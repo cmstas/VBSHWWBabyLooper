@@ -85,23 +85,14 @@ int main(int argc, char** argv)
                     const int& lep_j = vbs.tx.getBranchLazy<vector<int>>("good_leptons_pdgid")[jlep];
                     if (lep_i == -lep_j)
                         nsfos++;
+                    if (lep_i == lep_j and abs(lep_i) == 13)
+                        nssmm++;
                 }
             }
             vbs.tx.setBranch<int>("nsfos", nsfos);
             vbs.tx.setBranch<int>("nssmm", nssmm);
-            for (unsigned int ilep = 0; ilep < vbs.tx.getBranchLazy<vector<LV>>("good_leptons_p4").size(); ++ilep)
-            {
-                for (unsigned int jlep = ilep + 1; jlep < vbs.tx.getBranchLazy<vector<LV>>("good_leptons_p4").size(); ++jlep)
-                {
-                    const int& lep_i = vbs.tx.getBranchLazy<vector<int>>("good_leptons_pdgid")[ilep];
-                    const int& lep_j = vbs.tx.getBranchLazy<vector<int>>("good_leptons_pdgid")[jlep];
-                    if (abs(lep_i)
-                        nsfos++;
-                }
-            }
-            vbs.tx.setBranch<int>("nsfos", nsfos);
 
-            if (not (pt0 > 25. and pt1 > 25. and pt2 > 10.))
+            if (not (pt0 > 35. and pt1 > 35. and pt2 > 10.))
                 return false;
 
             const int& trig_ee = vbs.tx.getBranch<int>("trig_ee");
@@ -168,7 +159,7 @@ int main(int argc, char** argv)
     //*****************************
     // Description: Select Good Reco Jets
     vbs.cutflow.getCut("TLPreselection");
-    vbs.cutflow.addCutToLastActiveCut("TL0SFOSSSMM", [&]() { return vbs.tx.getBranch<int>("nsfos") == 0; }, UNITY);
+    vbs.cutflow.addCutToLastActiveCut("TL0SFOSSSMM", [&]() { return vbs.tx.getBranch<int>("nsfos") == 0 and vbs.tx.getBranch<int>("nssmm") == 1; }, UNITY);
     vbs.cutflow.getCut("TL0SFOS");
     vbs.cutflow.addCutToLastActiveCut("TL0SFOSSSMMNbTightGeq1", [&]() { return vbs.tx.getBranchLazy<int>("nbtight") >= 1; }, UNITY);
     vbs.cutflow.addCutToLastActiveCut("TL0SFOSSSMMNbTightGeq2", [&]() { return vbs.tx.getBranchLazy<int>("nbtight") >= 2; }, UNITY);

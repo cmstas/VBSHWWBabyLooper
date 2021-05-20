@@ -61,7 +61,14 @@ public:
 
     BTagCalibration* btagCalib;
     BTagCalibrationReader* btagReaderTight;
+    BTagCalibrationReader* btagReaderMedium;
     BTagCalibrationReader* btagReaderLoose;
+    RooUtil::HistMap* btagEffTight_b;
+    RooUtil::HistMap* btagEffTight_c;
+    RooUtil::HistMap* btagEffTight_l;
+    RooUtil::HistMap* btagEffLoose_b;
+    RooUtil::HistMap* btagEffLoose_c;
+    RooUtil::HistMap* btagEffLoose_l;
 
     VBSHWW(int, char**);
     ~VBSHWW();
@@ -82,6 +89,9 @@ public:
     // Select Gen particles for different processes
     void processGenParticles_VBSWWH();
     void processGenParticles_TopBackgrounds();
+
+    // b-tagging SF
+    void setBTagSF(std::vector<float> jet_pt, std::vector<float> jet_eta, std::vector<float> jet_score, std::vector<int> jet_flavor);
 
 };
 
