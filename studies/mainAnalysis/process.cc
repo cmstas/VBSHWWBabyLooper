@@ -196,7 +196,8 @@ int main(int argc, char** argv)
                 continue;
         }
 
-        vbs.process("AK4CategPresel");
+        vbs.process("AK4CategChannels");
+        // vbs.process("AK4CategTagHiggsJets");
 
     }
 

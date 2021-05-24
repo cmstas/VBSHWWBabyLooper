@@ -1451,7 +1451,7 @@ void VBSHWW::initSRCutflow()
         },
         UNITY);
 
-    cutflow.addCutToLastActiveCut("AK4CategPresel",
+    cutflow.addCutToLastActiveCut("AK4CategChannels",
         [&]()
         {
             const int& pass_blind = tx.getBranch<int>("pass_blind");
@@ -1486,14 +1486,20 @@ void VBSHWW::initSRCutflow()
             if (pass_blind and btagchannel == 0 and lepchannel == 4 and     mbbIn) channeldetail = 14;
             if (pass_blind and btagchannel == 0 and lepchannel == 4 and not mbbIn) channeldetail = 15;
             tx.setBranch<int>("channeldetail", channeldetail);
+            return true;
+        },
+        UNITY);
+
+    cutflow.addCutToLastActiveCut("AK4CategPresel",
+        [&]()
+        {
+            int channel = tx.getBranch<int>("channel");
             if (channel < 0)
                 return false;
             else
                 return true;
         },
         [&]() { return tx.getBranch<float>("btagsf"); } );
-        // UNITY);
-
     return;
 }
 
