@@ -1814,7 +1814,7 @@ void VBSHWW::setBTagSF(std::vector<float> jet_pt, std::vector<float> jet_eta, st
                 flavor == 5 ? btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_B, eta, pt) : (
                 flavor == 0 ? btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_UDSG, eta, pt) :
                               btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_C, eta, pt));
-            std::cout <<  " eff_tight: " << eff_tight <<  " eff_loose: " << eff_loose <<  " sf_tight: " << sf_tight <<  " sf_loose: " << sf_loose <<  std::endl;
+            // std::cout <<  " eff_tight: " << eff_tight <<  " eff_loose: " << eff_loose <<  " sf_tight: " << sf_tight <<  " sf_loose: " << sf_loose <<  std::endl;
             if (is_tight_btagged)
             {
                 btag_prob_MC *= eff_tight;
