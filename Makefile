@@ -12,7 +12,10 @@ VBSHWWCORE:
 rooutil:
 	$(MAKE) -C rooutil
 
-$(SUBDIRS): NanoCORE VBSHWWCORE rooutil
+minilooper:
+	$(MAKE) -C minilooper
+
+$(SUBDIRS): NanoCORE VBSHWWCORE rooutil minilooper
 	$(MAKE) -C $@
 
 .PHONY: all $(LIBRARIES) $(SUBDIRS)
