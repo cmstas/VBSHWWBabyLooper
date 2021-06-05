@@ -32,10 +32,16 @@ cd ${CONDOR_JOB_DIR}
 
 ARGS=$(getjobad Args ${CONDORJOBID})
 CMD=$(getjobad Cmd ${CONDORJOBID})
-TRANSERINPUT=$(getjobad TransferInput ${CONDORJOBID})
+TRANSFERINPUT=$(getjobad TransferInput ${CONDORJOBID})
 
-echo ${TRANSERINPUT}
+chmod 755 ${CMD}
 
-cp ${TRANSERINPUT} .
+echo ${TRANSFERINPUT}
+
+cp ${TRANSFERINPUT} .
 
 _CONDOR_JOB_AD=${CONDOR_JOB_AD} X509_USER_PROXY=/tmp/x509up_u$(id -u ${USER}) $CMD $ARGS
+
+rm -rf ${CONDOR_JOB_DIR}
+
+condor_rm ${CONDORJOBID}
