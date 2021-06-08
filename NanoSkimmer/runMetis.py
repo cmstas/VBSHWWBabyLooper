@@ -477,16 +477,28 @@ if __name__ == "__main__":
     tag = "v15"
     tarfile = "/nfs-7/userdata/phchang/VBSHWWNanoSkimmer_v8_CMSSW_10_2_13_slc7_amd64_gcc700.package.tar.gz" # >= 2 leptons of any charge (35 GeV each) + njets_20 >= 4
     #============================================================================================================================
-    tag = "v16"
-    tarfile = "/nfs-7/userdata/phchang/VBSHWWNanoSkimmer_v9_CMSSW_10_2_13_slc7_amd64_gcc700.package.tar.gz"
-    # if not (nelectrons_veto + nmuons_veto >= 1             ): return False # First check that we have at least one light lepton
-    # if not (nelectrons_veto + nmuons_veto + ntaus_veto == 2): return False # Then check that we have exactly two veto leptons
-    # if not (nelectrons_35 + nmuons_35 + ntaus_35 == 2      ): return False # Then check that we have exactly two tight leptons
-    # if not (charges[0] * charges[1] > 0                    ): return False # Then check that we have same-sign leptons
-    # if not (njets_20 >= 4): return False
-    # if len(vbf_jet_candidates) < 2: return False
-    # if not ((vbf_jet0 + vbf_jet1).mass() > 400.       ): return False # if Mjj < 400 skip the event
-    # if not (abs(vbf_jet0.eta() - vbf_jet1.eta()) > 3.5): return False # if deltaEta < 3.5 skip the event
+    # tag = "v16"# BUGGY Tau counters were messed up
+    # tarfile = "/nfs-7/userdata/phchang/VBSHWWNanoSkimmer_v9_CMSSW_10_2_13_slc7_amd64_gcc700.package.tar.gz"
+    #============================================================================================================================
+    #============================================================================================================================
+    # tag = "v17"# BUGGY Tau counters were messed up
+    # tarfile = "/nfs-7/userdata/phchang/VBSHWWNanoSkimmer_v10_CMSSW_10_2_13_slc7_amd64_gcc700.package.tar.gz"
+    #============================================================================================================================
+    #============================================================================================================================
+    # tag = "v18" # BUGGY
+    # tarfile = "/nfs-7/userdata/phchang/VBSHWWNanoSkimmer_v11_CMSSW_10_2_13_slc7_amd64_gcc700.package.tar.gz"
+    #============================================================================================================================
+    ##============================================================================================================================
+    #tag = "v19" # BUGGY
+    #tarfile = "/nfs-7/userdata/phchang/VBSHWWNanoSkimmer_v12_CMSSW_10_2_13_slc7_amd64_gcc700.package.tar.gz"
+    ##============================================================================================================================
+    #============================================================================================================================
+    tag = "v20" # Same-sign
+    tarfile = "/nfs-7/userdata/phchang/VBSHWWNanoSkimmer_v20_CMSSW_10_2_13_slc7_amd64_gcc700.package.tar.gz"
+    #============================================================================================================================
+    #============================================================================================================================
+    tag = "v21" # Opposite-sign
+    tarfile = "/nfs-7/userdata/phchang/VBSHWWNanoSkimmer_v21_CMSSW_10_2_13_slc7_amd64_gcc700.package.tar.gz"
     #============================================================================================================================
 
     task_summary = {}
@@ -498,7 +510,9 @@ if __name__ == "__main__":
                 output_name = "output.root",
                 tag = tag,
                 # condor_submit_params = {"sites": "T2_US_UCSD", "use_xrootd":True, "classads": [ ["metis_extraargs", "fetch_nano"] ]},
-                condor_submit_params = {"sites": "T2_US_UCSD", "use_xrootd":True},
+                # condor_submit_params = {"sites": "T2_US_UCSD", "use_xrootd":True, "classads": [ ["periodic_hold", "(JobStatus == 2) && (time() - EnteredCurrentStatus) > (2 * 3600)"], ["metis_extraargs", "fetch_nano"] ]},
+                condor_submit_params = {"sites": "T2_US_UCSD", "use_xrootd":True, "classads": [ ["periodic_hold", "(JobStatus == 2) && (time() - EnteredCurrentStatus) > (3 * 3600)"] ]},
+                # condor_submit_params = {"use_xrootd":True},
                 cmssw_version = "CMSSW_10_2_13",
                 scram_arch = "slc7_amd64_gcc700",
                 input_executable = "condor_executable_metis.sh", # your condor executable here

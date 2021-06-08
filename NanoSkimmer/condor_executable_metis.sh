@@ -86,6 +86,7 @@ echo -e "\n--- begin running ---\n" #                           <----- section d
 #------------------------------------------------------------------------------------------------------------------------------>
 localpath=$(echo ${INPUTFILENAMES} | sed 's/^.*\(\/store.*\).*$/\1/')
 INPUTFILE=root://xcache-redirector.t2.ucsd.edu:2042/${localpath}
+# INPUTFILE=root://cmsxrootd.fnal.gov/${localpath}
 echo ${INPUTFILE}
 #------------------------------------------------------------------------------------------------------------------------------>
 
