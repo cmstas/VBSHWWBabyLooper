@@ -40,10 +40,17 @@ echo "------------------------------------------------"
 echo "NANOSKIMDIR    : ${NANOSKIMDIR}"
 echo "================================================"
 
+TAG=$(basename $NANOSKIMDIR)
+NFSDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_${TAG}/
+NSAMPLES=$(ls -d ${NANOSKIMDIR}/* | wc -l)
+
+IDX=1
 for SAMPLEDIR in $(ls -d ${NANOSKIMDIR}/*); do
-    echo ${SAMPLEDIR}
-    mkdir -p ${SAMPLEDIR}/merged/
-    if [ ! -f ${SAMPLEDIR}/merged/nevents.txt ]; then
+    SAMPLENAME=$(basename ${SAMPLEDIR})
+    MERGEDDIR=${NFSDIR}/${SAMPLENAME}/merged/
+    mkdir -p ${MERGEDDIR}
+    echo "Processing ... ${IDX} / ${NSAMPLES} samples (dataset=${SAMPLENAME})"
+    if [ ! -f ${MERGEDDIR}/nevents.txt ]; then
         TOTALNEVENTS=0
         TOTALNEFFEVENTS=0
         for NEVENTSFILE in $(ls $SAMPLEDIR/*_nevents.txt); do
@@ -55,18 +62,26 @@ for SAMPLEDIR in $(ls -d ${NANOSKIMDIR}/*); do
             TOTALNEFFEVENTS=$((TOTALNEFFEVENTS - ${NEGWEIGHTS}))
             # echo ${POSWEIGHTS} ${NEGWEIGHTS}
         done
-        echo ${TOTALNEVENTS} > nevents.txt
-        echo ${TOTALNEFFEVENTS} >> nevents.txt
-        cp nevents.txt ${SAMPLEDIR}/merged/
+        echo ${TOTALNEVENTS} > ${MERGEDDIR}/nevents.txt
+        echo ${TOTALNEFFEVENTS} >> ${MERGEDDIR}/nevents.txt
     fi
     # hadding
-    if [ ! -f ${SAMPLEDIR}/merged/output.root ]; then
-        python haddnano.py output.root ${SAMPLEDIR}/*.root
-        rsync -ah --progress output.root ${SAMPLEDIR}/merged/output.root
+    if [ ! -f ${MERGEDDIR}/output.root ]; then
+        CMD="python haddnano.py ${MERGEDDIR}/output.root ${SAMPLEDIR}/*.root"
+        $CMD > ${MERGEDDIR}/output_hadd.log 2>&1
+        EXITCODE=$?
+        if [ $EXITCODE -ne 0 ]; then
+            echo $CMD
+            echo "ERROR - Fail to process $SAMPLEDIR"
+            exit
+        fi
+        # rsync -ah --progress output.root ${SAMPLEDIR}/merged/output.root
+        # cp -v output.root ${SAMPLEDIR}/merged/output.root
         # SAMPLEDIRPATHNEW=$(echo ${SAMPLEDIR} | sed 's/^.*\(\/store.*\).*$/\1/')
         # COPY_SRC="file://`pwd`/output.root"
         # COPY_DEST="davs://redirector.t2.ucsd.edu:1094/${SAMPLEDIRPATHNEW}/merged/output.root"
         # echo "gfal-copy -p -f -t 4200 --verbose --checksum ADLER32 ${COPY_SRC} ${COPY_DEST}"
         # break
     fi
+    IDX=$((IDX + 1))
 done
