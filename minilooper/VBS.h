@@ -1,6 +1,6 @@
 // -*- C++ -*-
 // This is a header file generated with the command:
-// makeCMS3ClassFiles("/home/users/phchang/public_html/analysis/hwh/VBSHWWBabyLooper/hadds/mainAnalysis_Run2/vbshww.root", "variable", "VBS", "tas", "vbs")
+// makeCMS3ClassFiles("/home/users/phchang/public_html/analysis/hwh/VBSHWWBabyLooper/hadds/createMini_Run2/vbshww_c2v_4p5.root", "variable", "VBS", "tas", "vbs")
 
 #ifndef VBS_H
 #define VBS_H
@@ -98,6 +98,9 @@ class VBS {
   ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > *gen_lep1_;
   TBranch *gen_lep1_branch;
   bool     gen_lep1_isLoaded;
+  ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > *gen_lep2_;
+  TBranch *gen_lep2_branch;
+  bool     gen_lep2_isLoaded;
   ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > *gen_nu0_;
   TBranch *gen_nu0_branch;
   bool     gen_nu0_isLoaded;
@@ -131,6 +134,9 @@ class VBS {
   vector<int> *good_leptons_jetIdx_;
   TBranch *good_leptons_jetIdx_branch;
   bool     good_leptons_jetIdx_isLoaded;
+  vector<int> *good_leptons_genPartFlav_;
+  TBranch *good_leptons_genPartFlav_branch;
+  bool     good_leptons_genPartFlav_isLoaded;
   vector<float> *good_leptons_pfRelIso03_all_;
   TBranch *good_leptons_pfRelIso03_all_branch;
   bool     good_leptons_pfRelIso03_all_isLoaded;
@@ -257,6 +263,12 @@ class VBS {
   int      lep1ID_;
   TBranch *lep1ID_branch;
   bool     lep1ID_isLoaded;
+  int      lep0GenPartFlav_;
+  TBranch *lep0GenPartFlav_branch;
+  bool     lep0GenPartFlav_isLoaded;
+  int      lep1GenPartFlav_;
+  TBranch *lep1GenPartFlav_branch;
+  bool     lep1GenPartFlav_isLoaded;
   ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > *leadlep_;
   TBranch *leadlep_branch;
   bool     leadlep_isLoaded;
@@ -269,6 +281,12 @@ class VBS {
   int      subllepID_;
   TBranch *subllepID_branch;
   bool     subllepID_isLoaded;
+  int      leadlepGenPartFlav_;
+  TBranch *leadlepGenPartFlav_branch;
+  bool     leadlepGenPartFlav_isLoaded;
+  int      subllepGenPartFlav_;
+  TBranch *subllepGenPartFlav_branch;
+  bool     subllepGenPartFlav_isLoaded;
   ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > *b0_;
   TBranch *b0_branch;
   bool     b0_isLoaded;
@@ -334,6 +352,7 @@ void LoadAllBranches();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_h();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_lep0();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_lep1();
+  const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_lep2();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_nu0();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_nu1();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_b0();
@@ -345,6 +364,7 @@ void LoadAllBranches();
   const vector<int> &good_leptons_pdgid();
   const vector<int> &good_leptons_tight();
   const vector<int> &good_leptons_jetIdx();
+  const vector<int> &good_leptons_genPartFlav();
   const vector<float> &good_leptons_pfRelIso03_all();
   const vector<float> &good_leptons_pfRelIso03_chg();
   const vector<float> &good_leptons_jetPtRelv2();
@@ -387,10 +407,14 @@ void LoadAllBranches();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &lep1();
   const int &lep0ID();
   const int &lep1ID();
+  const int &lep0GenPartFlav();
+  const int &lep1GenPartFlav();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &leadlep();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &subllep();
   const int &leadlepID();
   const int &subllepID();
+  const int &leadlepGenPartFlav();
+  const int &subllepGenPartFlav();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &b0();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &b1();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &j0();
@@ -437,6 +461,7 @@ namespace tas {
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_h();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_lep0();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_lep1();
+  const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_lep2();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_nu0();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_nu1();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_b0();
@@ -448,6 +473,7 @@ namespace tas {
   const vector<int> &good_leptons_pdgid();
   const vector<int> &good_leptons_tight();
   const vector<int> &good_leptons_jetIdx();
+  const vector<int> &good_leptons_genPartFlav();
   const vector<float> &good_leptons_pfRelIso03_all();
   const vector<float> &good_leptons_pfRelIso03_chg();
   const vector<float> &good_leptons_jetPtRelv2();
@@ -490,10 +516,14 @@ namespace tas {
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &lep1();
   const int &lep0ID();
   const int &lep1ID();
+  const int &lep0GenPartFlav();
+  const int &lep1GenPartFlav();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &leadlep();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &subllep();
   const int &leadlepID();
   const int &subllepID();
+  const int &leadlepGenPartFlav();
+  const int &subllepGenPartFlav();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &b0();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &b1();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &j0();

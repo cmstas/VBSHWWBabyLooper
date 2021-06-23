@@ -18,6 +18,8 @@ EXECUTABLE=./studies/${STUDY}/doAnalysis
 SAMPLES="TTJets_DiLept \
 TTJets_SingleLeptFromT \
 TTJets_SingleLeptFromTbar \
+TTTo2L2Nu \
+TTToSemiLeptonic \
 TTWJetsToLNu \
 TTZToLLNuNu_M-10 \
 TTZToLL_M-1to10 \
@@ -44,6 +46,7 @@ WZG \
 WZZ \
 ZZZ \
 WWToLNuQQ \
+WWTo2L2Nu \
 ST_s-channel_4f \
 ST_t-channel_antitop_4f \
 ST_t-channel_top_4f \
@@ -53,7 +56,6 @@ VBSWmpWmpHToLNuLNu_C2V_6_TuneCP5 \
 VBSWmpWmpHToLNuLNu_C2V_3_TuneCP5 \
 VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5 \
 VBSWmpWmpHToLNuLNu_C2V_m2_TuneCP5 \
-VBSWmpWmpHToLNuLNu_TuneCP5 \
 DoubleEG_Run2016 \
 DoubleMuon_Run2016 \
 MuonEG_Run2016 \
@@ -69,8 +71,15 @@ DoubleMuon_Run2018 \
 MuonEG_Run2018 \
 SingleMuon_Run2018"
 
+# VBSWmpWmpHToLNuLNu_TuneCP5 \
+
 # NANOSKIMDIR=/hadoop/cms/store/user/phchang/VBSHWWNanoSkim/v12/
-NANOSKIMDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_v12/
+# NANOSKIMDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_v12/
+# NANOSKIMDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_v20/
+# NANOSKIMDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_v22/
+# NANOSKIMDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_test/
+# NANOSKIMDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_v30/
+NANOSKIMDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_v40/
 
 rm -f .jobs.txt
 
@@ -108,6 +117,8 @@ for SAMPLE in ${SAMPLES}; do
         if [[ ${SAMPLE} == *"TTJets_DiLept"* ]]; then XSEC=91.044; fi
         if [[ ${SAMPLE} == *"TTJets_SingleLeptFromT"* ]]; then XSEC=182.96; fi
         if [[ ${SAMPLE} == *"TTJets_SingleLeptFromTbar"* ]]; then XSEC=182.96; fi
+        if [[ ${SAMPLE} == *"TTTo2L2Nu"* ]]; then XSEC=87.315; fi
+        if [[ ${SAMPLE} == *"TTToSemiLeptonic"* ]]; then XSEC=365.34; fi
         if [[ ${SAMPLE} == *"WpWpJJ_EWK"* ]]; then XSEC=0.0539; fi
         if [[ ${SAMPLE} == *"WZTo3LNu"* ]]; then XSEC=4.4297; fi
         if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_TuneCP5"* ]]; then XSEC=0.00001708; fi
@@ -128,6 +139,7 @@ for SAMPLE in ${SAMPLES}; do
         if [[ ${SAMPLE} == *"WZZ"* ]]; then XSEC=0.05565; fi
         if [[ ${SAMPLE} == *"ZZZ"* ]]; then XSEC=0.01398; fi
         if [[ ${SAMPLE} == *"WWToLNuQQ"* ]]; then XSEC=49.997; fi
+        if [[ ${SAMPLE} == *"WWTo2L2Nu"* ]]; then XSEC=12.178; fi
         if [[ ${SAMPLE} == *"Run201"* ]]; then XSEC=1; fi # data
 
         if [[ -z "${XSEC}" ]]; then
@@ -160,8 +172,18 @@ for SAMPLE in ${SAMPLES}; do
         if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_m2_TuneCP5_2016"* ]]; then continue; fi
         if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_m2_TuneCP5_2017"* ]]; then continue; fi
 
+        if [[ ${STUDY} == "os" ]]; then
+            if [[ ${SAMPLE}_${YEAR} == *"SingleElectron_Run2016_2016"* ]]; then continue; fi  #   803.8
+            if [[ ${SAMPLE}_${YEAR} == *"SingleElectron_Run2017_2017"* ]]; then continue; fi  #   971.4
+            if [[ ${SAMPLE}_${YEAR} == *"SingleMuon_Run2016_2016"* ]]; then continue; fi      #   1751.2
+            if [[ ${SAMPLE}_${YEAR} == *"SingleMuon_Run2017_2017"* ]]; then continue; fi      #   2026.6
+            if [[ ${SAMPLE}_${YEAR} == *"SingleMuon_Run2018_2018"* ]]; then continue; fi      #   2765.8
+        fi
+
         EXTRATAG=""
         if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5"* ]]; then EXTRATAG=ext1; fi
+        # if [[ ${SAMPLE}_${YEAR} == *"TTToSemiLeptonic_2018"* ]]; then EXTRATAG=ext3; fi
+        # if [[ ${SAMPLE}_${YEAR} == *"TTToSemiLeptonic_2017"* ]]; then EXTRATAG=ext1; fi
 
         # Last bit modification
         if [[ ${SAMPLE} == *"Run201"* ]]; then
@@ -173,14 +195,27 @@ for SAMPLE in ${SAMPLES}; do
         fi
 
         NEVENTSINFOFILE=${NANOSKIMDIR}/${SAMPLEWITHUNDERSCORE}*${NANOTAG}*${EXTRATAG}*/merged/nevents.txt
+        NFILES_NEVENTSINFOFILE=$(ls ${NEVENTSINFOFILE} | wc -l)
         if [[ ${SAMPLE} == *"Run201"* ]]; then
             NTOTALEVENTS=1
             NEFFEVENTS=1
             SCALE1FB=1
         else
-            NTOTALEVENTS=$(head -n1 ${NEVENTSINFOFILE})
-            NEFFEVENTS=$(tail -n1 ${NEVENTSINFOFILE})
-            SCALE1FB=$(echo "${XSEC} / ${NEFFEVENTS} * 1000" | bc -l)
+            if [ "${NFILES_NEVENTSINFOFILE}" -gt "1" ]; then
+                NTOTALEVENTS=0
+                NEFFEVENTS=0
+                for i in $(ls ${NEVENTSINFOFILE}); do
+                    TMPNTOTALEVENTS=$(head -n1 ${i})
+                    TMPNEFFEVENTS=$(tail -n1 ${i})
+                    NTOTALEVENTS=$(($NTOTALEVENTS + $TMPNTOTALEVENTS))
+                    NEFFEVENTS=$(($NEFFEVENTS + $TMPNEFFEVENTS))
+                done
+                SCALE1FB=$(echo "${XSEC} / ${NEFFEVENTS} * 1000" | bc -l)
+            else
+                NTOTALEVENTS=$(head -n1 ${NEVENTSINFOFILE})
+                NEFFEVENTS=$(tail -n1 ${NEVENTSINFOFILE})
+                SCALE1FB=$(echo "${XSEC} / ${NEFFEVENTS} * 1000" | bc -l)
+            fi
         fi
 
         echo ""
@@ -220,6 +255,70 @@ for SAMPLE in ${SAMPLES}; do
         if [[ ${SAMPLE}_${YEAR} == *"ZZTo4L_2016"* ]]; then NJOBS=2; fi
         if [[ ${SAMPLE}_${YEAR} == *"ZZTo4L_2017"* ]]; then NJOBS=20; fi
         if [[ ${SAMPLE}_${YEAR} == *"ZZTo4L_2018"* ]]; then NJOBS=20; fi
+
+        if [[ ${STUDY} == "os" ]]; then
+            if [[ ${SAMPLE}_${YEAR} == *"DYJetsToLL_M-50_2016"* ]]; then NJOBS=10; fi        #   1886.3
+            if [[ ${SAMPLE}_${YEAR} == *"DYJetsToLL_M-50_2016"* ]]; then NJOBS=10; fi        #   1900.1
+            if [[ ${SAMPLE}_${YEAR} == *"DYJetsToLL_M-50_2016"* ]]; then NJOBS=5; fi         #   946.1
+            if [[ ${SAMPLE}_${YEAR} == *"DoubleEG_Run2016_2016"* ]]; then NJOBS=5; fi        #   1031.0
+            if [[ ${SAMPLE}_${YEAR} == *"DoubleEG_Run2017_2017"* ]]; then NJOBS=6; fi        #   1201.3
+            if [[ ${SAMPLE}_${YEAR} == *"EGamma_Run2018_2018"* ]]; then NJOBS=9; fi          #   1831.5
+            if [[ ${SAMPLE}_${YEAR} == *"DoubleMuon_Run2016_2016"* ]]; then NJOBS=11; fi     #   2208.1
+            if [[ ${SAMPLE}_${YEAR} == *"DoubleMuon_Run2017_2017"* ]]; then NJOBS=12; fi     #   2449.8
+            if [[ ${SAMPLE}_${YEAR} == *"DoubleMuon_Run2018_2018"* ]]; then NJOBS=35; fi     #   3474.0
+            # if [[ ${SAMPLE}_${YEAR} == *"SingleElectron_Run2016_2016"* ]]; then NJOBS=4; fi  #   803.8
+            # if [[ ${SAMPLE}_${YEAR} == *"SingleElectron_Run2017_2017"* ]]; then NJOBS=5; fi  #   971.4
+            # if [[ ${SAMPLE}_${YEAR} == *"SingleMuon_Run2016_2016"* ]]; then NJOBS=9; fi      #   1751.2
+            # if [[ ${SAMPLE}_${YEAR} == *"SingleMuon_Run2017_2017"* ]]; then NJOBS=10; fi     #   2026.6
+            # if [[ ${SAMPLE}_${YEAR} == *"SingleMuon_Run2018_2018"* ]]; then NJOBS=10; fi     #   2765.8
+            if [[ ${SAMPLE}_${YEAR} == *"TTJets_DiLept_2016"* ]]; then NJOBS=2; fi           #   247.9
+            if [[ ${SAMPLE}_${YEAR} == *"TTJets_DiLept_2017"* ]]; then NJOBS=5; fi           #   930.3
+            if [[ ${SAMPLE}_${YEAR} == *"TTJets_DiLept_2018"* ]]; then NJOBS=5; fi           #   968.1
+        fi
+
+        if [[ ${STUDY} == "createMini" ]]; then
+            if [[ ${SAMPLE}_${YEAR} == *"DYJetsToLL_M-50_2016"* ]]; then NJOBS=10; fi        #   1886.3
+            if [[ ${SAMPLE}_${YEAR} == *"DYJetsToLL_M-50_2016"* ]]; then NJOBS=10; fi        #   1900.1
+            if [[ ${SAMPLE}_${YEAR} == *"DYJetsToLL_M-50_2016"* ]]; then NJOBS=10; fi         #   946.1
+            if [[ ${SAMPLE}_${YEAR} == *"DoubleEG_Run2016_2016"* ]]; then NJOBS=10; fi        #   1031.0
+            if [[ ${SAMPLE}_${YEAR} == *"DoubleEG_Run2017_2017"* ]]; then NJOBS=10; fi        #   1201.3
+            if [[ ${SAMPLE}_${YEAR} == *"EGamma_Run2018_2018"* ]]; then NJOBS=10; fi          #   1831.5
+            if [[ ${SAMPLE}_${YEAR} == *"DoubleMuon_Run2016_2016"* ]]; then NJOBS=11; fi     #   2208.1
+            if [[ ${SAMPLE}_${YEAR} == *"DoubleMuon_Run2017_2017"* ]]; then NJOBS=12; fi     #   2449.8
+            if [[ ${SAMPLE}_${YEAR} == *"DoubleMuon_Run2018_2018"* ]]; then NJOBS=35; fi     #   3474.0
+            if [[ ${SAMPLE}_${YEAR} == *"SingleElectron_Run2016_2016"* ]]; then NJOBS=10; fi  #   803.8
+            if [[ ${SAMPLE}_${YEAR} == *"SingleElectron_Run2017_2017"* ]]; then NJOBS=10; fi  #   971.4
+            if [[ ${SAMPLE}_${YEAR} == *"SingleMuon_Run2016_2016"* ]]; then NJOBS=10; fi      #   1751.2
+            if [[ ${SAMPLE}_${YEAR} == *"SingleMuon_Run2017_2017"* ]]; then NJOBS=10; fi     #   2026.6
+            if [[ ${SAMPLE}_${YEAR} == *"SingleMuon_Run2018_2018"* ]]; then NJOBS=10; fi     #   2765.8
+            if [[ ${SAMPLE}_${YEAR} == *"TTJets_DiLept_2016"* ]]; then NJOBS=10; fi           #   247.9
+            if [[ ${SAMPLE}_${YEAR} == *"TTJets_DiLept_2017"* ]]; then NJOBS=10; fi           #   930.3
+            if [[ ${SAMPLE}_${YEAR} == *"TTJets_DiLept_2018"* ]]; then NJOBS=10; fi           #   968.1
+            if [[ ${SAMPLE}_${YEAR} == *"TTTo2L2Nu_2016"* ]]; then NJOBS=10; fi           #   247.9
+            if [[ ${SAMPLE}_${YEAR} == *"TTTo2L2Nu_2017"* ]]; then NJOBS=10; fi           #   930.3
+            if [[ ${SAMPLE}_${YEAR} == *"TTTo2L2Nu_2018"* ]]; then NJOBS=10; fi           #   968.1
+        fi
+
+# DYJetsToLL_M-50_output_0.log:Real           hists/createMini_2016/ 2077.3
+# DYJetsToLL_M-50_output_0.log:Real           hists/createMini_2017/ 955.2
+# DYJetsToLL_M-50_output_0.log:Real           hists/createMini_2018/ 2015.7
+# DoubleEG_Run2016_output_0.log:Real          hists/createMini_2016/ 1109.1
+# DoubleEG_Run2017_output_0.log:Real          hists/createMini_2017/ 1260.9
+# EGamma_Run2018_output_0.log:Real            hists/createMini_2018/ 1992.6
+# DoubleMuon_Run2016_output_0.log:Real        hists/createMini_2016/ 2467.7
+# DoubleMuon_Run2017_output_0.log:Real        hists/createMini_2017/ 2482.3
+# DoubleMuon_Run2018_output_0.log:Real        hists/createMini_2018/ 3805.4
+# SingleElectron_Run2016_output_0.log:Real    hists/createMini_2016/ 1145.3
+# SingleElectron_Run2017_output_0.log:Real    hists/createMini_2017/ 1280.1
+# SingleMuon_Run2016_output_0.log:Real        hists/createMini_2016/ 2480.3
+# SingleMuon_Run2017_output_0.log:Real        hists/createMini_2017/ 2754.2
+# SingleMuon_Run2018_output_0.log:Real        hists/createMini_2018/ 3932.3
+# TTJets_DiLept_output_0.log:Real             hists/createMini_2017/ 1071.8
+# TTJets_DiLept_output_0.log:Real             hists/createMini_2018/ 1198.4
+# TTTo2L2Nu_output_0.log:Real                 hists/createMini_2016/ 2046.5
+# TTTo2L2Nu_output_0.log:Real                 hists/createMini_2017/ 1984.0
+# TTTo2L2Nu_output_0.log:Real                 hists/createMini_2018/ 2088.2
+
         NJOBSMAXIDX=$((NJOBS - 1))
 
         FILELIST=$(ls ${NANOSKIMDIR}/${SAMPLEWITHUNDERSCORE}*${NANOTAG}*${EXTRATAG}*/merged/output.root | tr '\n' ',')

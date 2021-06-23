@@ -67,7 +67,7 @@ for SAMPLEDIR in $(ls -d ${NANOSKIMDIR}/*); do
     fi
     # hadding
     if [ ! -f ${MERGEDDIR}/output.root ]; then
-        CMD="python haddnano.py ${MERGEDDIR}/output.root ${SAMPLEDIR}/*.root"
+        CMD="python ${DIR}/haddnano.py ${MERGEDDIR}/output.root ${SAMPLEDIR}/*.root"
         $CMD > ${MERGEDDIR}/output_hadd.log 2>&1
         EXITCODE=$?
         if [ $EXITCODE -ne 0 ]; then

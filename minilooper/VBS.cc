@@ -18,6 +18,8 @@ void VBS::Init(TTree *tree) {
   if (gen_lep0_branch) gen_lep0_branch->SetAddress(&gen_lep0_);
   gen_lep1_branch = tree->GetBranch("gen_lep1");
   if (gen_lep1_branch) gen_lep1_branch->SetAddress(&gen_lep1_);
+  gen_lep2_branch = tree->GetBranch("gen_lep2");
+  if (gen_lep2_branch) gen_lep2_branch->SetAddress(&gen_lep2_);
   gen_nu0_branch = tree->GetBranch("gen_nu0");
   if (gen_nu0_branch) gen_nu0_branch->SetAddress(&gen_nu0_);
   gen_nu1_branch = tree->GetBranch("gen_nu1");
@@ -103,6 +105,8 @@ void VBS::Init(TTree *tree) {
   if (good_leptons_tight_branch) good_leptons_tight_branch->SetAddress(&good_leptons_tight_);
   good_leptons_jetIdx_branch = tree->GetBranch("good_leptons_jetIdx");
   if (good_leptons_jetIdx_branch) good_leptons_jetIdx_branch->SetAddress(&good_leptons_jetIdx_);
+  good_leptons_genPartFlav_branch = tree->GetBranch("good_leptons_genPartFlav");
+  if (good_leptons_genPartFlav_branch) good_leptons_genPartFlav_branch->SetAddress(&good_leptons_genPartFlav_);
   good_leptons_pfRelIso03_all_branch = tree->GetBranch("good_leptons_pfRelIso03_all");
   if (good_leptons_pfRelIso03_all_branch) good_leptons_pfRelIso03_all_branch->SetAddress(&good_leptons_pfRelIso03_all_);
   good_leptons_pfRelIso03_chg_branch = tree->GetBranch("good_leptons_pfRelIso03_chg");
@@ -173,10 +177,18 @@ void VBS::Init(TTree *tree) {
   if (lep0ID_branch) lep0ID_branch->SetAddress(&lep0ID_);
   lep1ID_branch = tree->GetBranch("lep1ID");
   if (lep1ID_branch) lep1ID_branch->SetAddress(&lep1ID_);
+  lep0GenPartFlav_branch = tree->GetBranch("lep0GenPartFlav");
+  if (lep0GenPartFlav_branch) lep0GenPartFlav_branch->SetAddress(&lep0GenPartFlav_);
+  lep1GenPartFlav_branch = tree->GetBranch("lep1GenPartFlav");
+  if (lep1GenPartFlav_branch) lep1GenPartFlav_branch->SetAddress(&lep1GenPartFlav_);
   leadlepID_branch = tree->GetBranch("leadlepID");
   if (leadlepID_branch) leadlepID_branch->SetAddress(&leadlepID_);
   subllepID_branch = tree->GetBranch("subllepID");
   if (subllepID_branch) subllepID_branch->SetAddress(&subllepID_);
+  leadlepGenPartFlav_branch = tree->GetBranch("leadlepGenPartFlav");
+  if (leadlepGenPartFlav_branch) leadlepGenPartFlav_branch->SetAddress(&leadlepGenPartFlav_);
+  subllepGenPartFlav_branch = tree->GetBranch("subllepGenPartFlav");
+  if (subllepGenPartFlav_branch) subllepGenPartFlav_branch->SetAddress(&subllepGenPartFlav_);
   channel_branch = tree->GetBranch("channel");
   if (channel_branch) channel_branch->SetAddress(&channel_);
   channeldetail_branch = tree->GetBranch("channeldetail");
@@ -225,6 +237,7 @@ void VBS::GetEntry(unsigned int idx) {
   gen_h_isLoaded = false;
   gen_lep0_isLoaded = false;
   gen_lep1_isLoaded = false;
+  gen_lep2_isLoaded = false;
   gen_nu0_isLoaded = false;
   gen_nu1_isLoaded = false;
   gen_b0_isLoaded = false;
@@ -236,6 +249,7 @@ void VBS::GetEntry(unsigned int idx) {
   good_leptons_pdgid_isLoaded = false;
   good_leptons_tight_isLoaded = false;
   good_leptons_jetIdx_isLoaded = false;
+  good_leptons_genPartFlav_isLoaded = false;
   good_leptons_pfRelIso03_all_isLoaded = false;
   good_leptons_pfRelIso03_chg_isLoaded = false;
   good_leptons_jetPtRelv2_isLoaded = false;
@@ -278,10 +292,14 @@ void VBS::GetEntry(unsigned int idx) {
   lep1_isLoaded = false;
   lep0ID_isLoaded = false;
   lep1ID_isLoaded = false;
+  lep0GenPartFlav_isLoaded = false;
+  lep1GenPartFlav_isLoaded = false;
   leadlep_isLoaded = false;
   subllep_isLoaded = false;
   leadlepID_isLoaded = false;
   subllepID_isLoaded = false;
+  leadlepGenPartFlav_isLoaded = false;
+  subllepGenPartFlav_isLoaded = false;
   b0_isLoaded = false;
   b1_isLoaded = false;
   j0_isLoaded = false;
@@ -323,6 +341,7 @@ void VBS::LoadAllBranches() {
   if (gen_h_branch != 0) gen_h();
   if (gen_lep0_branch != 0) gen_lep0();
   if (gen_lep1_branch != 0) gen_lep1();
+  if (gen_lep2_branch != 0) gen_lep2();
   if (gen_nu0_branch != 0) gen_nu0();
   if (gen_nu1_branch != 0) gen_nu1();
   if (gen_b0_branch != 0) gen_b0();
@@ -334,6 +353,7 @@ void VBS::LoadAllBranches() {
   if (good_leptons_pdgid_branch != 0) good_leptons_pdgid();
   if (good_leptons_tight_branch != 0) good_leptons_tight();
   if (good_leptons_jetIdx_branch != 0) good_leptons_jetIdx();
+  if (good_leptons_genPartFlav_branch != 0) good_leptons_genPartFlav();
   if (good_leptons_pfRelIso03_all_branch != 0) good_leptons_pfRelIso03_all();
   if (good_leptons_pfRelIso03_chg_branch != 0) good_leptons_pfRelIso03_chg();
   if (good_leptons_jetPtRelv2_branch != 0) good_leptons_jetPtRelv2();
@@ -376,10 +396,14 @@ void VBS::LoadAllBranches() {
   if (lep1_branch != 0) lep1();
   if (lep0ID_branch != 0) lep0ID();
   if (lep1ID_branch != 0) lep1ID();
+  if (lep0GenPartFlav_branch != 0) lep0GenPartFlav();
+  if (lep1GenPartFlav_branch != 0) lep1GenPartFlav();
   if (leadlep_branch != 0) leadlep();
   if (subllep_branch != 0) subllep();
   if (leadlepID_branch != 0) leadlepID();
   if (subllepID_branch != 0) subllepID();
+  if (leadlepGenPartFlav_branch != 0) leadlepGenPartFlav();
+  if (subllepGenPartFlav_branch != 0) subllepGenPartFlav();
   if (b0_branch != 0) b0();
   if (b1_branch != 0) b1();
   if (j0_branch != 0) j0();
@@ -719,6 +743,19 @@ const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &VBS::gen_lep1(
   return *gen_lep1_;
 }
 
+const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &VBS::gen_lep2() {
+  if (not gen_lep2_isLoaded) {
+    if (gen_lep2_branch != 0) {
+      gen_lep2_branch->GetEntry(index);
+    } else {
+      printf("branch gen_lep2_branch does not exist!\n");
+      exit(1);
+    }
+    gen_lep2_isLoaded = true;
+  }
+  return *gen_lep2_;
+}
+
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &VBS::gen_nu0() {
   if (not gen_nu0_isLoaded) {
     if (gen_nu0_branch != 0) {
@@ -860,6 +897,19 @@ const vector<int> &VBS::good_leptons_jetIdx() {
     good_leptons_jetIdx_isLoaded = true;
   }
   return *good_leptons_jetIdx_;
+}
+
+const vector<int> &VBS::good_leptons_genPartFlav() {
+  if (not good_leptons_genPartFlav_isLoaded) {
+    if (good_leptons_genPartFlav_branch != 0) {
+      good_leptons_genPartFlav_branch->GetEntry(index);
+    } else {
+      printf("branch good_leptons_genPartFlav_branch does not exist!\n");
+      exit(1);
+    }
+    good_leptons_genPartFlav_isLoaded = true;
+  }
+  return *good_leptons_genPartFlav_;
 }
 
 const vector<float> &VBS::good_leptons_pfRelIso03_all() {
@@ -1408,6 +1458,32 @@ const int &VBS::lep1ID() {
   return lep1ID_;
 }
 
+const int &VBS::lep0GenPartFlav() {
+  if (not lep0GenPartFlav_isLoaded) {
+    if (lep0GenPartFlav_branch != 0) {
+      lep0GenPartFlav_branch->GetEntry(index);
+    } else {
+      printf("branch lep0GenPartFlav_branch does not exist!\n");
+      exit(1);
+    }
+    lep0GenPartFlav_isLoaded = true;
+  }
+  return lep0GenPartFlav_;
+}
+
+const int &VBS::lep1GenPartFlav() {
+  if (not lep1GenPartFlav_isLoaded) {
+    if (lep1GenPartFlav_branch != 0) {
+      lep1GenPartFlav_branch->GetEntry(index);
+    } else {
+      printf("branch lep1GenPartFlav_branch does not exist!\n");
+      exit(1);
+    }
+    lep1GenPartFlav_isLoaded = true;
+  }
+  return lep1GenPartFlav_;
+}
+
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &VBS::leadlep() {
   if (not leadlep_isLoaded) {
     if (leadlep_branch != 0) {
@@ -1458,6 +1534,32 @@ const int &VBS::subllepID() {
     subllepID_isLoaded = true;
   }
   return subllepID_;
+}
+
+const int &VBS::leadlepGenPartFlav() {
+  if (not leadlepGenPartFlav_isLoaded) {
+    if (leadlepGenPartFlav_branch != 0) {
+      leadlepGenPartFlav_branch->GetEntry(index);
+    } else {
+      printf("branch leadlepGenPartFlav_branch does not exist!\n");
+      exit(1);
+    }
+    leadlepGenPartFlav_isLoaded = true;
+  }
+  return leadlepGenPartFlav_;
+}
+
+const int &VBS::subllepGenPartFlav() {
+  if (not subllepGenPartFlav_isLoaded) {
+    if (subllepGenPartFlav_branch != 0) {
+      subllepGenPartFlav_branch->GetEntry(index);
+    } else {
+      printf("branch subllepGenPartFlav_branch does not exist!\n");
+      exit(1);
+    }
+    subllepGenPartFlav_isLoaded = true;
+  }
+  return subllepGenPartFlav_;
 }
 
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &VBS::b0() {
@@ -1664,6 +1766,7 @@ const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_w1() { ret
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_h() { return vbs.gen_h(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_lep0() { return vbs.gen_lep0(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_lep1() { return vbs.gen_lep1(); }
+const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_lep2() { return vbs.gen_lep2(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_nu0() { return vbs.gen_nu0(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_nu1() { return vbs.gen_nu1(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_b0() { return vbs.gen_b0(); }
@@ -1675,6 +1778,7 @@ const vector<ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > > &good_
 const vector<int> &good_leptons_pdgid() { return vbs.good_leptons_pdgid(); }
 const vector<int> &good_leptons_tight() { return vbs.good_leptons_tight(); }
 const vector<int> &good_leptons_jetIdx() { return vbs.good_leptons_jetIdx(); }
+const vector<int> &good_leptons_genPartFlav() { return vbs.good_leptons_genPartFlav(); }
 const vector<float> &good_leptons_pfRelIso03_all() { return vbs.good_leptons_pfRelIso03_all(); }
 const vector<float> &good_leptons_pfRelIso03_chg() { return vbs.good_leptons_pfRelIso03_chg(); }
 const vector<float> &good_leptons_jetPtRelv2() { return vbs.good_leptons_jetPtRelv2(); }
@@ -1717,10 +1821,14 @@ const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &lep0() { retur
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &lep1() { return vbs.lep1(); }
 const int &lep0ID() { return vbs.lep0ID(); }
 const int &lep1ID() { return vbs.lep1ID(); }
+const int &lep0GenPartFlav() { return vbs.lep0GenPartFlav(); }
+const int &lep1GenPartFlav() { return vbs.lep1GenPartFlav(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &leadlep() { return vbs.leadlep(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &subllep() { return vbs.subllep(); }
 const int &leadlepID() { return vbs.leadlepID(); }
 const int &subllepID() { return vbs.subllepID(); }
+const int &leadlepGenPartFlav() { return vbs.leadlepGenPartFlav(); }
+const int &subllepGenPartFlav() { return vbs.subllepGenPartFlav(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &b0() { return vbs.b0(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &b1() { return vbs.b1(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &j0() { return vbs.j0(); }

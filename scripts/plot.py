@@ -27,8 +27,8 @@ except:
 hadd_dir = "hadds/{}".format(study_name)
 
 bkgs = [
-        "{}/tt1l.root".format(hadd_dir),
-        "{}/tt2l.root".format(hadd_dir),
+        "{}/tt1lpowheg.root".format(hadd_dir),
+        "{}/tt2lpowheg.root".format(hadd_dir),
         "{}/ttw.root".format(hadd_dir),
         "{}/ttz.root".format(hadd_dir),
         "{}/raretop.root".format(hadd_dir),
@@ -72,6 +72,10 @@ if "2016" in hadd_dir: lumi = 35.9
 if "2017" in hadd_dir: lumi = 41.5
 if "2018" in hadd_dir: lumi = 59.97
 if "Run2" in hadd_dir: lumi = 137
+
+if "Run2" not in hadd_dir:
+    sigs = []
+    signal_labels = []
 
 ChannelsDetails_bin_labels = [
 "T-ee-in",
@@ -199,6 +203,8 @@ p.dump_plot(fnames=bkgs,
         "legend_scalex": 2.0,
         "lumi_value": lumi,
         "ratio_range": [0., 2.],
+        "yaxis_log":False,
+        "remove_underflow":True,
         },
     histxaxislabeloptions=histxaxislabeloptions,
     skip2d=True,

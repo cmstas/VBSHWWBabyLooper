@@ -1,6 +1,7 @@
 #include "VBS.h"
 #include "rooutil.h"
 #include "cxxopts.h"
+#include "lester_mt2_bisect.h"
 
 class AnalysisConfig {
 
@@ -371,21 +372,104 @@ int main(int argc, char** argv)
     ana.cutflow.setTFile(ana.output_tfile);
 
     // Splitting events by channels
-    ana.cutflow.addCut("LooseVRChannel", [&]() { return vbs.channel() >= 0; }, [&]() { return vbs.wgt() * vbs.btagsf() * vbs.lepsf(); } );
+    ana.cutflow.addCut("LooseVRChannel",
+                       [&]()
+                       {
+                           bool pass = (vbs.j0() + vbs.j1()).mass() > 400. and (fabs(RooUtil::Calc::DeltaEta(vbs.j0(), vbs.j1())) > 3.0) and vbs.channel() >= 0;
+                           // if (pass)
+                           // {
+                           //     std::cout << std::endl
+                           //     std::cout << vbs.j0().pt() << ":" << vbs.j1().pt() << ":" << (vbs.j0()+vbs.j1()).mass() << ":" << fabs(RooUtil::Calc::DeltaEta(vbs.j0(),vbs.j1())) << ":" << vbs.run() << ":" << vbs.lumi() << ":" << vbs.evt() << std::endl;
+                           // }
+                           return pass;
+                       }, [&]() { return vbs.wgt() * vbs.btagsf() * vbs.lepsf(); } );
 
-    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightLXChannel", [&]() { return vbs.btagchannel() == 0;                                                     }, UNITY);
-    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightEEChannel", [&]() { return vbs.btagchannel() == 0 and vbs.lepchannel() == 0;                           }, UNITY);
-    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightEMChannel", [&]() { return vbs.btagchannel() == 0 and vbs.lepchannel() == 1;                           }, UNITY);
-    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightMMChannel", [&]() { return vbs.btagchannel() == 0 and vbs.lepchannel() == 2;                           }, UNITY);
-    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightETChannel", [&]() { return vbs.btagchannel() == 0 and vbs.lepchannel() == 3;                           }, UNITY);
-    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightMTChannel", [&]() { return vbs.btagchannel() == 0 and vbs.lepchannel() == 4;                           }, UNITY);
-    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightLLChannel", [&]() { return vbs.btagchannel() == 0 and vbs.lepchannel() >= 0 and vbs.lepchannel() <= 2; }, UNITY);
-    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightLTChannel", [&]() { return vbs.btagchannel() == 0 and vbs.lepchannel() >= 3 and vbs.lepchannel() <= 4; }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightLXChannel", [&]() { return vbs.btagchannel() == 0;                                                         }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightEEChannel", [&]() { return vbs.btagchannel() == 0 and vbs.lepchannel() == 0;                               }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightEMChannel", [&]() { return vbs.btagchannel() == 0 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 11;}, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightMEChannel", [&]() { return vbs.btagchannel() == 0 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) != 11;}, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightMMChannel", [&]() { return vbs.btagchannel() == 0 and vbs.lepchannel() == 2;                               }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightETChannel", [&]() { return vbs.btagchannel() == 0 and vbs.lepchannel() == 3;                               }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightMTChannel", [&]() { return vbs.btagchannel() == 0 and vbs.lepchannel() == 4;                               }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightLLChannel", [&]() { return vbs.btagchannel() == 0 and vbs.lepchannel() >= 0 and vbs.lepchannel() <= 2;     }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightLTChannel", [&]() { return vbs.btagchannel() == 0 and vbs.lepchannel() >= 3 and vbs.lepchannel() <= 4;     }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightLEChannel", [&]() { return vbs.btagchannel() == 0 and vbs.lepchannel() >= 0 and vbs.lepchannel() <= 2 and abs(vbs.subllepID()) == 11; }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightLMChannel", [&]() { return vbs.btagchannel() == 0 and vbs.lepchannel() >= 0 and vbs.lepchannel() <= 2 and abs(vbs.subllepID()) == 13; }, UNITY);
 
-    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseEEChannel", [&]() { return vbs.btagchannel() == 1 and vbs.lepchannel() == 0;                           }, UNITY);
-    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseEMChannel", [&]() { return vbs.btagchannel() == 1 and vbs.lepchannel() == 1;                           }, UNITY);
-    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseMMChannel", [&]() { return vbs.btagchannel() == 1 and vbs.lepchannel() == 2;                           }, UNITY);
-    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseLLChannel", [&]() { return vbs.btagchannel() == 1 and vbs.lepchannel() >= 0 and vbs.lepchannel() <= 2; }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseEEChannel", [&]() { return vbs.btagchannel() == 1 and vbs.lepchannel() == 0;                               }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseEMChannel", [&]() { return vbs.btagchannel() == 1 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 11;}, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseMEChannel", [&]() { return vbs.btagchannel() == 1 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) != 11;}, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseMMChannel", [&]() { return vbs.btagchannel() == 1 and vbs.lepchannel() == 2;                               }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseLLChannel", [&]() { return vbs.btagchannel() == 1 and vbs.lepchannel() >= 0 and vbs.lepchannel() <= 2;     }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseLEChannel", [&]() { return vbs.btagchannel() == 1 and vbs.lepchannel() >= 0 and vbs.lepchannel() <= 2 and abs(vbs.subllepID()) == 11; }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseLMChannel", [&]() { return vbs.btagchannel() == 1 and vbs.lepchannel() >= 0 and vbs.lepchannel() <= 2 and abs(vbs.subllepID()) == 13; }, UNITY);
+
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LightLLChannel", [&]() { return                            vbs.lepchannel() >= 0 and vbs.lepchannel() <= 2;     }, UNITY);
+
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("ElChannel"      , [&]() { return (vbs.leadlepID() < 0) and (vbs.lepchannel()  == 0 or (vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 11)); }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("MuChannel"      , [&]() { return (vbs.leadlepID() < 0) and (vbs.lepchannel()  == 2 or (vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 13)); }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightElChannel" , [&]() { return (vbs.btagchannel() == 0) and (vbs.leadlepID() < 0) and (vbs.lepchannel()  == 0 or (vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 11)); }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightMuChannel" , [&]() { return (vbs.btagchannel() == 0) and (vbs.leadlepID() < 0) and (vbs.lepchannel()  == 2 or (vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 13)); }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseElChannel" , [&]() { return (vbs.btagchannel() == 1) and (vbs.leadlepID() < 0) and (vbs.lepchannel()  == 0 or (vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 11)); }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseMuChannel" , [&]() { return (vbs.btagchannel() == 1) and (vbs.leadlepID() < 0) and (vbs.lepchannel()  == 2 or (vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 13)); }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TauChannel"     , [&]() { return (vbs.leadlepID() < 0) and (vbs.btagchannel() == 0 and vbs.lepchannel() >= 3 and vbs.lepchannel() <= 4);       }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("NegChannel"     , [&]() { return (vbs.leadlepID() > 0);}, UNITY);
+
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightEETTChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 0 and vbs.lepchannel() == 0;                               }, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightEMTTChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 0 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightMETTChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 0 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) != 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightMMTTChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 0 and vbs.lepchannel() == 2;                               }, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseEETTChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 1 and vbs.lepchannel() == 0;                               }, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseEMTTChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 1 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseMETTChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 1 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) != 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseMMTTChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 1 and vbs.lepchannel() == 2;                               }, UNITY);
+
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightEETFChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 0 and vbs.lepchannel() == 0;                               }, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightEMTFChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 0 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightMETFChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 0 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) != 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightMMTFChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 0 and vbs.lepchannel() == 2;                               }, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseEETFChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 1 and vbs.lepchannel() == 0;                               }, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseEMTFChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 1 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseMETFChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 1 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) != 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseMMTFChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 1 and vbs.lepchannel() == 2;                               }, UNITY);
+
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightEEFTChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 0 and vbs.lepchannel() == 0;                               }, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightEMFTChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 0 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightMEFTChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 0 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) != 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightMMFTChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 0 and vbs.lepchannel() == 2;                               }, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseEEFTChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 1 and vbs.lepchannel() == 0;                               }, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseEMFTChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 1 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseMEFTChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 1 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) != 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseMMFTChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 1 and vbs.lepchannel() == 2;                               }, UNITY);
+
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightEEFFChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 0 and vbs.lepchannel() == 0;                               }, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightEMFFChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 0 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightMEFFChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 0 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) != 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TightMMFFChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 0 and vbs.lepchannel() == 2;                               }, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseEEFFChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 1 and vbs.lepchannel() == 0;                               }, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseEMFFChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 1 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseMEFFChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 1 and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) != 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LooseMMFFChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 1 and vbs.lepchannel() == 2;                               }, UNITY);
+
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("EETTChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.lepchannel() == 0;                               }, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("EMTTChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("METTChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) != 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("MMTTChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.lepchannel() == 2;                               }, UNITY);
+
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("EETFChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.lepchannel() == 0;                               }, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("EMTFChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("METFChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) != 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("MMTFChannel", [&]() { return (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.lepchannel() == 2;                               }, UNITY);
+
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("EEFTChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.lepchannel() == 0;                               }, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("EMFTChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("MEFTChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) != 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("MMFTChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.btagchannel() == 0 and vbs.lepchannel() == 2;                               }, UNITY);
+
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("EEFFChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.lepchannel() == 0;                               }, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("EMFFChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("MEFFChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.lepchannel() == 1 and abs(vbs.leadlepID()) != 11;}, UNITY);
+    // ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("MMFFChannel", [&]() { return not (vbs.leadlepGenPartFlav() == 1 or vbs.leadlepGenPartFlav() == 15) and not (vbs.subllepGenPartFlav() == 1 or vbs.subllepGenPartFlav() == 15) and vbs.lepchannel() == 2;                               }, UNITY);
 
     // Selecting channels of interest
     std::vector<TString> channels =
@@ -393,28 +477,111 @@ int main(int argc, char** argv)
             // All channels
             "LooseVR", // All channels included
 
-            // Main channels
-            "TightLL", // Tight-Tight b-tag + lightlep + lightlep
-            "LooseLL", // Tight-Loose b-tag + lightlep + lightlep
-            "TightLT", // Tight-Tight b-tag + lightlep + tau
-            "TightET", // Tight-Tight b-tag + electron + tau
-            "TightMT", // Tight-Tight b-tag + muon     + tau
-            "TightLX", // Tight-Tight b-tag + muon     + tau
+            // // Main channels
+            // "TightLL", // Tight-Tight b-tag + lightlep + lightlep
+            // "LooseLL", // Tight-Loose b-tag + lightlep + lightlep
+            // "TightLT", // Tight-Tight b-tag + lightlep + tau
+            // "TightLX", // Tight-Tight b-tag + muon     + tau
+            // "TightLE", // Tight-Tight b-tag + subl el + lightlep
+            // "TightLM", // Tight-Tight b-tag + subl mu + lightlep
+            // "LooseLE", // Tight-Loose b-tag + subl el + lightlep
+            // "LooseLM", // Tight-Loose b-tag + subl mu + lightlep
                        // TODO: Low Pt VBS jets
 
-            // Sub-channels
+            // // Sub-channels
             "TightEE", // Tight-Tight b-tag + electron + electron
-            "LooseEE", // Tight-Loose b-tag + electron + electron
+            // "LooseEE", // Tight-Loose b-tag + electron + electron
             "TightEM", // Tight-Tight b-tag + electron + muon
-            "LooseEM", // Tight-Loose b-tag + electron + muon
+            // "LooseEM", // Tight-Loose b-tag + electron + muon
+            "TightME", // Tight-Tight b-tag + electron + muon
+            // "LooseME", // Tight-Loose b-tag + electron + muon
             "TightMM", // Tight-Tight b-tag + muon     + muon
-            "LooseMM", // Tight-Loose b-tag + muon     + muon
+            // "LooseMM", // Tight-Loose b-tag + muon     + muon
+
+            // "TightET", // Tight-Tight b-tag + electron + tau
+            // "TightMT", // Tight-Tight b-tag + muon     + tau
+
+            "LightLL", // Tight-Loose or Tight-Tight b-tag + lightlep + lightlep
+
+            "El",
+            "Mu",
+            "Tau",
+            "Neg",
+            // "TightEl",
+            // "TightMu",
+            // "LooseEl",
+            // "LooseMu",
+
+            // // Sub-channels based on truth and fake
+            // "TightEETT", // Tight-Tight b-tag + electron + electron
+            // "LooseEETT", // Tight-Loose b-tag + electron + electron
+            // "TightEMTT", // Tight-Tight b-tag + electron + muon
+            // "LooseEMTT", // Tight-Loose b-tag + electron + muon
+            // "TightMETT", // Tight-Tight b-tag + electron + muon
+            // "LooseMETT", // Tight-Loose b-tag + electron + muon
+            // "TightMMTT", // Tight-Tight b-tag + muon     + muon
+            // "LooseMMTT", // Tight-Loose b-tag + muon     + muon
+
+            // // Sub-channels based on truth and fake
+            // "TightEETF", // Tight-Tight b-tag + electron + electron
+            // "LooseEETF", // Tight-Loose b-tag + electron + electron
+            // "TightEMTF", // Tight-Tight b-tag + electron + muon
+            // "LooseEMTF", // Tight-Loose b-tag + electron + muon
+            // "TightMETF", // Tight-Tight b-tag + electron + muon
+            // "LooseMETF", // Tight-Loose b-tag + electron + muon
+            // "TightMMTF", // Tight-Tight b-tag + muon     + muon
+            // "LooseMMTF", // Tight-Loose b-tag + muon     + muon
+
+            // // Sub-channels based on truth and fake
+            // "TightEEFT", // Tight-Tight b-tag + electron + electron
+            // "LooseEEFT", // Tight-Loose b-tag + electron + electron
+            // "TightEMFT", // Tight-Tight b-tag + electron + muon
+            // "LooseEMFT", // Tight-Loose b-tag + electron + muon
+            // "TightMEFT", // Tight-Tight b-tag + electron + muon
+            // "LooseMEFT", // Tight-Loose b-tag + electron + muon
+            // "TightMMFT", // Tight-Tight b-tag + muon     + muon
+            // "LooseMMFT", // Tight-Loose b-tag + muon     + muon
+
+            // // Sub-channels based on truth and fake
+            // "TightEEFF", // Tight-Tight b-tag + electron + electron
+            // "LooseEEFF", // Tight-Loose b-tag + electron + electron
+            // "TightEMFF", // Tight-Tight b-tag + electron + muon
+            // "LooseEMFF", // Tight-Loose b-tag + electron + muon
+            // "TightMEFF", // Tight-Tight b-tag + electron + muon
+            // "LooseMEFF", // Tight-Loose b-tag + electron + muon
+            // "TightMMFF", // Tight-Tight b-tag + muon     + muon
+            // "LooseMMFF", // Tight-Loose b-tag + muon     + muon
+
+            // // Sub-channels based on truth and fake
+            // "EETT", // Tight-Tight b-tag + electron + electron
+            // "EMTT", // Tight-Tight b-tag + electron + muon
+            // "METT", // Tight-Tight b-tag + electron + muon
+            // "MMTT", // Tight-Tight b-tag + muon     + muon
+
+            // // Sub-channels based on truth and fake
+            // "EETF", // Tight-Loose b-tag + electron + electron
+            // "EMTF", // Tight-Loose b-tag + electron + muon
+            // "METF", // Tight-Loose b-tag + electron + muon
+            // "MMTF", // Tight-Loose b-tag + muon     + muon
+
+            // // Sub-channels based on truth and fake
+            // "EEFT", // Tight-Loose b-tag + electron + electron
+            // "EMFT", // Tight-Loose b-tag + electron + muon
+            // "MEFT", // Tight-Loose b-tag + electron + muon
+            // "MMFT", // Tight-Loose b-tag + muon     + muon
+
+            // // Sub-channels based on truth and fake
+            // "EEFF", // Tight-Loose b-tag + electron + electron
+            // "EMFF", // Tight-Loose b-tag + electron + muon
+            // "MEFF", // Tight-Loose b-tag + electron + muon
+            // "MMFF", // Tight-Loose b-tag + muon     + muon
+
         };
 
     std::vector<std::pair<TString, std::function<bool()>>> kin_regs = {
         std::make_pair("MbbOn",   [&]() { return      (vbs.b0()+vbs.b1()).mass() < 140. and (vbs.b0()+vbs.b1()).mass() > 90.; }),
         std::make_pair("MbbOff",  [&]() { return not ((vbs.b0()+vbs.b1()).mass() < 140. and (vbs.b0()+vbs.b1()).mass() > 90.); }),
-        std::make_pair("MbbHigh", [&]() { return      (vbs.b0()+vbs.b1()).mass() > 140.; }),
+        // std::make_pair("MbbHigh", [&]() { return      (vbs.b0()+vbs.b1()).mass() > 140.; }),
         std::make_pair("MbbAll",  UNITY),
     };
 
@@ -425,55 +592,78 @@ int main(int argc, char** argv)
         {
             ana.cutflow.getCut(TString::Format("%sChannel", channel.Data()));
             ana.cutflow.addCutToLastActiveCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()), kin_reg.second, UNITY );
+
             ana.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
-            ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sVBF"   , channel.Data(), kin_reg.first.Data()), [&]() { return      (vbs.j0()+vbs.j1()).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(vbs.j0(), vbs.j1())) > 3.0;                                                           }, UNITY );
+            ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sPS"   , channel.Data(), kin_reg.first.Data()), UNITY, UNITY );
+            // ana.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
+            // ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sPP"   , channel.Data(), kin_reg.first.Data()), [&]() { return vbs.leadlepID() < 0;}, UNITY );
+            // ana.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
+            // ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sMM"   , channel.Data(), kin_reg.first.Data()), [&]() { return vbs.leadlepID() > 0;}, UNITY );
             ana.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
-            ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sLepPts", channel.Data(), kin_reg.first.Data()), [&]() { return                                                                                                        vbs.leadlep().pt() > 140 and vbs.subllep().pt() > 60;  }, UNITY );
+            ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sLT"   , channel.Data(), kin_reg.first.Data()), [&]() { return ((vbs.b0() + vbs.b1() + vbs.leadlep() + vbs.subllep() + vbs.met_p4()).mass() > 1000.) and (vbs.leadlep().pt() + vbs.subllep().pt() + vbs.met_p4().pt() > 300.) and (vbs.j0() + vbs.j1()).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(vbs.j0(), vbs.j1())) > 6 and vbs.ncenjet30() < 6 and (vbs.b0().pt() + vbs.b0().pt() + vbs.leadlep().pt() + vbs.subllep().pt() + vbs.met_p4().pt() > 900.); } , UNITY );
+            ana.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
+            ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sLTCR"   , channel.Data(), kin_reg.first.Data()), [&]() { return ((vbs.b0() + vbs.b1() + vbs.leadlep() + vbs.subllep() + vbs.met_p4()).mass() > 700.) and (vbs.j0() + vbs.j1()).mass() < 500.; } , UNITY );
+            // ana.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
+            // ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sLTPP"   , channel.Data(), kin_reg.first.Data()), [&]() { return (vbs.leadlep().pt() + vbs.subllep().pt() + vbs.met_p4().pt() > 300.) and (vbs.j0() + vbs.j1()).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(vbs.j0(), vbs.j1())) > 3 and vbs.leadlepID() < 0; } , UNITY );
+            // ana.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
+            // ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sLTMM"   , channel.Data(), kin_reg.first.Data()), [&]() { return (vbs.leadlep().pt() + vbs.subllep().pt() + vbs.met_p4().pt() > 300.) and (vbs.j0() + vbs.j1()).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(vbs.j0(), vbs.j1())) > 3 and vbs.leadlepID() > 0; } , UNITY );
+            // ana.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
+            // ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sSRLT"    , channel.Data(), kin_reg.first.Data()), [&]() { return ((vbs.b0() + vbs.b1() + vbs.leadlep() + vbs.subllep() + vbs.met_p4()).mass() > 800.) and (vbs.leadlep().pt() + vbs.subllep().pt() + vbs.met_p4().pt() > 490.) and   (vbs.j0()+vbs.j1()).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(vbs.j0(), vbs.j1())) > 3.0;  }, UNITY );
             ana.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
             ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sSR"    , channel.Data(), kin_reg.first.Data()), [&]() { return      (vbs.j0()+vbs.j1()).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(vbs.j0(), vbs.j1())) > 3.0 and vbs.leadlep().pt() > 140 and vbs.subllep().pt() > 60;  }, UNITY );
             ana.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
-            ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sNonSR" , channel.Data(), kin_reg.first.Data()), [&]() { return not ((vbs.j0()+vbs.j1()).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(vbs.j0(), vbs.j1())) > 3.0 and vbs.leadlep().pt() > 140 and vbs.subllep().pt() > 60); }, UNITY );
+            ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sSRTight", channel.Data(), kin_reg.first.Data()), [&]() { return (vbs.j0()+vbs.j1()).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(vbs.j0(), vbs.j1())) > 3.0 and vbs.leadlep().pt() > 140 and vbs.subllep().pt() > 60 and ((vbs.j0()+vbs.j1()).mass() > 1100.) and (vbs.leadlep().pt() + vbs.subllep().pt() + vbs.met_p4().pt() > 740.); }, UNITY );
             ana.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
-            ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sSRp"   , channel.Data(), kin_reg.first.Data()), [&]() { return      (vbs.j0()+vbs.j1()).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(vbs.j0(), vbs.j1())) > 3.0 and vbs.leadlep().pt() > 140 and vbs.subllep().pt() > 60 and vbs.leadlepID() < 0;  }, UNITY );
-            ana.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
-            ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sSRm"   , channel.Data(), kin_reg.first.Data()), [&]() { return      (vbs.j0()+vbs.j1()).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(vbs.j0(), vbs.j1())) > 3.0 and vbs.leadlep().pt() > 140 and vbs.subllep().pt() > 60 and vbs.leadlepID() > 0;  }, UNITY );
+            ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sSRnoPT", channel.Data(), kin_reg.first.Data()), [&]() { return      (vbs.j0()+vbs.j1()).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(vbs.j0(), vbs.j1())) > 3.0;  }, UNITY );
+
+            // ana.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
+            // ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sVBF"   , channel.Data(), kin_reg.first.Data()), [&]() { return      (vbs.j0()+vbs.j1()).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(vbs.j0(), vbs.j1())) > 3.0;                                                           }, UNITY );
+            // ana.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
+            // ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sLepPts", channel.Data(), kin_reg.first.Data()), [&]() { return                                                                                                        vbs.leadlep().pt() > 140 and vbs.subllep().pt() > 60;  }, UNITY );
+            // ana.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
+            // ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sNonSR" , channel.Data(), kin_reg.first.Data()), [&]() { return not ((vbs.j0()+vbs.j1()).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(vbs.j0(), vbs.j1())) > 3.0 and vbs.leadlep().pt() > 140 and vbs.subllep().pt() > 60); }, UNITY );
+            // ana.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
+            // ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sSRp"   , channel.Data(), kin_reg.first.Data()), [&]() { return      (vbs.j0()+vbs.j1()).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(vbs.j0(), vbs.j1())) > 3.0 and vbs.leadlep().pt() > 140 and vbs.subllep().pt() > 60 and vbs.leadlepID() < 0;  }, UNITY );
+            // ana.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
+            // ana.cutflow.addCutToLastActiveCut(TString::Format("%s%sSRm"   , channel.Data(), kin_reg.first.Data()), [&]() { return      (vbs.j0()+vbs.j1()).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(vbs.j0(), vbs.j1())) > 3.0 and vbs.leadlep().pt() > 140 and vbs.subllep().pt() > 60 and vbs.leadlepID() > 0;  }, UNITY );
         }
     }
 
     // Defining histograms
-    ana.histograms.addHistogram("NCenJet30"           , 9   , 0       , 9      , [&]() { return vbs.ncenjet30();                                                               } );
-    ana.histograms.addHistogram("NJet30"              , 9   , 0       , 9      , [&]() { return vbs.njet30();                                                                  } );
-    ana.histograms.addHistogram("NBLoose"             , 5   , 0       , 5      , [&]() { return vbs.nbloose();                                                                 } );
-    ana.histograms.addHistogram("NBMedium"            , 5   , 0       , 5      , [&]() { return vbs.nbmedium();                                                                } );
-    ana.histograms.addHistogram("NBTight"             , 5   , 0       , 5      , [&]() { return vbs.nbtight();                                                                 } );
-    ana.histograms.addHistogram("LeptonPt0"           , 180 , 0       , 600    , [&]() { return vbs.leadlep().pt();                                                             } );
-    ana.histograms.addHistogram("LeptonPt1"           , 180 , 0       , 600    , [&]() { return vbs.subllep().pt();                                                             } );
-    ana.histograms.addHistogram("LeptonPt0Zoom"       , 180 , 0       , 250    , [&]() { return vbs.leadlep().pt();                                                             } );
-    ana.histograms.addHistogram("LeptonPt1Zoom"       , 180 , 0       , 250    , [&]() { return vbs.subllep().pt();                                                             } );
-    ana.histograms.addHistogram("LeptonEta0"          , 180 , -3      , 3      , [&]() { return vbs.leadlep().eta();                                                            } );
-    ana.histograms.addHistogram("LeptonEta1"          , 180 , -3      , 3      , [&]() { return vbs.subllep().eta();                                                            } );
-    ana.histograms.addHistogram("LeptonPhi0"          , 180 , -3.1416 , 3.1416 , [&]() { return vbs.leadlep().phi();                                                            } );
-    ana.histograms.addHistogram("LeptonPhi1"          , 180 , -3.1416 , 3.1416 , [&]() { return vbs.subllep().phi();                                                            } );
-    ana.histograms.addHistogram("LeptonPtFlavor0"     , 180 , 0       , 600    , [&]() { return vbs.lep0().pt();                                                                } );
-    ana.histograms.addHistogram("LeptonPtFlavor1"     , 180 , 0       , 600    , [&]() { return vbs.lep1().pt();                                                                } );
-    ana.histograms.addHistogram("LeptonPtFlavor0Zoom" , 180 , 0       , 250    , [&]() { return vbs.lep0().pt();                                                                } );
-    ana.histograms.addHistogram("LeptonPtFlavor1Zoom" , 180 , 0       , 250    , [&]() { return vbs.lep1().pt();                                                                } );
-    ana.histograms.addHistogram("LeptonEtaFlavor0"    , 180 , -3      , 3      , [&]() { return vbs.lep0().eta();                                                               } );
-    ana.histograms.addHistogram("LeptonEtaFlavor1"    , 180 , -3      , 3      , [&]() { return vbs.lep1().eta();                                                               } );
-    ana.histograms.addHistogram("LeptonPhiFlavor0"    , 180 , -3.1416 , 3.1416 , [&]() { return vbs.lep0().phi();                                                               } );
-    ana.histograms.addHistogram("LeptonPhiFlavor1"    , 180 , -3.1416 , 3.1416 , [&]() { return vbs.lep1().phi();                                                               } );
-    ana.histograms.addHistogram("JetPt0"              , 180 , 0       , 250    , [&]() { return vbs.j0().pt();                                                                  } );
-    ana.histograms.addHistogram("JetPt1"              , 180 , 0       , 250    , [&]() { return vbs.j1().pt();                                                                  } );
-    ana.histograms.addHistogram("JetEta0"             , 180 , -5      , 5      , [&]() { return vbs.j0().eta();                                                                 } );
-    ana.histograms.addHistogram("JetEta1"             , 180 , -5      , 5      , [&]() { return vbs.j1().eta();                                                                 } );
-    ana.histograms.addHistogram("JetPhi0"             , 180 , -3.1416 , 3.1416 , [&]() { return vbs.j0().phi();                                                                 } );
-    ana.histograms.addHistogram("JetPhi1"             , 180 , -3.1416 , 3.1416 , [&]() { return vbs.j1().phi();                                                                 } );
-    ana.histograms.addHistogram("BJetPt0"             , 180 , 0       , 450    , [&]() { return vbs.b0().pt();                                                                  } );
-    ana.histograms.addHistogram("BJetPt1"             , 180 , 0       , 250    , [&]() { return vbs.b1().pt();                                                                  } );
-    ana.histograms.addHistogram("BJetEta0"            , 180 , -5      , 5      , [&]() { return vbs.b0().eta();                                                                 } );
-    ana.histograms.addHistogram("BJetEta1"            , 180 , -5      , 5      , [&]() { return vbs.b1().eta();                                                                 } );
-    ana.histograms.addHistogram("BJetPhi0"            , 180 , -3.1416 , 3.1416 , [&]() { return vbs.b0().phi();                                                                 } );
-    ana.histograms.addHistogram("BJetPhi1"            , 180 , -3.1416 , 3.1416 , [&]() { return vbs.b1().phi();                                                                 } );
+    ana.histograms.addHistogram("NCenJet30"           , 9   , 0       , 9      , [&]() { return vbs.ncenjet30();                                                             } );
+    ana.histograms.addHistogram("NJet30"              , 9   , 0       , 9      , [&]() { return vbs.njet30();                                                                } );
+    ana.histograms.addHistogram("NBLoose"             , 5   , 0       , 5      , [&]() { return vbs.nbloose();                                                               } );
+    ana.histograms.addHistogram("NBMedium"            , 5   , 0       , 5      , [&]() { return vbs.nbmedium();                                                              } );
+    ana.histograms.addHistogram("NBTight"             , 5   , 0       , 5      , [&]() { return vbs.nbtight();                                                               } );
+    ana.histograms.addHistogram("LeptonPt0"           , 180 , 0       , 600    , [&]() { return vbs.leadlep().pt();                                                          } );
+    ana.histograms.addHistogram("LeptonPt1"           , 180 , 0       , 600    , [&]() { return vbs.subllep().pt();                                                          } );
+    ana.histograms.addHistogram("LeptonPt0Zoom"       , 180 , 0       , 250    , [&]() { return vbs.leadlep().pt();                                                          } );
+    ana.histograms.addHistogram("LeptonPt1Zoom"       , 180 , 0       , 250    , [&]() { return vbs.subllep().pt();                                                          } );
+    ana.histograms.addHistogram("LeptonEta0"          , 180 , -3      , 3      , [&]() { return vbs.leadlep().eta();                                                         } );
+    ana.histograms.addHistogram("LeptonEta1"          , 180 , -3      , 3      , [&]() { return vbs.subllep().eta();                                                         } );
+    ana.histograms.addHistogram("LeptonPhi0"          , 180 , -3.1416 , 3.1416 , [&]() { return vbs.leadlep().phi();                                                         } );
+    ana.histograms.addHistogram("LeptonPhi1"          , 180 , -3.1416 , 3.1416 , [&]() { return vbs.subllep().phi();                                                         } );
+    ana.histograms.addHistogram("LeptonPtFlavor0"     , 180 , 0       , 600    , [&]() { return vbs.lep0().pt();                                                             } );
+    ana.histograms.addHistogram("LeptonPtFlavor1"     , 180 , 0       , 600    , [&]() { return vbs.lep1().pt();                                                             } );
+    ana.histograms.addHistogram("LeptonPtFlavor0Zoom" , 180 , 0       , 250    , [&]() { return vbs.lep0().pt();                                                             } );
+    ana.histograms.addHistogram("LeptonPtFlavor1Zoom" , 180 , 0       , 250    , [&]() { return vbs.lep1().pt();                                                             } );
+    ana.histograms.addHistogram("LeptonEtaFlavor0"    , 180 , -3      , 3      , [&]() { return vbs.lep0().eta();                                                            } );
+    ana.histograms.addHistogram("LeptonEtaFlavor1"    , 180 , -3      , 3      , [&]() { return vbs.lep1().eta();                                                            } );
+    ana.histograms.addHistogram("LeptonPhiFlavor0"    , 180 , -3.1416 , 3.1416 , [&]() { return vbs.lep0().phi();                                                            } );
+    ana.histograms.addHistogram("LeptonPhiFlavor1"    , 180 , -3.1416 , 3.1416 , [&]() { return vbs.lep1().phi();                                                            } );
+    ana.histograms.addHistogram("JetPt0"              , 180 , 0       , 250    , [&]() { return vbs.j0().pt();                                                               } );
+    ana.histograms.addHistogram("JetPt1"              , 180 , 0       , 250    , [&]() { return vbs.j1().pt();                                                               } );
+    ana.histograms.addHistogram("JetEta0"             , 180 , -5      , 5      , [&]() { return vbs.j0().eta();                                                              } );
+    ana.histograms.addHistogram("JetEta1"             , 180 , -5      , 5      , [&]() { return vbs.j1().eta();                                                              } );
+    ana.histograms.addHistogram("JetPhi0"             , 180 , -3.1416 , 3.1416 , [&]() { return vbs.j0().phi();                                                              } );
+    ana.histograms.addHistogram("JetPhi1"             , 180 , -3.1416 , 3.1416 , [&]() { return vbs.j1().phi();                                                              } );
+    ana.histograms.addHistogram("BJetPt0"             , 180 , 0       , 450    , [&]() { return vbs.b0().pt();                                                               } );
+    ana.histograms.addHistogram("BJetPt1"             , 180 , 0       , 250    , [&]() { return vbs.b1().pt();                                                               } );
+    ana.histograms.addHistogram("BJetEta0"            , 180 , -5      , 5      , [&]() { return vbs.b0().eta();                                                              } );
+    ana.histograms.addHistogram("BJetEta1"            , 180 , -5      , 5      , [&]() { return vbs.b1().eta();                                                              } );
+    ana.histograms.addHistogram("BJetPhi0"            , 180 , -3.1416 , 3.1416 , [&]() { return vbs.b0().phi();                                                              } );
+    ana.histograms.addHistogram("BJetPhi1"            , 180 , -3.1416 , 3.1416 , [&]() { return vbs.b1().phi();                                                              } );
+    ana.histograms.addHistogram("PtJJ"                , 180 , 0       , 250    , [&]() { return (vbs.j0()+vbs.j1()).pt();                                                    } );
     ana.histograms.addHistogram("MJJ"                 , 180 , 0       , 4500   , [&]() { return (vbs.j0()+vbs.j1()).mass();                                                  } );
     ana.histograms.addHistogram("MJJLow"              , 180 , 0       , 350    , [&]() { return (vbs.j0()+vbs.j1()).mass();                                                  } );
     ana.histograms.addHistogram("DEtaJJ"              , 180 , 0       , 10     , [&]() { return fabs(RooUtil::Calc::DeltaEta(vbs.j0(), vbs.j1()));                           } );
@@ -487,15 +677,16 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("MllLow"              , 180 , 0       , 250    , [&]() { return (vbs.leadlep()+vbs.subllep()).mass();                                        } );
     ana.histograms.addHistogram("Mbb"                 , 180 , -10     , 290    , [&]() { return (vbs.b0()+vbs.b1()).mass();                                                  } );
     ana.histograms.addHistogram("MbbMax"              , 180 , -10     , 590    , [&]() { return (vbs.b0()+vbs.b1()).mass();                                                  } );
-    ana.histograms.addHistogram("MbbInOut"            , 2   , 0       , 2      , [&]() { return (vbs.b0()+vbs.b1()).mass() < 140 and (vbs.b0()+vbs.b1()).mass() > 90.; } );
+    ana.histograms.addHistogram("MbbInOut"            , 2   , 0       , 2      , [&]() { return (vbs.b0()+vbs.b1()).mass() < 140 and (vbs.b0()+vbs.b1()).mass() > 90.;       } );
     ana.histograms.addHistogram("DRbb"                , 180 , 0       , 6      , [&]() { return RooUtil::Calc::DeltaR(vbs.b0(), vbs.b1());                                   } );
-    ana.histograms.addHistogram("MET"                 , 180 , 0       , 1500   , [&]() { return vbs.met_p4().pt();                                                              } );
-    ana.histograms.addHistogram("METLow"              , 180 , 0       , 250    , [&]() { return vbs.met_p4().pt();                                                              } );
-    ana.histograms.addHistogram("Channels"            , 8   , 0       , 8      , [&]() { return vbs.channel();                                                                 } );
-    ana.histograms.addHistogram("ChannelsDetails"     , 16  , 0       , 16     , [&]() { return vbs.channeldetail();                                                           } );
-    ana.histograms.addHistogram("ChannelsMbbMerged"   , 8   , 0       , 8      , [&]() { return vbs.channeldetail() / 2;                                                       } );
-    ana.histograms.addHistogram("ST"                  , 180 , 0       , 2500   , [&]() { return vbs.b0().pt() + vbs.b0().pt() + vbs.leadlep().pt() + vbs.subllep().pt() + vbs.met_p4().pt() + vbs.j0().pt() + vbs.j1().pt(); } );
-    ana.histograms.addHistogram("STLep"               , 180 , 0       , 2500   , [&]() { return vbs.leadlep().pt() + vbs.subllep().pt() + vbs.met_p4().pt(); } );
+    ana.histograms.addHistogram("MET"                 , 180 , 0       , 1500   , [&]() { return vbs.met_p4().pt();                                                           } );
+    ana.histograms.addHistogram("METLow"              , 180 , 0       , 250    , [&]() { return vbs.met_p4().pt();                                                           } );
+    ana.histograms.addHistogram("Channels"            , 8   , 0       , 8      , [&]() { return vbs.channel();                                                               } );
+    ana.histograms.addHistogram("ChannelsDetails"     , 16  , 0       , 16     , [&]() { return vbs.channeldetail();                                                         } );
+    ana.histograms.addHistogram("ChannelsMbbMerged"   , 8   , 0       , 8      , [&]() { return vbs.channeldetail() / 2;                                                     } );
+    ana.histograms.addHistogram("MVVH"                , 180 , 0       , 2500   , [&]() { return (vbs.b0() + vbs.b1() + vbs.leadlep() + vbs.subllep() + vbs.met_p4()).mass(); } );
+    ana.histograms.addHistogram("ST"                  , 180 , 0       , 2500   , [&]() { return vbs.b0().pt() + vbs.b0().pt() + vbs.leadlep().pt() + vbs.subllep().pt() + vbs.met_p4().pt(); } );
+    ana.histograms.addHistogram("LT"                  , 180 , 0       , 2500   , [&]() { return vbs.leadlep().pt() + vbs.subllep().pt() + vbs.met_p4().pt(); } );
     ana.histograms.addHistogram("BJetMatchCategory"   , 4   , -1      , 3      , [&]() { return vbs.bmatchcateg();                                                             } );
     ana.histograms.addHistogram("MbbBothGenMatched"   , 180 , -10     , 290    , [&]() { if (vbs.higgs_jets_genmatched()[0] and vbs.higgs_jets_genmatched()[1]) return (vbs.b0()+vbs.b1()).mass(); else return -999.f;} );
     ana.histograms.addHistogram("MbbMaxBothGenMatched", 180 , -10     , 290    , [&]() { if (vbs.higgs_jets_genmatched()[0] and vbs.higgs_jets_genmatched()[1]) return (vbs.b0()+vbs.b1()).mass(); else return -999.f;} );
@@ -507,17 +698,101 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("MbbMaxLoneGenMatched", 180 , -10     , 290    , [&]() { if (vbs.higgs_jets_genmatched()[0] + vbs.higgs_jets_genmatched()[1] == 1) return (vbs.b0()+vbs.b1()).mass(); else return -999.f;} );
     ana.histograms.addHistogram("MbbNoneGenMatched"   , 180 , -10     , 290    , [&]() { if (not vbs.higgs_jets_genmatched()[0] and not vbs.higgs_jets_genmatched()[1]) return (vbs.b0()+vbs.b1()).mass(); else return -999.f;} );
     ana.histograms.addHistogram("MbbMaxNoneGenMatched", 180 , -10     , 290    , [&]() { if (not vbs.higgs_jets_genmatched()[0] and not vbs.higgs_jets_genmatched()[1]) return (vbs.b0()+vbs.b1()).mass(); else return -999.f;} );
+    ana.histograms.addHistogram("Channels4Bins"       , 4   , 0       , 4      ,
+                                [&]()
+                                {
+                                    if ((vbs.leadlepID() < 0) and (vbs.lepchannel()  == 0 or (vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 11)))
+                                        return 0;
+                                    else if ((vbs.leadlepID() < 0) and (vbs.lepchannel()  == 2 or (vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 13)))
+                                        return 1;
+                                    else if ((vbs.leadlepID() < 0) and (vbs.btagchannel() == 0 and vbs.lepchannel() >= 3 and vbs.lepchannel() <= 4))
+                                        return 2;
+                                    else if ((vbs.leadlepID() > 0))
+                                        return 3;
+                                    else
+                                        return -999;
+                                } );
 
-    ana.histograms.addHistogram("GenBJetPt0"          , 180 , -10     , 290    , [&]() { return vbs.gen_b0().pt();                                                              } );
-    ana.histograms.addHistogram("GenBJetPt1"          , 180 , -10     , 290    , [&]() { return vbs.gen_b1().pt();                                                              } );
-    ana.histograms.addHistogram("GenBJetEta0"         , 180 , -3      , 3      , [&]() { return vbs.gen_b0().eta();                                                             } );
-    ana.histograms.addHistogram("GenBJetEta1"         , 180 , -3      , 3      , [&]() { return vbs.gen_b1().eta();                                                             } );
-    ana.histograms.addHistogram("GenMbb"              , 180 , -10     , 290    , [&]() { return (vbs.gen_b0()+vbs.gen_b1()).mass();                                          } );
-    ana.histograms.addHistogram("GenPtbbLow"          , 180 , -10     , 350    , [&]() { return (vbs.gen_b0()+vbs.gen_b1()).pt();                                            } );
-    ana.histograms.addHistogram("GenPtbb"             , 180 , -30     , 1000   , [&]() { return (vbs.gen_b0()+vbs.gen_b1()).pt();                                            } );
-    ana.histograms.addHistogram("GenDRbb"             , 180 , -0.5    , 6      , [&]() { return RooUtil::Calc::DeltaR(vbs.gen_b0(),vbs.gen_b1());                            } );
-    ana.histograms.addHistogram("GenDPhibb"           , 180 , -0.2    , 3.1416 , [&]() { return fabs(RooUtil::Calc::DeltaPhi(vbs.gen_b0(),vbs.gen_b1()));                    } );
-    ana.histograms.addHistogram("GenDEtabb"           , 180 , -0.5    , 6      , [&]() { return fabs(RooUtil::Calc::DeltaEta(vbs.gen_b0(),vbs.gen_b1()));                    } );
+
+    // ana.histograms.addHistogram("MT2"                 , 180 , 0       , 250   ,
+    //                             [&]()
+    //                             {
+    //                                 TLorentzVector lepton1 = RooUtil::Calc::getTLV(vbs.leadlep());
+    //                                 TLorentzVector lepton2 = RooUtil::Calc::getTLV(vbs.subllep());
+    //                                 TLorentzVector misspart = RooUtil::Calc::getTLV(vbs.met_p4());
+    //                                 // TLorentzVector rest_WW = lepton1 + lepton2 + misspart;
+    //                                 // TVector3 beta_from_miss_reverse(rest_WW.BoostVector());
+    //                                 // TVector3 beta_from_miss(-beta_from_miss_reverse.X(),-beta_from_miss_reverse.Y(),-beta_from_miss_reverse.Z());
+    //                                 // lepton1.Boost(beta_from_miss);
+    //                                 // lepton2.Boost(beta_from_miss);
+    //                                 // misspart.Boost(beta_from_miss);
+    //                                 double MT2_0mass = asymm_mt2_lester_bisect::get_mT2(0,lepton1.Px(),lepton1.Py(),0,lepton2.Px(),lepton2.Py(),misspart.Px(), misspart.Py(),0,0,0);
+    //                                 return MT2_0mass;
+    //                             } );
+
+    ana.histograms.addHistogram("NCenJet"             , 9   , 0       , 9      , [&]()
+                                {
+                                    int njets = 0;
+                                    const vector<LV>& good_jets_p4 = vbs.good_jets_p4();
+                                    for (unsigned int i = 0; i < good_jets_p4.size(); i++)
+                                    {
+                                        if (vbs.higgs_jets_good_jets_idx()[0] == i) continue;
+                                        if (vbs.higgs_jets_good_jets_idx()[1] == i) continue;
+                                        if (vbs.vbs_jets_good_jets_idx()[0] == i) continue;
+                                        if (vbs.vbs_jets_good_jets_idx()[1] == i) continue;
+                                        float eta = good_jets_p4[i].eta();
+                                        float eta0 = vbs.j0().eta();
+                                        float eta1 = vbs.j1().eta();
+                                        if ((eta0 - eta) * (eta1 - eta) > 0)
+                                            continue;
+                                        njets++;
+                                    }
+                                    return njets;
+                                } );
+
+    // ana.histograms.addHistogram("CentBB", 180   , 0       , 2      , [&]()
+    //                             {
+    //                                 float eta0 = vbs.j0().eta();
+    //                                 float eta1 = vbs.j1().eta();
+    //                                 float etaavg = (eta0 + eta1) / 2;
+    //                                 float deta = fabs(eta0 - eta1);
+    //                                 float etabb = (vbs.b0() + vbs.b1()).eta();
+    //                                 return fabs((etaavg - etabb)) / (deta / 2);
+    //                             } );
+
+    // ana.histograms.addHistogram("CentLL", 180   , 0       , 2      , [&]()
+    //                             {
+    //                                 float eta0 = vbs.j0().eta();
+    //                                 float eta1 = vbs.j1().eta();
+    //                                 float etaavg = (eta0 + eta1) / 2;
+    //                                 float deta = fabs(eta0 - eta1);
+    //                                 float etall = (vbs.leadlep() + vbs.subllep()).eta();
+    //                                 return fabs((etaavg - etall)) / (deta / 2);
+    //                             } );
+
+    // ana.histograms.addHistogram("CentLLBB", 180   , 0       , 2      , [&]()
+    //                             {
+    //                                 float eta0 = vbs.j0().eta();
+    //                                 float eta1 = vbs.j1().eta();
+    //                                 float etaavg = (eta0 + eta1) / 2;
+    //                                 float deta = fabs(eta0 - eta1);
+    //                                 float etallbb = (vbs.leadlep() + vbs.subllep() + vbs.b0() + vbs.b1()).eta();
+    //                                 return fabs((etaavg - etallbb)) / (deta / 2);
+    //                             } );
+    // ana.histograms.addHistogram("DPhillbb"            , 180 , 0       , 3.1416 , [&]() { return fabs(RooUtil::Calc::DeltaPhi(vbs.leadlep()+vbs.subllep(), vbs.b0()+vbs.b1()));  } );
+    // ana.histograms.addHistogram("DPhil0bb"            , 180 , 0       , 3.1416 , [&]() { return fabs(RooUtil::Calc::DeltaPhi(vbs.leadlep(), vbs.b0()+vbs.b1()));  } );
+    // ana.histograms.addHistogram("DPhil1bb"            , 180 , 0       , 3.1416 , [&]() { return fabs(RooUtil::Calc::DeltaPhi(vbs.subllep(), vbs.b0()+vbs.b1()));  } );
+
+    // ana.histograms.addHistogram("GenBJetPt0"          , 180 , -10     , 290    , [&]() { return vbs.gen_b0().pt();                                                              } );
+    // ana.histograms.addHistogram("GenBJetPt1"          , 180 , -10     , 290    , [&]() { return vbs.gen_b1().pt();                                                              } );
+    // ana.histograms.addHistogram("GenBJetEta0"         , 180 , -3      , 3      , [&]() { return vbs.gen_b0().eta();                                                             } );
+    // ana.histograms.addHistogram("GenBJetEta1"         , 180 , -3      , 3      , [&]() { return vbs.gen_b1().eta();                                                             } );
+    // ana.histograms.addHistogram("GenMbb"              , 180 , -10     , 290    , [&]() { return (vbs.gen_b0()+vbs.gen_b1()).mass();                                          } );
+    // ana.histograms.addHistogram("GenPtbbLow"          , 180 , -10     , 350    , [&]() { return (vbs.gen_b0()+vbs.gen_b1()).pt();                                            } );
+    // ana.histograms.addHistogram("GenPtbb"             , 180 , -30     , 1000   , [&]() { return (vbs.gen_b0()+vbs.gen_b1()).pt();                                            } );
+    // ana.histograms.addHistogram("GenDRbb"             , 180 , -0.5    , 6      , [&]() { return RooUtil::Calc::DeltaR(vbs.gen_b0(),vbs.gen_b1());                            } );
+    // ana.histograms.addHistogram("GenDPhibb"           , 180 , -0.2    , 3.1416 , [&]() { return fabs(RooUtil::Calc::DeltaPhi(vbs.gen_b0(),vbs.gen_b1()));                    } );
+    // ana.histograms.addHistogram("GenDEtabb"           , 180 , -0.5    , 6      , [&]() { return fabs(RooUtil::Calc::DeltaEta(vbs.gen_b0(),vbs.gen_b1()));                    } );
 
     ana.histograms.add2DHistogram("Mbb", 50 , 0 , 300 , "HiggsPt", 50, 0, 350, [&]() { return (vbs.b0()+vbs.b1()).mass(); }, [&]() { return (vbs.b0()+vbs.b1()).pt(); } );
     ana.histograms.add2DHistogram("Mbb", 50 , 0 , 300 , "DRbb", 50, 0, 6, [&]() { return (vbs.b0()+vbs.b1()).mass(); }, [&]() { return RooUtil::Calc::DeltaR(vbs.b0(), vbs.b1()); } );
@@ -528,6 +803,13 @@ int main(int argc, char** argv)
     ana.histograms.add2DHistogram("Mbb", 50 , 0 , 300 , "BJetPt0", 50, 0, 450, [&]() { return (vbs.b0()+vbs.b1()).mass(); }, [&]() { return vbs.b0().pt(); } );
     ana.histograms.add2DHistogram("Mbb", 50 , 0 , 300 , "BJetPt1", 50, 0, 250, [&]() { return (vbs.b0()+vbs.b1()).mass(); }, [&]() { return vbs.b1().pt(); } );
     ana.histograms.add2DHistogram("Mbb", 50 , 0 , 300 , "ST", 50, 0, 2500, [&]() { return (vbs.b0()+vbs.b1()).mass(); }, [&]() { return vbs.b0().pt() + vbs.b0().pt() + vbs.leadlep().pt() + vbs.subllep().pt() + vbs.met_p4().pt() + vbs.j0().pt() + vbs.j1().pt(); } );
+    ana.histograms.add2DHistogram("Mbb", 50 , 0 , 300 , "MVVH", 50, 0, 2500, [&]() { return (vbs.b0()+vbs.b1()).mass(); }, [&]() { return (vbs.b0() + vbs.b1() + vbs.leadlep() + vbs.subllep() + vbs.met_p4()).mass(); } );
+    ana.histograms.add2DHistogram("MbbMax", 50 , 0 , 700 , "ST", 50, 0, 2500, [&]() { return (vbs.b0()+vbs.b1()).mass(); }, [&]() { return vbs.b0().pt() + vbs.b0().pt() + vbs.leadlep().pt() + vbs.subllep().pt() + vbs.met_p4().pt() + vbs.j0().pt() + vbs.j1().pt(); } );
+    ana.histograms.add2DHistogram("MbbMax", 50 , 0 , 700 , "MVVH", 50, 0, 2500, [&]() { return (vbs.b0()+vbs.b1()).mass(); }, [&]() { return (vbs.b0() + vbs.b1() + vbs.leadlep() + vbs.subllep() + vbs.met_p4()).mass(); } );
+    ana.histograms.add2DHistogram("MbbMax", 50 , 0 , 700 , "HiggsPt", 50, 0, 350, [&]() { return (vbs.b0()+vbs.b1()).mass(); }, [&]() { return (vbs.b0()+vbs.b1()).pt(); } );
+    ana.histograms.add2DHistogram("ST", 50 , 0 , 2500 , "MVVH", 50, 0, 2500, [&]() { return vbs.b0().pt() + vbs.b0().pt() + vbs.leadlep().pt() + vbs.subllep().pt() + vbs.met_p4().pt() + vbs.j0().pt() + vbs.j1().pt(); }, [&]() { return (vbs.b0() + vbs.b1() + vbs.leadlep() + vbs.subllep() + vbs.met_p4()).mass(); } );
+    ana.histograms.add2DHistogram("Mbb", 50 , 0 , 300 , "LT", 50, 0, 2500, [&]() { return (vbs.b0()+vbs.b1()).mass(); }, [&]() { return vbs.leadlep().pt() + vbs.subllep().pt() + vbs.met_p4().pt(); } );
+    ana.histograms.add2DHistogram("MbbMax", 50 , 0 , 700 , "LT", 50, 0, 2500, [&]() { return (vbs.b0()+vbs.b1()).mass(); }, [&]() { return vbs.leadlep().pt() + vbs.subllep().pt() + vbs.met_p4().pt(); } );
 
 
     // Print cut structure
