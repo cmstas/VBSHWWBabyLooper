@@ -3,29 +3,32 @@
 import os
 
 jobs = [
-        ("SR"     , ","       , "Presel,"             ) ,
-        ("VBF"    , "VBF,"    , "Only VBF cuts,"      ) ,
-        ("LepPts" , "LepPts," , "Only Lepton PT cuts,"),
+        # ("SR"     , ","       , "Presel,"             ) ,
+        # ("VBF"    , "VBF,"    , "Only VBF cuts,"      ) ,
+        # ("LepPts" , "LepPts," , "Only Lepton PT cuts,"),
         ("SR"     , "SR,"     , "All Nominal Cuts,"   ) ,
+        # ("SRp"    , "SRp,"    , "All Nominal Cuts (++),") ,
+        # ("SRm"    , "SRm,"    , "All Nominal Cuts (--),") ,
     ]
 
 categories = [
-        "TightEE",
-        "TightEM",
-        "TightMM",
+        # "TightEE",
+        # "TightEM",
+        # "TightMM",
+        # "LooseEE",
+        # "LooseEM",
+        # "LooseMM",
+        # "TightET",
+        # "TightMT",
         "TightLL",
-        "LooseEE",
-        "LooseEM",
-        "LooseMM",
         "LooseLL",
-        "TightET",
-        "TightMT",
         "TightLT",
     ]
 
 mbbs = [
-        "MbbOn",
+        # "MbbOn",
         "MbbOff",
+        # "MbbAll",
     ]
 
 
@@ -40,4 +43,5 @@ for job in jobs:
             cmd += " | sed 's/Loose/Loose,/'"
             cmd += " | sed 's/MbbOn/,On Mbb-peak,/'"
             cmd += " | sed 's/MbbOff/,Off Mbb-peak,/'"
+            cmd += " | sed 's/MbbAll/,Mbb inclusive,/'"
             os.system(cmd)

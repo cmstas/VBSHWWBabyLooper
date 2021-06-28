@@ -22,6 +22,7 @@ int main(int argc, char** argv)
     // Splitting events by channels
     vbs.cutflow.getCut("AK4CategPresel"); vbs.cutflow.addCutToLastActiveCut("LooseVRChannel", [&]() { return VBSINT("channel") >= 0;                                                                 }, UNITY);
 
+    vbs.cutflow.getCut("LooseVRChannel"); vbs.cutflow.addCutToLastActiveCut("TightLXChannel", [&]() { return VBSINT("btagchannel") == 0;                                                             }, UNITY);
     vbs.cutflow.getCut("LooseVRChannel"); vbs.cutflow.addCutToLastActiveCut("TightEEChannel", [&]() { return VBSINT("btagchannel") == 0 and VBSINT("lepchannel") == 0;                               }, UNITY);
     vbs.cutflow.getCut("LooseVRChannel"); vbs.cutflow.addCutToLastActiveCut("TightEMChannel", [&]() { return VBSINT("btagchannel") == 0 and VBSINT("lepchannel") == 1;                               }, UNITY);
     vbs.cutflow.getCut("LooseVRChannel"); vbs.cutflow.addCutToLastActiveCut("TightMMChannel", [&]() { return VBSINT("btagchannel") == 0 and VBSINT("lepchannel") == 2;                               }, UNITY);
@@ -47,6 +48,7 @@ int main(int argc, char** argv)
             "TightLT", // Tight-Tight b-tag + lightlep + tau
             "TightET", // Tight-Tight b-tag + electron + tau
             "TightMT", // Tight-Tight b-tag + muon     + tau
+            "TightLX", // Tight-Tight b-tag + muon     + tau
                        // TODO: Low Pt VBS jets
 
             // Sub-channels
@@ -58,29 +60,32 @@ int main(int argc, char** argv)
             "LooseMM", // Tight-Loose b-tag + muon     + muon
         };
 
+    std::vector<std::pair<TString, std::function<bool()>>> kin_regs = {
+        std::make_pair("MbbOn",   [&]() { return      (VBSLV("b0")+VBSLV("b1")).mass() < 140. and (VBSLV("b0")+VBSLV("b1")).mass() > 90.; }),
+        std::make_pair("MbbOff",  [&]() { return not ((VBSLV("b0")+VBSLV("b1")).mass() < 140. and (VBSLV("b0")+VBSLV("b1")).mass() > 90.); }),
+        std::make_pair("MbbHigh", [&]() { return      (VBSLV("b0")+VBSLV("b1")).mass() > 140.; }),
+        std::make_pair("MbbAll",  UNITY),
+    };
+
     // Looping over channels of interest and adding kinematic selections
     for (auto& channel : channels)
     {
-        vbs.cutflow.getCut(TString::Format("%sChannel", channel.Data()));
-        vbs.cutflow.addCutToLastActiveCut(TString::Format("%sMbbOn", channel.Data()), [&]() { return (VBSLV("b0")+VBSLV("b1")).mass() < 140. and (VBSLV("b0")+VBSLV("b1")).mass() > 90.; }, UNITY );
-        vbs.cutflow.getCut(TString::Format("%sChannel", channel.Data()));
-        vbs.cutflow.addCutToLastActiveCut(TString::Format("%sMbbOff", channel.Data()), [&]() { return not ((VBSLV("b0")+VBSLV("b1")).mass() < 140. and (VBSLV("b0")+VBSLV("b1")).mass() > 90.); }, UNITY );
-        vbs.cutflow.getCut(TString::Format("%sChannel", channel.Data()));
-        vbs.cutflow.addCutToLastActiveCut(TString::Format("%sMbbAll", channel.Data()), UNITY, UNITY );
-        vbs.cutflow.getCut(TString::Format("%sChannel", channel.Data()));
-        vbs.cutflow.addCutToLastActiveCut(TString::Format("%sMbbHigh", channel.Data()), [&]() { return (VBSLV("b0")+VBSLV("b1")).mass() > 140.; }, UNITY );
-
-        std::vector<TString> kin_regs = {"MbbOn", "MbbOff", "MbbAll", "MbbHigh"};
         for (auto& kin_reg : kin_regs)
         {
-            vbs.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.Data()));
-            vbs.cutflow.addCutToLastActiveCut(TString::Format("%s%sVBF"   , channel.Data(), kin_reg.Data()), [&]() { return      (VBSLV("j0")+VBSLV("j1")).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(VBSLV("j0"), VBSLV("j1"))) > 3.0;                                                                 }, UNITY );
-            vbs.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.Data()));
-            vbs.cutflow.addCutToLastActiveCut(TString::Format("%s%sLepPts", channel.Data(), kin_reg.Data()), [&]() { return                                                                                                                    VBSLV("leadlep").pt() > 140 and VBSLV("subllep").pt() > 60;  }, UNITY );
-            vbs.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.Data()));
-            vbs.cutflow.addCutToLastActiveCut(TString::Format("%s%sSR"    , channel.Data(), kin_reg.Data()), [&]() { return      (VBSLV("j0")+VBSLV("j1")).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(VBSLV("j0"), VBSLV("j1"))) > 3.0 and VBSLV("leadlep").pt() > 140 and VBSLV("subllep").pt() > 60;  }, UNITY );
-            vbs.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.Data()));
-            vbs.cutflow.addCutToLastActiveCut(TString::Format("%s%sNonSR" , channel.Data(), kin_reg.Data()), [&]() { return not ((VBSLV("j0")+VBSLV("j1")).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(VBSLV("j0"), VBSLV("j1"))) > 3.0 and VBSLV("leadlep").pt() > 140 and VBSLV("subllep").pt() > 60); }, UNITY );
+            vbs.cutflow.getCut(TString::Format("%sChannel", channel.Data()));
+            vbs.cutflow.addCutToLastActiveCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()), kin_reg.second, UNITY );
+            vbs.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
+            vbs.cutflow.addCutToLastActiveCut(TString::Format("%s%sVBF"   , channel.Data(), kin_reg.first.Data()), [&]() { return      (VBSLV("j0")+VBSLV("j1")).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(VBSLV("j0"), VBSLV("j1"))) > 3.0;                                                                 }, UNITY );
+            vbs.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
+            vbs.cutflow.addCutToLastActiveCut(TString::Format("%s%sLepPts", channel.Data(), kin_reg.first.Data()), [&]() { return                                                                                                                    VBSLV("leadlep").pt() > 140 and VBSLV("subllep").pt() > 60;  }, UNITY );
+            vbs.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
+            vbs.cutflow.addCutToLastActiveCut(TString::Format("%s%sSR"    , channel.Data(), kin_reg.first.Data()), [&]() { return      (VBSLV("j0")+VBSLV("j1")).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(VBSLV("j0"), VBSLV("j1"))) > 3.0 and VBSLV("leadlep").pt() > 140 and VBSLV("subllep").pt() > 60;  }, UNITY );
+            vbs.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
+            vbs.cutflow.addCutToLastActiveCut(TString::Format("%s%sNonSR" , channel.Data(), kin_reg.first.Data()), [&]() { return not ((VBSLV("j0")+VBSLV("j1")).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(VBSLV("j0"), VBSLV("j1"))) > 3.0 and VBSLV("leadlep").pt() > 140 and VBSLV("subllep").pt() > 60); }, UNITY );
+            vbs.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
+            vbs.cutflow.addCutToLastActiveCut(TString::Format("%s%sSRp"   , channel.Data(), kin_reg.first.Data()), [&]() { return      (VBSLV("j0")+VBSLV("j1")).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(VBSLV("j0"), VBSLV("j1"))) > 3.0 and VBSLV("leadlep").pt() > 140 and VBSLV("subllep").pt() > 60 and VBSINT("leadlepID") < 0;  }, UNITY );
+            vbs.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
+            vbs.cutflow.addCutToLastActiveCut(TString::Format("%s%sSRm"   , channel.Data(), kin_reg.first.Data()), [&]() { return      (VBSLV("j0")+VBSLV("j1")).mass() > 500. and fabs(RooUtil::Calc::DeltaEta(VBSLV("j0"), VBSLV("j1"))) > 3.0 and VBSLV("leadlep").pt() > 140 and VBSLV("subllep").pt() > 60 and VBSINT("leadlepID") > 0;  }, UNITY );
         }
     }
 
@@ -191,7 +196,8 @@ int main(int argc, char** argv)
                 continue;
         }
 
-        vbs.process("AK4CategPresel");
+        vbs.process("AK4CategChannels");
+        // vbs.process("AK4CategTagHiggsJets");
 
     }
 

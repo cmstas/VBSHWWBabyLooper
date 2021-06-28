@@ -3,13 +3,15 @@ usage()
 {
   echo "ERROR - Usage:"
   echo
-  echo "      sh $(basename $0) STUDYNAME"
+  echo "      sh $(basename $0) STUDYNAME TAG"
   echo
   exit
 }
 
 if [ -z ${1} ]; then usage; fi
 STUDY=${1}
+if [ -z ${2} ]; then usage; fi
+TAG=${2}
 
 YEARS="2016 2017 2018 Run2"
 
@@ -17,12 +19,12 @@ rm .haddjobs.txt
 
 for YEAR in ${YEARS}; do
 
-    HADDDIR=hadds/${STUDY}_${YEAR}
+    HADDDIR=hadds/${TAG}/${STUDY}_${YEAR}
 
     if [[ ${YEAR} == *"Run2"* ]]; then
-        HISTDIR="hists/${STUDY}_*"
+        HISTDIR="hists/${TAG}/${STUDY}_*"
     else
-        HISTDIR=hists/${STUDY}_${YEAR}
+        HISTDIR=hists/${TAG}/${STUDY}_${YEAR}
     fi
 
     mkdir -p ${HADDDIR}
@@ -34,6 +36,8 @@ for YEAR in ${YEARS}; do
     echo "rm -f ${HADDDIR}/vjet.root;hadd -f ${HADDDIR}/vjet.root ${HISTDIR}/WJetsTo*.root ${HISTDIR}/DY*.root > ${HADDDIR}/vjet.hadd.log 2>&1" >> .haddjobs.txt
     echo "rm -f ${HADDDIR}/tt1l.root;hadd -f ${HADDDIR}/tt1l.root ${HISTDIR}/TTJets_Sing*.root > ${HADDDIR}/tt1l.hadd.log 2>&1" >> .haddjobs.txt
     echo "rm -f ${HADDDIR}/tt2l.root;hadd -f ${HADDDIR}/tt2l.root ${HISTDIR}/TTJets_Di*.root > ${HADDDIR}/tt2l.hadd.log 2>&1" >> .haddjobs.txt
+    echo "rm -f ${HADDDIR}/tt1lpowheg.root;hadd -f ${HADDDIR}/tt1lpowheg.root ${HISTDIR}/TTToSemi*.root > ${HADDDIR}/tt1lpowheg.hadd.log 2>&1" >> .haddjobs.txt
+    echo "rm -f ${HADDDIR}/tt2lpowheg.root;hadd -f ${HADDDIR}/tt2lpowheg.root ${HISTDIR}/TTTo2L2Nu*.root > ${HADDDIR}/tt2lpowheg.hadd.log 2>&1" >> .haddjobs.txt
     echo "rm -f ${HADDDIR}/ttw.root;hadd -f ${HADDDIR}/ttw.root ${HISTDIR}/TTWJets*.root > ${HADDDIR}/ttw.hadd.log 2>&1" >> .haddjobs.txt
     echo "rm -f ${HADDDIR}/ttz.root;hadd -f ${HADDDIR}/ttz.root ${HISTDIR}/TTZToLL*.root > ${HADDDIR}/ttz.hadd.log 2>&1" >> .haddjobs.txt
     echo "rm -f ${HADDDIR}/tth.root;hadd -f ${HADDDIR}/tth.root ${HISTDIR}/ttHToNonbb*.root ${HISTDIR}/ttHTobb*.root > ${HADDDIR}/tth.hadd.log 2>&1" >> .haddjobs.txt
@@ -45,7 +49,8 @@ for YEAR in ${YEARS}; do
     echo "rm -f ${HADDDIR}/wz.root;hadd -f ${HADDDIR}/wz.root ${HISTDIR}/WZTo3LNu*.root > ${HADDDIR}/wz.hadd.log 2>&1" >> .haddjobs.txt
     echo "rm -f ${HADDDIR}/wzg.root;hadd -f ${HADDDIR}/wzg.root ${HISTDIR}/WZG*.root > ${HADDDIR}/wzg.hadd.log 2>&1" >> .haddjobs.txt
     echo "rm -f ${HADDDIR}/zz.root;hadd -f ${HADDDIR}/zz.root ${HISTDIR}/ZZTo4L*.root ${HISTDIR}/GluGluHToZZTo4L*.root > ${HADDDIR}/zz.hadd.log 2>&1" >> .haddjobs.txt
-    echo "rm -f ${HADDDIR}/bosons.root;hadd -f ${HADDDIR}/bosons.root ${HISTDIR}/WJetsTo*.root ${HISTDIR}/DY*.root ${HISTDIR}/WWToLNuQQ*.root ${HISTDIR}/WpWp*.root ${HISTDIR}/WZTo3LNu*.root ${HISTDIR}/ZZTo4L*.root ${HISTDIR}/GluGluHToZZTo4L*.root ${HISTDIR}/WWW_4F*.root ${HISTDIR}/WWZ*.root ${HISTDIR}/WZZ*.root ${HISTDIR}/ZZZ*.root > ${HADDDIR}/bosons.hadd.log 2>&1" >> .haddjobs.txt
+    echo "rm -f ${HADDDIR}/bosons.root;hadd -f ${HADDDIR}/bosons.root ${HISTDIR}/WJetsTo*.root ${HISTDIR}/DY*.root ${HISTDIR}/WWTo2L2Nu*.root ${HISTDIR}/WWToLNuQQ*.root ${HISTDIR}/WpWp*.root ${HISTDIR}/WZTo3LNu*.root ${HISTDIR}/ZZTo4L*.root ${HISTDIR}/GluGluHToZZTo4L*.root ${HISTDIR}/WWW_4F*.root ${HISTDIR}/WWZ*.root ${HISTDIR}/WZZ*.root ${HISTDIR}/ZZZ*.root > ${HADDDIR}/bosons.hadd.log 2>&1" >> .haddjobs.txt
+    # echo "rm -f ${HADDDIR}/bosons.root;hadd -f ${HADDDIR}/bosons.root ${HISTDIR}/WJetsTo*.root ${HISTDIR}/DY*.root ${HISTDIR}/WWToLNuQQ*.root ${HISTDIR}/WpWp*.root ${HISTDIR}/WZTo3LNu*.root ${HISTDIR}/ZZTo4L*.root ${HISTDIR}/GluGluHToZZTo4L*.root ${HISTDIR}/WWW_4F*.root ${HISTDIR}/WWZ*.root ${HISTDIR}/WZZ*.root ${HISTDIR}/ZZZ*.root > ${HADDDIR}/bosons.hadd.log 2>&1" >> .haddjobs.txt
     echo "rm -f ${HADDDIR}/vbshww.root;hadd -f ${HADDDIR}/vbshww.root ${HISTDIR}/VBSWmpWmpHToLNuLNu_TuneCP5*.root > ${HADDDIR}/vbshww.hadd.log 2>&1" >> .haddjobs.txt
     echo "rm -f ${HADDDIR}/vbshww_c2v_6.root;hadd -f ${HADDDIR}/vbshww_c2v_6.root ${HISTDIR}/VBSWmpWmpHToLNuLNu_C2V_6_TuneCP5*.root > ${HADDDIR}/vbshww_c2v_6.hadd.log 2>&1" >> .haddjobs.txt
     echo "rm -f ${HADDDIR}/vbshww_c2v_3.root;hadd -f ${HADDDIR}/vbshww_c2v_3.root ${HISTDIR}/VBSWmpWmpHToLNuLNu_C2V_3_TuneCP5*.root > ${HADDDIR}/vbshww_c2v_3.hadd.log 2>&1" >> .haddjobs.txt

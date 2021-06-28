@@ -1,6 +1,9 @@
 #include "VBSHWW.h"
 #include "common_utils.h" // Four-top analysis scale factors
 
+// #define LEPID SS
+#define LEPID ttH
+
 VBSHWW::VBSHWW(int argc, char** argv) :
     tx(
        (parseCLI(argc, argv), "variable"), // This weird syntax guarantees that parseCLI runs prior to initializing "tx"
@@ -50,9 +53,48 @@ VBSHWW::VBSHWW(int argc, char** argv) :
         RooUtil::error(TString::Format("While setting b-tag scale factors, found year = %d that is not recognized.", nt.year()));
     }
     btagReaderTight = new BTagCalibrationReader(BTagEntry::OP_TIGHT, "central", {"up", "down"});
+    btagReaderMedium = new BTagCalibrationReader(BTagEntry::OP_MEDIUM, "central", {"up", "down"});
     btagReaderLoose = new BTagCalibrationReader(BTagEntry::OP_LOOSE, "central", {"up", "down"});
     btagReaderTight->load(*btagCalib, BTagEntry::FLAV_B, "comb");
+    btagReaderTight->load(*btagCalib, BTagEntry::FLAV_C, "comb");
+    btagReaderTight->load(*btagCalib, BTagEntry::FLAV_UDSG, "incl");
+    btagReaderMedium->load(*btagCalib, BTagEntry::FLAV_B, "comb");
+    btagReaderMedium->load(*btagCalib, BTagEntry::FLAV_C, "comb");
+    btagReaderMedium->load(*btagCalib, BTagEntry::FLAV_UDSG, "incl");
     btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_B, "comb");
+    btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_C, "comb");
+    btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_UDSG, "incl");
+    if (nt.year() == 2016)
+    {
+        btagEffTight_b = new RooUtil::HistMap("data/eff_DeepFlav_102X_2016_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_b");
+        btagEffTight_c = new RooUtil::HistMap("data/eff_DeepFlav_102X_2016_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_c");
+        btagEffTight_l = new RooUtil::HistMap("data/eff_DeepFlav_102X_2016_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_udsg");
+        btagEffLoose_b = new RooUtil::HistMap("data/eff_DeepFlav_102X_2016_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_b");
+        btagEffLoose_c = new RooUtil::HistMap("data/eff_DeepFlav_102X_2016_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_c");
+        btagEffLoose_l = new RooUtil::HistMap("data/eff_DeepFlav_102X_2016_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_udsg");
+    }
+    else if (nt.year() == 2017)
+    {
+        btagEffTight_b = new RooUtil::HistMap("data/eff_DeepFlav_102X_2017_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_b");
+        btagEffTight_c = new RooUtil::HistMap("data/eff_DeepFlav_102X_2017_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_c");
+        btagEffTight_l = new RooUtil::HistMap("data/eff_DeepFlav_102X_2017_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_udsg");
+        btagEffLoose_b = new RooUtil::HistMap("data/eff_DeepFlav_102X_2017_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_b");
+        btagEffLoose_c = new RooUtil::HistMap("data/eff_DeepFlav_102X_2017_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_c");
+        btagEffLoose_l = new RooUtil::HistMap("data/eff_DeepFlav_102X_2017_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_udsg");
+    }
+    else if (nt.year() == 2018)
+    {
+        btagEffTight_b = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_b");
+        btagEffTight_c = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_c");
+        btagEffTight_l = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_udsg");
+        btagEffLoose_b = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_b");
+        btagEffLoose_c = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_c");
+        btagEffLoose_l = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_udsg");
+    }
+    else
+    {
+        RooUtil::error(TString::Format("While setting b-tag efficiencies, found year = %d that is not recognized.", nt.year()));
+    }
 
 //=============================
 //
@@ -92,6 +134,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch<LV>("gen_h");
     tx.createBranch<LV>("gen_lep0");
     tx.createBranch<LV>("gen_lep1");
+    tx.createBranch<LV>("gen_lep2");
     tx.createBranch<LV>("gen_nu0");
     tx.createBranch<LV>("gen_nu1");
     tx.createBranch<LV>("gen_b0");
@@ -107,6 +150,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch<vector<int>>("good_leptons_pdgid");
     tx.createBranch<vector<int>>("good_leptons_tight");
     tx.createBranch<vector<int>>("good_leptons_jetIdx");
+    tx.createBranch<vector<int>>("good_leptons_genPartFlav");
     tx.createBranch<vector<float>>("good_leptons_pfRelIso03_all");
     tx.createBranch<vector<float>>("good_leptons_pfRelIso03_chg");
     tx.createBranch<vector<float>>("good_leptons_jetPtRelv2");
@@ -127,6 +171,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch<vector<int>>("good_jets_tight_btagged");
     tx.createBranch<vector<float>>("good_jets_btag_score");
     tx.createBranch<vector<float>>("good_jets_qg_disc");
+    tx.createBranch<vector<int>>("good_jets_flavor");
 
     // Create fatjet branches (NOTE: > 20 GeV jets are saved)
     tx.createBranch<vector<LV>>("good_fatjets_p4");
@@ -141,6 +186,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch<vector<int>>("higgs_jets_medium_btagged");
     tx.createBranch<vector<int>>("higgs_jets_tight_btagged");
     tx.createBranch<vector<float>>("higgs_jets_btag_score");
+    tx.createBranch<vector<int>>("higgs_jets_flavor");
     tx.createBranch<vector<int>>("higgs_jets_good_jets_idx");
     tx.createBranch<vector<int>>("higgs_jets_genmatched");
     tx.createBranch<vector<float>>("higgs_jets_genmatched_dr");
@@ -161,8 +207,16 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     // Create 6 fermion vectors
     tx.createBranch<LV>("lep0");
     tx.createBranch<LV>("lep1");
+    tx.createBranch<int>("lep0ID");
+    tx.createBranch<int>("lep1ID");
+    tx.createBranch<int>("lep0GenPartFlav");
+    tx.createBranch<int>("lep1GenPartFlav");
     tx.createBranch<LV>("leadlep");
     tx.createBranch<LV>("subllep");
+    tx.createBranch<int>("leadlepID");
+    tx.createBranch<int>("subllepID");
+    tx.createBranch<int>("leadlepGenPartFlav");
+    tx.createBranch<int>("subllepGenPartFlav");
     tx.createBranch<LV>("b0");
     tx.createBranch<LV>("b1");
     tx.createBranch<LV>("j0");
@@ -574,12 +628,13 @@ void VBSHWW::initSRCutflow()
             // Select muons
             for (unsigned int imu = 0; imu < nt.Muon_pt().size(); ++imu)
             {
-                if (SS::muonID(imu, SS::IDveto, nt.year()))
+                if (LEPID::muonID(imu, LEPID::IDveto, nt.year()))
                 {
                     tx.pushbackToBranch<LV>("good_leptons_p4", nt.Muon_p4()[imu]);
                     tx.pushbackToBranch<int>("good_leptons_pdgid", (-nt.Muon_charge()[imu]) * 13);
-                    tx.pushbackToBranch<int>("good_leptons_tight", SS::muonID(imu, SS::IDtight, nt.year()));
+                    tx.pushbackToBranch<int>("good_leptons_tight", LEPID::muonID(imu, LEPID::IDtight, nt.year()));
                     tx.pushbackToBranch<int>("good_leptons_jetIdx", nt.Muon_jetIdx()[imu]);
+                    tx.pushbackToBranch<int>("good_leptons_genPartFlav", nt.isData() ? -999 : nt.Muon_genPartFlav()[imu]);
                     tx.pushbackToBranch<float>("good_leptons_pfRelIso03_all", nt.Muon_pfRelIso03_all()[imu]);
                     tx.pushbackToBranch<float>("good_leptons_pfRelIso03_chg", -999);
                     tx.pushbackToBranch<float>("good_leptons_jetPtRelv2", nt.Muon_jetPtRelv2()[imu]);
@@ -592,12 +647,13 @@ void VBSHWW::initSRCutflow()
             // Select electrons
             for (unsigned int iel = 0; iel < nt.Electron_pt().size(); ++iel)
             {
-                if (SS::electronID(iel, SS::IDveto, nt.year()))
+                if (LEPID::electronID(iel, LEPID::IDveto, nt.year()))
                 {
                     tx.pushbackToBranch<LV>("good_leptons_p4", nt.Electron_p4()[iel]);
                     tx.pushbackToBranch<int>("good_leptons_pdgid", (-nt.Electron_charge()[iel]) * 11);
-                    tx.pushbackToBranch<int>("good_leptons_tight", SS::electronID(iel, SS::IDtight, nt.year()));
+                    tx.pushbackToBranch<int>("good_leptons_tight", LEPID::electronID(iel, LEPID::IDtight, nt.year()));
                     tx.pushbackToBranch<int>("good_leptons_jetIdx", nt.Electron_jetIdx()[iel]);
+                    tx.pushbackToBranch<int>("good_leptons_genPartFlav", nt.isData() ? -999 : nt.Electron_genPartFlav()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_pfRelIso03_all", nt.Electron_pfRelIso03_all()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_pfRelIso03_chg", nt.Electron_pfRelIso03_chg()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_jetPtRelv2", nt.Electron_jetPtRelv2()[iel]);
@@ -623,6 +679,7 @@ void VBSHWW::initSRCutflow()
                     "good_leptons_pdgid",
                     "good_leptons_tight",
                     "good_leptons_jetIdx",
+                    "good_leptons_genPartFlav",
                 },
                 /* names of any associated vector<bool>  branches to sort along */
                 {}
@@ -635,7 +692,7 @@ void VBSHWW::initSRCutflow()
                 const vector<int>& good_leptons_pdgid = tx.getBranchLazy<vector<int>>("good_leptons_pdgid");
                 for (unsigned int itau = 0; itau < nt.nTau(); ++itau)
                 {
-                    if (SS::tauID(itau, SS::IDfakable, nt.year()))
+                    if (LEPID::tauID(itau, LEPID::IDfakable, nt.year()))
                     {
                         // tau-(non-tau lep) overlap removal
                         bool save_this_tau = true;
@@ -658,7 +715,7 @@ void VBSHWW::initSRCutflow()
                         tx.pushbackToBranch<LV>("good_taus_p4", nt.Tau_p4()[itau]);
                         tx.pushbackToBranch<int>("good_taus_genPartFlav", nt.isData() ? -999 : nt.Tau_genPartFlav()[itau]);
                         tx.pushbackToBranch<int>("good_taus_pdgid", (-nt.Tau_charge()[itau]) * 15);
-                        tx.pushbackToBranch<int>("good_taus_tight", SS::tauID(itau, SS::IDtight, nt.year()));
+                        tx.pushbackToBranch<int>("good_taus_tight", LEPID::tauID(itau, LEPID::IDtight, nt.year()));
                         tx.pushbackToBranch<int>("good_taus_jetIdx", nt.Tau_jetIdx()[itau]);
 
                     }
@@ -718,8 +775,22 @@ void VBSHWW::initSRCutflow()
                 // Read jet p4
                 const LV& jet_p4 = nt.Jet_p4()[ijet];
 
-                if (nt.Jet_jetId()[ijet] < 2) // "Tight" ID requirement
-                    continue;
+                if (nt.year() == 2016)
+                {
+                    if (nt.Jet_jetId()[ijet] < 1) // For 2016 apparently it's >= 1
+                        continue;
+                }
+                else
+                {
+                    if (nt.Jet_jetId()[ijet] < 2) // "Tight" ID requirement while for others >= 2
+                        continue;
+                }
+
+                // if (nt.year() == 2017)
+                // {
+                //     if (nt.Jet_puId()[ijet] < 7) // For 2017 "111" (pass tight)
+                //         continue;
+                // }
 
                 // Overlap check against good leptons
                 bool isOverlap = false;
@@ -773,6 +844,7 @@ void VBSHWW::initSRCutflow()
                 tx.pushbackToBranch<int>("good_jets_tight_btagged", is_tight_btagged);
                 tx.pushbackToBranch<float>("good_jets_btag_score", nt.Jet_btagDeepFlavB()[ijet]);
                 tx.pushbackToBranch<float>("good_jets_qg_disc", nt.Jet_qgl()[ijet]);
+                tx.pushbackToBranch<int>("good_jets_flavor", nt.isData() ? -999 : nt.Jet_hadronFlavour()[ijet]);
 
                 if (abs(jet_p4.eta()) < 3.0 and jet_p4.pt() > 30.)
                 {
@@ -794,7 +866,7 @@ void VBSHWW::initSRCutflow()
             tx.sortVecBranchesByPt(
                     /* name of the 4vector branch to use to pt sort by*/               "good_jets_p4",
                     /* names of any associated vector<float> branches to sort along */ {"good_jets_btag_score", "good_jets_qg_disc"},
-                    /* names of any associated vector<int>   branches to sort along */ {"good_jets_loose_btagged", "good_jets_medium_btagged", "good_jets_tight_btagged"},
+                    /* names of any associated vector<int>   branches to sort along */ {"good_jets_loose_btagged", "good_jets_medium_btagged", "good_jets_tight_btagged", "good_jets_flavor"},
                     /* names of any associated vector<bool>  branches to sort along */ {}
                     );
 
@@ -1057,6 +1129,9 @@ void VBSHWW::initSRCutflow()
             // Require same sign
             if (not (pdgid0 * pdgid1 > 0))
                 return false;
+            // // Require opposite sign
+            // if (not (pdgid0 * pdgid1 < 0))
+            //     return false;
 
             const float& pt0 = tx.getBranchLazy<vector<LV>>("good_leptons_p4")[0].pt();
             const float& pt1 = tx.getBranchLazy<vector<LV>>("good_leptons_p4").size() == 2 ? tx.getBranchLazy<vector<LV>>("good_leptons_p4")[1].pt() : tx.getBranchLazy<vector<LV>>("good_taus_p4")[0].pt();
@@ -1065,11 +1140,11 @@ void VBSHWW::initSRCutflow()
             int lepchannel = -1;
             if (tx.getBranch<vector<LV>>("good_leptons_p4").size() == 2)
             {
-                if (tx.getBranch<vector<int>>("good_leptons_pdgid")[0] * tx.getBranch<vector<int>>("good_leptons_pdgid")[1] == 121)
+                if (abs(tx.getBranch<vector<int>>("good_leptons_pdgid")[0]) * abs(tx.getBranch<vector<int>>("good_leptons_pdgid")[1]) == 121)
                     lepchannel = 0;
-                else if (tx.getBranch<vector<int>>("good_leptons_pdgid")[0] * tx.getBranch<vector<int>>("good_leptons_pdgid")[1] == 143)
+                else if (abs(tx.getBranch<vector<int>>("good_leptons_pdgid")[0]) * abs(tx.getBranch<vector<int>>("good_leptons_pdgid")[1]) == 143)
                     lepchannel = 1;
-                else if (tx.getBranch<vector<int>>("good_leptons_pdgid")[0] * tx.getBranch<vector<int>>("good_leptons_pdgid")[1] == 169)
+                else if (abs(tx.getBranch<vector<int>>("good_leptons_pdgid")[0]) * abs(tx.getBranch<vector<int>>("good_leptons_pdgid")[1]) == 169)
                     lepchannel = 2;
             }
             else // It has to be good_leptons_p4.size() == 1 by now
@@ -1093,29 +1168,53 @@ void VBSHWW::initSRCutflow()
                 case 0:
                     tx.setBranch<LV>("lep0", tx.getBranch<vector<LV>>("good_leptons_p4")[0]);
                     tx.setBranch<LV>("lep1", tx.getBranch<vector<LV>>("good_leptons_p4")[1]);
+                    tx.setBranch<int>("lep0ID", tx.getBranch<vector<int>>("good_leptons_pdgid")[0]);
+                    tx.setBranch<int>("lep1ID", tx.getBranch<vector<int>>("good_leptons_pdgid")[1]);
+                    tx.setBranch<int>("lep0GenPartFlav", tx.getBranch<vector<int>>("good_leptons_genPartFlav")[0]);
+                    tx.setBranch<int>("lep1GenPartFlav", tx.getBranch<vector<int>>("good_leptons_genPartFlav")[1]);
                     break;
                 case 1:
                     tx.setBranch<LV>("lep0", abs(tx.getBranch<vector<int>>("good_leptons_pdgid")[0]) == 11 ? tx.getBranch<vector<LV>>("good_leptons_p4")[0] : tx.getBranch<vector<LV>>("good_leptons_p4")[1]);
                     tx.setBranch<LV>("lep1", abs(tx.getBranch<vector<int>>("good_leptons_pdgid")[0]) == 11 ? tx.getBranch<vector<LV>>("good_leptons_p4")[1] : tx.getBranch<vector<LV>>("good_leptons_p4")[0]);
+                    tx.setBranch<int>("lep0ID", abs(tx.getBranch<vector<int>>("good_leptons_pdgid")[0]) == 11 ? tx.getBranch<vector<int>>("good_leptons_pdgid")[0] : tx.getBranch<vector<int>>("good_leptons_pdgid")[1]);
+                    tx.setBranch<int>("lep1ID", abs(tx.getBranch<vector<int>>("good_leptons_pdgid")[0]) == 11 ? tx.getBranch<vector<int>>("good_leptons_pdgid")[1] : tx.getBranch<vector<int>>("good_leptons_pdgid")[0]);
+                    tx.setBranch<int>("lep0GenPartFlav", abs(tx.getBranch<vector<int>>("good_leptons_genPartFlav")[0]) == 11 ? tx.getBranch<vector<int>>("good_leptons_genPartFlav")[0] : tx.getBranch<vector<int>>("good_leptons_genPartFlav")[1]);
+                    tx.setBranch<int>("lep1GenPartFlav", abs(tx.getBranch<vector<int>>("good_leptons_genPartFlav")[0]) == 11 ? tx.getBranch<vector<int>>("good_leptons_genPartFlav")[1] : tx.getBranch<vector<int>>("good_leptons_genPartFlav")[0]);
                     break;
                 case 2:
                     tx.setBranch<LV>("lep0", tx.getBranch<vector<LV>>("good_leptons_p4")[0]);
                     tx.setBranch<LV>("lep1", tx.getBranch<vector<LV>>("good_leptons_p4")[1]);
+                    tx.setBranch<int>("lep0ID", tx.getBranch<vector<int>>("good_leptons_pdgid")[0]);
+                    tx.setBranch<int>("lep1ID", tx.getBranch<vector<int>>("good_leptons_pdgid")[1]);
+                    tx.setBranch<int>("lep0GenPartFlav", tx.getBranch<vector<int>>("good_leptons_genPartFlav")[0]);
+                    tx.setBranch<int>("lep1GenPartFlav", tx.getBranch<vector<int>>("good_leptons_genPartFlav")[1]);
                     break;
                 case 3:
                     tx.setBranch<LV>("lep0", tx.getBranch<vector<LV>>("good_leptons_p4")[0]);
                     tx.setBranch<LV>("lep1", tx.getBranch<vector<LV>>("good_taus_p4")[0]);
+                    tx.setBranch<int>("lep0ID", tx.getBranch<vector<int>>("good_leptons_pdgid")[0]);
+                    tx.setBranch<int>("lep1ID", tx.getBranch<vector<int>>("good_taus_pdgid")[0]);
+                    tx.setBranch<int>("lep0GenPartFlav", tx.getBranch<vector<int>>("good_leptons_genPartFlav")[0]);
+                    tx.setBranch<int>("lep1GenPartFlav", tx.getBranch<vector<int>>("good_taus_genPartFlav")[0]);
                     break;
                 case 4:
                     tx.setBranch<LV>("lep0", tx.getBranch<vector<LV>>("good_leptons_p4")[0]);
                     tx.setBranch<LV>("lep1", tx.getBranch<vector<LV>>("good_taus_p4")[0]);
+                    tx.setBranch<int>("lep0ID", tx.getBranch<vector<int>>("good_leptons_pdgid")[0]);
+                    tx.setBranch<int>("lep1ID", tx.getBranch<vector<int>>("good_taus_pdgid")[0]);
+                    tx.setBranch<int>("lep0GenPartFlav", tx.getBranch<vector<int>>("good_leptons_genPartFlav")[0]);
+                    tx.setBranch<int>("lep1GenPartFlav", tx.getBranch<vector<int>>("good_taus_genPartFlav")[0]);
                     break;
             }
             tx.setBranch<LV>("leadlep", tx.getBranch<LV>("lep0").pt() > tx.getBranch<LV>("lep1").pt() ? tx.getBranch<LV>("lep0") : tx.getBranch<LV>("lep1"));
             tx.setBranch<LV>("subllep", tx.getBranch<LV>("lep0").pt() > tx.getBranch<LV>("lep1").pt() ? tx.getBranch<LV>("lep1") : tx.getBranch<LV>("lep0"));
+            tx.setBranch<int>("leadlepID", tx.getBranch<LV>("lep0").pt() > tx.getBranch<LV>("lep1").pt() ? tx.getBranch<int>("lep0ID") : tx.getBranch<int>("lep1ID"));
+            tx.setBranch<int>("subllepID", tx.getBranch<LV>("lep0").pt() > tx.getBranch<LV>("lep1").pt() ? tx.getBranch<int>("lep1ID") : tx.getBranch<int>("lep0ID"));
+            tx.setBranch<int>("leadlepGenPartFlav", tx.getBranch<LV>("lep0").pt() > tx.getBranch<LV>("lep1").pt() ? tx.getBranch<int>("lep0GenPartFlav") : tx.getBranch<int>("lep1GenPartFlav"));
+            tx.setBranch<int>("subllepGenPartFlav", tx.getBranch<LV>("lep0").pt() > tx.getBranch<LV>("lep1").pt() ? tx.getBranch<int>("lep1GenPartFlav") : tx.getBranch<int>("lep0GenPartFlav"));
 
             // To veto same-sign dielectron on-Z (charge flip)
-            int mee_noZ = (not (lepchannel == 0 and abs((tx.getBranch<LV>("lep0")+tx.getBranch<LV>("lep1")).mass() - 91.1876) < 15.)); // if ee channel and mll is on-Z
+            int mee_noZ = (not (lepchannel == 0 and abs((tx.getBranch<LV>("lep0")+tx.getBranch<LV>("lep1")).mass() - 91.1876) < 15. and (tx.getBranch<int>("lep0ID") * tx.getBranch<int>("lep1ID") == 121))); // if ee channel and mll is on-Z
             tx.setBranch<int>("mee_noZ", mee_noZ);
 
             if (not mee_noZ) // reject events with dielectrons being on-Z (charge flip from likely Z+jets)
@@ -1153,6 +1252,19 @@ void VBSHWW::initSRCutflow()
 
         },
         [&]() { return tx.getBranch<float>("lepsf"); } );
+        // UNITY);
+
+    cutflow.addCutToLastActiveCut("NjetGeq4",
+        [&]()
+        {
+            // std::cout <<  " looper.getCurrentEventIndex(): " << looper.getCurrentEventIndex() <<  std::endl;
+            // std::cout <<  " tx.getBranch<vector<LV>>('good_jets_p4').size(): " << tx.getBranch<vector<LV>>("good_jets_p4").size() <<  std::endl;
+            if (tx.getBranchLazy<vector<LV>>("good_jets_p4").size() < 4)
+                return false;
+            return true;
+
+        },
+        UNITY);
 
 
     //*****************************
@@ -1179,6 +1291,13 @@ void VBSHWW::initSRCutflow()
                 btag_jets.push_back(std::make_pair(btag_score, i));
             }
 
+            // // printing
+            // for (auto& item : btag_jets)
+            // {
+            //     std::cout <<  " item.first: " << item.first <<  std::endl;
+            //     std::cout <<  " item.second: " << item.second <<  std::endl;
+            // }
+
             // Sort the pairs
             std::sort(btag_jets.begin(), btag_jets.end(),
                     [](const std::pair<float, int> & a, const std::pair<float, int> & b) -> bool
@@ -1189,11 +1308,15 @@ void VBSHWW::initSRCutflow()
             int higgs_jet_0 = btag_jets[0].second < btag_jets[1].second ? btag_jets[0].second : btag_jets[1].second;
             int higgs_jet_1 = btag_jets[0].second < btag_jets[1].second ? btag_jets[1].second : btag_jets[0].second;
 
+            // std::cout <<  " higgs_jet_0: " << higgs_jet_0 <<  std::endl;
+            // std::cout <<  " higgs_jet_1: " << higgs_jet_1 <<  std::endl;
+
             tx.pushbackToBranch<LV>("higgs_jets_p4", tx.getBranch<vector<LV>>("good_jets_p4")[higgs_jet_0]);
             tx.pushbackToBranch<int>("higgs_jets_loose_btagged", tx.getBranch<vector<int>>("good_jets_loose_btagged")[higgs_jet_0]);
             tx.pushbackToBranch<int>("higgs_jets_medium_btagged", tx.getBranch<vector<int>>("good_jets_medium_btagged")[higgs_jet_0]);
             tx.pushbackToBranch<int>("higgs_jets_tight_btagged", tx.getBranch<vector<int>>("good_jets_tight_btagged")[higgs_jet_0]);
             tx.pushbackToBranch<float>("higgs_jets_btag_score", tx.getBranch<vector<float>>("good_jets_btag_score")[higgs_jet_0]);
+            tx.pushbackToBranch<int>("higgs_jets_flavor", tx.getBranch<vector<int>>("good_jets_flavor")[higgs_jet_0]);
             tx.pushbackToBranch<int>("higgs_jets_good_jets_idx", higgs_jet_0);
 
             tx.pushbackToBranch<LV>("higgs_jets_p4", tx.getBranch<vector<LV>>("good_jets_p4")[higgs_jet_1]);
@@ -1201,6 +1324,7 @@ void VBSHWW::initSRCutflow()
             tx.pushbackToBranch<int>("higgs_jets_medium_btagged", tx.getBranch<vector<int>>("good_jets_medium_btagged")[higgs_jet_1]);
             tx.pushbackToBranch<int>("higgs_jets_tight_btagged", tx.getBranch<vector<int>>("good_jets_tight_btagged")[higgs_jet_1]);
             tx.pushbackToBranch<float>("higgs_jets_btag_score", tx.getBranch<vector<float>>("good_jets_btag_score")[higgs_jet_1]);
+            tx.pushbackToBranch<int>("higgs_jets_flavor", tx.getBranch<vector<int>>("good_jets_flavor")[higgs_jet_1]);
             tx.pushbackToBranch<int>("higgs_jets_good_jets_idx", higgs_jet_1);
 
             if (tx.isBranchSet<LV>("gen_b0"))
@@ -1245,31 +1369,32 @@ void VBSHWW::initSRCutflow()
             const int& bloose0 = tx.getBranch<vector<int>>("higgs_jets_loose_btagged")[0];
             const int& bloose1 = tx.getBranch<vector<int>>("higgs_jets_loose_btagged")[1];
             int btagchannel = -999;
-            float btagsf = 1.;
             if (btight0 and btight1)
             {
                 btagchannel = 0;
-                btagsf *= btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_B, fabs(tx.getBranch<vector<LV>>("higgs_jets_p4")[0].eta()), tx.getBranch<vector<LV>>("higgs_jets_p4")[0].pt());
-                btagsf *= btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_B, fabs(tx.getBranch<vector<LV>>("higgs_jets_p4")[1].eta()), tx.getBranch<vector<LV>>("higgs_jets_p4")[1].pt());
             }
             else if (btight0 and bloose1)
             {
                 btagchannel = 1;
-                btagsf *= btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_B, fabs(tx.getBranch<vector<LV>>("higgs_jets_p4")[0].eta()), tx.getBranch<vector<LV>>("higgs_jets_p4")[0].pt());
-                btagsf *= btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_B, fabs(tx.getBranch<vector<LV>>("higgs_jets_p4")[1].eta()), tx.getBranch<vector<LV>>("higgs_jets_p4")[1].pt());
             }
             else if (bloose0 and btight1)
             {
                 btagchannel = 1;
-                btagsf *= btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_B, fabs(tx.getBranch<vector<LV>>("higgs_jets_p4")[0].eta()), tx.getBranch<vector<LV>>("higgs_jets_p4")[0].pt());
-                btagsf *= btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_B, fabs(tx.getBranch<vector<LV>>("higgs_jets_p4")[1].eta()), tx.getBranch<vector<LV>>("higgs_jets_p4")[1].pt());
             }
             else
             {
                 btagchannel = -1;
             }
             tx.setBranch<int>("btagchannel", btagchannel);
-            tx.setBranch<float>("btagsf", nt.isData() ? 1. : btagsf);
+            setBTagSF(
+                {tx.getBranch<LV>("b0").pt(), tx.getBranch<LV>("b1").pt()},
+                {tx.getBranch<LV>("b0").eta(), tx.getBranch<LV>("b1").eta()},
+                {tx.getBranch<vector<float>>("higgs_jets_btag_score")[0], tx.getBranch<vector<float>>("higgs_jets_btag_score")[1]},
+                {tx.getBranch<vector<int>>("higgs_jets_flavor")[0], tx.getBranch<vector<int>>("higgs_jets_flavor")[1]}
+                );
+            // std::cout <<  " looper.getCurrentEventIndex(): " << looper.getCurrentEventIndex() <<  std::endl;
+            // std::cout <<  " tx.getBranch<LV>('b0').pt(): " << tx.getBranch<LV>("b0").pt() <<  " tx.getBranch<LV>('b1').pt(): " << tx.getBranch<LV>("b1").pt() <<  std::endl;
+            // std::cout <<  " tx.getBranch<vector<LV>>('good_jets_p4').size(): " << tx.getBranch<vector<LV>>("good_jets_p4").size() <<  std::endl;
 
             return true;
         }, UNITY);
@@ -1386,12 +1511,24 @@ void VBSHWW::initSRCutflow()
             float leppt1 = tx.getBranch<LV>("subllep").pt();
             int mbbIn = tx.getBranch<int>("mbbIn");
             tx.setBranch<int>("pass_blind", nt.isData() ? not (mbbIn and mjj > 500. and detajj > 3 and leppt0 > 140. and leppt1 > 60.): 1);
+            // if (mjj > 400 and detajj > 3 and nt.event() == 30)
+            // {
+            //     std::cout <<  " nt.run(): " << nt.run() <<  std::endl;
+            //     std::cout <<  " nt.luminosityBlock(): " << nt.luminosityBlock() <<  std::endl;
+            //     std::cout <<  " nt.event(): " << nt.event() <<  std::endl;
+            //     std::cout <<  " looper.getCurrentEventIndex(): " << looper.getCurrentEventIndex() <<  std::endl;
+            //     std::cout <<  " tx.getBranch<LV>('b0').pt(): " << tx.getBranch<LV>("b0").pt() <<  " tx.getBranch<LV>('b1').pt(): " << tx.getBranch<LV>("b1").pt() <<  std::endl;
+            //     std::cout <<  " tx.getBranch<LV>('j0').pt(): " << tx.getBranch<LV>("j0").pt() <<  " tx.getBranch<LV>('j1').pt(): " << tx.getBranch<LV>("j1").pt() <<  std::endl;
+            //     std::cout <<  " tx.getBranch<LV>('j0').eta(): " << tx.getBranch<LV>("j0").eta() <<  " tx.getBranch<LV>('j1').eta(): " << tx.getBranch<LV>("j1").eta() <<  std::endl;
+            //     std::cout <<  " tx.getBranch<vector<LV>>('good_jets_p4').size(): " << tx.getBranch<vector<LV>>("good_jets_p4").size() <<  std::endl;
+            //     std::cout <<  " mjj: " << mjj <<  " detajj: " << detajj <<  std::endl;
+            // }
             return true;
 
         },
         UNITY);
 
-    cutflow.addCutToLastActiveCut("AK4CategPresel",
+    cutflow.addCutToLastActiveCut("AK4CategChannels",
         [&]()
         {
             const int& pass_blind = tx.getBranch<int>("pass_blind");
@@ -1426,12 +1563,20 @@ void VBSHWW::initSRCutflow()
             if (pass_blind and btagchannel == 0 and lepchannel == 4 and     mbbIn) channeldetail = 14;
             if (pass_blind and btagchannel == 0 and lepchannel == 4 and not mbbIn) channeldetail = 15;
             tx.setBranch<int>("channeldetail", channeldetail);
+            return true;
+        },
+        UNITY);
+
+    cutflow.addCutToLastActiveCut("AK4CategPresel",
+        [&]()
+        {
+            int channel = tx.getBranch<int>("channel");
             if (channel < 0)
                 return false;
             else
                 return true;
-        }, [&]() { return tx.getBranch<float>("btagsf"); } );
-
+        },
+        [&]() { return tx.getBranch<float>("btagsf"); } );
     return;
 }
 
@@ -1716,4 +1861,54 @@ void VBSHWW::processGenParticles_TopBackgrounds()
     //     std::cout << std::endl;
     // }
 
+}
+
+void VBSHWW::setBTagSF(std::vector<float> jet_pt, std::vector<float> jet_eta, std::vector<float> jet_score, std::vector<int> jet_flavor)
+{
+    if (nt.isData())
+    {
+        tx.setBranch<float>("btagsf", 1);
+    }
+    else
+    {
+        float btag_prob_MC = 1;
+        float btag_prob_DATA = 1;
+        for (unsigned ijet = 0; ijet < jet_pt.size(); ++ijet)
+        {
+            float pt = min(jet_pt.at(ijet), 599.99f);
+            float eta = min(abs(jet_eta.at(ijet)), 2.399f);
+            float score = jet_score.at(ijet);
+            int flavor = jet_flavor.at(ijet);
+            bool is_loose_btagged = score > gconf.WP_DeepFlav_loose;
+            bool is_tight_btagged = score > gconf.WP_DeepFlav_tight;
+            float eff_tight = flavor == 5 ? btagEffTight_b->eval(pt, eta) : (flavor == 0 ? btagEffTight_l->eval(pt, eta) : btagEffTight_c->eval(pt, eta));
+            float eff_loose = flavor == 5 ? btagEffLoose_b->eval(pt, eta) : (flavor == 0 ? btagEffLoose_l->eval(pt, eta) : btagEffLoose_c->eval(pt, eta));
+            float sf_tight = 
+                flavor == 5 ? btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_B, eta, pt) : (
+                flavor == 0 ? btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_UDSG, eta, pt) :
+                              btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_C, eta, pt));
+            float sf_loose = 
+                flavor == 5 ? btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_B, eta, pt) : (
+                flavor == 0 ? btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_UDSG, eta, pt) :
+                              btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_C, eta, pt));
+            // std::cout <<  " eff_tight: " << eff_tight <<  " eff_loose: " << eff_loose <<  " sf_tight: " << sf_tight <<  " sf_loose: " << sf_loose <<  std::endl;
+            if (is_tight_btagged)
+            {
+                btag_prob_MC *= eff_tight;
+                btag_prob_DATA *= sf_tight * eff_tight;
+            }
+            else if (is_loose_btagged)
+            {
+                btag_prob_MC *= (eff_loose - eff_tight);
+                btag_prob_DATA *= (sf_loose * eff_loose - sf_tight * eff_tight);
+            }
+            else
+            {
+                btag_prob_MC *= (1 - eff_loose);
+                btag_prob_DATA *= (1 - sf_loose * eff_loose);
+            }
+        }
+        float btagsf = btag_prob_DATA / btag_prob_MC;
+        tx.setBranch<float>("btagsf", btagsf);
+    }
 }

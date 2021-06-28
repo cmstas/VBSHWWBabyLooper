@@ -27,8 +27,8 @@ except:
 hadd_dir = "hadds/{}".format(study_name)
 
 bkgs = [
-        "{}/tt1l.root".format(hadd_dir),
-        "{}/tt2l.root".format(hadd_dir),
+        "{}/tt1lpowheg.root".format(hadd_dir),
+        "{}/tt2lpowheg.root".format(hadd_dir),
         "{}/ttw.root".format(hadd_dir),
         "{}/ttz.root".format(hadd_dir),
         "{}/raretop.root".format(hadd_dir),
@@ -73,6 +73,10 @@ if "2017" in hadd_dir: lumi = 41.5
 if "2018" in hadd_dir: lumi = 59.97
 if "Run2" in hadd_dir: lumi = 137
 
+if "Run2" not in hadd_dir:
+    sigs = []
+    signal_labels = []
+
 ChannelsDetails_bin_labels = [
 "T-ee-in",
 "T-ee-out",
@@ -111,7 +115,15 @@ histxaxislabeloptions = {
         "TightLLMbbAll__LeptonPt1" : {"xaxis_label"      : "p_{T,sublead-lep} [GeV]" , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":  "auto" ,"blind":True},
         "TightLLMbbAll__HiggsPt"   : {"xaxis_label"      : "p_{T,bb} [GeV]"          , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":  "auto" ,"blind":True},
         "TightLLMbbAll__DRbb"      : {"xaxis_label"      : "#DeltaR_{bb}"            , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":  "auto" ,"blind":True},
-        "Mbb"                      : {"xaxis_label"      : "m_{bb} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 18, "signal_scale":   1                },
+        "TightLLMbbOnSR__HiggsPt"  : {"xaxis_label"      : "p_{T,bb} [GeV]"          , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":  "auto" ,"blind":True},
+        "TightLLMbbOnSR__ST"       : {"xaxis_label"      : "S_{T} [GeV]"             , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":  "auto" ,"blind":True},
+        "TightLLMbbOnSR__MET"      : {"xaxis_label"      : "MET [GeV]"               , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":  "auto", "blind":True},
+        "TightLLMbbOnSR__NCenJet30": {"xaxis_label"      : "N_{cen,jet}"             , "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale":  "auto", "blind":True},
+        "Mbb"                      : {"xaxis_label"      : "m_{bb} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale":   1                },
+        "TightLLMbbAll__Mbb"       : {"xaxis_label"      : "m_{bb} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 45, "signal_scale":   "auto", "blind":True},
+        "TightLLMbbAllNonSR__Mbb"  : {"xaxis_label"      : "m_{bb} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale":   1                },
+        "LooseLLMbbAllNonSR__Mbb"  : {"xaxis_label"      : "m_{bb} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale":   1                },
+        "TightLTMbbAllNonSR__Mbb"  : {"xaxis_label"      : "m_{bb} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale":   1                },
         "TightLLChannel__MJJ"      : {"xaxis_label"      : "m_{bb} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 18, "signal_scale":   1                },
         "TightLLCRMjj__Mbb"        : {"xaxis_label"      : "m_{bb} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 18, "signal_scale":   1                },
         "TightLLCRLepPt0__Mbb"     : {"xaxis_label"      : "m_{bb} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 12, "signal_scale":   1                },
@@ -185,12 +197,14 @@ p.dump_plot(fnames=bkgs,
     usercolors=colors,
     extraoptions={
         "print_yield": True,
-        "nbins": 20,
+        "nbins": 30,
         "signal_scale": 1,
         "legend_ncolumns": 3,
         "legend_scalex": 2.0,
         "lumi_value": lumi,
         "ratio_range": [0., 2.],
+        "yaxis_log":False,
+        "remove_underflow":True,
         },
     histxaxislabeloptions=histxaxislabeloptions,
     skip2d=True,
