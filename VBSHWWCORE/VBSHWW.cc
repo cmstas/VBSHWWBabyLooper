@@ -1214,7 +1214,7 @@ void VBSHWW::initSRCutflow()
             tx.setBranch<int>("subllepGenPartFlav", tx.getBranch<LV>("lep0").pt() > tx.getBranch<LV>("lep1").pt() ? tx.getBranch<int>("lep1GenPartFlav") : tx.getBranch<int>("lep0GenPartFlav"));
 
             // To veto same-sign dielectron on-Z (charge flip)
-            int mee_noZ = (not (lepchannel == 0 and abs((tx.getBranch<LV>("lep0")+tx.getBranch<LV>("lep1")).mass() - 91.1876) < 15.)); // if ee channel and mll is on-Z
+            int mee_noZ = (not (lepchannel == 0 and abs((tx.getBranch<LV>("lep0")+tx.getBranch<LV>("lep1")).mass() - 91.1876) < 15. and (tx.getBranch<int>("lep0ID") * tx.getBranch<int>("lep1ID") == 121))); // if ee channel and mll is on-Z
             tx.setBranch<int>("mee_noZ", mee_noZ);
 
             if (not mee_noZ) // reject events with dielectrons being on-Z (charge flip from likely Z+jets)

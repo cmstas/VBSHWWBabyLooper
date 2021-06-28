@@ -3,13 +3,15 @@ usage()
 {
   echo "ERROR - Usage:"
   echo
-  echo "      sh $(basename $0) STUDYNAME"
+  echo "      sh $(basename $0) STUDYNAME TAG"
   echo
   exit
 }
 
 if [ -z ${1} ]; then usage; fi
 STUDY=${1}
+if [ -z ${2} ]; then usage; fi
+TAG=${2}
 
 YEARS="2016 2017 2018"
 
@@ -73,13 +75,7 @@ SingleMuon_Run2018"
 
 # VBSWmpWmpHToLNuLNu_TuneCP5 \
 
-# NANOSKIMDIR=/hadoop/cms/store/user/phchang/VBSHWWNanoSkim/v12/
-# NANOSKIMDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_v12/
-# NANOSKIMDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_v20/
-# NANOSKIMDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_v22/
-# NANOSKIMDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_test/
-# NANOSKIMDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_v30/
-NANOSKIMDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_v40/
+NANOSKIMDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_${TAG}/
 
 rm -f .jobs.txt
 
@@ -89,7 +85,7 @@ for SAMPLE in ${SAMPLES}; do
 
     for YEAR in ${YEARS}; do
 
-        HISTDIR=hists/${STUDY}_${YEAR}
+        HISTDIR=hists/${TAG}/${STUDY}_${YEAR}
         mkdir -p ${HISTDIR}
 
         if [[ ${YEAR} == *"2016"* ]]; then NANOTAG=RunIISummer16NanoAOD*; fi
