@@ -1,8 +1,11 @@
 #ifndef VBSHWW_h
 #define VBSHWW_h
 
+// Misc
 #include "cxxopts.h"
+// Rooutil
 #include "rooutil.h"
+// NanoCORE
 #include "Nano.h"
 #include "Config.h"
 #include "Base.h"
@@ -12,6 +15,9 @@
 #include "MCTools.h"
 #include "Tools/goodrun.h"
 #include "Tools/btagsf/BTagCalibrationStandalone.h"
+// VBSHWWCORE
+#include "tools/lepScaleFactors.h" // ttH analysis scale factors
+#include "tools/TauIDSFTool.h"     // tau POG scale factors
 
 class VBSHWW
 {
@@ -59,6 +65,10 @@ public:
 
     // Custom TTree object
     RooUtil::TTreeX tx;
+
+    TauIDSFTool* tauSF_vsJet;
+    TauIDSFTool* tauSF_vsMu;
+    TauIDSFTool* tauSF_vsEl;
 
     BTagCalibration* btagCalib;
     BTagCalibrationReader* btagReaderTight;
