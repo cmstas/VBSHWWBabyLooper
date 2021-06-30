@@ -1,5 +1,5 @@
 #include "VBSHWW.h"
-#include "common_utils.h" // Four-top analysis scale factors
+#include "tools/lepScaleFactors.h" // ttH analysis scale factors
 
 // #define LEPID SS
 #define LEPID ttH
@@ -640,7 +640,7 @@ void VBSHWW::initSRCutflow()
                     tx.pushbackToBranch<float>("good_leptons_jetPtRelv2", nt.Muon_jetPtRelv2()[imu]);
                     tx.pushbackToBranch<float>("good_leptons_jetRelIso", nt.Muon_jetRelIso()[imu]);
                     tx.pushbackToBranch<float>("good_leptons_miniPFRelIso_all", nt.Muon_miniPFRelIso_all()[imu]);
-                    lepsf *= leptonScaleFactor(nt.year(), 13, nt.Muon_p4()[imu].pt(), nt.Muon_p4()[imu].eta(), /*ht is always 0 as we do not use HT trigger*/0, FTANA/*we use 4-top ID*/);
+                    lepsf *= getLeptonSF(13, nt.year(), ttH::IDtight, nt.Muon_p4()[imu].pt(), nt.Muon_p4()[imu].eta());
                 }
             }
 
@@ -659,7 +659,7 @@ void VBSHWW::initSRCutflow()
                     tx.pushbackToBranch<float>("good_leptons_jetPtRelv2", nt.Electron_jetPtRelv2()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_jetRelIso", nt.Electron_jetRelIso()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_miniPFRelIso_all", nt.Electron_miniPFRelIso_all()[iel]);
-                    lepsf *= leptonScaleFactor(nt.year(), 11, nt.Electron_p4()[iel].pt(), nt.Electron_p4()[iel].eta(), /*ht is always 0 as we do not use HT trigger*/0, FTANA/*we use 4-top ID*/);
+                    lepsf *= getLeptonSF(11, nt.year(), ttH::IDtight, nt.Electron_p4()[iel].pt(), nt.Electron_p4()[iel].eta());
                 }
             }
 

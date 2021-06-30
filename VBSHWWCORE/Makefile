@@ -6,7 +6,7 @@ include Makefile.arch
 SOURCES=$(wildcard *.cc)
 OBJECTS=$(SOURCES:.cc=.o)
 HEADERS=$(SOURCES:.cc=.h)
-SOURCES=VBSHWW.cc
+SOURCES=VBSHWW.cc $(wildcard tools/*.cc)
 HEADERS=VBSHWW.h
 OBJECTS=VBSHWW.o
 LIB=VBSHWW_CORE.so
