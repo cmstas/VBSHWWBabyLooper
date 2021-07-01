@@ -4,13 +4,18 @@
 #include "Base.h"
 
 namespace ttH {
-    float getElecTightSF(float eta, float pt, int year);
-    float getMuonTightSF(float eta, float pt, int year);
+    float getElecPOGLooseSFErr(float eta, float pt, int year);
+    float getMuonTightSFErr(float eta, float pt, int year);
     float getElecLooseSF(float eta, float pt, int year);
+    float getMuonLooseSFErr(float eta, float pt, int year);
+    float getMuonTightSF(float eta, float pt, int year);
+    float getElecTightSFErr(float eta, float pt, int year);
     float getMuonLooseSF(float eta, float pt, int year);
     float getElecPOGLooseSF(float eta, float pt, int year);
+    float getElecTightSF(float eta, float pt, int year);
+    float getElecLooseSFErr(float eta, float pt, int year);
+    float getElecRecoEffSFErr(float eta, float pt, int year);
     float getElecRecoEffSF(float eta, float pt, int year);
-    float getLeptonSF(int pdg_id, int year, ttH::IDLevel id_level, float pt, float eta);
 }
 
 #endif

@@ -664,7 +664,7 @@ void VBSHWW::initSRCutflow()
                     tx.pushbackToBranch<float>("good_leptons_jetPtRelv2", nt.Muon_jetPtRelv2()[imu]);
                     tx.pushbackToBranch<float>("good_leptons_jetRelIso", nt.Muon_jetRelIso()[imu]);
                     tx.pushbackToBranch<float>("good_leptons_miniPFRelIso_all", nt.Muon_miniPFRelIso_all()[imu]);
-                    lepsf *= getLeptonSF(13, nt.year(), ttH::IDtight, nt.Muon_p4()[imu].pt(), nt.Muon_p4()[imu].eta());
+                    lepsf *= ttH::getMuonTightSF(nt.Muon_p4()[imu].eta(), nt.Muon_p4()[imu].pt(), nt.year());
                 }
             }
 
@@ -683,7 +683,9 @@ void VBSHWW::initSRCutflow()
                     tx.pushbackToBranch<float>("good_leptons_jetPtRelv2", nt.Electron_jetPtRelv2()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_jetRelIso", nt.Electron_jetRelIso()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_miniPFRelIso_all", nt.Electron_miniPFRelIso_all()[iel]);
-                    lepsf *= getLeptonSF(11, nt.year(), ttH::IDtight, nt.Electron_p4()[iel].pt(), nt.Electron_p4()[iel].eta());
+                    lepsf *= ttH::getElecRecoEffSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());  // event -> reco
+                    lepsf *= ttH::getElecPOGLooseSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year()); // reco -> loose POG ID
+                    lepsf *= ttH::getElecTightSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());    // loose POG ID -> tight ttH ID
                 }
             }
 
