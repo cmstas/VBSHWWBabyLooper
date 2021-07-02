@@ -1121,6 +1121,9 @@ void VBSHWW::initSRCutflow()
             // Select only two tight leptons
             if (not (ntight == 2))
                 return false;
+            // // Select only two tight leptons
+            // if (not (ntight == 1))
+            //     return false;
 
             // Therefore I will only have two leptons in the good_leptons container
             const int& pdgid0 = tx.getBranchLazy<vector<int>>("good_leptons_pdgid")[0];
@@ -1360,7 +1363,8 @@ void VBSHWW::initSRCutflow()
             tx.setBranch<LV>("b0", tx.getBranch<vector<LV>>("higgs_jets_p4")[0]);
             tx.setBranch<LV>("b1", tx.getBranch<vector<LV>>("higgs_jets_p4")[1]);
             float mbb = (tx.getBranch<LV>("b0")+tx.getBranch<LV>("b1")).mass();
-            int mbbIn = mbb > 90. and mbb < 140.;
+            // int mbbIn = mbb > 90. and mbb < 140.;
+            int mbbIn = mbb < 150.;
             tx.setBranch<int>("mbbIn", mbbIn);
 
             // Require at least one of them pass a tight and another pass loose
@@ -1510,7 +1514,7 @@ void VBSHWW::initSRCutflow()
             float leppt0 = tx.getBranch<LV>("leadlep").pt();
             float leppt1 = tx.getBranch<LV>("subllep").pt();
             int mbbIn = tx.getBranch<int>("mbbIn");
-            tx.setBranch<int>("pass_blind", nt.isData() ? not (mbbIn and mjj > 500. and detajj > 3 and leppt0 > 140. and leppt1 > 60.): 1);
+            tx.setBranch<int>("pass_blind", nt.isData() ? not (mbbIn): 1);
             // if (mjj > 400 and detajj > 3 and nt.event() == 30)
             // {
             //     std::cout <<  " nt.run(): " << nt.run() <<  std::endl;
