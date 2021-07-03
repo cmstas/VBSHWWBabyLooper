@@ -18,5 +18,5 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - name: Checkout submodules
-      run: git submodule update --init --recursive
+      run: apt install git && git submodule update --init --recursive
     - run: . rooutil/thisrooutil.sh && export VBSHWWNANOLOOPERDIR=$PWD && export LD_LIBRARY_PATH=$PWD/VBSHWWCORE:$LD_LIBRARY_PATH && export LD_LIBRARY_PATH=$PWD/NanoTools/NanoCORE:$LD_LIBRARY_PATH && make -j
