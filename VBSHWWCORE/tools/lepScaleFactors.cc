@@ -1158,7 +1158,7 @@ float ttH::getMuonPOGMediumSF2016BCDEF(float eta, float pt) {
 
 float ttH::getMuonPOGMediumSF(float eta, float pt, int year) {
     if (year == 2016) {
-        return 0.45*ttH::getMuonPOGMediumSF2016GH(eta, pt, year) + 0.55*ttH::getMuonPOGMediumSF2016BCDEF(eta, pt, year);
+        return 0.45*ttH::getMuonPOGMediumSF2016GH(eta, pt) + 0.55*ttH::getMuonPOGMediumSF2016BCDEF(eta, pt);
     }
     if (year == 2017) {
         if (pt >= 15 && pt < 20 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.997092;
