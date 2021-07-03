@@ -1,0 +1,20 @@
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+
+jobs:
+
+  build:
+    
+    runs-on: ubuntu-latest
+    container:
+        image: rootproject/root:6.22.00-ubuntu20.04
+
+    steps:
+    - uses: actions/checkout@v2
+    - run: make -j
