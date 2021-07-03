@@ -254,6 +254,43 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch<int>("mbbIn");
     tx.createBranch<int>("pass_blind");
 
+    // Create keyvariables worth computing
+    tx.createBranch<float>("mbb");
+    tx.createBranch<float>("dphibb");
+    tx.createBranch<float>("detabb");
+    tx.createBranch<float>("drbb");
+    tx.createBranch<float>("ptbb");
+
+    tx.createBranch<float>("b0pt");
+    tx.createBranch<float>("b1pt");
+
+    tx.createBranch<float>("mjj");
+    tx.createBranch<float>("dphijj");
+    tx.createBranch<float>("detajj");
+    tx.createBranch<float>("drjj");
+    tx.createBranch<float>("ptjj");
+
+    tx.createBranch<float>("j0pt");
+    tx.createBranch<float>("j1pt");
+
+    tx.createBranch<float>("mll");
+    tx.createBranch<float>("dphill");
+    tx.createBranch<float>("detall");
+    tx.createBranch<float>("drll");
+    tx.createBranch<float>("ptll");
+
+    tx.createBranch<float>("l0pt");
+    tx.createBranch<float>("l1pt");
+
+    tx.createBranch<float>("met");
+
+    tx.createBranch<float>("lt");
+    tx.createBranch<float>("st");
+    tx.createBranch<float>("mvvh");
+    tx.createBranch<float>("mtvvh");
+    tx.createBranch<float>("ptvvh");
+
+
 //=============================
 //
 // Common Selections
@@ -745,9 +782,9 @@ void VBSHWW::initSRCutflow()
                         tx.pushbackToBranch<int>("good_taus_pdgid", (-nt.Tau_charge()[itau]) * 15);
                         tx.pushbackToBranch<int>("good_taus_tight", LEPID::tauID(itau, LEPID::IDtight, nt.year()));
                         tx.pushbackToBranch<int>("good_taus_jetIdx", nt.Tau_jetIdx()[itau]);
-                        lepsf *= tauSF_vsJet->getSFvsPT(nt.Tau_pt()[itau], nt.Tau_genPartFlav()[itau]);
-                        lepsf *= tauSF_vsMu->getSFvsEta(nt.Tau_eta()[itau], nt.Tau_genPartFlav()[itau]);
-                        lepsf *= tauSF_vsEl->getSFvsEta(nt.Tau_eta()[itau], nt.Tau_genPartFlav()[itau]);
+                        lepsf *= (nt.isData() ? 1. : tauSF_vsJet->getSFvsPT(nt.Tau_pt()[itau], nt.Tau_genPartFlav()[itau]));
+                        lepsf *= (nt.isData() ? 1. : tauSF_vsMu->getSFvsEta(nt.Tau_eta()[itau], nt.Tau_genPartFlav()[itau]));
+                        lepsf *= (nt.isData() ? 1. : tauSF_vsEl->getSFvsEta(nt.Tau_eta()[itau], nt.Tau_genPartFlav()[itau]));
                     }
                 }
 
@@ -1159,12 +1196,18 @@ void VBSHWW::initSRCutflow()
             const int& pdgid0 = tx.getBranchLazy<vector<int>>("good_leptons_pdgid")[0];
             const int& pdgid1 = tx.getBranchLazy<vector<int>>("good_leptons_pdgid").size() == 2 ? tx.getBranchLazy<vector<int>>("good_leptons_pdgid")[1] : tx.getBranchLazy<vector<int>>("good_taus_pdgid")[0];
 
-            // Require same sign
-            if (not (pdgid0 * pdgid1 > 0))
-                return false;
-            // // Require opposite sign
-            // if (not (pdgid0 * pdgid1 < 0))
-            //     return false;
+            if (looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v40/"))
+            {
+                // Require same sign
+                if (not (pdgid0 * pdgid1 > 0))
+                    return false;
+            }
+            else if (looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v41/"))
+            {
+                // Require opposite sign
+                if (not (pdgid0 * pdgid1 < 0))
+                    return false;
+            }
 
             const float& pt0 = tx.getBranchLazy<vector<LV>>("good_leptons_p4")[0].pt();
             const float& pt1 = tx.getBranchLazy<vector<LV>>("good_leptons_p4").size() == 2 ? tx.getBranchLazy<vector<LV>>("good_leptons_p4")[1].pt() : tx.getBranchLazy<vector<LV>>("good_taus_p4")[0].pt();
@@ -1544,7 +1587,8 @@ void VBSHWW::initSRCutflow()
             float leppt0 = tx.getBranch<LV>("leadlep").pt();
             float leppt1 = tx.getBranch<LV>("subllep").pt();
             int mbbIn = tx.getBranch<int>("mbbIn");
-            tx.setBranch<int>("pass_blind", nt.isData() ? not (mbbIn): 1);
+            int isSS = (tx.getBranch<int>("lep0ID") * tx.getBranch<int>("lep1ID")) > 0;
+            tx.setBranch<int>("pass_blind", nt.isData() and isSS ? not (mbbIn): 1);
             // if (mjj > 400 and detajj > 3 and nt.event() == 30)
             // {
             //     std::cout <<  " nt.run(): " << nt.run() <<  std::endl;
@@ -1597,6 +1641,50 @@ void VBSHWW::initSRCutflow()
             if (pass_blind and btagchannel == 0 and lepchannel == 4 and     mbbIn) channeldetail = 14;
             if (pass_blind and btagchannel == 0 and lepchannel == 4 and not mbbIn) channeldetail = 15;
             tx.setBranch<int>("channeldetail", channeldetail);
+
+            // Create keyvariables worth computing
+            const LV& b0 = tx.getBranch<LV>("b0");
+            const LV& b1 = tx.getBranch<LV>("b1");
+            tx.setBranch<float>("mbb", (b0 + b1).mass());
+            tx.setBranch<float>("dphibb", fabs(RooUtil::Calc::DeltaPhi(b0, b1)));
+            tx.setBranch<float>("detabb", fabs(RooUtil::Calc::DeltaEta(b0, b1)));
+            tx.setBranch<float>("drbb", RooUtil::Calc::DeltaR(b0, b1));
+            tx.setBranch<float>("ptbb", (b0 + b1).pt());
+
+            tx.setBranch<float>("b0pt", b0.pt());
+            tx.setBranch<float>("b1pt", b1.pt());
+
+            const LV& j0 = tx.getBranch<LV>("j0");
+            const LV& j1 = tx.getBranch<LV>("j1");
+            tx.setBranch<float>("mjj", (j0 + j1).mass());
+            tx.setBranch<float>("dphijj", fabs(RooUtil::Calc::DeltaPhi(j0, j1)));
+            tx.setBranch<float>("detajj", fabs(RooUtil::Calc::DeltaEta(j0, j1)));
+            tx.setBranch<float>("drjj", RooUtil::Calc::DeltaR(j0, j1));
+            tx.setBranch<float>("ptjj", (j0 + j1).pt());
+
+            tx.setBranch<float>("j0pt", j0.pt());
+            tx.setBranch<float>("j1pt", j1.pt());
+
+            const LV& leadlep = tx.getBranch<LV>("leadlep");
+            const LV& subllep = tx.getBranch<LV>("subllep");
+            tx.setBranch<float>("mll", (leadlep + subllep).mass());
+            tx.setBranch<float>("dphill", fabs(RooUtil::Calc::DeltaPhi(leadlep, subllep)));
+            tx.setBranch<float>("detall", fabs(RooUtil::Calc::DeltaEta(leadlep, subllep)));
+            tx.setBranch<float>("drll", RooUtil::Calc::DeltaR(leadlep, subllep));
+            tx.setBranch<float>("ptll", (leadlep + subllep).pt());
+
+            tx.setBranch<float>("l0pt", leadlep.pt());
+            tx.setBranch<float>("l1pt", subllep.pt());
+
+            const LV& met_p4 = tx.getBranch<LV>("met_p4");
+            tx.setBranch<float>("met", met_p4.pt());
+
+            tx.setBranch<float>("lt", leadlep.pt() + subllep.pt() + met_p4.pt());
+            tx.setBranch<float>("st", leadlep.pt() + subllep.pt() + met_p4.pt() + b0.pt() + b1.pt());
+            tx.setBranch<float>("mvvh", (leadlep + subllep + met_p4 + b0 + b1).mass());
+            tx.setBranch<float>("mtvvh", (leadlep + subllep + met_p4 + b0 + b1).mt());
+            tx.setBranch<float>("ptvvh", (leadlep + subllep + met_p4 + b0 + b1).pt());
+
             return true;
         },
         UNITY);
