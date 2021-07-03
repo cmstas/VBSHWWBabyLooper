@@ -1,5 +1,4 @@
 #include "VBSHWW.h"
-#include "common_utils.h" // Four-top analysis scale factors
 
 // #define LEPID SS
 #define LEPID ttH
@@ -34,6 +33,31 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     // const char* json_file = TString::Format("%s/NanoTools/NanoCORE/Tools/data/Cert_271036-325175_13TeV_Combined161718_JSON_snt.txt", vbsHwwNanoLooperDirPath.Data()).Data();
     // cout << "Setting grl: " << json_file << endl;
     set_goodrun_file("/nfs-7/userdata/phchang/analysis_data/grl/Cert_271036-325175_13TeV_Combined161718_JSON_snt.txt");
+
+    // Setting up tau ID scale factors (used tight ttH tau ID DeepTau working points)
+    // TODO: check that 'embedding' should indeed be false (last bool in the TauIDSFTool constructor)
+    if (nt.year() == 2016)
+    {
+        tauSF_vsJet = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSjet", "Tight", false, false);
+        tauSF_vsMu = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSmu", "VLoose", false, false);
+        tauSF_vsEl = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSe", "VVLoose", false, false); // ttH uses VVVLoose but sfs only available up to VVLoose
+    }
+    else if (nt.year() == 2017)
+    {
+        tauSF_vsJet = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSjet", "Tight", false, false);
+        tauSF_vsMu = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSmu", "VLoose", false, false);
+        tauSF_vsEl = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSe", "VVLoose", false, false); // ttH uses VVVLoose but sfs only available up to VVLoose
+    }
+    else if (nt.year() == 2018)
+    {
+        tauSF_vsJet = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSjet", "Tight", false, false);
+        tauSF_vsMu = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSmu", "VLoose", false, false);
+        tauSF_vsEl = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSe", "VVLoose", false, false); // ttH uses VVVLoose but sfs only available up to VVLoose
+    }
+    else
+    {
+        RooUtil::error(TString::Format("While setting tau ID scale factors, found year = %d that is not recognized.", nt.year()));
+    }
 
     // Setting up btagging scale factors
     if (nt.year() == 2016)
@@ -640,7 +664,8 @@ void VBSHWW::initSRCutflow()
                     tx.pushbackToBranch<float>("good_leptons_jetPtRelv2", nt.Muon_jetPtRelv2()[imu]);
                     tx.pushbackToBranch<float>("good_leptons_jetRelIso", nt.Muon_jetRelIso()[imu]);
                     tx.pushbackToBranch<float>("good_leptons_miniPFRelIso_all", nt.Muon_miniPFRelIso_all()[imu]);
-                    lepsf *= leptonScaleFactor(nt.year(), 13, nt.Muon_p4()[imu].pt(), nt.Muon_p4()[imu].eta(), /*ht is always 0 as we do not use HT trigger*/0, FTANA/*we use 4-top ID*/);
+                    lepsf *= ttH::getMuonLooseSF(nt.Muon_p4()[imu].eta(), nt.Muon_p4()[imu].pt(), nt.year());     // reco -> loose ttH ID
+                    lepsf *= ttH::getMuonTightSF(nt.Muon_p4()[imu].eta(), nt.Muon_p4()[imu].pt(), nt.year());     // loose ttH ID -> tight ttH ID
                 }
             }
 
@@ -659,7 +684,10 @@ void VBSHWW::initSRCutflow()
                     tx.pushbackToBranch<float>("good_leptons_jetPtRelv2", nt.Electron_jetPtRelv2()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_jetRelIso", nt.Electron_jetRelIso()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_miniPFRelIso_all", nt.Electron_miniPFRelIso_all()[iel]);
-                    lepsf *= leptonScaleFactor(nt.year(), 11, nt.Electron_p4()[iel].pt(), nt.Electron_p4()[iel].eta(), /*ht is always 0 as we do not use HT trigger*/0, FTANA/*we use 4-top ID*/);
+                    lepsf *= ttH::getElecRecoEffSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());  // event -> reco
+                    lepsf *= ttH::getElecPOGLooseSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year()); // reco -> loose POG ID
+                    lepsf *= ttH::getElecLooseSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());    // loose POG ID -> loose ttH ID
+                    lepsf *= ttH::getElecTightSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());    // loose ttH ID -> tight ttH ID
                 }
             }
 
@@ -717,7 +745,9 @@ void VBSHWW::initSRCutflow()
                         tx.pushbackToBranch<int>("good_taus_pdgid", (-nt.Tau_charge()[itau]) * 15);
                         tx.pushbackToBranch<int>("good_taus_tight", LEPID::tauID(itau, LEPID::IDtight, nt.year()));
                         tx.pushbackToBranch<int>("good_taus_jetIdx", nt.Tau_jetIdx()[itau]);
-
+                        lepsf *= tauSF_vsJet->getSFvsPT(nt.Tau_pt()[itau], nt.Tau_genPartFlav()[itau]);
+                        lepsf *= tauSF_vsMu->getSFvsEta(nt.Tau_eta()[itau], nt.Tau_genPartFlav()[itau]);
+                        lepsf *= tauSF_vsEl->getSFvsEta(nt.Tau_eta()[itau], nt.Tau_genPartFlav()[itau]);
                     }
                 }
 
