@@ -1,8 +1,5 @@
 name: CI
 
-variables:
-  GIT_SUBMODULE_STRATEGY: recursive
-
 on:
   push:
     branches: [ main ]
@@ -20,4 +17,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
+    - name: Checkout submodules
+      uses: textbook/git-checkout-submodule-action@master
     - run: . rooutil/thisrooutil.sh && export VBSHWWNANOLOOPERDIR=$PWD && export LD_LIBRARY_PATH=$PWD/VBSHWWCORE:$LD_LIBRARY_PATH && export LD_LIBRARY_PATH=$PWD/NanoTools/NanoCORE:$LD_LIBRARY_PATH && make -j
