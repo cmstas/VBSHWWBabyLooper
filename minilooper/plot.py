@@ -1,24 +1,5 @@
 #!/bin/env python
 
-ChannelsDetails_bin_labels = [
-"T-ee-in",
-"T-ee-out",
-"T-e#mu-in",
-"T-e#mu-out",
-"T-#mu#mu-in",
-"T-#mu#mu-out",
-"L-ee-in",
-"L-ee-out",
-"L-e#mu-in",
-"L-e#mu-out",
-"L-#mu#mu-in",
-"L-#mu#mu-out",
-"T-e#tau-in",
-"T-e#tau-out",
-"T-#mu#tau-in",
-"T-#mu#tau-out",
-]
-
 histxaxislabeloptions = {
 "ElChannel__Mbb"         : {"xaxis_label"      : "m_{bb} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": 1, "blind": False },
 "MuChannel__Mbb"         : {"xaxis_label"      : "m_{bb} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": 1, "blind": False },
@@ -29,27 +10,35 @@ histxaxislabeloptions = {
 
 import plottery_wrapper as p
 import sys
-import ROOT as r
-r.gROOT.SetBatch(True)
-
 def usage():
     print("Usage:")
     print("")
-    print("   python {} [PLOTNAMES]".format(sys.argv[0]))
+    print("   python {} VERSION YEAR [PLOTNAMES]".format(sys.argv[0]))
     print("")
+    print("    VERSION       Skim versions (e.g. v40)")
+    print("    YEAR          Year          (e.g. 2016, 2017, 2018, or Run2)")
     print("")
     sys.exit()
 
+try:
+    tag = sys.argv[1]
+except:
+    usage()
 
 try:
-    cutname_to_plot = sys.argv[1]
+    year = sys.argv[2]
+except:
+    usage()
+
+try:
+    cutname_to_plot = sys.argv[3]
 except:
     cutname_to_plot = ""
 
-tag = "v40"
+import ROOT as r
+r.gROOT.SetBatch(True)
 
-hadd_dir = "hists/{}/".format(tag)
-
+hadd_dir = "hists/{}/{}/".format(tag, year)
 
 bkgs = [
         "{}/tt1lpowheg.root".format(hadd_dir),
@@ -91,6 +80,10 @@ signal_labels = [
         # "C_{2V}=3",
         # "C_{2V}=-2",
         ]
+
+if "Run2" not in hadd_dir:
+    sigs = []
+    signal_labels = None
 
 data_fname = "{}/data.root".format(hadd_dir)
 
@@ -144,19 +137,20 @@ p.dump_plot(
     data_fname=data_fname,
     legend_labels=bkg_labels,
     signal_labels=signal_labels,
-    dirname="cutscans/{}/".format(tag) if do_cut_scan else "plots/{}/".format(tag),
+    dirname="cutscans/{}/{}".format(tag, year) if do_cut_scan else "plots/{}/{}".format(tag, year),
     filter_pattern=filter_pattern,
     dogrep=dogrep,
     usercolors=colors,
     extraoptions={
         "print_yield": True,
-        "nbins": 6,
+        "nbins": 20,
         # "signal_scale": 10,
         "legend_ncolumns": 3,
         "legend_scalex": 2.0,
         "lumi_value": lumi,
-        "ratio_range": [0., 2.],
-        "yield_prec": 2,
+        # "ratio_range": [0., 2.],
+        "ratio_range": [0.7, 1.3],
+        # "yield_prec": 4,
         # "blind": True,
         # "yaxis_range": [0., 45.],
         },
@@ -164,86 +158,3 @@ p.dump_plot(
     skip2d=True,
     _plotter=p.plot_cut_scan if do_cut_scan else p.plot_hist,
     )
-
-# # cutflow
-# p.dump_plot(fnames=bkgs,
-#     sig_fnames=sigs,
-#     data_fname=data_fname,
-#     legend_labels=bkg_labels,
-#     signal_labels=signal_labels,
-#     dirname="plots/{}/".format(tag),
-#     filter_pattern=filter_pattern,
-#     dogrep=dogrep,
-#     usercolors=colors,
-#     extraoptions={
-#         "print_yield": True,
-#         # "nbins": 45,
-#         "signal_scale": "auto",
-#         "legend_ncolumns": 3,
-#         "legend_scalex": 2.0,
-#         "lumi_value": lumi,
-#         "ratio_range": [0., 2.],
-#         # "blind": True,
-#         },
-#     histxaxislabeloptions=histxaxislabeloptions,
-#     skip2d=True,
-#     _plotter=p.plot_cut_scan,
-#     )
-
-
-# "HiggsPt"     : {"xaxis_label"      : "p_{T,bb} [GeV]"          , "xaxis_ndivisions" : 505, "nbins":  5, "signal_scale": 40, "blind": True },
-# "DEtaJJ"      : {"xaxis_label"      : "#Delta#eta_{jj}"         , "xaxis_ndivisions" : 505, "nbins": 45, "signal_scale": 40, "blind": True },
-# "MJJ"         : {"xaxis_label"      : "m_{jj} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 45, "signal_scale": 40, "blind": True },
-# "Mbb"         : {"xaxis_label"      : "m_{bb} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 15, "signal_scale": 5, "blind": True },
-# "LeptonPt0"   : {"xaxis_label"      : "p_{T,lead-lep} [GeV]"    , "xaxis_ndivisions" : 505, "nbins": 45, "signal_scale": 40, "blind": True },
-# "LeptonPt1"   : {"xaxis_label"      : "p_{T,trail-lep} [GeV]"   , "xaxis_ndivisions" : 505, "nbins": 45, "signal_scale": 40, "blind": True },
-# "LT"          : {"xaxis_label"      : "L_{T} [GeV]"             , "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": 1, "blind": False, "yaxis_log":True },
-# "MVVH"        : {"xaxis_label"      : "m_{WWH} [GeV]"           , "xaxis_ndivisions" : 505, "nbins": 45, "signal_scale": 10, "blind": True },
-# "LL__Mb0b1MET"             : {"xaxis_label"      : "m_{bbMET} [GeV]"         , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1, "remove_overflow":True},
-# "TightLLMbbAll__MJJ"       : {"xaxis_label"      : "m_{jj} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":  "auto" ,"blind":True},
-# "TightLLMbbAll__DEtaJJ"    : {"xaxis_label"      : "#Delta#eta_{jj}"         , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":  "auto" ,"blind":True},
-# "TightLLMbbAll__LeptonPt0" : {"xaxis_label"      : "p_{T,lead-lep} [GeV]"    , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":  "auto" ,"blind":True},
-# "TightLLMbbAll__LeptonPt1" : {"xaxis_label"      : "p_{T,sublead-lep} [GeV]" , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":  "auto" ,"blind":True},
-# "TightLLMbbAll__HiggsPt"   : {"xaxis_label"      : "p_{T,bb} [GeV]"          , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":  "auto" ,"blind":True},
-# "TightLLMbbAll__DRbb"      : {"xaxis_label"      : "#DeltaR_{bb}"            , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":  "auto" ,"blind":True},
-# "TightLLMbbOnSR__HiggsPt"  : {"xaxis_label"      : "p_{T,bb} [GeV]"          , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":  "auto" ,"blind":True},
-# "TightLLMbbOnSR__ST"       : {"xaxis_label"      : "S_{T} [GeV]"             , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":  "auto" ,"blind":True},
-# "TightLLMbbOnSR__MET"      : {"xaxis_label"      : "MET [GeV]"               , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":  "auto", "blind":True},
-# "TightLLMbbOnSR__NCenJet30": {"xaxis_label"      : "N_{cen,jet}"             , "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale":  "auto", "blind":True},
-# "Mbb"                      : {"xaxis_label"      : "m_{bb} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale":   1                },
-# "TightLLMbbAll__Mbb"       : {"xaxis_label"      : "m_{bb} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 45, "signal_scale":   "auto", "blind":True},
-# "TightLLChannel__MJJ"      : {"xaxis_label"      : "m_{bb} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 18, "signal_scale":   1                },
-# "TightLLCRMjj__Mbb"        : {"xaxis_label"      : "m_{bb} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 18, "signal_scale":   1                },
-# "TightLLCRLepPt0__Mbb"     : {"xaxis_label"      : "m_{bb} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 12, "signal_scale":   1                },
-# "TightLLCRLepPt1__Mbb"     : {"xaxis_label"      : "m_{bb} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 12, "signal_scale":   1                },
-# "LeptonPt0"                : {"xaxis_label"      : "p_{T,lead-lep} [GeV]"    , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":  "auto"            },
-# "LeptonPt1"                : {"xaxis_label"      : "p_{T,sublead-lep} [GeV]" , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":  "auto"            },
-# "LeptonPtFlavor0"          : {"xaxis_label"      : "p_{T,type0} [GeV]"       , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":  "auto"            },
-# "LeptonPtFlavor1"          : {"xaxis_label"      : "p_{T,type1} [GeV]"       , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":  "auto"            },
-# "HiggsPt"                  : {"xaxis_label"      : "p_{T,bb} [GeV]"          , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "DRbb"                     : {"xaxis_label"      : "#DeltaR_{bb}"            , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "MET"                      : {"xaxis_label"      : "MET [GeV]"               , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "METLow"                   : {"xaxis_label"      : "MET [GeV]"               , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "Mll"                      : {"xaxis_label"      : "m_{ll} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "Mll"                      : {"xaxis_label"      : "m_{ll} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "MJJ"                      : {"xaxis_label"      : "m_{jj} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "DEtaJJ"                   : {"xaxis_label"      : "#Delta#eta_{jj}"         , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "DPhill"                   : {"xaxis_label"      : "#Delta#phi_{ll}"         , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "DRll"                     : {"xaxis_label"      : "#DeltaR_{ll}"            , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "DEtall"                   : {"xaxis_label"      : "#Delta#eta_{ll}"         , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "JetPt0"                   : {"xaxis_label"      : "p_{T,lead-jet} [GeV]"    , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "JetPt1"                   : {"xaxis_label"      : "p_{T,sublead-jet} [GeV]" , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "BJetPt0"                  : {"xaxis_label"      : "p_{T,lead-b} [GeV]"      , "xaxis_ndivisions" : 505, "nbins": 45, "signal_scale":   1                },
-# "BJetPt1"                  : {"xaxis_label"      : "p_{T,sublead-b} [GeV]"   , "xaxis_ndivisions" : 505, "nbins": 45, "signal_scale":   1                },
-# "JetEta0"                  : {"xaxis_label"      : "#eta_{lead-jet}"         , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "JetEta1"                  : {"xaxis_label"      : "#eta_{sublead-jet}"      , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "BJetEta0"                 : {"xaxis_label"      : "#eta_{lead-b}"           , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "BJetEta1"                 : {"xaxis_label"      : "#eta_{sublead-b}"        , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "JetPhi0"                  : {"xaxis_label"      : "#phi_{lead-jet}"         , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "JetPhi1"                  : {"xaxis_label"      : "#phi_{sublead-jet}"      , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "BJetPhi0"                 : {"xaxis_label"      : "#phi_{lead-b}"           , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "BJetPhi1"                 : {"xaxis_label"      : "#phi_{sublead-b}"        , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "Channels"                 : {"xaxis_label"      : "Channels"                , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                },
-# "ChannelsMbbMerged"        : {"xaxis_label"      : ""                        , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                , "bin_labels": ChannelsMbbMerged_bin_labels},
-# "MbbBothGenMatched"        : {"xaxis_label"      : "m_{bb} [GeV]"            , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   1                , "remove_underflow": True},
-# "BJetMatchCategory"        : {"xaxis_label"      : "N_{b-jet,gen-matched}"   , "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale":   "auto"           , "bin_labels": ["N/A", "0", "1", "2"]},

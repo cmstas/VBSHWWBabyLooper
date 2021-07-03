@@ -1,11 +1,24 @@
+#!/bin/bash
 
-TAG=v40
+if [ -z $1 ]; then
+    echo "Usage:"
+    echo ""
+    echo "  sh $0 VERSION YEAR"
+    echo ""
+    echo "     VERSION    Skim version (e.g. v40)"
+    echo "     YEAR       Year         (e.g. 2016, 2017, 2018, or Run2)"
+    echo ""
+    exit
+fi
 
-HISTDIR=hists/${TAG}
+TAG=${1}
+YEAR=${2}
+
+HISTDIR=hists/${TAG}/${YEAR}
 
 mkdir -p ${HISTDIR}
 
-MINIDIR=../hadds/${TAG}/createMini_Run2
+MINIDIR=../hadds/${TAG}/createMini_${YEAR}
 
 rm -f .jobs.txt
 echo "rm -f ${HISTDIR}/tt1l.root          ; ./doAnalysis -t variable -i ${MINIDIR}/tt1l.root           -o ${HISTDIR}/tt1l.root           > ${HISTDIR}/tt1l.log                 2>&1" >> .jobs.txt
