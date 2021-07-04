@@ -221,6 +221,10 @@ void VBS::Init(TTree *tree) {
   if (b0pt_branch) b0pt_branch->SetAddress(&b0pt_);
   b1pt_branch = tree->GetBranch("b1pt");
   if (b1pt_branch) b1pt_branch->SetAddress(&b1pt_);
+  b0tag_branch = tree->GetBranch("b0tag");
+  if (b0tag_branch) b0tag_branch->SetAddress(&b0tag_);
+  b1tag_branch = tree->GetBranch("b1tag");
+  if (b1tag_branch) b1tag_branch->SetAddress(&b1tag_);
   mjj_branch = tree->GetBranch("mjj");
   if (mjj_branch) mjj_branch->SetAddress(&mjj_);
   dphijj_branch = tree->GetBranch("dphijj");
@@ -376,6 +380,8 @@ void VBS::GetEntry(unsigned int idx) {
   ptbb_isLoaded = false;
   b0pt_isLoaded = false;
   b1pt_isLoaded = false;
+  b0tag_isLoaded = false;
+  b1tag_isLoaded = false;
   mjj_isLoaded = false;
   dphijj_isLoaded = false;
   detajj_isLoaded = false;
@@ -508,6 +514,8 @@ void VBS::LoadAllBranches() {
   if (ptbb_branch != 0) ptbb();
   if (b0pt_branch != 0) b0pt();
   if (b1pt_branch != 0) b1pt();
+  if (b0tag_branch != 0) b0tag();
+  if (b1tag_branch != 0) b1tag();
   if (mjj_branch != 0) mjj();
   if (dphijj_branch != 0) dphijj();
   if (detajj_branch != 0) detajj();
@@ -1934,6 +1942,32 @@ const float &VBS::b1pt() {
   return b1pt_;
 }
 
+const int &VBS::b0tag() {
+  if (not b0tag_isLoaded) {
+    if (b0tag_branch != 0) {
+      b0tag_branch->GetEntry(index);
+    } else {
+      printf("branch b0tag_branch does not exist!\n");
+      exit(1);
+    }
+    b0tag_isLoaded = true;
+  }
+  return b0tag_;
+}
+
+const int &VBS::b1tag() {
+  if (not b1tag_isLoaded) {
+    if (b1tag_branch != 0) {
+      b1tag_branch->GetEntry(index);
+    } else {
+      printf("branch b1tag_branch does not exist!\n");
+      exit(1);
+    }
+    b1tag_isLoaded = true;
+  }
+  return b1tag_;
+}
+
 const float &VBS::mjj() {
   if (not mjj_isLoaded) {
     if (mjj_branch != 0) {
@@ -2325,6 +2359,8 @@ const float &drbb() { return vbs.drbb(); }
 const float &ptbb() { return vbs.ptbb(); }
 const float &b0pt() { return vbs.b0pt(); }
 const float &b1pt() { return vbs.b1pt(); }
+const int &b0tag() { return vbs.b0tag(); }
+const int &b1tag() { return vbs.b1tag(); }
 const float &mjj() { return vbs.mjj(); }
 const float &dphijj() { return vbs.dphijj(); }
 const float &detajj() { return vbs.detajj(); }
