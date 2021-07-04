@@ -265,6 +265,8 @@ VBSHWW::VBSHWW(int argc, char** argv) :
 
     tx.createBranch<float>("b0pt");
     tx.createBranch<float>("b1pt");
+    tx.createBranch<int>("b0tag");
+    tx.createBranch<int>("b1tag");
 
     tx.createBranch<float>("mjj");
     tx.createBranch<float>("dphijj");
@@ -1655,6 +1657,8 @@ void VBSHWW::initSRCutflow()
 
             tx.setBranch<float>("b0pt", b0.pt());
             tx.setBranch<float>("b1pt", b1.pt());
+            tx.setBranch<int>("b0tight", tx.getBranch<vector<int>>("higgs_jets_tight_btagged")[0]);
+            tx.setBranch<int>("b1tight", tx.getBranch<vector<int>>("higgs_jets_tight_btagged")[1]);
 
             const LV& j0 = tx.getBranch<LV>("j0");
             const LV& j1 = tx.getBranch<LV>("j1");
