@@ -254,6 +254,8 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch<int>("mbbIn");
     tx.createBranch<int>("pass_blind");
 
+    tx.createBranch<int>("categ");
+
     // Create keyvariables worth computing
     tx.createBranch<float>("mbb");
     tx.createBranch<float>("dphibb");
@@ -1684,6 +1686,18 @@ void VBSHWW::initSRCutflow()
             tx.setBranch<float>("mvvh", (leadlep + subllep + met_p4 + b0 + b1).mass());
             tx.setBranch<float>("mtvvh", (leadlep + subllep + met_p4 + b0 + b1).mt());
             tx.setBranch<float>("ptvvh", (leadlep + subllep + met_p4 + b0 + b1).pt());
+
+            int categ = -1;
+            const int& leadlepID = tx.getBranch<int>("leadlepID");
+            if (leadlepID < 0 and   btagchannel <= 1 and lepchannel <= 2 and abs(leadlepID) == 11)
+                categ = 0;
+            else if (leadlepID < 0 and   btagchannel <= 1 and lepchannel <= 2 and abs(leadlepID) == 13)
+                categ = 1;
+            else if (leadlepID < 0 and   btagchannel == 0 and lepchannel >  2)
+                categ = 2;
+            else if (leadlepID > 0 and ((btagchannel <= 1 and lepchannel <= 2) or (btagchannel == 0 and lepchannel < 2)))
+                categ = 3;
+            tx.setBranch<int>("categ", categ);
 
             return true;
         },
