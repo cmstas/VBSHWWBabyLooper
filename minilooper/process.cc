@@ -385,22 +385,26 @@ int main(int argc, char** argv)
     ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("EEChannel" , [&]() { return vbs.lepchannel() == 0; }, UNITY);
     ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("EMChannel" , [&]() { return vbs.lepchannel() == 1; }, UNITY);
     ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("MMChannel" , [&]() { return vbs.lepchannel() == 2; }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LLChannel" , [&]() { return vbs.lepchannel() == 0 or vbs.lepchannel() == 1 or vbs.lepchannel() == 2; }, UNITY);
     ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("ETChannel" , [&]() { return vbs.lepchannel() == 3; }, UNITY);
     ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("MTChannel" , [&]() { return vbs.lepchannel() == 4; }, UNITY);
     ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LTChannel" , [&]() { return vbs.lepchannel() >= 3; }, UNITY);
-    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("ElChannel" , [&]() { return (vbs.leadlepID() < 0) and (vbs.lepchannel()  == 0 or (vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 11)); }, UNITY);
-    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("MuChannel" , [&]() { return (vbs.leadlepID() < 0) and (vbs.lepchannel()  == 2 or (vbs.lepchannel() == 1 and abs(vbs.leadlepID()) == 13)); }, UNITY);
-    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TauChannel", [&]() { return (vbs.leadlepID() < 0) and (vbs.btagchannel() == 0 and vbs.lepchannel() >= 3 and vbs.lepchannel() <= 4);       }, UNITY);
-    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("NegChannel", [&]() { return (vbs.leadlepID() > 0);}, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("ElChannel" , [&]() { return vbs.categ() == 0; }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("MuChannel" , [&]() { return vbs.categ() == 1; }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("LgtChannel", [&]() { return vbs.categ() == 0 or vbs.categ() == 1; }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("TauChannel", [&]() { return vbs.categ() == 2; }, UNITY);
+    ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("NegChannel", [&]() { return vbs.categ() == 3; }, UNITY);
 
     // Selecting channels of interest
     std::vector<TString> channels =
         {
             // All channels
             "LooseVR", // All channels included
+            "LL",
 
             "El",
             "Mu",
+            "Lgt",
             "Tau",
             "Neg",
         };
