@@ -265,8 +265,8 @@ VBSHWW::VBSHWW(int argc, char** argv) :
 
     tx.createBranch<float>("b0pt");
     tx.createBranch<float>("b1pt");
-    tx.createBranch<int>("b0tag");
-    tx.createBranch<int>("b1tag");
+    tx.createBranch<int>("b0tight");
+    tx.createBranch<int>("b1tight");
 
     tx.createBranch<float>("mjj");
     tx.createBranch<float>("dphijj");
@@ -1699,7 +1699,7 @@ void VBSHWW::initSRCutflow()
                 categ = 1;
             else if (leadlepID < 0 and   btagchannel == 0 and lepchannel >  2)
                 categ = 2;
-            else if (leadlepID > 0 and ((btagchannel <= 1 and lepchannel <= 2) or (btagchannel == 0 and lepchannel < 2)))
+            else if (leadlepID > 0 and ((btagchannel <= 1 and lepchannel <= 2) or (btagchannel == 0 and lepchannel > 2)))
                 categ = 3;
             tx.setBranch<int>("categ", categ);
 
