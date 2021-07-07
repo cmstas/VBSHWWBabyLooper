@@ -8,7 +8,7 @@ r.gROOT.SetBatch(True)
 def usage():
     print("Usage:")
     print("")
-    print("   python {} [STUDYNAME=mainAnalysis_Run2] [PLOTNAMES]".format(sys.argv[0]))
+    print("   python {} [STUDYNAME=mainAnalysis_Run2] [TAG=v44] [PLOTNAMES]".format(sys.argv[0]))
     print("")
     print("")
     sys.exit()
@@ -20,11 +20,16 @@ except:
     study_name = "mainAnalysis_Run2"
 
 try:
-    cutname_to_plot = sys.argv[2]
+    tag_name = sys.argv[2]
+except:
+    tag_name = "mainAnalysis_Run2"
+
+try:
+    cutname_to_plot = sys.argv[3]
 except:
     cutname_to_plot = ""
 
-hadd_dir = "hadds/{}".format(study_name)
+hadd_dir = "hadds/{}/{}".format(tag_name, study_name)
 
 bkgs = [
         "{}/tt1lpowheg.root".format(hadd_dir),
@@ -191,7 +196,7 @@ p.dump_plot(fnames=bkgs,
     data_fname=data_fname,
     legend_labels=bkg_labels,
     signal_labels=signal_labels,
-    dirname="plots/{}".format(study_name),
+    dirname="plots/{}/{}".format(tag_name, study_name),
     filter_pattern=filter_pattern,
     dogrep=dogrep,
     usercolors=colors,

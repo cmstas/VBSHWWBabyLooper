@@ -1200,13 +1200,19 @@ void VBSHWW::initSRCutflow()
             const int& pdgid0 = tx.getBranchLazy<vector<int>>("good_leptons_pdgid")[0];
             const int& pdgid1 = tx.getBranchLazy<vector<int>>("good_leptons_pdgid").size() == 2 ? tx.getBranchLazy<vector<int>>("good_leptons_pdgid")[1] : tx.getBranchLazy<vector<int>>("good_taus_pdgid")[0];
 
-            if (looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v40/"))
+            if (
+                looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v40/")
+                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v60/")
+                )
             {
                 // Require same sign
                 if (not (pdgid0 * pdgid1 > 0))
                     return false;
             }
-            else if (looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v41/"))
+            else if (
+                looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v41/")
+                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v44/")
+                )
             {
                 // Require opposite sign
                 if (not (pdgid0 * pdgid1 < 0))
