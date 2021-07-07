@@ -401,6 +401,12 @@ int main(int argc, char** argv)
             // All channels
             "LooseVR", // All channels included
             "LL",
+            "EE",
+            "EM",
+            "MM",
+            "ET",
+            "MT",
+            "LT",
 
             "El",
             "Mu",
