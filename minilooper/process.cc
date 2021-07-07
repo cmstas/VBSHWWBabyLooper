@@ -450,8 +450,11 @@ int main(int argc, char** argv)
                                                       // and
                                                       (vbs.leadlep().pt() + vbs.subllep().pt() + vbs.met_p4().pt()) > 450.
                                                       and
-                                                      vbs.b0().pt() + vbs.b0().pt() + vbs.leadlep().pt() + vbs.subllep().pt() + vbs.met_p4().pt() > 900.
-                                                      and (fabs(RooUtil::Calc::DeltaEta(vbs.j0(), vbs.j1())) > 5.0)
+                                                      // RooUtil::Calc::DeltaR(vbs.b0(), vbs.b1()) < 2.
+                                                      // and
+                                                      vbs.b0().pt() + vbs.b0().pt() + vbs.leadlep().pt() + vbs.subllep().pt() + vbs.met_p4().pt() > 700.
+                                                      and
+                                                      (fabs(RooUtil::Calc::DeltaEta(vbs.j0(), vbs.j1())) > 5.0)
                                                       ;
                                               } , UNITY );
             ana.cutflow.getCut(TString::Format("%s%s", channel.Data(), kin_reg.first.Data()));
@@ -551,6 +554,8 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("MbbInOut"            , 2   , 0       , 2      , [&]() { return (vbs.b0()+vbs.b1()).mass() < 150 and (vbs.b0()+vbs.b1()).mass() > 0.;        } );
     ana.histograms.addHistogram("MbbInOutV1"          , 2   , 0       , 2      , [&]() { return (vbs.b0()+vbs.b1()).mass() < 140 and (vbs.b0()+vbs.b1()).mass() > 90.;       } );
     ana.histograms.addHistogram("DRbb"                , 180 , 0       , 6      , [&]() { return RooUtil::Calc::DeltaR(vbs.b0(), vbs.b1());                                   } );
+    ana.histograms.addHistogram("DEtabb"              , 180 , 0       , 6      , [&]() { return fabs(RooUtil::Calc::DeltaEta(vbs.b0(), vbs.b1()));                           } );
+    ana.histograms.addHistogram("DPhibb"              , 180 , 0       , 6      , [&]() { return fabs(RooUtil::Calc::DeltaPhi(vbs.b0(), vbs.b1()));                           } );
     ana.histograms.addHistogram("MET"                 , 180 , 0       , 1500   , [&]() { return vbs.met_p4().pt();                                                           } );
     ana.histograms.addHistogram("METLow"              , 180 , 0       , 250    , [&]() { return vbs.met_p4().pt();                                                           } );
     ana.histograms.addHistogram("Channels"            , 8   , 0       , 8      , [&]() { return vbs.channel();                                                               } );

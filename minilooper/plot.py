@@ -143,7 +143,7 @@ p.dump_plot(
     usercolors=colors,
     extraoptions={
         "print_yield": True,
-        "nbins": 10,
+        "nbins": 30,
         # "signal_scale": 10,
         "legend_ncolumns": 3,
         "legend_scalex": 2.0,
