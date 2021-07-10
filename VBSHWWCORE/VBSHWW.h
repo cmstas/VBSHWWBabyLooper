@@ -51,6 +51,9 @@ public:
     // Tau boolean
     bool do_tau;
 
+    // Boolean to determine whether it is UL
+    bool isUL;
+
     // TChain that holds the input TTree's
     TChain* events_tchain;
 
@@ -74,12 +77,18 @@ public:
     BTagCalibrationReader* btagReaderTight;
     BTagCalibrationReader* btagReaderMedium;
     BTagCalibrationReader* btagReaderLoose;
-    RooUtil::HistMap* btagEffTight_b;
-    RooUtil::HistMap* btagEffTight_c;
-    RooUtil::HistMap* btagEffTight_l;
-    RooUtil::HistMap* btagEffLoose_b;
-    RooUtil::HistMap* btagEffLoose_c;
-    RooUtil::HistMap* btagEffLoose_l;
+    RooUtil::HistMap* btagEffTight_b; // lead
+    RooUtil::HistMap* btagEffTight_c; // lead
+    RooUtil::HistMap* btagEffTight_l; // lead
+    RooUtil::HistMap* btagEffLoose_b; // lead
+    RooUtil::HistMap* btagEffLoose_c; // lead
+    RooUtil::HistMap* btagEffLoose_l; // lead
+    RooUtil::HistMap* btagEffTight_b_subl; // sublead
+    RooUtil::HistMap* btagEffTight_c_subl; // sublead
+    RooUtil::HistMap* btagEffTight_l_subl; // sublead
+    RooUtil::HistMap* btagEffLoose_b_subl; // sublead
+    RooUtil::HistMap* btagEffLoose_c_subl; // sublead
+    RooUtil::HistMap* btagEffLoose_l_subl; // sublead
 
     VBSHWW(int, char**);
     ~VBSHWW();

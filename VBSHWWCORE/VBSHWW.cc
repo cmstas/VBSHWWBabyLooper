@@ -22,11 +22,17 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     // Set up a looper
     looper.init(events_tchain, &nt, n_events);
 
+    isUL = (
+        input_file_list_tstring.Contains("UL18") or input_file_list_tstring.Contains("UL2018")
+        );
+
     // Set the cutflow object output file
     cutflow.setTFile(output_tfile);
 
     // Set up the NanoCORE's common configuration service tool
+    gconf.nanoAOD_ver = isUL ? 8 : 0;
     gconf.GetConfigs(nt.year());
+    std::cout <<  " gconf.WP_DeepFlav_tight: " << gconf.WP_DeepFlav_tight <<  std::endl;
 
     // Setting up good runs list
     // TString vbsHwwNanoLooperDirPath = gSystem->Getenv("VBSHWWNANOLOOPERDIR");
@@ -68,7 +74,11 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     {
         btagCalib = new BTagCalibration("DeepJet", "data/DeepJet_94XSF_V4_B_F.csv");
     }
-    else if (nt.year() == 2018)
+    else if (nt.year() == 2018 and isUL)
+    {
+        btagCalib = new BTagCalibration("DeepJet", "data/DeepJet_106XUL18SF_WPonly.csv");
+    }
+    else if (nt.year() == 2018 and not isUL)
     {
         btagCalib = new BTagCalibration("DeepJet", "data/DeepJet_102XSF_V3.csv");
     }
@@ -106,7 +116,28 @@ VBSHWW::VBSHWW(int argc, char** argv) :
         btagEffLoose_c = new RooUtil::HistMap("data/eff_DeepFlav_102X_2017_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_c");
         btagEffLoose_l = new RooUtil::HistMap("data/eff_DeepFlav_102X_2017_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_udsg");
     }
-    else if (nt.year() == 2018)
+    else if (nt.year() == 2018 and isUL)
+    {
+        btagEffTight_b = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_b");
+        btagEffTight_c = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_c");
+        btagEffTight_l = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_udsg");
+        btagEffLoose_b = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_b");
+        btagEffLoose_c = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_c");
+        btagEffLoose_l = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_udsg");
+        btagEffTight_b_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_b");
+        btagEffTight_c_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_c");
+        btagEffTight_l_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_udsg");
+        btagEffLoose_b_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_b");
+        btagEffLoose_c_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_c");
+        btagEffLoose_l_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_udsg");
+        // btagEffTight_b = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_b");
+        // btagEffTight_c = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_c");
+        // btagEffTight_l = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_udsg");
+        // btagEffLoose_b = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_b");
+        // btagEffLoose_c = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_c");
+        // btagEffLoose_l = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_udsg");
+    }
+    else if (nt.year() == 2018 and not isUL)
     {
         btagEffTight_b = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_b");
         btagEffTight_c = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_c");
@@ -294,6 +325,11 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch<float>("mtvvh");
     tx.createBranch<float>("ptvvh");
 
+    tx.createBranch<float>("v0pt");
+    tx.createBranch<float>("v1pt");
+
+    tx.createBranch<float>("w0mass");
+    tx.createBranch<float>("w1mass");
 
 //=============================
 //
@@ -661,12 +697,28 @@ void VBSHWW::initSRCutflow()
                     filterflagMC = nt.Flag_goodVertices() and                                              nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter();
                     break;
                 case 2017:
-                    filterflag   = nt.Flag_goodVertices() and nt.Flag_globalSuperTightHalo2016Filter() and nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilterV2();
-                    filterflagMC = nt.Flag_goodVertices() and                                              nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilterV2();
+                    if (isUL)
+                    {
+                        filterflag   = nt.Flag_goodVertices() and nt.Flag_globalSuperTightHalo2016Filter() and nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilter();
+                        filterflagMC = nt.Flag_goodVertices() and                                              nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilter();
+                    }
+                    else
+                    {
+                        filterflag   = nt.Flag_goodVertices() and nt.Flag_globalSuperTightHalo2016Filter() and nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilterV2();
+                        filterflagMC = nt.Flag_goodVertices() and                                              nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilterV2();
+                    }
                     break;
                 case 2018:
-                    filterflag   = nt.Flag_goodVertices() and nt.Flag_globalSuperTightHalo2016Filter() and nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilterV2();
-                    filterflagMC = nt.Flag_goodVertices() and                                              nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilterV2();
+                    if (isUL)
+                    {
+                        filterflag   = nt.Flag_goodVertices() and nt.Flag_globalSuperTightHalo2016Filter() and nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilter();
+                        filterflagMC = nt.Flag_goodVertices() and                                              nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilter();
+                    }
+                    else
+                    {
+                        filterflag   = nt.Flag_goodVertices() and nt.Flag_globalSuperTightHalo2016Filter() and nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilterV2();
+                        filterflagMC = nt.Flag_goodVertices() and                                              nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilterV2();
+                    }
                     break;
             }
             if (nt.isData())
@@ -1203,6 +1255,8 @@ void VBSHWW::initSRCutflow()
             if (
                 looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v40/")
                 or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v60/")
+                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v70_SS/")
+                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.0_SS/")
                 )
             {
                 // Require same sign
@@ -1212,6 +1266,8 @@ void VBSHWW::initSRCutflow()
             else if (
                 looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v41/")
                 or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v44/")
+                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v70_OS/")
+                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.0_OS/")
                 )
             {
                 // Require opposite sign
@@ -1697,6 +1753,56 @@ void VBSHWW::initSRCutflow()
             tx.setBranch<float>("mtvvh", (leadlep + subllep + met_p4 + b0 + b1).mt());
             tx.setBranch<float>("ptvvh", (leadlep + subllep + met_p4 + b0 + b1).pt());
 
+            // computing neutrino assuming neutrinos are collinear with leptons
+            float l0x = leadlep.pt() * std::cos(leadlep.phi());
+            float l0y = leadlep.pt() * std::sin(leadlep.phi());
+            float l1x = subllep.pt() * std::cos(subllep.phi());
+            float l1y = subllep.pt() * std::sin(subllep.phi());
+            float metx = met_p4.pt() * std::cos(met_p4.phi());
+            float mety = met_p4.pt() * std::sin(met_p4.phi());
+
+            // // https://www.wolframalpha.com/input/?i=Solve+x+%3D+m+*+a+%2B+n+*+b%2C+y+%3D+m+*+c+%2B+n+*+d+for+m%2C+n
+            // float a = std::sin(leadlep.theta()) * std::cos(leadlep.phi());
+            // float b = std::sin(subllep.theta()) * std::cos(subllep.phi());
+            // float c = std::sin(leadlep.theta()) * std::sin(leadlep.phi());
+            // float d = std::sin(subllep.theta()) * std::sin(subllep.phi());
+            // float v0p = (d * metx - b * mety) / (a * d - b * c);
+            // float v1p = (c * metx - a * mety) / (b * c - a * d);
+            // float v0pt = v0p * std::sin(leadlep.theta());
+            // float v1pt = v1p * std::sin(subllep.theta());
+
+            // https://www.wolframalpha.com/input/?i=Solve+x+%3D+m+*+a+%2B+n+*+b%2C+y+%3D+m+*+c+%2B+n+*+d+for+m%2C+n
+            float a = std::cos(leadlep.phi());
+            float b = std::cos(subllep.phi());
+            float c = std::sin(leadlep.phi());
+            float d = std::sin(subllep.phi());
+            float v0p = (d * metx - b * mety) / (a * d - b * c);
+            float v1p = (c * metx - a * mety) / (b * c - a * d);
+            // float v0pt = v0p * std::sin(leadlep.theta());
+            // float v1pt = v1p * std::sin(subllep.theta());
+            float v0pt = v0p * std::sin(leadlep.theta());
+            float v1pt = v1p * std::sin(subllep.theta());
+
+            tx.setBranch<float>("v0pt", v0pt);
+            tx.setBranch<float>("v1pt", v1pt);
+
+            // TLorentzVector
+            TLorentzVector v0_tlv;
+            TLorentzVector v1_tlv;
+            // v0_tlv.SetPtEtaPhiM(v0pt, leadlep.eta(), leadlep.phi(), 0);
+            // v1_tlv.SetPtEtaPhiM(v1pt, subllep.eta(), subllep.phi(), 0);
+            v0_tlv.SetPtEtaPhiM(v0pt, 0, leadlep.phi(), 0);
+            v1_tlv.SetPtEtaPhiM(v1pt, 0, subllep.phi(), 0);
+
+            LV v0 = RooUtil::Calc::getLV(v0_tlv);
+            LV v1 = RooUtil::Calc::getLV(v1_tlv);
+
+            float w0mass = (v0 + leadlep).mass();
+            float w1mass = (v1 + subllep).mass();
+
+            tx.setBranch<float>("w0mass", w0mass);
+            tx.setBranch<float>("w1mass", w1mass);
+
             int categ = -1;
             const int& leadlepID = tx.getBranch<int>("leadlepID");
             if (leadlepID < 0 and   btagchannel <= 1 and lepchannel <= 2 and abs(leadlepID) == 11)
@@ -2011,12 +2117,22 @@ void VBSHWW::processGenParticles_TopBackgrounds()
 
 void VBSHWW::setBTagSF(std::vector<float> jet_pt, std::vector<float> jet_eta, std::vector<float> jet_score, std::vector<int> jet_flavor)
 {
+
+    // ******
+    // Warning: This function assumes you only pass 2 jets!!
+    // Warning: This function assumes you only pass 2 jets!!
+    // Warning: This function assumes you only pass 2 jets!!
+    // ******
+
     if (nt.isData())
     {
         tx.setBranch<float>("btagsf", 1);
     }
     else
     {
+        int idx_lead_bscore = jet_score[0] > jet_score[1] ? 0 : 1;
+        int idx_subl_bscore = jet_score[0] > jet_score[1] ? 1 : 0;
+
         float btag_prob_MC = 1;
         float btag_prob_DATA = 1;
         for (unsigned ijet = 0; ijet < jet_pt.size(); ++ijet)
@@ -2027,8 +2143,31 @@ void VBSHWW::setBTagSF(std::vector<float> jet_pt, std::vector<float> jet_eta, st
             int flavor = jet_flavor.at(ijet);
             bool is_loose_btagged = score > gconf.WP_DeepFlav_loose;
             bool is_tight_btagged = score > gconf.WP_DeepFlav_tight;
-            float eff_tight = flavor == 5 ? btagEffTight_b->eval(pt, eta) : (flavor == 0 ? btagEffTight_l->eval(pt, eta) : btagEffTight_c->eval(pt, eta));
-            float eff_loose = flavor == 5 ? btagEffLoose_b->eval(pt, eta) : (flavor == 0 ? btagEffLoose_l->eval(pt, eta) : btagEffLoose_c->eval(pt, eta));
+
+            float eff_tight = 1;
+            float eff_loose = 1;
+
+            if (isUL)
+            {
+                if (idx_lead_bscore == ijet)
+                {
+                    eff_tight = flavor == 5 ? btagEffTight_b->eval(pt, eta) : (flavor == 0 ? btagEffTight_l->eval(pt, eta) : btagEffTight_c->eval(pt, eta));
+                    eff_loose = flavor == 5 ? btagEffLoose_b->eval(pt, eta) : (flavor == 0 ? btagEffLoose_l->eval(pt, eta) : btagEffLoose_c->eval(pt, eta));
+                }
+                else
+                {
+                    eff_tight = flavor == 5 ? btagEffTight_b_subl->eval(pt, eta) : (flavor == 0 ? btagEffTight_l_subl->eval(pt, eta) : btagEffTight_c_subl->eval(pt, eta));
+                    eff_loose = flavor == 5 ? btagEffLoose_b_subl->eval(pt, eta) : (flavor == 0 ? btagEffLoose_l_subl->eval(pt, eta) : btagEffLoose_c_subl->eval(pt, eta));
+                }
+                // eff_tight = flavor == 5 ? btagEffTight_b->eval(pt, eta) : (flavor == 0 ? btagEffTight_l->eval(pt, eta) : btagEffTight_c->eval(pt, eta));
+                // eff_loose = flavor == 5 ? btagEffLoose_b->eval(pt, eta) : (flavor == 0 ? btagEffLoose_l->eval(pt, eta) : btagEffLoose_c->eval(pt, eta));
+            }
+            else
+            {
+                eff_tight = flavor == 5 ? btagEffTight_b->eval(pt, eta) : (flavor == 0 ? btagEffTight_l->eval(pt, eta) : btagEffTight_c->eval(pt, eta));
+                eff_loose = flavor == 5 ? btagEffLoose_b->eval(pt, eta) : (flavor == 0 ? btagEffLoose_l->eval(pt, eta) : btagEffLoose_c->eval(pt, eta));
+            }
+
             float sf_tight = 
                 flavor == 5 ? btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_B, eta, pt) : (
                 flavor == 0 ? btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_UDSG, eta, pt) :
