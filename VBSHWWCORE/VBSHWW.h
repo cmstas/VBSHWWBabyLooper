@@ -103,9 +103,6 @@ public:
     // Signal and Control regions
     void initSRCutflow();
 
-    // BDT input computation
-    void initBDTInputComputation();
-
     // Select Gen particles for different processes
     void processGenParticles_VBSWWH();
     void processGenParticles_TopBackgrounds();

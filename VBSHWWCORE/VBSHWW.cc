@@ -1,8 +1,13 @@
 #include "VBSHWW.h"
 
-// #define LEPID SS
-#define LEPID ttH
 
+
+//________________________________________________________________________________________________________________________________________
+VBSHWW::~VBSHWW() {}
+
+
+
+//________________________________________________________________________________________________________________________________________
 VBSHWW::VBSHWW(int argc, char** argv) :
     tx(
        (parseCLI(argc, argv), "variable"), // This weird syntax guarantees that parseCLI runs prior to initializing "tx"
@@ -130,12 +135,6 @@ VBSHWW::VBSHWW(int argc, char** argv) :
         btagEffLoose_b_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_b");
         btagEffLoose_c_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_c");
         btagEffLoose_l_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_udsg");
-        // btagEffTight_b = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_b");
-        // btagEffTight_c = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_c");
-        // btagEffTight_l = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_udsg");
-        // btagEffLoose_b = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_b");
-        // btagEffLoose_c = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_c");
-        // btagEffLoose_l = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_udsg");
     }
     else if (nt.year() == 2018 and not isUL)
     {
@@ -341,7 +340,6 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     // Weighting each MC event
     //*****************************
     // Description: Weighting each event to 137/fb
-    // TODO TODO TODO TODO TODO: MAKE LUMINOSITY AN CLI ARGUMENT THAT DEPENDS ON YEAR
     cutflow.addCut("Weight",
         [&]()
         {
@@ -423,217 +421,9 @@ VBSHWW::VBSHWW(int argc, char** argv) :
         UNITY);
 }
 
-VBSHWW::~VBSHWW() {}
-
-void VBSHWW::parseCLI(int argc, char** argv)
-{
-    //********************************************************************************
-    //
-    // 1. Parsing options
-    //
-    //********************************************************************************
-
-    // cxxopts is just a tool to parse argc, and argv easily
-
-    // Grand option setting
-    cxxopts::Options options("\n  $ doAnalysis",  "\n         **********************\n         *                    *\n         *       Looper       *\n         *                    *\n         **********************\n");
-
-    // Read the options
-    options.add_options()
-        ("i,input"       , "Comma separated input file list OR if just a directory is provided it will glob all in the directory BUT must end with '/' for the path", cxxopts::value<std::string>())
-        ("t,tree"        , "Name of the tree in the root file to open and loop over"                                             , cxxopts::value<std::string>())
-        ("o,output"      , "Output file name"                                                                                    , cxxopts::value<std::string>())
-        ("n,nevents"     , "N events to loop over"                                                                               , cxxopts::value<int>()->default_value("-1"))
-        ("j,nsplit_jobs" , "Enable splitting jobs by N blocks (--job_index must be set)"                                         , cxxopts::value<int>())
-        ("I,job_index"   , "job_index of split jobs (--nsplit_jobs must be set. index starts from 0. i.e. 0, 1, 2, 3, etc...)"   , cxxopts::value<int>())
-        ("s,scale1fb"    , "pass scale1fb of the sample"                                                                         , cxxopts::value<float>())
-        ("d,debug"       , "Run debug job. i.e. overrides output option to 'debug.root' and 'recreate's the file.")
-        ("h,help"        , "Print help")
-        ;
-
-    auto result = options.parse(argc, argv);
-
-    // NOTE: When an option was provided (e.g. -i or --input), then the result.count("<option name>") is more than 0
-    // Therefore, the option can be parsed easily by asking the condition if (result.count("<option name>");
-    // That's how the several options are parsed below
-
-    //_______________________________________________________________________________
-    // --help
-    if (result.count("help"))
-    {
-        std::cout << options.help() << std::endl;
-        exit(1);
-    }
-
-    //_______________________________________________________________________________
-    // --input
-    if (result.count("input"))
-    {
-        input_file_list_tstring = result["input"].as<std::string>();
-    }
-    else
-    {
-        std::cout << options.help() << std::endl;
-        std::cout << "ERROR: Input list is not provided! Check your arguments" << std::endl;
-        exit(1);
-    }
-
-    //_______________________________________________________________________________
-    // --tree
-    if (result.count("tree"))
-    {
-        input_tree_name = result["tree"].as<std::string>();
-    }
-    else
-    {
-        std::cout << options.help() << std::endl;
-        std::cout << "ERROR: Input tree name is not provided! Check your arguments" << std::endl;
-        exit(1);
-    }
-
-    //_______________________________________________________________________________
-    // --scale1fb
-    if (result.count("scale1fb"))
-    {
-        scale1fb = result["scale1fb"].as<float>();
-    }
-
-    //_______________________________________________________________________________
-    // --debug
-    if (result.count("debug"))
-    {
-        output_tfile = new TFile("debug.root", "recreate");
-    }
-    else
-    {
-        //_______________________________________________________________________________
-        // --output
-        if (result.count("output"))
-        {
-            output_tfile = new TFile(result["output"].as<std::string>().c_str(), "create");
-            if (not output_tfile->IsOpen())
-            {
-                std::cout << options.help() << std::endl;
-                std::cout << "ERROR: output already exists! provide new output name or delete old file. OUTPUTFILE=" << result["output"].as<std::string>() << std::endl;
-                exit(1);
-            }
-        }
-        else
-        {
-            std::cout << options.help() << std::endl;
-            std::cout << "ERROR: Output file name is not provided! Check your arguments" << std::endl;
-            exit(1);
-        }
-    }
-
-    //_______________________________________________________________________________
-    // --nevents
-    n_events = result["nevents"].as<int>();
-
-    //_______________________________________________________________________________
-    // --nsplit_jobs
-    if (result.count("nsplit_jobs"))
-    {
-        nsplit_jobs = result["nsplit_jobs"].as<int>();
-        if (nsplit_jobs <= 0)
-        {
-            std::cout << options.help() << std::endl;
-            std::cout << "ERROR: option string --nsplit_jobs" << nsplit_jobs << " has zero or negative value!" << std::endl;
-            std::cout << "I am not sure what this means..." << std::endl;
-            exit(1);
-        }
-    }
-    else
-    {
-        nsplit_jobs = -1;
-    }
-
-    //_______________________________________________________________________________
-    // --nsplit_jobs
-    if (result.count("job_index"))
-    {
-        job_index = result["job_index"].as<int>();
-        if (job_index < 0)
-        {
-            std::cout << options.help() << std::endl;
-            std::cout << "ERROR: option string --job_index" << job_index << " has negative value!" << std::endl;
-            std::cout << "I am not sure what this means..." << std::endl;
-            exit(1);
-        }
-    }
-    else
-    {
-        job_index = -1;
-    }
 
 
-    // Sanity check for split jobs (if one is set the other must be set too)
-    if (result.count("job_index") or result.count("nsplit_jobs"))
-    {
-        // If one is not provided then throw error
-        if ( not (result.count("job_index") and result.count("nsplit_jobs")))
-        {
-            std::cout << options.help() << std::endl;
-            std::cout << "ERROR: option string --job_index and --nsplit_jobs must be set at the same time!" << std::endl;
-            exit(1);
-        }
-        // If it is set then check for sanity
-        else
-        {
-            if (job_index >= nsplit_jobs)
-            {
-                std::cout << options.help() << std::endl;
-                std::cout << "ERROR: --job_index >= --nsplit_jobs ! This does not make sense..." << std::endl;
-                exit(1);
-            }
-        }
-    }
-
-    do_tau = true;
-
-    //
-    // Printing out the option settings overview
-    //
-    std::cout <<  "=========================================================" << std::endl;
-    std::cout <<  " Setting of the analysis job based on provided arguments " << std::endl;
-    std::cout <<  "---------------------------------------------------------" << std::endl;
-    std::cout <<  " input_file_list_tstring: " << input_file_list_tstring <<  std::endl;
-    std::cout <<  " output_tfile: " << output_tfile->GetName() <<  std::endl;
-    std::cout <<  " n_events: " << n_events <<  std::endl;
-    std::cout <<  " nsplit_jobs: " << nsplit_jobs <<  std::endl;
-    std::cout <<  " job_index: " << job_index <<  std::endl;
-    std::cout <<  "=========================================================" << std::endl;
-
-}
-
-// For a given cutname it writes the run, lumi, evt into a textfile based on the output root name
-void VBSHWW::writeEventList(TString cutname)
-{
-    TString eventlist_output_name = output_tfile->GetName(); // get the output file name
-    TString suffix = TString::Format(".%s.txt", cutname.Data());
-    eventlist_output_name.ReplaceAll(".root", suffix); // replace .root with suffix if .root exists
-    if (not eventlist_output_name.Contains(suffix)) eventlist_output_name += suffix; // if no suffix exists, then append suffix
-    cutflow.getCut(cutname).writeEventList(eventlist_output_name);
-}
-
-void VBSHWW::process(TString final_cutname)
-{
-    // Clear the data structure for the event
-    tx.clear();
-
-    // // Set the run lumi and event for this event
-    cutflow.setEventID(nt.run(), nt.luminosityBlock(), nt.event()); // Setting event ID in case we need to keep track of event id
-
-    // Run all the cutflow selections and filling histograms
-    cutflow.fill();
-
-    // Writing skimmed event tree for the data structure we created
-    if (cutflow.getCut(final_cutname).pass)
-    {
-        tx.fill();
-    }
-}
-
+//________________________________________________________________________________________________________________________________________
 void VBSHWW::initSRCutflow()
 {
 
@@ -745,11 +535,11 @@ void VBSHWW::initSRCutflow()
             // Select muons
             for (unsigned int imu = 0; imu < nt.Muon_pt().size(); ++imu)
             {
-                if (LEPID::muonID(imu, LEPID::IDveto, nt.year()))
+                if (ttH::muonID(imu, ttH::IDveto, nt.year()))
                 {
                     tx.pushbackToBranch<LV>("good_leptons_p4", nt.Muon_p4()[imu]);
                     tx.pushbackToBranch<int>("good_leptons_pdgid", (-nt.Muon_charge()[imu]) * 13);
-                    tx.pushbackToBranch<int>("good_leptons_tight", LEPID::muonID(imu, LEPID::IDtight, nt.year()));
+                    tx.pushbackToBranch<int>("good_leptons_tight", ttH::muonID(imu, ttH::IDtight, nt.year()));
                     tx.pushbackToBranch<int>("good_leptons_jetIdx", nt.Muon_jetIdx()[imu]);
                     tx.pushbackToBranch<int>("good_leptons_genPartFlav", nt.isData() ? -999 : nt.Muon_genPartFlav()[imu]);
                     tx.pushbackToBranch<float>("good_leptons_pfRelIso03_all", nt.Muon_pfRelIso03_all()[imu]);
@@ -765,11 +555,11 @@ void VBSHWW::initSRCutflow()
             // Select electrons
             for (unsigned int iel = 0; iel < nt.Electron_pt().size(); ++iel)
             {
-                if (LEPID::electronID(iel, LEPID::IDveto, nt.year()))
+                if (ttH::electronID(iel, ttH::IDveto, nt.year()))
                 {
                     tx.pushbackToBranch<LV>("good_leptons_p4", nt.Electron_p4()[iel]);
                     tx.pushbackToBranch<int>("good_leptons_pdgid", (-nt.Electron_charge()[iel]) * 11);
-                    tx.pushbackToBranch<int>("good_leptons_tight", LEPID::electronID(iel, LEPID::IDtight, nt.year()));
+                    tx.pushbackToBranch<int>("good_leptons_tight", ttH::electronID(iel, ttH::IDtight, nt.year()));
                     tx.pushbackToBranch<int>("good_leptons_jetIdx", nt.Electron_jetIdx()[iel]);
                     tx.pushbackToBranch<int>("good_leptons_genPartFlav", nt.isData() ? -999 : nt.Electron_genPartFlav()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_pfRelIso03_all", nt.Electron_pfRelIso03_all()[iel]);
@@ -777,7 +567,10 @@ void VBSHWW::initSRCutflow()
                     tx.pushbackToBranch<float>("good_leptons_jetPtRelv2", nt.Electron_jetPtRelv2()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_jetRelIso", nt.Electron_jetRelIso()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_miniPFRelIso_all", nt.Electron_miniPFRelIso_all()[iel]);
-                    lepsf *= ttH::getElecRecoEffSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());  // event -> reco
+                    if (isUL)
+                        lepsf *= ttH::getElecRecoEffSFUL(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());  // event -> reco
+                    else
+                        lepsf *= ttH::getElecRecoEffSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());  // event -> reco
                     lepsf *= ttH::getElecPOGLooseSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year()); // reco -> loose POG ID
                     lepsf *= ttH::getElecLooseSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());    // loose POG ID -> loose ttH ID
                     lepsf *= ttH::getElecTightSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());    // loose ttH ID -> tight ttH ID
@@ -813,7 +606,7 @@ void VBSHWW::initSRCutflow()
                 const vector<int>& good_leptons_pdgid = tx.getBranchLazy<vector<int>>("good_leptons_pdgid");
                 for (unsigned int itau = 0; itau < nt.nTau(); ++itau)
                 {
-                    if (LEPID::tauID(itau, LEPID::IDfakable, nt.year()))
+                    if (ttH::tauID(itau, ttH::IDfakable, nt.year()))
                     {
                         // tau-(non-tau lep) overlap removal
                         bool save_this_tau = true;
@@ -836,7 +629,7 @@ void VBSHWW::initSRCutflow()
                         tx.pushbackToBranch<LV>("good_taus_p4", nt.Tau_p4()[itau]);
                         tx.pushbackToBranch<int>("good_taus_genPartFlav", nt.isData() ? -999 : nt.Tau_genPartFlav()[itau]);
                         tx.pushbackToBranch<int>("good_taus_pdgid", (-nt.Tau_charge()[itau]) * 15);
-                        tx.pushbackToBranch<int>("good_taus_tight", LEPID::tauID(itau, LEPID::IDtight, nt.year()));
+                        tx.pushbackToBranch<int>("good_taus_tight", ttH::tauID(itau, ttH::IDtight, nt.year()));
                         tx.pushbackToBranch<int>("good_taus_jetIdx", nt.Tau_jetIdx()[itau]);
                         lepsf *= (nt.isData() ? 1. : tauSF_vsJet->getSFvsPT(nt.Tau_pt()[itau], nt.Tau_genPartFlav()[itau]));
                         lepsf *= (nt.isData() ? 1. : tauSF_vsMu->getSFvsEta(nt.Tau_eta()[itau], nt.Tau_genPartFlav()[itau]));
@@ -1832,95 +1625,9 @@ void VBSHWW::initSRCutflow()
     return;
 }
 
-void VBSHWW::initBDTInputComputation()
-{
 
-    tx.createBranch<float>("lepton1pt");
-    tx.createBranch<float>("lepton2pt");
-    tx.createBranch<float>("lepton1reliso");
-    tx.createBranch<float>("lepton2reliso");
-    tx.createBranch<int>("bjetscoretype");
-    tx.createBranch<float>("dibjetmass");
-    tx.createBranch<float>("bjet1eta");
-    tx.createBranch<float>("bjet2eta");
-    tx.createBranch<float>("dibjetdeltaR");
-    tx.createBranch<float>("dibjetdeta");
-    tx.createBranch<float>("dibjetdphi");
-    tx.createBranch<float>("leadingvbfjetp");
-    tx.createBranch<float>("subleadvbfjetp");
-    tx.createBranch<float>("divbfjetmass");
-    tx.createBranch<float>("divbfjetdeta");
-    tx.createBranch<float>("divbfjetdphi");
-    tx.createBranch<float>("vbfjet1eta");
-    tx.createBranch<float>("vbfjet2eta");
-    tx.createBranch<float>("vbfjet1Pt");
-    tx.createBranch<float>("vbfjet2Pt");
-    tx.createBranch<float>("divbfjetPt");
-    tx.createBranch<float>("divbfjetdeltaR");
 
-    tx.createBranch<int>("lepflavorchannel");
-
-    cutflow.getCut("VBSJetPreselection");
-    cutflow.addCutToLastActiveCut("ComputeBDTInputs",
-            [&]()
-            {
-                // lepton 4-vectors and extra info
-                LV lepton_0 = tx.getBranch<vector<LV>>("good_leptons_p4").at(0);
-                LV lepton_1 = tx.getBranch<vector<LV>>("good_leptons_p4").at(1);
-                int lepton_0_pdgid = tx.getBranch<vector<int>>("good_leptons_pdgid").at(0);
-                int lepton_1_pdgid = tx.getBranch<vector<int>>("good_leptons_pdgid").at(1);
-
-                // b-jets 4-vectors and extra info
-                LV higgs_jet_0 = tx.getBranch<vector<LV>>("higgs_jets_p4").at(0);
-                LV higgs_jet_1 = tx.getBranch<vector<LV>>("higgs_jets_p4").at(1);
-                float higgs_jet_0_btag_score = tx.getBranch<vector<float>>("higgs_jets_btag_score").at(0);
-                float higgs_jet_1_btag_score = tx.getBranch<vector<float>>("higgs_jets_btag_score").at(1);
-
-                // vbf tagged jets 4-vectors
-                LV vbs_jet_0 = tx.getBranch<vector<LV>>("vbs_jets_p4").at(0);
-                LV vbs_jet_1 = tx.getBranch<vector<LV>>("vbs_jets_p4").at(1);
-
-                // Compute various input variables
-                float M_jj = (vbs_jet_0 + vbs_jet_1).M();
-                float deta_jj = vbs_jet_0.eta() - vbs_jet_1.eta();
-                int lepflavorchannel = -1;
-                if (abs(lepton_0_pdgid) == 11 and  abs(lepton_1_pdgid) == 11) lepflavorchannel = 0;
-                if (abs(lepton_0_pdgid) == 13 and  abs(lepton_1_pdgid) == 11) lepflavorchannel = 1;
-                if (abs(lepton_0_pdgid) == 11 and  abs(lepton_1_pdgid) == 13) lepflavorchannel = 2;
-                if (abs(lepton_0_pdgid) == 13 and  abs(lepton_1_pdgid) == 13) lepflavorchannel = 3;
-                // TODO: Compute other objects
-
-                tx.setBranch<float>("lepton1pt", -999); // TODO
-                tx.setBranch<float>("lepton2pt", -999); // TODO
-                tx.setBranch<float>("lepton1reliso", -999); // TODO
-                tx.setBranch<float>("lepton2reliso", -999); // TODO
-                tx.setBranch<int>("bjetscoretype", -999); // TODO
-                tx.setBranch<float>("dibjetmass", -999); // TODO
-                tx.setBranch<float>("bjet1eta", -999); // TODO
-                tx.setBranch<float>("bjet2eta", -999); // TODO
-                tx.setBranch<float>("dibjetdeltaR", -999); // TODO
-                tx.setBranch<float>("dibjetdeta", -999); // TODO
-                tx.setBranch<float>("dibjetdphi", -999); // TODO
-                tx.setBranch<float>("leadingvbfjetp", -999); // TODO
-                tx.setBranch<float>("subleadvbfjetp", -999); // TODO
-                tx.setBranch<float>("divbfjetmass", M_jj);
-                tx.setBranch<float>("divbfjetdeta", deta_jj);
-                tx.setBranch<float>("divbfjetdphi", -999); // TODO
-                tx.setBranch<float>("vbfjet1eta", -999); // TODO
-                tx.setBranch<float>("vbfjet2eta", -999); // TODO
-                tx.setBranch<float>("vbfjet1Pt", -999); // TODO
-                tx.setBranch<float>("vbfjet2Pt", -999); // TODO
-                tx.setBranch<float>("divbfjetPt", -999); // TODO
-                tx.setBranch<float>("divbfjetdeltaR", -999); // TODO
-
-                tx.setBranch<int>("lepflavorchannel", lepflavorchannel);
-
-                return true;
-            },
-            UNITY
-            );
-}
-
+//________________________________________________________________________________________________________________________________________
 void VBSHWW::processGenParticles_VBSWWH()
 {
 
@@ -2066,6 +1773,9 @@ void VBSHWW::processGenParticles_VBSWWH()
     }
 }
 
+
+
+//________________________________________________________________________________________________________________________________________
 void VBSHWW::processGenParticles_TopBackgrounds()
 {
 
@@ -2115,6 +1825,9 @@ void VBSHWW::processGenParticles_TopBackgrounds()
 
 }
 
+
+
+//________________________________________________________________________________________________________________________________________
 void VBSHWW::setBTagSF(std::vector<float> jet_pt, std::vector<float> jet_eta, std::vector<float> jet_score, std::vector<int> jet_flavor)
 {
 
@@ -2196,4 +1909,222 @@ void VBSHWW::setBTagSF(std::vector<float> jet_pt, std::vector<float> jet_eta, st
         float btagsf = btag_prob_DATA / btag_prob_MC;
         tx.setBranch<float>("btagsf", btagsf);
     }
+}
+
+
+
+//________________________________________________________________________________________________________________________________________
+// For a given cutname it writes the run, lumi, evt into a textfile based on the output root name
+void VBSHWW::writeEventList(TString cutname)
+{
+    TString eventlist_output_name = output_tfile->GetName(); // get the output file name
+    TString suffix = TString::Format(".%s.txt", cutname.Data());
+    eventlist_output_name.ReplaceAll(".root", suffix); // replace .root with suffix if .root exists
+    if (not eventlist_output_name.Contains(suffix)) eventlist_output_name += suffix; // if no suffix exists, then append suffix
+    cutflow.getCut(cutname).writeEventList(eventlist_output_name);
+}
+
+
+
+//________________________________________________________________________________________________________________________________________
+void VBSHWW::process(TString final_cutname)
+{
+    // Clear the data structure for the event
+    tx.clear();
+
+    // // Set the run lumi and event for this event
+    cutflow.setEventID(nt.run(), nt.luminosityBlock(), nt.event()); // Setting event ID in case we need to keep track of event id
+
+    // Run all the cutflow selections and filling histograms
+    cutflow.fill();
+
+    // Writing skimmed event tree for the data structure we created
+    if (cutflow.getCut(final_cutname).pass)
+    {
+        tx.fill();
+    }
+}
+
+
+
+//________________________________________________________________________________________________________________________________________
+void VBSHWW::parseCLI(int argc, char** argv)
+{
+    //********************************************************************************
+    //
+    // 1. Parsing options
+    //
+    //********************************************************************************
+
+    // cxxopts is just a tool to parse argc, and argv easily
+
+    // Grand option setting
+    cxxopts::Options options("\n  $ doAnalysis",  "\n         **********************\n         *                    *\n         *       Looper       *\n         *                    *\n         **********************\n");
+
+    // Read the options
+    options.add_options()
+        ("i,input"       , "Comma separated input file list OR if just a directory is provided it will glob all in the directory BUT must end with '/' for the path", cxxopts::value<std::string>())
+        ("t,tree"        , "Name of the tree in the root file to open and loop over"                                             , cxxopts::value<std::string>())
+        ("o,output"      , "Output file name"                                                                                    , cxxopts::value<std::string>())
+        ("n,nevents"     , "N events to loop over"                                                                               , cxxopts::value<int>()->default_value("-1"))
+        ("j,nsplit_jobs" , "Enable splitting jobs by N blocks (--job_index must be set)"                                         , cxxopts::value<int>())
+        ("I,job_index"   , "job_index of split jobs (--nsplit_jobs must be set. index starts from 0. i.e. 0, 1, 2, 3, etc...)"   , cxxopts::value<int>())
+        ("s,scale1fb"    , "pass scale1fb of the sample"                                                                         , cxxopts::value<float>())
+        ("d,debug"       , "Run debug job. i.e. overrides output option to 'debug.root' and 'recreate's the file.")
+        ("h,help"        , "Print help")
+        ;
+
+    auto result = options.parse(argc, argv);
+
+    // NOTE: When an option was provided (e.g. -i or --input), then the result.count("<option name>") is more than 0
+    // Therefore, the option can be parsed easily by asking the condition if (result.count("<option name>");
+    // That's how the several options are parsed below
+
+    //_______________________________________________________________________________
+    // --help
+    if (result.count("help"))
+    {
+        std::cout << options.help() << std::endl;
+        exit(1);
+    }
+
+    //_______________________________________________________________________________
+    // --input
+    if (result.count("input"))
+    {
+        input_file_list_tstring = result["input"].as<std::string>();
+    }
+    else
+    {
+        std::cout << options.help() << std::endl;
+        std::cout << "ERROR: Input list is not provided! Check your arguments" << std::endl;
+        exit(1);
+    }
+
+    //_______________________________________________________________________________
+    // --tree
+    if (result.count("tree"))
+    {
+        input_tree_name = result["tree"].as<std::string>();
+    }
+    else
+    {
+        std::cout << options.help() << std::endl;
+        std::cout << "ERROR: Input tree name is not provided! Check your arguments" << std::endl;
+        exit(1);
+    }
+
+    //_______________________________________________________________________________
+    // --scale1fb
+    if (result.count("scale1fb"))
+    {
+        scale1fb = result["scale1fb"].as<float>();
+    }
+
+    //_______________________________________________________________________________
+    // --debug
+    if (result.count("debug"))
+    {
+        output_tfile = new TFile("debug.root", "recreate");
+    }
+    else
+    {
+        //_______________________________________________________________________________
+        // --output
+        if (result.count("output"))
+        {
+            output_tfile = new TFile(result["output"].as<std::string>().c_str(), "create");
+            if (not output_tfile->IsOpen())
+            {
+                std::cout << options.help() << std::endl;
+                std::cout << "ERROR: output already exists! provide new output name or delete old file. OUTPUTFILE=" << result["output"].as<std::string>() << std::endl;
+                exit(1);
+            }
+        }
+        else
+        {
+            std::cout << options.help() << std::endl;
+            std::cout << "ERROR: Output file name is not provided! Check your arguments" << std::endl;
+            exit(1);
+        }
+    }
+
+    //_______________________________________________________________________________
+    // --nevents
+    n_events = result["nevents"].as<int>();
+
+    //_______________________________________________________________________________
+    // --nsplit_jobs
+    if (result.count("nsplit_jobs"))
+    {
+        nsplit_jobs = result["nsplit_jobs"].as<int>();
+        if (nsplit_jobs <= 0)
+        {
+            std::cout << options.help() << std::endl;
+            std::cout << "ERROR: option string --nsplit_jobs" << nsplit_jobs << " has zero or negative value!" << std::endl;
+            std::cout << "I am not sure what this means..." << std::endl;
+            exit(1);
+        }
+    }
+    else
+    {
+        nsplit_jobs = -1;
+    }
+
+    //_______________________________________________________________________________
+    // --nsplit_jobs
+    if (result.count("job_index"))
+    {
+        job_index = result["job_index"].as<int>();
+        if (job_index < 0)
+        {
+            std::cout << options.help() << std::endl;
+            std::cout << "ERROR: option string --job_index" << job_index << " has negative value!" << std::endl;
+            std::cout << "I am not sure what this means..." << std::endl;
+            exit(1);
+        }
+    }
+    else
+    {
+        job_index = -1;
+    }
+
+
+    // Sanity check for split jobs (if one is set the other must be set too)
+    if (result.count("job_index") or result.count("nsplit_jobs"))
+    {
+        // If one is not provided then throw error
+        if ( not (result.count("job_index") and result.count("nsplit_jobs")))
+        {
+            std::cout << options.help() << std::endl;
+            std::cout << "ERROR: option string --job_index and --nsplit_jobs must be set at the same time!" << std::endl;
+            exit(1);
+        }
+        // If it is set then check for sanity
+        else
+        {
+            if (job_index >= nsplit_jobs)
+            {
+                std::cout << options.help() << std::endl;
+                std::cout << "ERROR: --job_index >= --nsplit_jobs ! This does not make sense..." << std::endl;
+                exit(1);
+            }
+        }
+    }
+
+    do_tau = true;
+
+    //
+    // Printing out the option settings overview
+    //
+    std::cout <<  "=========================================================" << std::endl;
+    std::cout <<  " Setting of the analysis job based on provided arguments " << std::endl;
+    std::cout <<  "---------------------------------------------------------" << std::endl;
+    std::cout <<  " input_file_list_tstring: " << input_file_list_tstring <<  std::endl;
+    std::cout <<  " output_tfile: " << output_tfile->GetName() <<  std::endl;
+    std::cout <<  " n_events: " << n_events <<  std::endl;
+    std::cout <<  " nsplit_jobs: " << nsplit_jobs <<  std::endl;
+    std::cout <<  " job_index: " << job_index <<  std::endl;
+    std::cout <<  "=========================================================" << std::endl;
+
 }
