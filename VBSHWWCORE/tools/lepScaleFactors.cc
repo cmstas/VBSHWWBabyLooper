@@ -1225,7 +1225,7 @@ float ttH::getElecRecoEffSFUL(float eta, float pt, int year) {
         std::abort();
     }
     if (year == 2017) {
-        float pt_ = std::min(pt, 500.000 - 0.001);
+        float pt_ = std::min((double) pt, 500.000 - 0.001);
         if (eta>=-2.500 && eta<-2.000 && pt_>=20.000 && pt_<45.000) return 0.981462419033; // +-0.5%;
         if (eta>=-2.500 && eta<-2.000 && pt_>=45.000 && pt_<75.000) return 0.983623325825; // +-0.3%;
         if (eta>=-2.500 && eta<-2.000 && pt_>=75.000 && pt_<100.000) return 0.976434409618; // +-2.1%;
@@ -1277,7 +1277,7 @@ float ttH::getElecRecoEffSFUL(float eta, float pt, int year) {
 
     }
     if (year == 2018) {
-        float pt_ = std::min(pt, 500.000 - 0.001);
+        float pt_ = std::min((double) pt, 500.000 - 0.001);
         if (eta>=-2.500 && eta<-2.000 && pt_>=20.000 && pt_<45.000) return 0.983539104462; // +-0.4%;
         if (eta>=-2.500 && eta<-2.000 && pt_>=45.000 && pt_<75.000) return 0.986707568169; // +-0.5%;
         if (eta>=-2.500 && eta<-2.000 && pt_>=75.000 && pt_<100.000) return 0.996926248074; // +-0.9%;

@@ -19,6 +19,8 @@
 #include "tools/lepScaleFactors.h" // ttH analysis scale factors
 #include "tools/TauIDSFTool.h"     // tau POG scale factors
 
+#include "TMVA/Reader.h"
+
 class VBSHWW
 {
 public:
@@ -54,6 +56,12 @@ public:
     // Boolean to determine whether it is UL
     bool isUL;
 
+    // Boolean to say whether the sample contains LHEScaleWeight
+    bool hasLHEScaleWeight;
+
+    // Boolean to say whether the sample contains PSWeight
+    bool hasPSWeight;
+
     // TChain that holds the input TTree's
     TChain* events_tchain;
 
@@ -68,6 +76,23 @@ public:
 
     // Custom TTree object
     RooUtil::TTreeX tx;
+
+    // process category
+    enum ProcessType
+    {
+        kBosons = 0,
+        kRaretop,
+        kTTW,
+        kTTZ,
+        kSignal,
+        kTT1LMadGraph,
+        kTT2LMadGraph,
+        kTT1LPowheg,
+        kTT2LPowheg,
+        kNProcess,
+    };
+
+    ProcessType processType;
 
     TauIDSFTool* tauSF_vsJet;
     TauIDSFTool* tauSF_vsMu;
@@ -89,6 +114,8 @@ public:
     RooUtil::HistMap* btagEffLoose_b_subl; // sublead
     RooUtil::HistMap* btagEffLoose_c_subl; // sublead
     RooUtil::HistMap* btagEffLoose_l_subl; // sublead
+
+    RooUtil::TMVAUtil::ReaderX* readerX;
 
     VBSHWW(int, char**);
     ~VBSHWW();

@@ -1,6 +1,6 @@
 // -*- C++ -*-
 // This is a header file generated with the command:
-// makeCMS3ClassFiles("/home/users/phchang/public_html/analysis/hwh/VBSHWWBabyLooper__/hadds/v40/createMini_Run2/data.root", "variable", "VBS", "tas", "vbs")
+// makeCMS3ClassFiles("/home/users/phchang/public_html/analysis/hwh/VBSHWWBabyLooper__/hadds/v70_SS/createMini_Run2/data.root", "variable", "VBS", "tas", "vbs")
 
 #ifndef VBS_H
 #define VBS_H
@@ -35,6 +35,12 @@ class VBS {
   float    wgt_;
   TBranch *wgt_branch;
   bool     wgt_isLoaded;
+  vector<float> *scalewgts_;
+  TBranch *scalewgts_branch;
+  bool     scalewgts_isLoaded;
+  vector<float> *pswgts_;
+  TBranch *pswgts_branch;
+  bool     pswgts_isLoaded;
   int      trig_ee_;
   TBranch *trig_ee_branch;
   bool     trig_ee_isLoaded;
@@ -347,12 +353,12 @@ class VBS {
   float    b1pt_;
   TBranch *b1pt_branch;
   bool     b1pt_isLoaded;
-  int      b0tag_;
-  TBranch *b0tag_branch;
-  bool     b0tag_isLoaded;
-  int      b1tag_;
-  TBranch *b1tag_branch;
-  bool     b1tag_isLoaded;
+  int      b0tight_;
+  TBranch *b0tight_branch;
+  bool     b0tight_isLoaded;
+  int      b1tight_;
+  TBranch *b1tight_branch;
+  bool     b1tight_isLoaded;
   float    mjj_;
   TBranch *mjj_branch;
   bool     mjj_isLoaded;
@@ -374,6 +380,12 @@ class VBS {
   float    j1pt_;
   TBranch *j1pt_branch;
   bool     j1pt_isLoaded;
+  float    j_lead_p_;
+  TBranch *j_lead_p_branch;
+  bool     j_lead_p_isLoaded;
+  float    j_sublead_p_;
+  TBranch *j_sublead_p_branch;
+  bool     j_sublead_p_isLoaded;
   float    mll_;
   TBranch *mll_branch;
   bool     mll_isLoaded;
@@ -413,6 +425,45 @@ class VBS {
   float    ptvvh_;
   TBranch *ptvvh_branch;
   bool     ptvvh_isLoaded;
+  float    v0pt_;
+  TBranch *v0pt_branch;
+  bool     v0pt_isLoaded;
+  float    v1pt_;
+  TBranch *v1pt_branch;
+  bool     v1pt_isLoaded;
+  float    w0mass_;
+  TBranch *w0mass_branch;
+  bool     w0mass_isLoaded;
+  float    w1mass_;
+  TBranch *w1mass_branch;
+  bool     w1mass_isLoaded;
+  int      is_ttbar_madgraph_;
+  TBranch *is_ttbar_madgraph_branch;
+  bool     is_ttbar_madgraph_isLoaded;
+  int      is_ttbar_powheg_;
+  TBranch *is_ttbar_powheg_branch;
+  bool     is_ttbar_powheg_isLoaded;
+  int      is_train_;
+  TBranch *is_train_branch;
+  bool     is_train_isLoaded;
+  int      is_test_;
+  TBranch *is_test_branch;
+  bool     is_test_isLoaded;
+  int      is_signal_;
+  TBranch *is_signal_branch;
+  bool     is_signal_isLoaded;
+  int      is_background_;
+  TBranch *is_background_branch;
+  bool     is_background_isLoaded;
+  float    xsec_sf_;
+  TBranch *xsec_sf_branch;
+  bool     xsec_sf_isLoaded;
+  float    bdt_;
+  TBranch *bdt_branch;
+  bool     bdt_isLoaded;
+  float    bdt_mbboff_;
+  TBranch *bdt_mbboff_branch;
+  bool     bdt_mbboff_isLoaded;
 public: 
 void Init(TTree *tree);
 void GetEntry(unsigned int idx); 
@@ -421,6 +472,8 @@ void LoadAllBranches();
   const int &lumi();
   const unsigned long long &evt();
   const float &wgt();
+  const vector<float> &scalewgts();
+  const vector<float> &pswgts();
   const int &trig_ee();
   const int &trig_em();
   const int &trig_mm();
@@ -525,8 +578,8 @@ void LoadAllBranches();
   const float &ptbb();
   const float &b0pt();
   const float &b1pt();
-  const int &b0tag();
-  const int &b1tag();
+  const int &b0tight();
+  const int &b1tight();
   const float &mjj();
   const float &dphijj();
   const float &detajj();
@@ -534,6 +587,8 @@ void LoadAllBranches();
   const float &ptjj();
   const float &j0pt();
   const float &j1pt();
+  const float &j_lead_p();
+  const float &j_sublead_p();
   const float &mll();
   const float &dphill();
   const float &detall();
@@ -547,6 +602,19 @@ void LoadAllBranches();
   const float &mvvh();
   const float &mtvvh();
   const float &ptvvh();
+  const float &v0pt();
+  const float &v1pt();
+  const float &w0mass();
+  const float &w1mass();
+  const int &is_ttbar_madgraph();
+  const int &is_ttbar_powheg();
+  const int &is_train();
+  const int &is_test();
+  const int &is_signal();
+  const int &is_background();
+  const float &xsec_sf();
+  const float &bdt();
+  const float &bdt_mbboff();
 
   static void progress(int nEventsTotal, int nEventsChain);
 };
@@ -560,6 +628,8 @@ namespace tas {
   const int &lumi();
   const unsigned long long &evt();
   const float &wgt();
+  const vector<float> &scalewgts();
+  const vector<float> &pswgts();
   const int &trig_ee();
   const int &trig_em();
   const int &trig_mm();
@@ -664,8 +734,8 @@ namespace tas {
   const float &ptbb();
   const float &b0pt();
   const float &b1pt();
-  const int &b0tag();
-  const int &b1tag();
+  const int &b0tight();
+  const int &b1tight();
   const float &mjj();
   const float &dphijj();
   const float &detajj();
@@ -673,6 +743,8 @@ namespace tas {
   const float &ptjj();
   const float &j0pt();
   const float &j1pt();
+  const float &j_lead_p();
+  const float &j_sublead_p();
   const float &mll();
   const float &dphill();
   const float &detall();
@@ -686,6 +758,19 @@ namespace tas {
   const float &mvvh();
   const float &mtvvh();
   const float &ptvvh();
+  const float &v0pt();
+  const float &v1pt();
+  const float &w0mass();
+  const float &w1mass();
+  const int &is_ttbar_madgraph();
+  const int &is_ttbar_powheg();
+  const int &is_train();
+  const int &is_test();
+  const int &is_signal();
+  const int &is_background();
+  const float &xsec_sf();
+  const float &bdt();
+  const float &bdt_mbboff();
 }
 #include "rooutil.h"
 #endif

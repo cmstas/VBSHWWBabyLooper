@@ -31,7 +31,7 @@ def dump_hist__eta_v_pt(h,name,do_errors=False):
     buff = ""
     buff += "float {}(float eta, float pt) {{\n".format(name)
     maxpt = h.GetYaxis().GetBinUpEdge(h.GetNbinsY())
-    buff += "   float pt_ = std::min(pt, {:.3f} - 0.001);\n".format(maxpt)
+    buff += "   float pt_ = std::min((double) pt, {:.3f} - 0.001);\n".format(maxpt)
     for xbin in range(1,h.GetNbinsX()+1):
         for ybin in range(1,h.GetNbinsY()+1):
             if xbin != h.GetNbinsX():

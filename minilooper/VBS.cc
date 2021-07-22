@@ -67,6 +67,10 @@ void VBS::Init(TTree *tree) {
   if (evt_branch) evt_branch->SetAddress(&evt_);
   wgt_branch = tree->GetBranch("wgt");
   if (wgt_branch) wgt_branch->SetAddress(&wgt_);
+  scalewgts_branch = tree->GetBranch("scalewgts");
+  if (scalewgts_branch) scalewgts_branch->SetAddress(&scalewgts_);
+  pswgts_branch = tree->GetBranch("pswgts");
+  if (pswgts_branch) pswgts_branch->SetAddress(&pswgts_);
   trig_ee_branch = tree->GetBranch("trig_ee");
   if (trig_ee_branch) trig_ee_branch->SetAddress(&trig_ee_);
   trig_em_branch = tree->GetBranch("trig_em");
@@ -221,10 +225,10 @@ void VBS::Init(TTree *tree) {
   if (b0pt_branch) b0pt_branch->SetAddress(&b0pt_);
   b1pt_branch = tree->GetBranch("b1pt");
   if (b1pt_branch) b1pt_branch->SetAddress(&b1pt_);
-  b0tag_branch = tree->GetBranch("b0tag");
-  if (b0tag_branch) b0tag_branch->SetAddress(&b0tag_);
-  b1tag_branch = tree->GetBranch("b1tag");
-  if (b1tag_branch) b1tag_branch->SetAddress(&b1tag_);
+  b0tight_branch = tree->GetBranch("b0tight");
+  if (b0tight_branch) b0tight_branch->SetAddress(&b0tight_);
+  b1tight_branch = tree->GetBranch("b1tight");
+  if (b1tight_branch) b1tight_branch->SetAddress(&b1tight_);
   mjj_branch = tree->GetBranch("mjj");
   if (mjj_branch) mjj_branch->SetAddress(&mjj_);
   dphijj_branch = tree->GetBranch("dphijj");
@@ -239,6 +243,10 @@ void VBS::Init(TTree *tree) {
   if (j0pt_branch) j0pt_branch->SetAddress(&j0pt_);
   j1pt_branch = tree->GetBranch("j1pt");
   if (j1pt_branch) j1pt_branch->SetAddress(&j1pt_);
+  j_lead_p_branch = tree->GetBranch("j_lead_p");
+  if (j_lead_p_branch) j_lead_p_branch->SetAddress(&j_lead_p_);
+  j_sublead_p_branch = tree->GetBranch("j_sublead_p");
+  if (j_sublead_p_branch) j_sublead_p_branch->SetAddress(&j_sublead_p_);
   mll_branch = tree->GetBranch("mll");
   if (mll_branch) mll_branch->SetAddress(&mll_);
   dphill_branch = tree->GetBranch("dphill");
@@ -265,6 +273,32 @@ void VBS::Init(TTree *tree) {
   if (mtvvh_branch) mtvvh_branch->SetAddress(&mtvvh_);
   ptvvh_branch = tree->GetBranch("ptvvh");
   if (ptvvh_branch) ptvvh_branch->SetAddress(&ptvvh_);
+  v0pt_branch = tree->GetBranch("v0pt");
+  if (v0pt_branch) v0pt_branch->SetAddress(&v0pt_);
+  v1pt_branch = tree->GetBranch("v1pt");
+  if (v1pt_branch) v1pt_branch->SetAddress(&v1pt_);
+  w0mass_branch = tree->GetBranch("w0mass");
+  if (w0mass_branch) w0mass_branch->SetAddress(&w0mass_);
+  w1mass_branch = tree->GetBranch("w1mass");
+  if (w1mass_branch) w1mass_branch->SetAddress(&w1mass_);
+  is_ttbar_madgraph_branch = tree->GetBranch("is_ttbar_madgraph");
+  if (is_ttbar_madgraph_branch) is_ttbar_madgraph_branch->SetAddress(&is_ttbar_madgraph_);
+  is_ttbar_powheg_branch = tree->GetBranch("is_ttbar_powheg");
+  if (is_ttbar_powheg_branch) is_ttbar_powheg_branch->SetAddress(&is_ttbar_powheg_);
+  is_train_branch = tree->GetBranch("is_train");
+  if (is_train_branch) is_train_branch->SetAddress(&is_train_);
+  is_test_branch = tree->GetBranch("is_test");
+  if (is_test_branch) is_test_branch->SetAddress(&is_test_);
+  is_signal_branch = tree->GetBranch("is_signal");
+  if (is_signal_branch) is_signal_branch->SetAddress(&is_signal_);
+  is_background_branch = tree->GetBranch("is_background");
+  if (is_background_branch) is_background_branch->SetAddress(&is_background_);
+  xsec_sf_branch = tree->GetBranch("xsec_sf");
+  if (xsec_sf_branch) xsec_sf_branch->SetAddress(&xsec_sf_);
+  bdt_branch = tree->GetBranch("bdt");
+  if (bdt_branch) bdt_branch->SetAddress(&bdt_);
+  bdt_mbboff_branch = tree->GetBranch("bdt_mbboff");
+  if (bdt_mbboff_branch) bdt_mbboff_branch->SetAddress(&bdt_mbboff_);
 
   tree->SetMakeClass(0);
 }
@@ -276,6 +310,8 @@ void VBS::GetEntry(unsigned int idx) {
   lumi_isLoaded = false;
   evt_isLoaded = false;
   wgt_isLoaded = false;
+  scalewgts_isLoaded = false;
+  pswgts_isLoaded = false;
   trig_ee_isLoaded = false;
   trig_em_isLoaded = false;
   trig_mm_isLoaded = false;
@@ -380,8 +416,8 @@ void VBS::GetEntry(unsigned int idx) {
   ptbb_isLoaded = false;
   b0pt_isLoaded = false;
   b1pt_isLoaded = false;
-  b0tag_isLoaded = false;
-  b1tag_isLoaded = false;
+  b0tight_isLoaded = false;
+  b1tight_isLoaded = false;
   mjj_isLoaded = false;
   dphijj_isLoaded = false;
   detajj_isLoaded = false;
@@ -389,6 +425,8 @@ void VBS::GetEntry(unsigned int idx) {
   ptjj_isLoaded = false;
   j0pt_isLoaded = false;
   j1pt_isLoaded = false;
+  j_lead_p_isLoaded = false;
+  j_sublead_p_isLoaded = false;
   mll_isLoaded = false;
   dphill_isLoaded = false;
   detall_isLoaded = false;
@@ -402,6 +440,19 @@ void VBS::GetEntry(unsigned int idx) {
   mvvh_isLoaded = false;
   mtvvh_isLoaded = false;
   ptvvh_isLoaded = false;
+  v0pt_isLoaded = false;
+  v1pt_isLoaded = false;
+  w0mass_isLoaded = false;
+  w1mass_isLoaded = false;
+  is_ttbar_madgraph_isLoaded = false;
+  is_ttbar_powheg_isLoaded = false;
+  is_train_isLoaded = false;
+  is_test_isLoaded = false;
+  is_signal_isLoaded = false;
+  is_background_isLoaded = false;
+  xsec_sf_isLoaded = false;
+  bdt_isLoaded = false;
+  bdt_mbboff_isLoaded = false;
 }
 
 void VBS::LoadAllBranches() {
@@ -410,6 +461,8 @@ void VBS::LoadAllBranches() {
   if (lumi_branch != 0) lumi();
   if (evt_branch != 0) evt();
   if (wgt_branch != 0) wgt();
+  if (scalewgts_branch != 0) scalewgts();
+  if (pswgts_branch != 0) pswgts();
   if (trig_ee_branch != 0) trig_ee();
   if (trig_em_branch != 0) trig_em();
   if (trig_mm_branch != 0) trig_mm();
@@ -514,8 +567,8 @@ void VBS::LoadAllBranches() {
   if (ptbb_branch != 0) ptbb();
   if (b0pt_branch != 0) b0pt();
   if (b1pt_branch != 0) b1pt();
-  if (b0tag_branch != 0) b0tag();
-  if (b1tag_branch != 0) b1tag();
+  if (b0tight_branch != 0) b0tight();
+  if (b1tight_branch != 0) b1tight();
   if (mjj_branch != 0) mjj();
   if (dphijj_branch != 0) dphijj();
   if (detajj_branch != 0) detajj();
@@ -523,6 +576,8 @@ void VBS::LoadAllBranches() {
   if (ptjj_branch != 0) ptjj();
   if (j0pt_branch != 0) j0pt();
   if (j1pt_branch != 0) j1pt();
+  if (j_lead_p_branch != 0) j_lead_p();
+  if (j_sublead_p_branch != 0) j_sublead_p();
   if (mll_branch != 0) mll();
   if (dphill_branch != 0) dphill();
   if (detall_branch != 0) detall();
@@ -536,6 +591,19 @@ void VBS::LoadAllBranches() {
   if (mvvh_branch != 0) mvvh();
   if (mtvvh_branch != 0) mtvvh();
   if (ptvvh_branch != 0) ptvvh();
+  if (v0pt_branch != 0) v0pt();
+  if (v1pt_branch != 0) v1pt();
+  if (w0mass_branch != 0) w0mass();
+  if (w1mass_branch != 0) w1mass();
+  if (is_ttbar_madgraph_branch != 0) is_ttbar_madgraph();
+  if (is_ttbar_powheg_branch != 0) is_ttbar_powheg();
+  if (is_train_branch != 0) is_train();
+  if (is_test_branch != 0) is_test();
+  if (is_signal_branch != 0) is_signal();
+  if (is_background_branch != 0) is_background();
+  if (xsec_sf_branch != 0) xsec_sf();
+  if (bdt_branch != 0) bdt();
+  if (bdt_mbboff_branch != 0) bdt_mbboff();
 }
 
 const int &VBS::run() {
@@ -588,6 +656,32 @@ const float &VBS::wgt() {
     wgt_isLoaded = true;
   }
   return wgt_;
+}
+
+const vector<float> &VBS::scalewgts() {
+  if (not scalewgts_isLoaded) {
+    if (scalewgts_branch != 0) {
+      scalewgts_branch->GetEntry(index);
+    } else {
+      printf("branch scalewgts_branch does not exist!\n");
+      exit(1);
+    }
+    scalewgts_isLoaded = true;
+  }
+  return *scalewgts_;
+}
+
+const vector<float> &VBS::pswgts() {
+  if (not pswgts_isLoaded) {
+    if (pswgts_branch != 0) {
+      pswgts_branch->GetEntry(index);
+    } else {
+      printf("branch pswgts_branch does not exist!\n");
+      exit(1);
+    }
+    pswgts_isLoaded = true;
+  }
+  return *pswgts_;
 }
 
 const int &VBS::trig_ee() {
@@ -1942,30 +2036,30 @@ const float &VBS::b1pt() {
   return b1pt_;
 }
 
-const int &VBS::b0tag() {
-  if (not b0tag_isLoaded) {
-    if (b0tag_branch != 0) {
-      b0tag_branch->GetEntry(index);
+const int &VBS::b0tight() {
+  if (not b0tight_isLoaded) {
+    if (b0tight_branch != 0) {
+      b0tight_branch->GetEntry(index);
     } else {
-      printf("branch b0tag_branch does not exist!\n");
+      printf("branch b0tight_branch does not exist!\n");
       exit(1);
     }
-    b0tag_isLoaded = true;
+    b0tight_isLoaded = true;
   }
-  return b0tag_;
+  return b0tight_;
 }
 
-const int &VBS::b1tag() {
-  if (not b1tag_isLoaded) {
-    if (b1tag_branch != 0) {
-      b1tag_branch->GetEntry(index);
+const int &VBS::b1tight() {
+  if (not b1tight_isLoaded) {
+    if (b1tight_branch != 0) {
+      b1tight_branch->GetEntry(index);
     } else {
-      printf("branch b1tag_branch does not exist!\n");
+      printf("branch b1tight_branch does not exist!\n");
       exit(1);
     }
-    b1tag_isLoaded = true;
+    b1tight_isLoaded = true;
   }
-  return b1tag_;
+  return b1tight_;
 }
 
 const float &VBS::mjj() {
@@ -2057,6 +2151,32 @@ const float &VBS::j1pt() {
     j1pt_isLoaded = true;
   }
   return j1pt_;
+}
+
+const float &VBS::j_lead_p() {
+  if (not j_lead_p_isLoaded) {
+    if (j_lead_p_branch != 0) {
+      j_lead_p_branch->GetEntry(index);
+    } else {
+      printf("branch j_lead_p_branch does not exist!\n");
+      exit(1);
+    }
+    j_lead_p_isLoaded = true;
+  }
+  return j_lead_p_;
+}
+
+const float &VBS::j_sublead_p() {
+  if (not j_sublead_p_isLoaded) {
+    if (j_sublead_p_branch != 0) {
+      j_sublead_p_branch->GetEntry(index);
+    } else {
+      printf("branch j_sublead_p_branch does not exist!\n");
+      exit(1);
+    }
+    j_sublead_p_isLoaded = true;
+  }
+  return j_sublead_p_;
 }
 
 const float &VBS::mll() {
@@ -2228,6 +2348,175 @@ const float &VBS::ptvvh() {
   return ptvvh_;
 }
 
+const float &VBS::v0pt() {
+  if (not v0pt_isLoaded) {
+    if (v0pt_branch != 0) {
+      v0pt_branch->GetEntry(index);
+    } else {
+      printf("branch v0pt_branch does not exist!\n");
+      exit(1);
+    }
+    v0pt_isLoaded = true;
+  }
+  return v0pt_;
+}
+
+const float &VBS::v1pt() {
+  if (not v1pt_isLoaded) {
+    if (v1pt_branch != 0) {
+      v1pt_branch->GetEntry(index);
+    } else {
+      printf("branch v1pt_branch does not exist!\n");
+      exit(1);
+    }
+    v1pt_isLoaded = true;
+  }
+  return v1pt_;
+}
+
+const float &VBS::w0mass() {
+  if (not w0mass_isLoaded) {
+    if (w0mass_branch != 0) {
+      w0mass_branch->GetEntry(index);
+    } else {
+      printf("branch w0mass_branch does not exist!\n");
+      exit(1);
+    }
+    w0mass_isLoaded = true;
+  }
+  return w0mass_;
+}
+
+const float &VBS::w1mass() {
+  if (not w1mass_isLoaded) {
+    if (w1mass_branch != 0) {
+      w1mass_branch->GetEntry(index);
+    } else {
+      printf("branch w1mass_branch does not exist!\n");
+      exit(1);
+    }
+    w1mass_isLoaded = true;
+  }
+  return w1mass_;
+}
+
+const int &VBS::is_ttbar_madgraph() {
+  if (not is_ttbar_madgraph_isLoaded) {
+    if (is_ttbar_madgraph_branch != 0) {
+      is_ttbar_madgraph_branch->GetEntry(index);
+    } else {
+      printf("branch is_ttbar_madgraph_branch does not exist!\n");
+      exit(1);
+    }
+    is_ttbar_madgraph_isLoaded = true;
+  }
+  return is_ttbar_madgraph_;
+}
+
+const int &VBS::is_ttbar_powheg() {
+  if (not is_ttbar_powheg_isLoaded) {
+    if (is_ttbar_powheg_branch != 0) {
+      is_ttbar_powheg_branch->GetEntry(index);
+    } else {
+      printf("branch is_ttbar_powheg_branch does not exist!\n");
+      exit(1);
+    }
+    is_ttbar_powheg_isLoaded = true;
+  }
+  return is_ttbar_powheg_;
+}
+
+const int &VBS::is_train() {
+  if (not is_train_isLoaded) {
+    if (is_train_branch != 0) {
+      is_train_branch->GetEntry(index);
+    } else {
+      printf("branch is_train_branch does not exist!\n");
+      exit(1);
+    }
+    is_train_isLoaded = true;
+  }
+  return is_train_;
+}
+
+const int &VBS::is_test() {
+  if (not is_test_isLoaded) {
+    if (is_test_branch != 0) {
+      is_test_branch->GetEntry(index);
+    } else {
+      printf("branch is_test_branch does not exist!\n");
+      exit(1);
+    }
+    is_test_isLoaded = true;
+  }
+  return is_test_;
+}
+
+const int &VBS::is_signal() {
+  if (not is_signal_isLoaded) {
+    if (is_signal_branch != 0) {
+      is_signal_branch->GetEntry(index);
+    } else {
+      printf("branch is_signal_branch does not exist!\n");
+      exit(1);
+    }
+    is_signal_isLoaded = true;
+  }
+  return is_signal_;
+}
+
+const int &VBS::is_background() {
+  if (not is_background_isLoaded) {
+    if (is_background_branch != 0) {
+      is_background_branch->GetEntry(index);
+    } else {
+      printf("branch is_background_branch does not exist!\n");
+      exit(1);
+    }
+    is_background_isLoaded = true;
+  }
+  return is_background_;
+}
+
+const float &VBS::xsec_sf() {
+  if (not xsec_sf_isLoaded) {
+    if (xsec_sf_branch != 0) {
+      xsec_sf_branch->GetEntry(index);
+    } else {
+      printf("branch xsec_sf_branch does not exist!\n");
+      exit(1);
+    }
+    xsec_sf_isLoaded = true;
+  }
+  return xsec_sf_;
+}
+
+const float &VBS::bdt() {
+  if (not bdt_isLoaded) {
+    if (bdt_branch != 0) {
+      bdt_branch->GetEntry(index);
+    } else {
+      printf("branch bdt_branch does not exist!\n");
+      exit(1);
+    }
+    bdt_isLoaded = true;
+  }
+  return bdt_;
+}
+
+const float &VBS::bdt_mbboff() {
+  if (not bdt_mbboff_isLoaded) {
+    if (bdt_mbboff_branch != 0) {
+      bdt_mbboff_branch->GetEntry(index);
+    } else {
+      printf("branch bdt_mbboff_branch does not exist!\n");
+      exit(1);
+    }
+    bdt_mbboff_isLoaded = true;
+  }
+  return bdt_mbboff_;
+}
+
 
 void VBS::progress( int nEventsTotal, int nEventsChain ){
   int period = 1000;
@@ -2255,6 +2544,8 @@ const int &run() { return vbs.run(); }
 const int &lumi() { return vbs.lumi(); }
 const unsigned long long &evt() { return vbs.evt(); }
 const float &wgt() { return vbs.wgt(); }
+const vector<float> &scalewgts() { return vbs.scalewgts(); }
+const vector<float> &pswgts() { return vbs.pswgts(); }
 const int &trig_ee() { return vbs.trig_ee(); }
 const int &trig_em() { return vbs.trig_em(); }
 const int &trig_mm() { return vbs.trig_mm(); }
@@ -2359,8 +2650,8 @@ const float &drbb() { return vbs.drbb(); }
 const float &ptbb() { return vbs.ptbb(); }
 const float &b0pt() { return vbs.b0pt(); }
 const float &b1pt() { return vbs.b1pt(); }
-const int &b0tag() { return vbs.b0tag(); }
-const int &b1tag() { return vbs.b1tag(); }
+const int &b0tight() { return vbs.b0tight(); }
+const int &b1tight() { return vbs.b1tight(); }
 const float &mjj() { return vbs.mjj(); }
 const float &dphijj() { return vbs.dphijj(); }
 const float &detajj() { return vbs.detajj(); }
@@ -2368,6 +2659,8 @@ const float &drjj() { return vbs.drjj(); }
 const float &ptjj() { return vbs.ptjj(); }
 const float &j0pt() { return vbs.j0pt(); }
 const float &j1pt() { return vbs.j1pt(); }
+const float &j_lead_p() { return vbs.j_lead_p(); }
+const float &j_sublead_p() { return vbs.j_sublead_p(); }
 const float &mll() { return vbs.mll(); }
 const float &dphill() { return vbs.dphill(); }
 const float &detall() { return vbs.detall(); }
@@ -2381,6 +2674,19 @@ const float &st() { return vbs.st(); }
 const float &mvvh() { return vbs.mvvh(); }
 const float &mtvvh() { return vbs.mtvvh(); }
 const float &ptvvh() { return vbs.ptvvh(); }
+const float &v0pt() { return vbs.v0pt(); }
+const float &v1pt() { return vbs.v1pt(); }
+const float &w0mass() { return vbs.w0mass(); }
+const float &w1mass() { return vbs.w1mass(); }
+const int &is_ttbar_madgraph() { return vbs.is_ttbar_madgraph(); }
+const int &is_ttbar_powheg() { return vbs.is_ttbar_powheg(); }
+const int &is_train() { return vbs.is_train(); }
+const int &is_test() { return vbs.is_test(); }
+const int &is_signal() { return vbs.is_signal(); }
+const int &is_background() { return vbs.is_background(); }
+const float &xsec_sf() { return vbs.xsec_sf(); }
+const float &bdt() { return vbs.bdt(); }
+const float &bdt_mbboff() { return vbs.bdt_mbboff(); }
 
 }
 
