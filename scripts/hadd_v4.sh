@@ -3,7 +3,7 @@ usage()
 {
   echo "ERROR - Usage:"
   echo
-  echo "      sh $(basename $0) STUDYNAME TAG"
+  echo "      sh $(basename $0) STUDYNAME TAG BABYVERSION"
   echo
   exit
 }
@@ -12,6 +12,8 @@ if [ -z ${1} ]; then usage; fi
 STUDY=${1}
 if [ -z ${2} ]; then usage; fi
 TAG=${2}
+if [ -z ${3} ]; then usage; fi
+BABYVERSION=${3}
 
 YEARS="2016"
 
@@ -19,12 +21,12 @@ rm .haddjobs.txt
 
 for YEAR in ${YEARS}; do
 
-    HADDDIR=hadds/${TAG}/${STUDY}_${YEAR}
+    HADDDIR=hadds/${TAG}/${BABYVERSION}/${STUDY}_${YEAR}
 
     if [[ ${YEAR} == *"Run2"* ]]; then
-        HISTDIR="hists/${TAG}/${STUDY}_*"
+        HISTDIR="hists/${TAG}/${BABYVERSION}/${STUDY}_*"
     else
-        HISTDIR=hists/${TAG}/${STUDY}_${YEAR}
+        HISTDIR=hists/${TAG}/${BABYVERSION}/${STUDY}_${YEAR}
     fi
 
     mkdir -p ${HADDDIR}

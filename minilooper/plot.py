@@ -5,11 +5,12 @@ import sys
 def usage():
     print("Usage:")
     print("")
-    print("   python {} VERSION YEAR RUNTAG PLOTSUBDIR [PLOTNAMES]".format(sys.argv[0]))
+    print("   python {} VERSION YEAR RUNTAG BABYVERSION PLOTSUBDIR [PLOTNAMES]".format(sys.argv[0]))
     print("")
     print("    VERSION       Skim versions (e.g. v40)")
     print("    YEAR          Year          (e.g. 2016, 2017, 2018, or Run2)")
     print("    RUNTAG        Run tag       (e.g. Nominal, date, or whatever)")
+    print("    BABYVERSION   Baby version  (e.g. Baby version)")
     print("    PLOTSUBDIR    Sub dir name  (e.g. VRPlots)")
     print("")
     sys.exit()
@@ -30,19 +31,24 @@ except:
     usage()
 
 try:
-    subdir = sys.argv[4]
+    babyversion = sys.argv[4]
 except:
     usage()
 
 try:
-    cutname_to_plot = sys.argv[5]
+    subdir = sys.argv[5]
+except:
+    usage()
+
+try:
+    cutname_to_plot = sys.argv[6]
 except:
     cutname_to_plot = ""
 
 import ROOT as r
 r.gROOT.SetBatch(True)
 
-hadd_dir = "hists/{}/{}/{}/".format(runtag, tag, year)
+hadd_dir = "hists/{}/{}/{}/{}/".format(runtag, tag, babyversion, year)
 
 bkgs = [
         "{}/tt1lpowheg.root".format(hadd_dir),
@@ -137,7 +143,7 @@ do_cut_scan = False
 blind = False
 
 signal_scale = 1
-if year == "Run2" and tag == "v2.2_SS":
+if year == "Run2" and tag == "v2.3_SS":
     signal_scale = 137. / (59.97+41.3)
 
 if "_SS" in tag:
@@ -147,38 +153,50 @@ if "_SS" in tag:
     if ("MbbOn" in cutname_to_plot and "__SRs" in cutname_to_plot):
         signal_scale = 137. / (59.97+41.3)
         blind = True
+    if ("MbbAll" in cutname_to_plot and "__BDT" in cutname_to_plot):
+        signal_scale = 137. / (59.97+41.3)
+        blind = True
 
 histxaxislabeloptions = {
-"LT"             : {"xaxis_label"      : "L_{T} [GeV]",              "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"ST"             : {"xaxis_label"      : "S_{T} [GeV]",              "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"LTVarBin"       : {"xaxis_label"      : "L_{T} [GeV]",              "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"STVarBin"       : {"xaxis_label"      : "S_{T} [GeV]",              "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"LTZoom"         : {"xaxis_label"      : "L_{T} [GeV]",              "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"STZoom"         : {"xaxis_label"      : "S_{T} [GeV]",              "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"BDT"            : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins":  3, "signal_scale": signal_scale, "blind": blind, "yaxis_log": True },
-"BDTMbb125"      : {"xaxis_label"      : "BDT (m_{bb}=125 GeV)",     "xaxis_ndivisions" : 505, "nbins":  3, "signal_scale": signal_scale, "blind": blind, "yaxis_log": True },
-"BDTLog"         : {"xaxis_label"      : "-Log(1-BDT)",              "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind, "yaxis_log": True },
-"LeptonPt0"      : {"xaxis_label"      : "p_{T,lead-lep} [GeV]",     "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"LeptonPt1"      : {"xaxis_label"      : "p_{T,sublead-lep} [GeV]",  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"LeptonPt0Zoom"  : {"xaxis_label"      : "p_{T,lead-lep} [GeV]",     "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind },
-"LeptonPt1Zoom"  : {"xaxis_label"      : "p_{T,sublead-lep} [GeV]",  "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind },
-"LeptonEta0"     : {"xaxis_label"      : "#eta_{lead-lep} [GeV]",    "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"LeptonEta1"     : {"xaxis_label"      : "#eta_{sublead-lep} [GeV]", "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"MJJ"            : {"xaxis_label"      : "m_{jj} [GeV]",             "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"MJJVarBin"      : {"xaxis_label"      : "m_{jj} [GeV]",             "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"DEtaJJ"         : {"xaxis_label"      : "#Delta#eta_{jj} [GeV]",    "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"JetEta0"        : {"xaxis_label"      : "p_{T,lead-jet} [GeV]",     "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"JetEta1"        : {"xaxis_label"      : "p_{T,sublead-jet} [GeV]",  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"BJetPt0"        : {"xaxis_label"      : "p_{T,lead-b} [GeV]",       "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind },
-"BJetPt1"        : {"xaxis_label"      : "p_{T,sublead-b} [GeV]",    "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind },
-"MET"            : {"xaxis_label"      : "MET [GeV]",                "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind },
-"MbbZoom"        : {"xaxis_label"      : "m_{bb} [GeV]",             "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"Mbb"            : {"xaxis_label"      : "m_{bb} [GeV]",             "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"Channels4Bins"  : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"Yield"          : {"xaxis_label"      : "Yield",                    "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"VRs"            : {"xaxis_label"      : "Yield",                    "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
-"SRs"            : {"xaxis_label"      : "Yield",                    "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind },
+"LT"                   : {"xaxis_label"      : "L_{T} [GeV]",              "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"ST"                   : {"xaxis_label"      : "S_{T} [GeV]",              "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"LTVarBin"             : {"xaxis_label"      : "L_{T} [GeV]",              "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"STVarBin"             : {"xaxis_label"      : "S_{T} [GeV]",              "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"LTZoom"               : {"xaxis_label"      : "L_{T} [GeV]",              "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"STZoom"               : {"xaxis_label"      : "S_{T} [GeV]",              "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"BDT"                  : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"BDTBkg"               : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins":  5, "signal_scale": signal_scale, "blind": blind},
+"BDTMD"                : {"xaxis_label"      : "BDT (m_{bb}=125 GeV)",     "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"LeptonPt0"            : {"xaxis_label"      : "p_{T,lead-lep} [GeV]",     "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"LeptonPt1"            : {"xaxis_label"      : "p_{T,sublead-lep} [GeV]",  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"LeptonPt0Zoom"        : {"xaxis_label"      : "p_{T,lead-lep} [GeV]",     "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
+"LeptonPt1Zoom"        : {"xaxis_label"      : "p_{T,sublead-lep} [GeV]",  "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
+"LeptonEta0"           : {"xaxis_label"      : "#eta_{lead-lep} [GeV]",    "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"LeptonEta1"           : {"xaxis_label"      : "#eta_{sublead-lep} [GeV]", "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"MJJ"                  : {"xaxis_label"      : "m_{jj} [GeV]",             "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"MJJZoom"              : {"xaxis_label"      : "m_{jj} [GeV]",             "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
+"MJJVarBin"            : {"xaxis_label"      : "m_{jj} [GeV]",             "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"DEtaJJ"               : {"xaxis_label"      : "#Delta#eta_{jj} [GeV]",    "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"DEtaJJVarBin"         : {"xaxis_label"      : "#Delta#eta_{jj} [GeV]",    "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"JetEta0"              : {"xaxis_label"      : "p_{T,lead-jet} [GeV]",     "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
+"JetEta1"              : {"xaxis_label"      : "p_{T,sublead-jet} [GeV]",  "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
+"JetPt0"               : {"xaxis_label"      : "p_{T,lead-jet} [GeV]",     "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
+"JetPt1"               : {"xaxis_label"      : "p_{T,sublead-jet} [GeV]",  "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
+"BJetPt0"              : {"xaxis_label"      : "p_{T,lead-b} [GeV]",       "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
+"BJetPt1"              : {"xaxis_label"      : "p_{T,sublead-b} [GeV]",    "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
+"MET"                  : {"xaxis_label"      : "MET [GeV]",                "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
+"MbbZoom"              : {"xaxis_label"      : "m_{bb} [GeV]",             "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"Mbb"                  : {"xaxis_label"      : "m_{bb} [GeV]",             "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"Channels4Bins"        : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"Channels5Bins"        : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"Yield"                : {"xaxis_label"      : "Yield",                    "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"VRs"                  : {"xaxis_label"      : "Yield",                    "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"SRs"                  : {"xaxis_label"      : "Yield",                    "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"LTMbbOff__BDTBkg"     : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins":  5, "signal_scale": signal_scale, "blind": blind, "yaxis_log":True},
+"PSLTMbbOff__BDTBkg"   : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins":  5, "signal_scale": signal_scale, "blind": blind, "yaxis_log":True},
 }
+
+fitbkg = True if "MbbOff" in cutname_to_plot else False
 
 # cutflow
 p.dump_plot(
@@ -187,7 +205,7 @@ p.dump_plot(
     data_fname=data_fname,
     legend_labels=bkg_labels,
     signal_labels=signal_labels,
-    dirname="cutscans/{}/{}/{}/{}".format(runtag, tag, year, subdir) if do_cut_scan else "plots/{}/{}/{}/{}".format(runtag, tag, year, subdir),
+    dirname="cutscans/{}/{}/{}/{}/{}".format(runtag, tag, babyversion, year, subdir) if do_cut_scan else "plots/{}/{}/{}/{}/{}".format(runtag, tag, babyversion, year, subdir),
     filter_pattern=filter_pattern,
     dogrep=dogrep,
     usercolors=colors,
@@ -206,7 +224,7 @@ p.dump_plot(
         # "yaxis_log": True,
         # "divide_by_bin_width": True,
         # "divide_by_first_bin": True,
-        "fit_bkg": True,
+        "fit_bkg": fitbkg,
         "extra_text_xpos":  0.3,
         "extra_text_ypos":  0.65,
         },

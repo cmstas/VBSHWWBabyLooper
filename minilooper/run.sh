@@ -5,9 +5,10 @@ if [ -z $1 ]; then
     echo ""
     echo "  sh $0 VERSION YEAR"
     echo ""
-    echo "     VERSION    Skim version (e.g. v40)"
-    echo "     YEAR       Year         (e.g. 2016, 2017, 2018, or Run2)"
-    echo "     RUNTAG     Run tag      (e.g. Date, name, or some specifier)"
+    echo "     VERSION       Skim version   (e.g. v40)"
+    echo "     YEAR          Year           (e.g. 2016, 2017, 2018, or Run2)"
+    echo "     RUNTAG        Run tag        (e.g. Date, name, or some specifier)"
+    echo "     BABYVERSION   Baby version   (e.g. v1)"
     echo ""
     exit
 fi
@@ -15,12 +16,13 @@ fi
 TAG=${1}
 YEAR=${2}
 RUNTAG=${3}
+BABYVERSION=${4}
 
-HISTDIR=hists/${RUNTAG}/${TAG}/${YEAR}
+HISTDIR=hists/${RUNTAG}/${TAG}/${BABYVERSION}/${YEAR}
 
 mkdir -p ${HISTDIR}
 
-MINIDIR=../hadds/${TAG}/createMini_${YEAR}
+MINIDIR=../hadds/${TAG}/${BABYVERSION}/createMini_${YEAR}
 
 echo "============================"
 echo "YEAR      : ${YEAR}"

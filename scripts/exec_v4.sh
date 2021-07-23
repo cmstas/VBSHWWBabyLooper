@@ -3,7 +3,7 @@ usage()
 {
   echo "ERROR - Usage:"
   echo
-  echo "      sh $(basename $0) STUDYNAME TAG [DEBUG]"
+  echo "      sh $(basename $0) STUDYNAME TAG BABYVERSION [DEBUG]"
   echo
   exit
 }
@@ -12,8 +12,10 @@ if [ -z ${1} ]; then usage; fi
 STUDY=${1}
 if [ -z ${2} ]; then usage; fi
 TAG=${2}
-# Third argument is DEBUG
-DEBUG=${3}
+if [ -z ${3} ]; then usage; fi
+BABYVERSION=${3}
+
+DEBUG=${4}
 
 YEARS="2016"
 
@@ -78,7 +80,7 @@ for SAMPLE in ${SAMPLES}; do
 
     for YEAR in ${YEARS}; do
 
-        HISTDIR=hists/${TAG}/${STUDY}_${YEAR}
+        HISTDIR=hists/${TAG}/${BABYVERSION}/${STUDY}_${YEAR}
         mkdir -p ${HISTDIR}
 
         if [[ ${YEAR} == *"2016"* ]]; then NANOTAG=RunIISummer16NanoAOD*; fi

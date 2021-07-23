@@ -3,7 +3,7 @@ usage()
 {
   echo "ERROR - Usage:"
   echo
-  echo "      sh $(basename $0) STUDYNAME TAG"
+  echo "      sh $(basename $0) STUDYNAME TAG BABYVERSION"
   echo
   exit
 }
@@ -12,6 +12,8 @@ if [ -z ${1} ]; then usage; fi
 STUDY=${1}
 if [ -z ${2} ]; then usage; fi
 TAG=${2}
+if [ -z ${3} ]; then usage; fi
+BABYVERSION=${3}
 
 # YEARS="2016 2017 2018 Run2"
 YEARS="2017 2018"
@@ -20,12 +22,12 @@ rm .haddjobs.txt
 
 for YEAR in ${YEARS}; do
 
-    HADDDIR=hadds/${TAG}/${STUDY}_${YEAR}
+    HADDDIR=hadds/${TAG}/${BABYVERSION}/${STUDY}_${YEAR}
 
     if [[ ${YEAR} == *"Run2"* ]]; then
-        HISTDIR="hists/${TAG}/${STUDY}_*"
+        HISTDIR="hists/${TAG}/${BABYVERSION}/${STUDY}_*"
     else
-        HISTDIR=hists/${TAG}/${STUDY}_${YEAR}
+        HISTDIR=hists/${TAG}/${BABYVERSION}/${STUDY}_${YEAR}
     fi
 
     mkdir -p ${HADDDIR}
@@ -57,7 +59,7 @@ for YEAR in ${YEARS}; do
     elif [[ ${YEAR} == *"2018"* ]]; then
         echo "rm -f ${HADDDIR}/bosons.root;hadd -f ${HADDDIR}/bosons.root ${HISTDIR}/WJetsTo*.root ${HISTDIR}/DY*.root ${HISTDIR}/WW_*.root ${HISTDIR}/SSWW*.root ${HISTDIR}/WZTo3LNu*.root ${HISTDIR}/ZZTo4L*.root > ${HADDDIR}/bosons.hadd.log 2>&1" >> .haddjobs.txt
     elif [[ ${YEAR} == *"Run2"* ]]; then
-        echo "rm -f ${HADDDIR}/bosons.root;hadd -f ${HADDDIR}/bosons.root ${HISTDIR}/WJetsTo*.root ${HISTDIR}/DY*.root ${HISTDIR}/WW_*.root ${HISTDIR}/SSWW*.root ${HISTDIR}/WZTo3LNu*.root hists/${TAG}/${STUDY}_2017/ZZ*.root hists/${TAG}/${STUDY}_2018/ZZTo4L*.root > ${HADDDIR}/bosons.hadd.log 2>&1" >> .haddjobs.txt
+        echo "rm -f ${HADDDIR}/bosons.root;hadd -f ${HADDDIR}/bosons.root ${HISTDIR}/WJetsTo*.root ${HISTDIR}/DY*.root ${HISTDIR}/WW_*.root ${HISTDIR}/SSWW*.root ${HISTDIR}/WZTo3LNu*.root hists/${TAG}/${BABYVERSION}/${STUDY}_2017/ZZ*.root hists/${TAG}/${BABYVERSION}/${STUDY}_2018/ZZTo4L*.root > ${HADDDIR}/bosons.hadd.log 2>&1" >> .haddjobs.txt
     fi
     # # echo "rm -f ${HADDDIR}/bosons.root;hadd -f ${HADDDIR}/bosons.root ${HISTDIR}/WJetsTo*.root ${HISTDIR}/DY*.root ${HISTDIR}/WWToLNuQQ*.root ${HISTDIR}/WpWp*.root ${HISTDIR}/WZTo3LNu*.root ${HISTDIR}/ZZTo4L*.root ${HISTDIR}/GluGluHToZZTo4L*.root ${HISTDIR}/WWW_4F*.root ${HISTDIR}/WWZ*.root ${HISTDIR}/WZZ*.root ${HISTDIR}/ZZZ*.root > ${HADDDIR}/bosons.hadd.log 2>&1" >> .haddjobs.txt
     # echo "rm -f ${HADDDIR}/vbshww.root;hadd -f ${HADDDIR}/vbshww.root ${HISTDIR}/VBSWmpWmpHToLNuLNu_TuneCP5*.root > ${HADDDIR}/vbshww.hadd.log 2>&1" >> .haddjobs.txt

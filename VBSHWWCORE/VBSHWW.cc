@@ -228,7 +228,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
         RooUtil::error(TString::Format("While setting b-tag efficiencies, found year = %d that is not recognized.", nt.year()));
     }
 
-    readerX = new RooUtil::TMVAUtil::ReaderX("BDT", "/home/users/phchang/public_html/analysis/hwh/VBSWWHBDT/dataset/weights/TMVAClassification_BDT.weights.xml");
+    readerX = new RooUtil::TMVAUtil::ReaderX("BDT", "/nfs-7/userdata/yxiang/BDTResult/dataset/weights/TMVAClassification_BDT.weights.xml");
 
 //=============================
 //
@@ -375,6 +375,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch<int>("pass_blind"); // for data, to blind the mbb < 150 region
 
     tx.createBranch<int>("categ"); // categ 0=e+l+ 1=m+l+ 2=t+l+
+    tx.createBranch<float>("categ_F"); // categ 0=e+l+ 1=m+l+ 2=t+l+ (float version)
 
     // Create keyvariables worth computing
     tx.createBranch<float>("mbb");
@@ -1870,6 +1871,7 @@ void VBSHWW::initSRCutflow()
             else if (leadlepID > 0 and ((btagchannel <= 1 and lepchannel <= 2) or (btagchannel == 0 and lepchannel > 2)))
                 categ = 3;
             tx.setBranch<int>("categ", categ);
+            tx.setBranch<float>("categ_F", categ);
 
             tx.setBranch<int>("is_ttbar_madgraph", processType == ProcessType::kTT1LMadGraph or processType == ProcessType::kTT2LMadGraph);
             tx.setBranch<int>("is_ttbar_powheg", processType == ProcessType::kTT1LPowheg or processType == ProcessType::kTT2LPowheg);
