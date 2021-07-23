@@ -17,3 +17,4 @@ NanoSkimmer/*.log
 NanoSkimmer/tasks
 NanoSkimmer/*.json
 test.py
+doAnalysis
