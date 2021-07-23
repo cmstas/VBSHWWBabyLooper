@@ -12,10 +12,11 @@ if [ -z ${1} ]; then usage; fi
 STUDY=${1}
 if [ -z ${2} ]; then usage; fi
 TAG=${2}
-# Third argument is DEBUG
+# Third argument is debug
 DEBUG=${3}
 
-YEARS="2016 2017 2018"
+# YEARS="2016 2017 2018"
+YEARS="2017 2018"
 
 EXECUTABLE=./studies/${STUDY}/doAnalysis
 
@@ -75,6 +76,40 @@ DoubleMuon_Run2018 \
 MuonEG_Run2018 \
 SingleMuon_Run2018"
 
+SAMPLES="TTTo2L2Nu \
+TTToSemiLeptonic \
+ST_tW_antitop_5f \
+ST_tW_top_5f \
+ST_s-channel_4f \
+ST_t-channel_antitop_4f \
+ST_t-channel_top_4f \
+TTWJetsToLNu \
+TTZToLLNuNu_M-10 \
+DYJetsToLL_M-50 \
+DYJetsToLL_M-10to50 \
+WJetsToLNu \
+SSWW \
+WW \
+WZTo3LNu \
+ZZTo4L \
+ZZ \
+ttHJetToNonbb \
+ttHJetTobb \
+TWZToLL_thad_Wlept_5f_DR \
+TWZToLL_tlept_Whad_5f_DR \
+TTWW \
+TTWZ \
+VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5 \
+DoubleEG_Run2017 \
+DoubleMuon_Run2017 \
+MuonEG_Run2017 \
+SingleElectron_Run2017 \
+SingleMuon_Run2017 \
+EGamma_Run2018 \
+DoubleMuon_Run2018 \
+MuonEG_Run2018 \
+SingleMuon_Run2018"
+
 # VBSWmpWmpHToLNuLNu_TuneCP5 \
 
 NANOSKIMDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_${TAG}/
@@ -90,12 +125,14 @@ for SAMPLE in ${SAMPLES}; do
         HISTDIR=hists/${TAG}/${STUDY}_${YEAR}
         mkdir -p ${HISTDIR}
 
-        if [[ ${YEAR} == *"2016"* ]]; then NANOTAG=RunIISummer16NanoAOD*; fi
-        if [[ ${YEAR} == *"2017"* ]]; then NANOTAG=RunIIFall17NanoAOD*; fi
-        if [[ ${YEAR} == *"2018"* ]]; then NANOTAG=RunIIAutumn18NanoAOD*; fi
+        # if [[ ${YEAR} == *"2016"* ]]; then NANOTAG=RunIISummer16NanoAOD*; fi
+        if [[ ${YEAR} == *"2017"* ]]; then NANOTAG=RunIISummer*UL17NanoAODv2*; fi
+        if [[ ${YEAR} == *"2018"* ]]; then NANOTAG=RunIISummer*UL18NanoAODv2*; fi
 
         if [[ ${SAMPLE} == *"Run201"* ]]; then NANOTAG=""; fi
 
+        if [[ ${SAMPLE} == *"WW"* ]]; then XSEC=118.71; fi # This line needs to be at the front
+        if [[ ${SAMPLE} == *"ZZ"* ]]; then XSEC=10.32; fi # This line needs to be at the front
         if [[ ${SAMPLE} == *"tZq_ll_4f_ckm_NLO"* ]]; then XSEC=0.0758; fi
         if [[ ${SAMPLE} == *"ST_s-channel_4f"* ]]; then XSEC=3.74; fi
         if [[ ${SAMPLE} == *"ST_t-channel_antitop_4f"* ]]; then XSEC=80.95; fi
@@ -103,12 +140,13 @@ for SAMPLE in ${SAMPLES}; do
         if [[ ${SAMPLE} == *"ST_tW_antitop_5f"* ]]; then XSEC=19.559; fi
         if [[ ${SAMPLE} == *"ST_tW_top_5f"* ]]; then XSEC=19.559; fi
         if [[ ${SAMPLE} == *"ST_tWll_5f_LO"* ]]; then XSEC=0.01123; fi
+        if [[ ${SAMPLE} == *"TWZToLL_tlept_Whad_5f_DR"* ]]; then XSEC=0.003004; fi
+        if [[ ${SAMPLE} == *"TWZToLL_thad_Wlept_5f_DR"* ]]; then XSEC=0.003004; fi
         if [[ ${SAMPLE} == *"ZZTo4L"* ]]; then XSEC=1.256; fi
         if [[ ${SAMPLE} == *"GluGluHToZZTo4L"* ]]; then XSEC=0.0082323; fi
         if [[ ${SAMPLE} == *"DYJetsToLL_M-10to50"* ]]; then XSEC=20657.0; fi
         if [[ ${SAMPLE} == *"DYJetsToLL_M-50"* ]]; then XSEC=6198.0; fi
         if [[ ${SAMPLE} == *"WJetsToLNu"* ]]; then XSEC=61335.0; fi
-        if [[ ${SAMPLE} == *"ttHTobb"* ]]; then XSEC=0.1279; fi
         if [[ ${SAMPLE} == *"TTWJetsToLNu"* ]]; then XSEC=0.2043; fi
         if [[ ${SAMPLE} == *"TTZToLLNuNu_M-10"* ]]; then XSEC=0.2529; fi
         if [[ ${SAMPLE} == *"TTZToLL_M-1to10"* ]]; then XSEC=0.2529; fi
@@ -118,13 +156,16 @@ for SAMPLE in ${SAMPLES}; do
         if [[ ${SAMPLE} == *"TTTo2L2Nu"* ]]; then XSEC=87.315; fi
         if [[ ${SAMPLE} == *"TTToSemiLeptonic"* ]]; then XSEC=365.34; fi
         if [[ ${SAMPLE} == *"WpWpJJ_EWK"* ]]; then XSEC=0.0539; fi
+        if [[ ${SAMPLE} == *"SSWW"* ]]; then XSEC=0.02794; fi
         if [[ ${SAMPLE} == *"WZTo3LNu"* ]]; then XSEC=4.4297; fi
-        if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_TuneCP5"* ]]; then XSEC=0.00001708; fi
-        if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_6_TuneCP5"* ]]; then XSEC=0.00116*137/59.97; fi
-        if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_3_TuneCP5"* ]]; then XSEC=0.000203237376*137/59.97; fi
-        if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5"* ]]; then XSEC=0.0005865984*137/59.97; fi
-        if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_m2_TuneCP5"* ]]; then XSEC=0.000418440192*137/59.97; fi
-        if [[ ${SAMPLE} == *"ttHToNonbb"* ]]; then XSEC=0.215; fi
+        # if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_TuneCP5"* ]]; then XSEC=0.00001708; fi
+        # if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_6_TuneCP5"* ]]; then XSEC=0.00116*137/59.97; fi
+        # if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_3_TuneCP5"* ]]; then XSEC=0.000203237376*137/59.97; fi
+        if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5"* ]]; then XSEC=0.01021; fi
+        if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5"* ]]; then XSEC=0.01021; fi
+        # if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_m2_TuneCP5"* ]]; then XSEC=0.000418440192*137/59.97; fi
+        if [[ ${SAMPLE} == *"ttHJetTobb"* ]]; then XSEC=0.1279; fi
+        if [[ ${SAMPLE} == *"ttHJetToNonbb"* ]]; then XSEC=0.215; fi
         if [[ ${SAMPLE} == *"TTTT"* ]]; then XSEC=0.009103; fi
         if [[ ${SAMPLE} == *"TTWW"* ]]; then XSEC=0.0115; fi
         if [[ ${SAMPLE} == *"TTWZ"* ]]; then XSEC=0.003884; fi
@@ -165,10 +206,13 @@ for SAMPLE in ${SAMPLES}; do
         if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_3_TuneCP5_2017"* ]]; then continue; fi
 
         if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5_2016"* ]]; then continue; fi
-        if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5_2017"* ]]; then continue; fi
+        # if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5_2017"* ]]; then continue; fi
 
         if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_m2_TuneCP5_2016"* ]]; then continue; fi
         if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_m2_TuneCP5_2017"* ]]; then continue; fi
+
+        if [[ ${SAMPLE}_${YEAR} == *"ZZ_2018"* ]]; then continue; fi
+        if [[ ${SAMPLE}_${YEAR} == *"ZZTo4L_2017"* ]]; then continue; fi
 
         if [[ ${STUDY} == "os" ]]; then
             if [[ ${SAMPLE}_${YEAR} == *"SingleElectron_Run2016_2016"* ]]; then continue; fi  #   803.8
@@ -179,7 +223,7 @@ for SAMPLE in ${SAMPLES}; do
         fi
 
         EXTRATAG=""
-        if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5"* ]]; then EXTRATAG=ext1; fi
+        # if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5"* ]]; then EXTRATAG=ext1; fi
         # if [[ ${SAMPLE}_${YEAR} == *"TTToSemiLeptonic_2018"* ]]; then EXTRATAG=ext3; fi
         # if [[ ${SAMPLE}_${YEAR} == *"TTToSemiLeptonic_2017"* ]]; then EXTRATAG=ext1; fi
 
@@ -289,33 +333,13 @@ for SAMPLE in ${SAMPLES}; do
             if [[ ${SAMPLE}_${YEAR} == *"SingleMuon_Run2016_2016"* ]]; then NJOBS=10; fi      #   1751.2
             if [[ ${SAMPLE}_${YEAR} == *"SingleMuon_Run2017_2017"* ]]; then NJOBS=10; fi     #   2026.6
             if [[ ${SAMPLE}_${YEAR} == *"SingleMuon_Run2018_2018"* ]]; then NJOBS=10; fi     #   2765.8
-            if [[ ${SAMPLE}_${YEAR} == *"TTJets_DiLept_2016"* ]]; then NJOBS=60; fi           #   247.9
-            if [[ ${SAMPLE}_${YEAR} == *"TTJets_DiLept_2017"* ]]; then NJOBS=60; fi           #   930.3
-            if [[ ${SAMPLE}_${YEAR} == *"TTJets_DiLept_2018"* ]]; then NJOBS=60; fi           #   968.1
-            if [[ ${SAMPLE}_${YEAR} == *"TTTo2L2Nu_2016"* ]]; then NJOBS=60; fi           #   247.9
-            if [[ ${SAMPLE}_${YEAR} == *"TTTo2L2Nu_2017"* ]]; then NJOBS=60; fi           #   930.3
-            if [[ ${SAMPLE}_${YEAR} == *"TTTo2L2Nu_2018"* ]]; then NJOBS=60; fi           #   968.1
+            if [[ ${SAMPLE}_${YEAR} == *"TTJets_DiLept_2016"* ]]; then NJOBS=10; fi           #   247.9
+            if [[ ${SAMPLE}_${YEAR} == *"TTJets_DiLept_2017"* ]]; then NJOBS=10; fi           #   930.3
+            if [[ ${SAMPLE}_${YEAR} == *"TTJets_DiLept_2018"* ]]; then NJOBS=10; fi           #   968.1
+            if [[ ${SAMPLE}_${YEAR} == *"TTTo2L2Nu_2016"* ]]; then NJOBS=30; fi           #   247.9
+            if [[ ${SAMPLE}_${YEAR} == *"TTTo2L2Nu_2017"* ]]; then NJOBS=30; fi           #   930.3
+            if [[ ${SAMPLE}_${YEAR} == *"TTTo2L2Nu_2018"* ]]; then NJOBS=30; fi           #   968.1
         fi
-
-# DYJetsToLL_M-50_output_0.log:Real           hists/createMini_2016/ 2077.3
-# DYJetsToLL_M-50_output_0.log:Real           hists/createMini_2017/ 955.2
-# DYJetsToLL_M-50_output_0.log:Real           hists/createMini_2018/ 2015.7
-# DoubleEG_Run2016_output_0.log:Real          hists/createMini_2016/ 1109.1
-# DoubleEG_Run2017_output_0.log:Real          hists/createMini_2017/ 1260.9
-# EGamma_Run2018_output_0.log:Real            hists/createMini_2018/ 1992.6
-# DoubleMuon_Run2016_output_0.log:Real        hists/createMini_2016/ 2467.7
-# DoubleMuon_Run2017_output_0.log:Real        hists/createMini_2017/ 2482.3
-# DoubleMuon_Run2018_output_0.log:Real        hists/createMini_2018/ 3805.4
-# SingleElectron_Run2016_output_0.log:Real    hists/createMini_2016/ 1145.3
-# SingleElectron_Run2017_output_0.log:Real    hists/createMini_2017/ 1280.1
-# SingleMuon_Run2016_output_0.log:Real        hists/createMini_2016/ 2480.3
-# SingleMuon_Run2017_output_0.log:Real        hists/createMini_2017/ 2754.2
-# SingleMuon_Run2018_output_0.log:Real        hists/createMini_2018/ 3932.3
-# TTJets_DiLept_output_0.log:Real             hists/createMini_2017/ 1071.8
-# TTJets_DiLept_output_0.log:Real             hists/createMini_2018/ 1198.4
-# TTTo2L2Nu_output_0.log:Real                 hists/createMini_2016/ 2046.5
-# TTTo2L2Nu_output_0.log:Real                 hists/createMini_2017/ 1984.0
-# TTTo2L2Nu_output_0.log:Real                 hists/createMini_2018/ 2088.2
 
         NJOBSMAXIDX=$((NJOBS - 1))
 

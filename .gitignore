@@ -11,9 +11,11 @@ studies/*/*.o
 .*.history
 *.root
 *.txt
+*.log
 mystudies/
 NanoSkimmer/CMSSW_10_2_13/
 NanoSkimmer/*.log
 NanoSkimmer/tasks
 NanoSkimmer/*.json
 test.py
+doAnalysis

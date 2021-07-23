@@ -10,6 +10,7 @@ namespace ttH {
     float getMuonLooseSF(float eta, float pt, int year);
     float getElecPOGLooseSF(float eta, float pt, int year);
     float getElecRecoEffSF(float eta, float pt, int year);
+    float getElecRecoEffSFUL(float eta, float pt, int year);
     float getMuonPOGMediumSF2016GH(float eta, float pt);
     float getMuonPOGMediumSF2016BCDEF(float eta, float pt);
     float getMuonPOGMediumSF(float eta, float pt, int year);

@@ -1,8 +1,13 @@
 #include "VBSHWW.h"
 
-// #define LEPID SS
-#define LEPID ttH
 
+
+//________________________________________________________________________________________________________________________________________
+VBSHWW::~VBSHWW() {}
+
+
+
+//________________________________________________________________________________________________________________________________________
 VBSHWW::VBSHWW(int argc, char** argv) :
     tx(
        (parseCLI(argc, argv), "variable"), // This weird syntax guarantees that parseCLI runs prior to initializing "tx"
@@ -19,14 +24,79 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     // Create the TChain that holds the TTree's of the baby ntuples
     events_tchain = RooUtil::FileUtil::createTChain(input_tree_name, input_file_list_tstring);
 
+    // Determine whether the sample being run over has LHEScaleWeight and PSWeight
+    hasLHEScaleWeight = false; // default is false
+    hasPSWeight = false; // default is false
+    TObjArray* brobjArray = events_tchain->GetListOfBranches();
+    for (unsigned int ibr = 0; ibr < (unsigned int) brobjArray->GetEntries(); ++ibr)
+    {
+        TString brname = brobjArray->At(ibr)->GetName();
+        if (brname.EqualTo("LHEScaleWeight"))
+            hasLHEScaleWeight = true; // if it has the branch it is set to true
+        if (brname.EqualTo("PSWeight"))
+            hasPSWeight = true; // if it has the branch it is set to true
+    }
+
     // Set up a looper
     looper.init(events_tchain, &nt, n_events);
+
+    isUL = (
+        input_file_list_tstring.Contains("UL18") or input_file_list_tstring.Contains("UL2018") or
+        input_file_list_tstring.Contains("UL17") or input_file_list_tstring.Contains("UL2017")
+        );
+
+    // Setup the process of the input
+    TString ofile_name = output_tfile->GetName();
+    if (ofile_name.Contains("/TTToSemi")) { processType = ProcessType::kTT1LPowheg; }
+    else if (ofile_name.Contains("/TTTo2L2Nu")) { processType = ProcessType::kTT2LPowheg; }
+    else if (ofile_name.Contains("/TTJets_Sing")) { processType = ProcessType::kTT1LMadGraph; }
+    else if (ofile_name.Contains("/TTJets_Di")) { processType = ProcessType::kTT2LMadGraph; }
+    else if (ofile_name.Contains("/TTWJets")) { processType = ProcessType::kTTW; }
+    else if (ofile_name.Contains("/TTZTo")) { processType = ProcessType::kTTZ; }
+    else if (ofile_name.Contains("/VBSWmpWmp")) { processType = ProcessType::kSignal; }
+    else if (ofile_name.Contains("/WJetsTo") or
+             ofile_name.Contains("/DY") or
+             ofile_name.Contains("/GluGluHToZZTo4L") or
+             ofile_name.Contains("/WWW") or
+             ofile_name.Contains("/WWZ") or
+             ofile_name.Contains("/WZZ") or
+             ofile_name.Contains("/ZZZ") or
+             ofile_name.Contains("/WW_") or
+             ofile_name.Contains("/WWTo") or
+             ofile_name.Contains("/WWTo") or
+             ofile_name.Contains("/WpWp") or
+             ofile_name.Contains("/SSWW_") or
+             ofile_name.Contains("/WZTo3LNu") or
+             ofile_name.Contains("/ZZ")
+            )
+    {
+        processType = ProcessType::kBosons;
+    }
+    else if (ofile_name.Contains("/ttHJetTo") or
+             ofile_name.Contains("/ttHTo") or
+             ofile_name.Contains("/ST_") or
+             ofile_name.Contains("/TWZ") or
+             ofile_name.Contains("/tZq") or
+             ofile_name.Contains("/TTWW") or
+             ofile_name.Contains("/TTWZ") or
+             ofile_name.Contains("/TTWH") or
+             ofile_name.Contains("/TTZZ") or
+             ofile_name.Contains("/TTZH") or
+             ofile_name.Contains("/TTTT")
+            )
+    {
+        processType = ProcessType::kRaretop;
+    }
+
+
 
     // Set the cutflow object output file
     cutflow.setTFile(output_tfile);
 
     // Set up the NanoCORE's common configuration service tool
+    gconf.nanoAOD_ver = isUL ? 8 : 0;
     gconf.GetConfigs(nt.year());
+    std::cout <<  " gconf.WP_DeepFlav_tight: " << gconf.WP_DeepFlav_tight <<  std::endl;
 
     // Setting up good runs list
     // TString vbsHwwNanoLooperDirPath = gSystem->Getenv("VBSHWWNANOLOOPERDIR");
@@ -64,11 +134,19 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     {
         btagCalib = new BTagCalibration("DeepJet", "data/DeepJet_2016LegacySF_V1.csv");
     }
-    else if (nt.year() == 2017)
+    else if (nt.year() == 2017 and isUL)
+    {
+        btagCalib = new BTagCalibration("DeepJet", "data/DeepJet_106XUL17SF_WPonly_V2p1.csv");
+    }
+    else if (nt.year() == 2017 and not isUL)
     {
         btagCalib = new BTagCalibration("DeepJet", "data/DeepJet_94XSF_V4_B_F.csv");
     }
-    else if (nt.year() == 2018)
+    else if (nt.year() == 2018 and isUL)
+    {
+        btagCalib = new BTagCalibration("DeepJet", "data/DeepJet_106XUL18SF_WPonly.csv");
+    }
+    else if (nt.year() == 2018 and not isUL)
     {
         btagCalib = new BTagCalibration("DeepJet", "data/DeepJet_102XSF_V3.csv");
     }
@@ -97,7 +175,22 @@ VBSHWW::VBSHWW(int argc, char** argv) :
         btagEffLoose_c = new RooUtil::HistMap("data/eff_DeepFlav_102X_2016_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_c");
         btagEffLoose_l = new RooUtil::HistMap("data/eff_DeepFlav_102X_2016_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_udsg");
     }
-    else if (nt.year() == 2017)
+    else if (nt.year() == 2017 and isUL)
+    {
+        btagEffTight_b = new RooUtil::HistMap("data/eff_DeepFlav_106X_2017_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_b");
+        btagEffTight_c = new RooUtil::HistMap("data/eff_DeepFlav_106X_2017_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_c");
+        btagEffTight_l = new RooUtil::HistMap("data/eff_DeepFlav_106X_2017_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_udsg");
+        btagEffLoose_b = new RooUtil::HistMap("data/eff_DeepFlav_106X_2017_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_b");
+        btagEffLoose_c = new RooUtil::HistMap("data/eff_DeepFlav_106X_2017_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_c");
+        btagEffLoose_l = new RooUtil::HistMap("data/eff_DeepFlav_106X_2017_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_udsg");
+        btagEffTight_b_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2017_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_b");
+        btagEffTight_c_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2017_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_c");
+        btagEffTight_l_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2017_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_udsg");
+        btagEffLoose_b_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2017_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_b");
+        btagEffLoose_c_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2017_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_c");
+        btagEffLoose_l_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2017_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_udsg");
+    }
+    else if (nt.year() == 2017 and not isUL)
     {
         btagEffTight_b = new RooUtil::HistMap("data/eff_DeepFlav_102X_2017_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_b");
         btagEffTight_c = new RooUtil::HistMap("data/eff_DeepFlav_102X_2017_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_c");
@@ -106,7 +199,22 @@ VBSHWW::VBSHWW(int argc, char** argv) :
         btagEffLoose_c = new RooUtil::HistMap("data/eff_DeepFlav_102X_2017_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_c");
         btagEffLoose_l = new RooUtil::HistMap("data/eff_DeepFlav_102X_2017_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_udsg");
     }
-    else if (nt.year() == 2018)
+    else if (nt.year() == 2018 and isUL)
+    {
+        btagEffTight_b = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_b");
+        btagEffTight_c = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_c");
+        btagEffTight_l = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_udsg");
+        btagEffLoose_b = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_b");
+        btagEffLoose_c = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_c");
+        btagEffLoose_l = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_udsg");
+        btagEffTight_b_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_b");
+        btagEffTight_c_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_c");
+        btagEffTight_l_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_udsg");
+        btagEffLoose_b_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_b");
+        btagEffLoose_c_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_c");
+        btagEffLoose_l_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2018_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_udsg");
+    }
+    else if (nt.year() == 2018 and not isUL)
     {
         btagEffTight_b = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_b");
         btagEffTight_c = new RooUtil::HistMap("data/eff_DeepFlav_102X_2018_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_c");
@@ -120,6 +228,8 @@ VBSHWW::VBSHWW(int argc, char** argv) :
         RooUtil::error(TString::Format("While setting b-tag efficiencies, found year = %d that is not recognized.", nt.year()));
     }
 
+    readerX = new RooUtil::TMVAUtil::ReaderX("BDT", "/home/users/phchang/public_html/analysis/hwh/VBSWWHBDT/dataset/weights/TMVAClassification_BDT.weights.xml");
+
 //=============================
 //
 // Analysis Data Structure
@@ -131,6 +241,8 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch<int>("lumi");
     tx.createBranch<unsigned long long>("evt");
     tx.createBranch<float>("wgt");
+    tx.createBranch<vector<float>>("scalewgts");
+    tx.createBranch<vector<float>>("pswgts");
 
     // Create trigger branches
     tx.createBranch<int>("trig_ee");
@@ -229,30 +341,97 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch<int>("njet30");
 
     // Create 6 fermion vectors
+    //==================================================
+    // lep0 is lead if same flavor
+    // lep1 is sublead if same flavor
+    // lep0 is electron if emu
+    // lep1 is muon if emu
+    // lep0 is e or mu if lep-tau
+    // lep1 is tau if lep-tau
     tx.createBranch<LV>("lep0");
     tx.createBranch<LV>("lep1");
     tx.createBranch<int>("lep0ID");
     tx.createBranch<int>("lep1ID");
-    tx.createBranch<int>("lep0GenPartFlav");
-    tx.createBranch<int>("lep1GenPartFlav");
-    tx.createBranch<LV>("leadlep");
-    tx.createBranch<LV>("subllep");
-    tx.createBranch<int>("leadlepID");
-    tx.createBranch<int>("subllepID");
-    tx.createBranch<int>("leadlepGenPartFlav");
-    tx.createBranch<int>("subllepGenPartFlav");
-    tx.createBranch<LV>("b0");
-    tx.createBranch<LV>("b1");
-    tx.createBranch<LV>("j0");
-    tx.createBranch<LV>("j1");
-    tx.createBranch<int>("channel");
-    tx.createBranch<int>("channeldetail");
-    tx.createBranch<int>("lepchannel");
-    tx.createBranch<int>("btagchannel");
-    tx.createBranch<int>("bmatchcateg");
-    tx.createBranch<int>("mee_noZ");
-    tx.createBranch<int>("mbbIn");
-    tx.createBranch<int>("pass_blind");
+    tx.createBranch<int>("lep0GenPartFlav"); // Truth MC information
+    tx.createBranch<int>("lep1GenPartFlav"); // Truth MC information
+    //==================================================
+    tx.createBranch<LV>("leadlep"); // leading in pt
+    tx.createBranch<LV>("subllep"); // subleading in pt
+    tx.createBranch<int>("leadlepID"); // PDGID of the lepton leading in pt
+    tx.createBranch<int>("subllepID"); // PDGID of the lepton subleading in pt
+    tx.createBranch<int>("leadlepGenPartFlav"); // Truth MC information
+    tx.createBranch<int>("subllepGenPartFlav"); // Truth MC information
+    tx.createBranch<LV>("b0"); // leading in pt
+    tx.createBranch<LV>("b1"); // subleading in pt
+    tx.createBranch<LV>("j0"); // leading in pt
+    tx.createBranch<LV>("j1"); // subleading in pt
+    tx.createBranch<int>("channel"); // 0=tight-ee 1=tight-em 2=tight-mm 3=loose-ee 4=loose-em 5=loose-mm 6=tight-etau 7=tight-mutau
+    tx.createBranch<int>("channeldetail"); // 2 * channel + (Mbb in ? 1 : 0)
+    tx.createBranch<int>("lepchannel"); // 0=ee 1=em 2=mm 3=etau 4=mtau
+    tx.createBranch<int>("btagchannel"); // 0=tight 1=loose
+    tx.createBranch<int>("bmatchcateg"); // Truth MC information
+    tx.createBranch<int>("mee_noZ"); // if dielectron is ee channel, is the ee within Z mass?
+    tx.createBranch<int>("mbbIn"); // mbb < 150? or not?
+    tx.createBranch<int>("pass_blind"); // for data, to blind the mbb < 150 region
+
+    tx.createBranch<int>("categ"); // categ 0=e+l+ 1=m+l+ 2=t+l+
+
+    // Create keyvariables worth computing
+    tx.createBranch<float>("mbb");
+    tx.createBranch<float>("dphibb");
+    tx.createBranch<float>("detabb");
+    tx.createBranch<float>("drbb");
+    tx.createBranch<float>("ptbb");
+
+    tx.createBranch<float>("b0pt");
+    tx.createBranch<float>("b1pt");
+    tx.createBranch<int>("b0tight"); // is the leading in pt b-quark tight tagged
+    tx.createBranch<int>("b1tight"); // is the leading in pt b-quark tight tagged
+
+    tx.createBranch<float>("mjj");
+    tx.createBranch<float>("dphijj");
+    tx.createBranch<float>("detajj");
+    tx.createBranch<float>("drjj");
+    tx.createBranch<float>("ptjj");
+
+    tx.createBranch<float>("j0pt");
+    tx.createBranch<float>("j1pt");
+    tx.createBranch<float>("j_lead_p"); // jet momentum of the jet leading in momentum
+    tx.createBranch<float>("j_sublead_p"); // jet momentum of the jet subleading in momentum
+
+    tx.createBranch<float>("mll");
+    tx.createBranch<float>("dphill");
+    tx.createBranch<float>("detall");
+    tx.createBranch<float>("drll");
+    tx.createBranch<float>("ptll");
+
+    tx.createBranch<float>("l0pt");
+    tx.createBranch<float>("l1pt");
+
+    tx.createBranch<float>("met");
+
+    tx.createBranch<float>("lt");
+    tx.createBranch<float>("st");
+    tx.createBranch<float>("mvvh");
+    tx.createBranch<float>("mtvvh");
+    tx.createBranch<float>("ptvvh");
+
+    tx.createBranch<float>("v0pt");
+    tx.createBranch<float>("v1pt");
+
+    tx.createBranch<float>("w0mass");
+    tx.createBranch<float>("w1mass");
+
+    tx.createBranch<int>("is_ttbar_madgraph");
+    tx.createBranch<int>("is_ttbar_powheg");
+    tx.createBranch<int>("is_train");
+    tx.createBranch<int>("is_test");
+    tx.createBranch<int>("is_signal");
+    tx.createBranch<int>("is_background");
+
+    tx.createBranch<float>("xsec_sf");
+    tx.createBranch<float>("bdt");
+    tx.createBranch<float>("bdt_mbboff");
 
 //=============================
 //
@@ -264,8 +443,153 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     // Weighting each MC event
     //*****************************
     // Description: Weighting each event to 137/fb
-    // TODO TODO TODO TODO TODO: MAKE LUMINOSITY AN CLI ARGUMENT THAT DEPENDS ON YEAR
-    cutflow.addCut("Weight",
+    cutflow.addCut("InitialFilter",
+        [&]()
+        {
+
+            std::vector<int> charges;
+            std::vector<LV> good_leptons_p4;
+            std::vector<LV> good_taus_p4;
+            std::vector<int> good_leptons_jetIdx;
+
+            // Select muons
+            for (unsigned int imu = 0; imu < nt.Muon_pt().size(); ++imu)
+            {
+                if (not (nt.Muon_p4()[imu].pt() > 40.)) continue;
+                if (not (ttH::muonID(imu, ttH::IDtight, nt.year()))) continue;
+                charges.push_back(nt.Muon_charge()[imu]);
+                good_leptons_p4.push_back(nt.Muon_p4()[imu]);
+                good_leptons_jetIdx.push_back(nt.Muon_jetIdx()[imu]);
+            }
+
+            // Select muons
+            for (unsigned int iel = 0; iel < nt.Electron_pt().size(); ++iel)
+            {
+                if (not (nt.Electron_p4()[iel].pt() > 40.)) continue;
+                if (not (ttH::electronID(iel, ttH::IDtight, nt.year()))) continue;
+                charges.push_back(nt.Electron_charge()[iel]);
+                good_leptons_p4.push_back(nt.Electron_p4()[iel]);
+                good_leptons_jetIdx.push_back(nt.Electron_jetIdx()[iel]);
+            }
+
+            // Select taus
+            for (unsigned int itau = 0; itau < nt.nTau(); ++itau)
+            {
+                if (not (nt.Tau_p4()[itau].pt() > 40.)) continue;
+                if (ttH::tauID(itau, ttH::IDtight, nt.year()))
+                {
+                    // tau-(non-tau lep) overlap removal
+                    bool save_this_tau = true;
+
+                    for (unsigned int ilep = 0; ilep < good_leptons_p4.size(); ++ilep)
+                    {
+                        if (RooUtil::Calc::DeltaR(nt.Tau_p4().at(itau), good_leptons_p4.at(ilep)) < 0.4)
+                        {
+                            save_this_tau = false;
+                            break;
+                        }
+                    }
+
+                    if (!save_this_tau)
+                    {
+                        continue;
+                    }
+                    charges.push_back(nt.Tau_charge()[itau]);
+                    good_taus_p4.push_back(nt.Tau_p4()[itau]);
+                }
+            }
+
+            if (charges.size() != 2)
+                return false;
+
+            if (looper.getCurrentFileName().Contains("_SS/"))
+            {
+                if (not (charges[0] * charges[1] > 0))
+                    return false;
+            }
+            else if (looper.getCurrentFileName().Contains("_OS/"))
+            {
+                if (not (charges[0] * charges[1] < 0))
+                    return false;
+            }
+
+            // Loop over the jets
+            int njets20 = 0;
+            int njets30 = 0;
+            for (unsigned int ijet = 0; ijet < nt.Jet_pt().size(); ++ijet)
+            {
+
+                // Read jet p4
+                const LV& jet_p4 = nt.Jet_p4()[ijet];
+
+                if (nt.year() == 2016)
+                {
+                    if (nt.Jet_jetId()[ijet] < 1) // For 2016 apparently it's >= 1
+                        continue;
+                }
+                else
+                {
+                    if (nt.Jet_jetId()[ijet] < 2) // "Tight" ID requirement while for others >= 2
+                        continue;
+                }
+
+                // if (nt.year() == 2017)
+                // {
+                //     if (nt.Jet_puId()[ijet] < 7) // For 2017 "111" (pass tight)
+                //         continue;
+                // }
+
+                // Overlap check against good leptons
+                bool isOverlap = false;
+                for (unsigned int ilep = 0; ilep < good_leptons_jetIdx.size(); ++ilep)
+                {
+                    if (good_leptons_jetIdx.at(ilep) == (int) ijet)
+                    {
+                        isOverlap = true;
+                        break;
+                    }
+                }
+
+                for (unsigned int itau = 0; itau < good_taus_p4.size(); ++itau)
+                {
+                    if (RooUtil::Calc::DeltaR(good_taus_p4.at(itau), jet_p4) < 0.4)
+                    {
+                        isOverlap = true;
+                        break;
+                    }
+                }
+
+                // Then skip
+                if (isOverlap)
+                    continue;
+
+                if (not (jet_p4.pt() > 20.))
+                    continue;
+
+                njets20++;
+
+                if (not (jet_p4.pt() > 30.))
+                    continue;
+
+                njets30++;
+
+            }
+
+            if (not (njets20 >= 4))
+                return false;
+
+            if (not (njets30 >= 2))
+                return false;
+
+            return true;
+
+        }, UNITY);
+
+    //*****************************
+    // Weighting each MC event
+    //*****************************
+    // Description: Weighting each event to 137/fb
+    cutflow.addCutToLastActiveCut("Weight",
         [&]()
         {
             // Set event level variables that would be processed for the given event regardless
@@ -285,6 +609,20 @@ VBSHWW::VBSHWW(int argc, char** argv) :
             {
                 float wgt = ((nt.Generator_weight() > 0) - (nt.Generator_weight() < 0)) * scale1fb;
                 tx.setBranch<float>("wgt", wgt * gconf.lumi);
+                if (hasLHEScaleWeight)
+                {
+                    for (unsigned int i = 0; i < nt.LHEScaleWeight().size(); ++i)
+                    {
+                        tx.pushbackToBranch<float>("scalewgts", nt.LHEScaleWeight()[i]);
+                    }
+                }
+                if (hasPSWeight)
+                {
+                    for (unsigned int i = 0; i < nt.PSWeight().size(); ++i)
+                    {
+                        tx.pushbackToBranch<float>("pswgts", nt.PSWeight()[i]);
+                    }
+                }
             }
             return tx.getBranch<float>("wgt");
         });
@@ -326,17 +664,14 @@ VBSHWW::VBSHWW(int argc, char** argv) :
                 }
             }
 
-            if (do_tau)
+            // loop over taus to count taus above 20 GeV
+            for (unsigned int idx = 0; idx < nt.Tau_pt().size(); ++idx)
             {
-                // loop over taus to count taus above 20 GeV
-                for (unsigned int idx = 0; idx < nt.Tau_pt().size(); ++idx)
+                float tau_pt = nt.Tau_pt()[idx];
+                if (tau_pt > 20)
                 {
-                    float tau_pt = nt.Tau_pt()[idx];
-                    if (tau_pt > 20)
-                    {
-                        ntau20++;
-                        tau20_idx.push_back(idx);
-                    }
+                    ntau20++;
+                    tau20_idx.push_back(idx);
                 }
             }
 
@@ -346,217 +681,9 @@ VBSHWW::VBSHWW(int argc, char** argv) :
         UNITY);
 }
 
-VBSHWW::~VBSHWW() {}
-
-void VBSHWW::parseCLI(int argc, char** argv)
-{
-    //********************************************************************************
-    //
-    // 1. Parsing options
-    //
-    //********************************************************************************
-
-    // cxxopts is just a tool to parse argc, and argv easily
-
-    // Grand option setting
-    cxxopts::Options options("\n  $ doAnalysis",  "\n         **********************\n         *                    *\n         *       Looper       *\n         *                    *\n         **********************\n");
-
-    // Read the options
-    options.add_options()
-        ("i,input"       , "Comma separated input file list OR if just a directory is provided it will glob all in the directory BUT must end with '/' for the path", cxxopts::value<std::string>())
-        ("t,tree"        , "Name of the tree in the root file to open and loop over"                                             , cxxopts::value<std::string>())
-        ("o,output"      , "Output file name"                                                                                    , cxxopts::value<std::string>())
-        ("n,nevents"     , "N events to loop over"                                                                               , cxxopts::value<int>()->default_value("-1"))
-        ("j,nsplit_jobs" , "Enable splitting jobs by N blocks (--job_index must be set)"                                         , cxxopts::value<int>())
-        ("I,job_index"   , "job_index of split jobs (--nsplit_jobs must be set. index starts from 0. i.e. 0, 1, 2, 3, etc...)"   , cxxopts::value<int>())
-        ("s,scale1fb"    , "pass scale1fb of the sample"                                                                         , cxxopts::value<float>())
-        ("d,debug"       , "Run debug job. i.e. overrides output option to 'debug.root' and 'recreate's the file.")
-        ("h,help"        , "Print help")
-        ;
-
-    auto result = options.parse(argc, argv);
-
-    // NOTE: When an option was provided (e.g. -i or --input), then the result.count("<option name>") is more than 0
-    // Therefore, the option can be parsed easily by asking the condition if (result.count("<option name>");
-    // That's how the several options are parsed below
-
-    //_______________________________________________________________________________
-    // --help
-    if (result.count("help"))
-    {
-        std::cout << options.help() << std::endl;
-        exit(1);
-    }
-
-    //_______________________________________________________________________________
-    // --input
-    if (result.count("input"))
-    {
-        input_file_list_tstring = result["input"].as<std::string>();
-    }
-    else
-    {
-        std::cout << options.help() << std::endl;
-        std::cout << "ERROR: Input list is not provided! Check your arguments" << std::endl;
-        exit(1);
-    }
-
-    //_______________________________________________________________________________
-    // --tree
-    if (result.count("tree"))
-    {
-        input_tree_name = result["tree"].as<std::string>();
-    }
-    else
-    {
-        std::cout << options.help() << std::endl;
-        std::cout << "ERROR: Input tree name is not provided! Check your arguments" << std::endl;
-        exit(1);
-    }
-
-    //_______________________________________________________________________________
-    // --scale1fb
-    if (result.count("scale1fb"))
-    {
-        scale1fb = result["scale1fb"].as<float>();
-    }
-
-    //_______________________________________________________________________________
-    // --debug
-    if (result.count("debug"))
-    {
-        output_tfile = new TFile("debug.root", "recreate");
-    }
-    else
-    {
-        //_______________________________________________________________________________
-        // --output
-        if (result.count("output"))
-        {
-            output_tfile = new TFile(result["output"].as<std::string>().c_str(), "create");
-            if (not output_tfile->IsOpen())
-            {
-                std::cout << options.help() << std::endl;
-                std::cout << "ERROR: output already exists! provide new output name or delete old file. OUTPUTFILE=" << result["output"].as<std::string>() << std::endl;
-                exit(1);
-            }
-        }
-        else
-        {
-            std::cout << options.help() << std::endl;
-            std::cout << "ERROR: Output file name is not provided! Check your arguments" << std::endl;
-            exit(1);
-        }
-    }
-
-    //_______________________________________________________________________________
-    // --nevents
-    n_events = result["nevents"].as<int>();
-
-    //_______________________________________________________________________________
-    // --nsplit_jobs
-    if (result.count("nsplit_jobs"))
-    {
-        nsplit_jobs = result["nsplit_jobs"].as<int>();
-        if (nsplit_jobs <= 0)
-        {
-            std::cout << options.help() << std::endl;
-            std::cout << "ERROR: option string --nsplit_jobs" << nsplit_jobs << " has zero or negative value!" << std::endl;
-            std::cout << "I am not sure what this means..." << std::endl;
-            exit(1);
-        }
-    }
-    else
-    {
-        nsplit_jobs = -1;
-    }
-
-    //_______________________________________________________________________________
-    // --nsplit_jobs
-    if (result.count("job_index"))
-    {
-        job_index = result["job_index"].as<int>();
-        if (job_index < 0)
-        {
-            std::cout << options.help() << std::endl;
-            std::cout << "ERROR: option string --job_index" << job_index << " has negative value!" << std::endl;
-            std::cout << "I am not sure what this means..." << std::endl;
-            exit(1);
-        }
-    }
-    else
-    {
-        job_index = -1;
-    }
 
 
-    // Sanity check for split jobs (if one is set the other must be set too)
-    if (result.count("job_index") or result.count("nsplit_jobs"))
-    {
-        // If one is not provided then throw error
-        if ( not (result.count("job_index") and result.count("nsplit_jobs")))
-        {
-            std::cout << options.help() << std::endl;
-            std::cout << "ERROR: option string --job_index and --nsplit_jobs must be set at the same time!" << std::endl;
-            exit(1);
-        }
-        // If it is set then check for sanity
-        else
-        {
-            if (job_index >= nsplit_jobs)
-            {
-                std::cout << options.help() << std::endl;
-                std::cout << "ERROR: --job_index >= --nsplit_jobs ! This does not make sense..." << std::endl;
-                exit(1);
-            }
-        }
-    }
-
-    do_tau = true;
-
-    //
-    // Printing out the option settings overview
-    //
-    std::cout <<  "=========================================================" << std::endl;
-    std::cout <<  " Setting of the analysis job based on provided arguments " << std::endl;
-    std::cout <<  "---------------------------------------------------------" << std::endl;
-    std::cout <<  " input_file_list_tstring: " << input_file_list_tstring <<  std::endl;
-    std::cout <<  " output_tfile: " << output_tfile->GetName() <<  std::endl;
-    std::cout <<  " n_events: " << n_events <<  std::endl;
-    std::cout <<  " nsplit_jobs: " << nsplit_jobs <<  std::endl;
-    std::cout <<  " job_index: " << job_index <<  std::endl;
-    std::cout <<  "=========================================================" << std::endl;
-
-}
-
-// For a given cutname it writes the run, lumi, evt into a textfile based on the output root name
-void VBSHWW::writeEventList(TString cutname)
-{
-    TString eventlist_output_name = output_tfile->GetName(); // get the output file name
-    TString suffix = TString::Format(".%s.txt", cutname.Data());
-    eventlist_output_name.ReplaceAll(".root", suffix); // replace .root with suffix if .root exists
-    if (not eventlist_output_name.Contains(suffix)) eventlist_output_name += suffix; // if no suffix exists, then append suffix
-    cutflow.getCut(cutname).writeEventList(eventlist_output_name);
-}
-
-void VBSHWW::process(TString final_cutname)
-{
-    // Clear the data structure for the event
-    tx.clear();
-
-    // // Set the run lumi and event for this event
-    cutflow.setEventID(nt.run(), nt.luminosityBlock(), nt.event()); // Setting event ID in case we need to keep track of event id
-
-    // Run all the cutflow selections and filling histograms
-    cutflow.fill();
-
-    // Writing skimmed event tree for the data structure we created
-    if (cutflow.getCut(final_cutname).pass)
-    {
-        tx.fill();
-    }
-}
-
+//________________________________________________________________________________________________________________________________________
 void VBSHWW::initSRCutflow()
 {
 
@@ -567,7 +694,7 @@ void VBSHWW::initSRCutflow()
     cutflow.addCutToLastActiveCut("SelectGenPart",
         [&]()
         {
-            if (looper.getCurrentFileName().Contains("VBSWmpWmpHToLNuLNu_C2V"))
+            if (looper.getCurrentFileName().Contains("VBSWmpWmpHToLNuLNu_C2V") and looper.getCurrentFileName().Contains("RunIIAutumn18"))
             {
                 processGenParticles_VBSWWH();
             }
@@ -620,12 +747,28 @@ void VBSHWW::initSRCutflow()
                     filterflagMC = nt.Flag_goodVertices() and                                              nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter();
                     break;
                 case 2017:
-                    filterflag   = nt.Flag_goodVertices() and nt.Flag_globalSuperTightHalo2016Filter() and nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilterV2();
-                    filterflagMC = nt.Flag_goodVertices() and                                              nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilterV2();
+                    if (isUL)
+                    {
+                        filterflag   = nt.Flag_goodVertices() and nt.Flag_globalSuperTightHalo2016Filter() and nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilter();
+                        filterflagMC = nt.Flag_goodVertices() and                                              nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilter();
+                    }
+                    else
+                    {
+                        filterflag   = nt.Flag_goodVertices() and nt.Flag_globalSuperTightHalo2016Filter() and nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilterV2();
+                        filterflagMC = nt.Flag_goodVertices() and                                              nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilterV2();
+                    }
                     break;
                 case 2018:
-                    filterflag   = nt.Flag_goodVertices() and nt.Flag_globalSuperTightHalo2016Filter() and nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilterV2();
-                    filterflagMC = nt.Flag_goodVertices() and                                              nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilterV2();
+                    if (isUL)
+                    {
+                        filterflag   = nt.Flag_goodVertices() and nt.Flag_globalSuperTightHalo2016Filter() and nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilter();
+                        filterflagMC = nt.Flag_goodVertices() and                                              nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilter();
+                    }
+                    else
+                    {
+                        filterflag   = nt.Flag_goodVertices() and nt.Flag_globalSuperTightHalo2016Filter() and nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilterV2();
+                        filterflagMC = nt.Flag_goodVertices() and                                              nt.Flag_HBHENoiseFilter() and nt.Flag_HBHENoiseIsoFilter() and nt.Flag_EcalDeadCellTriggerPrimitiveFilter() and nt.Flag_BadPFMuonFilter() and nt.Flag_ecalBadCalibFilterV2();
+                    }
                     break;
             }
             if (nt.isData())
@@ -652,11 +795,11 @@ void VBSHWW::initSRCutflow()
             // Select muons
             for (unsigned int imu = 0; imu < nt.Muon_pt().size(); ++imu)
             {
-                if (LEPID::muonID(imu, LEPID::IDveto, nt.year()))
+                if (ttH::muonID(imu, ttH::IDveto, nt.year()))
                 {
                     tx.pushbackToBranch<LV>("good_leptons_p4", nt.Muon_p4()[imu]);
                     tx.pushbackToBranch<int>("good_leptons_pdgid", (-nt.Muon_charge()[imu]) * 13);
-                    tx.pushbackToBranch<int>("good_leptons_tight", LEPID::muonID(imu, LEPID::IDtight, nt.year()));
+                    tx.pushbackToBranch<int>("good_leptons_tight", ttH::muonID(imu, ttH::IDtight, nt.year()));
                     tx.pushbackToBranch<int>("good_leptons_jetIdx", nt.Muon_jetIdx()[imu]);
                     tx.pushbackToBranch<int>("good_leptons_genPartFlav", nt.isData() ? -999 : nt.Muon_genPartFlav()[imu]);
                     tx.pushbackToBranch<float>("good_leptons_pfRelIso03_all", nt.Muon_pfRelIso03_all()[imu]);
@@ -672,11 +815,11 @@ void VBSHWW::initSRCutflow()
             // Select electrons
             for (unsigned int iel = 0; iel < nt.Electron_pt().size(); ++iel)
             {
-                if (LEPID::electronID(iel, LEPID::IDveto, nt.year()))
+                if (ttH::electronID(iel, ttH::IDveto, nt.year()))
                 {
                     tx.pushbackToBranch<LV>("good_leptons_p4", nt.Electron_p4()[iel]);
                     tx.pushbackToBranch<int>("good_leptons_pdgid", (-nt.Electron_charge()[iel]) * 11);
-                    tx.pushbackToBranch<int>("good_leptons_tight", LEPID::electronID(iel, LEPID::IDtight, nt.year()));
+                    tx.pushbackToBranch<int>("good_leptons_tight", ttH::electronID(iel, ttH::IDtight, nt.year()));
                     tx.pushbackToBranch<int>("good_leptons_jetIdx", nt.Electron_jetIdx()[iel]);
                     tx.pushbackToBranch<int>("good_leptons_genPartFlav", nt.isData() ? -999 : nt.Electron_genPartFlav()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_pfRelIso03_all", nt.Electron_pfRelIso03_all()[iel]);
@@ -684,7 +827,10 @@ void VBSHWW::initSRCutflow()
                     tx.pushbackToBranch<float>("good_leptons_jetPtRelv2", nt.Electron_jetPtRelv2()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_jetRelIso", nt.Electron_jetRelIso()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_miniPFRelIso_all", nt.Electron_miniPFRelIso_all()[iel]);
-                    lepsf *= ttH::getElecRecoEffSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());  // event -> reco
+                    if (isUL)
+                        lepsf *= ttH::getElecRecoEffSFUL(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());  // event -> reco
+                    else
+                        lepsf *= ttH::getElecRecoEffSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());  // event -> reco
                     lepsf *= ttH::getElecPOGLooseSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year()); // reco -> loose POG ID
                     lepsf *= ttH::getElecLooseSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());    // loose POG ID -> loose ttH ID
                     lepsf *= ttH::getElecTightSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());    // loose ttH ID -> tight ttH ID
@@ -713,60 +859,57 @@ void VBSHWW::initSRCutflow()
                 {}
             );
 
-            if (do_tau)
+            // Select taus
+            const vector<LV>& good_leptons_p4 = tx.getBranchLazy<vector<LV>>("good_leptons_p4");
+            const vector<int>& good_leptons_pdgid = tx.getBranchLazy<vector<int>>("good_leptons_pdgid");
+            for (unsigned int itau = 0; itau < nt.nTau(); ++itau)
             {
-                // Select taus
-                const vector<LV>& good_leptons_p4 = tx.getBranchLazy<vector<LV>>("good_leptons_p4");
-                const vector<int>& good_leptons_pdgid = tx.getBranchLazy<vector<int>>("good_leptons_pdgid");
-                for (unsigned int itau = 0; itau < nt.nTau(); ++itau)
+                if (ttH::tauID(itau, ttH::IDfakable, nt.year()))
                 {
-                    if (LEPID::tauID(itau, LEPID::IDfakable, nt.year()))
+                    // tau-(non-tau lep) overlap removal
+                    bool save_this_tau = true;
+
+                    for (unsigned int ilep = 0; ilep < good_leptons_p4.size(); ++ilep)
                     {
-                        // tau-(non-tau lep) overlap removal
-                        bool save_this_tau = true;
-
-                        for (unsigned int ilep = 0; ilep < good_leptons_p4.size(); ++ilep)
+                        if (RooUtil::Calc::DeltaR(nt.Tau_p4().at(itau), good_leptons_p4.at(ilep)) < 0.4)
                         {
-                            if (RooUtil::Calc::DeltaR(nt.Tau_p4().at(itau), good_leptons_p4.at(ilep)) < 0.4)
-                            {
-                                save_this_tau = false;
-                                break;
-                            }
+                            save_this_tau = false;
+                            break;
                         }
-
-                        if (!save_this_tau)
-                        {
-                            continue;
-                        }
-
-                        // Only save >= loose taus that do not overlap w/ a 'good' lepton
-                        tx.pushbackToBranch<LV>("good_taus_p4", nt.Tau_p4()[itau]);
-                        tx.pushbackToBranch<int>("good_taus_genPartFlav", nt.isData() ? -999 : nt.Tau_genPartFlav()[itau]);
-                        tx.pushbackToBranch<int>("good_taus_pdgid", (-nt.Tau_charge()[itau]) * 15);
-                        tx.pushbackToBranch<int>("good_taus_tight", LEPID::tauID(itau, LEPID::IDtight, nt.year()));
-                        tx.pushbackToBranch<int>("good_taus_jetIdx", nt.Tau_jetIdx()[itau]);
-                        lepsf *= tauSF_vsJet->getSFvsPT(nt.Tau_pt()[itau], nt.Tau_genPartFlav()[itau]);
-                        lepsf *= tauSF_vsMu->getSFvsEta(nt.Tau_eta()[itau], nt.Tau_genPartFlav()[itau]);
-                        lepsf *= tauSF_vsEl->getSFvsEta(nt.Tau_eta()[itau], nt.Tau_genPartFlav()[itau]);
                     }
-                }
 
-                tx.sortVecBranchesByPt(
-                    /* name of the 4vector branch to use to pt sort by*/
-                    "good_taus_p4",
-                    /* names of any associated vector<float> branches to sort along */
-                    {},
-                    /* names of any associated vector<int>   branches to sort along */
+                    if (!save_this_tau)
                     {
-                        "good_taus_pdgid",
-                        "good_taus_tight",
-                        "good_taus_jetIdx",
-                        "good_taus_genPartFlav"
-                    },
-                    /* names of any associated vector<bool>  branches to sort along */
-                    {}
-                    );
+                        continue;
+                    }
+
+                    // Only save >= loose taus that do not overlap w/ a 'good' lepton
+                    tx.pushbackToBranch<LV>("good_taus_p4", nt.Tau_p4()[itau]);
+                    tx.pushbackToBranch<int>("good_taus_genPartFlav", nt.isData() ? -999 : nt.Tau_genPartFlav()[itau]);
+                    tx.pushbackToBranch<int>("good_taus_pdgid", (-nt.Tau_charge()[itau]) * 15);
+                    tx.pushbackToBranch<int>("good_taus_tight", ttH::tauID(itau, ttH::IDtight, nt.year()));
+                    tx.pushbackToBranch<int>("good_taus_jetIdx", nt.Tau_jetIdx()[itau]);
+                    lepsf *= (nt.isData() ? 1. : tauSF_vsJet->getSFvsPT(nt.Tau_pt()[itau], nt.Tau_genPartFlav()[itau]));
+                    lepsf *= (nt.isData() ? 1. : tauSF_vsMu->getSFvsEta(fabs(nt.Tau_eta()[itau]), nt.Tau_genPartFlav()[itau]));
+                    lepsf *= (nt.isData() ? 1. : tauSF_vsEl->getSFvsEta(fabs(nt.Tau_eta()[itau]), nt.Tau_genPartFlav()[itau]));
+                }
             }
+
+            tx.sortVecBranchesByPt(
+                /* name of the 4vector branch to use to pt sort by*/
+                "good_taus_p4",
+                /* names of any associated vector<float> branches to sort along */
+                {},
+                /* names of any associated vector<int>   branches to sort along */
+                {
+                    "good_taus_pdgid",
+                    "good_taus_tight",
+                    "good_taus_jetIdx",
+                    "good_taus_genPartFlav"
+                },
+                /* names of any associated vector<bool>  branches to sort along */
+                {}
+                );
 
             // Set the lepton scale factor weight
             tx.setBranch<float>("lepsf", nt.isData() ? 1. : lepsf);
@@ -1151,17 +1294,39 @@ void VBSHWW::initSRCutflow()
             // Select only two tight leptons
             if (not (ntight == 2))
                 return false;
+            // // Select only two tight leptons
+            // if (not (ntight == 1))
+            //     return false;
 
             // Therefore I will only have two leptons in the good_leptons container
             const int& pdgid0 = tx.getBranchLazy<vector<int>>("good_leptons_pdgid")[0];
             const int& pdgid1 = tx.getBranchLazy<vector<int>>("good_leptons_pdgid").size() == 2 ? tx.getBranchLazy<vector<int>>("good_leptons_pdgid")[1] : tx.getBranchLazy<vector<int>>("good_taus_pdgid")[0];
 
-            // Require same sign
-            if (not (pdgid0 * pdgid1 > 0))
-                return false;
-            // // Require opposite sign
-            // if (not (pdgid0 * pdgid1 < 0))
-            //     return false;
+            if (
+                looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v40/")
+                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v60/")
+                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v70_SS/")
+                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.0_SS/")
+                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.1_SS/")
+                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.2_SS/")
+                )
+            {
+                // Require same sign
+                if (not (pdgid0 * pdgid1 > 0))
+                    return false;
+            }
+            else if (
+                looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v41/")
+                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v44/")
+                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v70_OS/")
+                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.1_OS/")
+                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.2_OS/")
+                )
+            {
+                // Require opposite sign
+                if (not (pdgid0 * pdgid1 < 0))
+                    return false;
+            }
 
             const float& pt0 = tx.getBranchLazy<vector<LV>>("good_leptons_p4")[0].pt();
             const float& pt1 = tx.getBranchLazy<vector<LV>>("good_leptons_p4").size() == 2 ? tx.getBranchLazy<vector<LV>>("good_leptons_p4")[1].pt() : tx.getBranchLazy<vector<LV>>("good_taus_p4")[0].pt();
@@ -1390,7 +1555,8 @@ void VBSHWW::initSRCutflow()
             tx.setBranch<LV>("b0", tx.getBranch<vector<LV>>("higgs_jets_p4")[0]);
             tx.setBranch<LV>("b1", tx.getBranch<vector<LV>>("higgs_jets_p4")[1]);
             float mbb = (tx.getBranch<LV>("b0")+tx.getBranch<LV>("b1")).mass();
-            int mbbIn = mbb > 90. and mbb < 140.;
+            // int mbbIn = mbb > 90. and mbb < 140.;
+            int mbbIn = mbb < 150.;
             tx.setBranch<int>("mbbIn", mbbIn);
 
             // Require at least one of them pass a tight and another pass loose
@@ -1540,7 +1706,8 @@ void VBSHWW::initSRCutflow()
             float leppt0 = tx.getBranch<LV>("leadlep").pt();
             float leppt1 = tx.getBranch<LV>("subllep").pt();
             int mbbIn = tx.getBranch<int>("mbbIn");
-            tx.setBranch<int>("pass_blind", nt.isData() ? not (mbbIn and mjj > 500. and detajj > 3 and leppt0 > 140. and leppt1 > 60.): 1);
+            int isSS = (tx.getBranch<int>("lep0ID") * tx.getBranch<int>("lep1ID")) > 0;
+            tx.setBranch<int>("pass_blind", nt.isData() and isSS ? not (mbbIn): 1);
             // if (mjj > 400 and detajj > 3 and nt.event() == 30)
             // {
             //     std::cout <<  " nt.run(): " << nt.run() <<  std::endl;
@@ -1593,6 +1760,144 @@ void VBSHWW::initSRCutflow()
             if (pass_blind and btagchannel == 0 and lepchannel == 4 and     mbbIn) channeldetail = 14;
             if (pass_blind and btagchannel == 0 and lepchannel == 4 and not mbbIn) channeldetail = 15;
             tx.setBranch<int>("channeldetail", channeldetail);
+
+            // Create keyvariables worth computing
+            const LV& b0 = tx.getBranch<LV>("b0");
+            const LV& b1 = tx.getBranch<LV>("b1");
+            tx.setBranch<float>("mbb", (b0 + b1).mass());
+            tx.setBranch<float>("dphibb", fabs(RooUtil::Calc::DeltaPhi(b0, b1)));
+            tx.setBranch<float>("detabb", fabs(RooUtil::Calc::DeltaEta(b0, b1)));
+            tx.setBranch<float>("drbb", RooUtil::Calc::DeltaR(b0, b1));
+            tx.setBranch<float>("ptbb", (b0 + b1).pt());
+
+            tx.setBranch<float>("b0pt", b0.pt());
+            tx.setBranch<float>("b1pt", b1.pt());
+            tx.setBranch<int>("b0tight", tx.getBranch<vector<int>>("higgs_jets_tight_btagged")[0]);
+            tx.setBranch<int>("b1tight", tx.getBranch<vector<int>>("higgs_jets_tight_btagged")[1]);
+
+            const LV& j0 = tx.getBranch<LV>("j0");
+            const LV& j1 = tx.getBranch<LV>("j1");
+            tx.setBranch<float>("mjj", (j0 + j1).mass());
+            tx.setBranch<float>("dphijj", fabs(RooUtil::Calc::DeltaPhi(j0, j1)));
+            tx.setBranch<float>("detajj", fabs(RooUtil::Calc::DeltaEta(j0, j1)));
+            tx.setBranch<float>("drjj", RooUtil::Calc::DeltaR(j0, j1));
+            tx.setBranch<float>("ptjj", (j0 + j1).pt());
+
+            tx.setBranch<float>("j0pt", j0.pt());
+            tx.setBranch<float>("j1pt", j1.pt());
+
+            tx.setBranch<float>("j_lead_p", j0.P() > j1.P() ? j0.P() : j1.P());
+            tx.setBranch<float>("j_sublead_p", j0.P() > j1.P() ? j1.P() : j0.P());
+
+            const LV& leadlep = tx.getBranch<LV>("leadlep");
+            const LV& subllep = tx.getBranch<LV>("subllep");
+            tx.setBranch<float>("mll", (leadlep + subllep).mass());
+            tx.setBranch<float>("dphill", fabs(RooUtil::Calc::DeltaPhi(leadlep, subllep)));
+            tx.setBranch<float>("detall", fabs(RooUtil::Calc::DeltaEta(leadlep, subllep)));
+            tx.setBranch<float>("drll", RooUtil::Calc::DeltaR(leadlep, subllep));
+            tx.setBranch<float>("ptll", (leadlep + subllep).pt());
+
+            tx.setBranch<float>("l0pt", leadlep.pt());
+            tx.setBranch<float>("l1pt", subllep.pt());
+
+            const LV& met_p4 = tx.getBranch<LV>("met_p4");
+            tx.setBranch<float>("met", met_p4.pt());
+
+            tx.setBranch<float>("lt", leadlep.pt() + subllep.pt() + met_p4.pt());
+            tx.setBranch<float>("st", leadlep.pt() + subllep.pt() + met_p4.pt() + b0.pt() + b1.pt());
+            tx.setBranch<float>("mvvh", (leadlep + subllep + met_p4 + b0 + b1).mass());
+            tx.setBranch<float>("mtvvh", (leadlep + subllep + met_p4 + b0 + b1).mt());
+            tx.setBranch<float>("ptvvh", (leadlep + subllep + met_p4 + b0 + b1).pt());
+
+            // computing neutrino assuming neutrinos are collinear with leptons
+            float l0x = leadlep.pt() * std::cos(leadlep.phi());
+            float l0y = leadlep.pt() * std::sin(leadlep.phi());
+            float l1x = subllep.pt() * std::cos(subllep.phi());
+            float l1y = subllep.pt() * std::sin(subllep.phi());
+            float metx = met_p4.pt() * std::cos(met_p4.phi());
+            float mety = met_p4.pt() * std::sin(met_p4.phi());
+
+            // // https://www.wolframalpha.com/input/?i=Solve+x+%3D+m+*+a+%2B+n+*+b%2C+y+%3D+m+*+c+%2B+n+*+d+for+m%2C+n
+            // float a = std::sin(leadlep.theta()) * std::cos(leadlep.phi());
+            // float b = std::sin(subllep.theta()) * std::cos(subllep.phi());
+            // float c = std::sin(leadlep.theta()) * std::sin(leadlep.phi());
+            // float d = std::sin(subllep.theta()) * std::sin(subllep.phi());
+            // float v0p = (d * metx - b * mety) / (a * d - b * c);
+            // float v1p = (c * metx - a * mety) / (b * c - a * d);
+            // float v0pt = v0p * std::sin(leadlep.theta());
+            // float v1pt = v1p * std::sin(subllep.theta());
+
+            // https://www.wolframalpha.com/input/?i=Solve+x+%3D+m+*+a+%2B+n+*+b%2C+y+%3D+m+*+c+%2B+n+*+d+for+m%2C+n
+            float a = std::cos(leadlep.phi());
+            float b = std::cos(subllep.phi());
+            float c = std::sin(leadlep.phi());
+            float d = std::sin(subllep.phi());
+            float v0p = (d * metx - b * mety) / (a * d - b * c);
+            float v1p = (c * metx - a * mety) / (b * c - a * d);
+            // float v0pt = v0p * std::sin(leadlep.theta());
+            // float v1pt = v1p * std::sin(subllep.theta());
+            float v0pt = v0p * std::sin(leadlep.theta());
+            float v1pt = v1p * std::sin(subllep.theta());
+
+            tx.setBranch<float>("v0pt", v0pt);
+            tx.setBranch<float>("v1pt", v1pt);
+
+            // TLorentzVector
+            TLorentzVector v0_tlv;
+            TLorentzVector v1_tlv;
+            // v0_tlv.SetPtEtaPhiM(v0pt, leadlep.eta(), leadlep.phi(), 0);
+            // v1_tlv.SetPtEtaPhiM(v1pt, subllep.eta(), subllep.phi(), 0);
+            v0_tlv.SetPtEtaPhiM(v0pt, 0, leadlep.phi(), 0);
+            v1_tlv.SetPtEtaPhiM(v1pt, 0, subllep.phi(), 0);
+
+            LV v0 = RooUtil::Calc::getLV(v0_tlv);
+            LV v1 = RooUtil::Calc::getLV(v1_tlv);
+
+            float w0mass = (v0 + leadlep).mass();
+            float w1mass = (v1 + subllep).mass();
+
+            tx.setBranch<float>("w0mass", w0mass);
+            tx.setBranch<float>("w1mass", w1mass);
+
+            int categ = -1;
+            const int& leadlepID = tx.getBranch<int>("leadlepID");
+            if (leadlepID < 0 and   btagchannel <= 1 and lepchannel <= 2 and abs(leadlepID) == 11)
+                categ = 0;
+            else if (leadlepID < 0 and   btagchannel <= 1 and lepchannel <= 2 and abs(leadlepID) == 13)
+                categ = 1;
+            else if (leadlepID < 0 and   btagchannel == 0 and lepchannel >  2)
+                categ = 2;
+            else if (leadlepID > 0 and ((btagchannel <= 1 and lepchannel <= 2) or (btagchannel == 0 and lepchannel > 2)))
+                categ = 3;
+            tx.setBranch<int>("categ", categ);
+
+            tx.setBranch<int>("is_ttbar_madgraph", processType == ProcessType::kTT1LMadGraph or processType == ProcessType::kTT2LMadGraph);
+            tx.setBranch<int>("is_ttbar_powheg", processType == ProcessType::kTT1LPowheg or processType == ProcessType::kTT2LPowheg);
+            tx.setBranch<int>("is_train", (nt.event() % 2 == 0) or tx.getBranch<int>("is_ttbar_madgraph"));
+            tx.setBranch<int>("is_test" , (nt.event() % 2 == 1) or tx.getBranch<int>("is_ttbar_powheg"));
+            tx.setBranch<int>("is_signal", processType == ProcessType::kSignal);
+            tx.setBranch<int>("is_background" ,  not (processType == ProcessType::kSignal));
+
+            // XSEC SF for when splitting training and testing
+            float xsec_sf = 1;
+            if (tx.getBranch<int>("is_test"))
+            {
+                // Set xsec_sf for only testing events and for the following 5 samples
+                // The following was obtained from https://github.com/sgnoohc/VBSWWHBDT/blob/25763819d8dcf538bdb882fad3a2698b78368108/print_yield.C
+                if (processType == ProcessType::kBosons) xsec_sf = 1.62521;
+                if (processType == ProcessType::kRaretop) xsec_sf = 1.97812;
+                if (processType == ProcessType::kTTW) xsec_sf = 1.98607;
+                if (processType == ProcessType::kTTZ) xsec_sf = 1.86443;
+                if (processType == ProcessType::kSignal) xsec_sf = 1.99914;
+            }
+            tx.setBranch<float>("xsec_sf", xsec_sf);
+
+            tx.setBranch<float>("bdt", readerX->eval(tx));
+            float mbb = tx.getBranch<float>("mbb");
+            tx.setBranch<float>("mbb", 125);
+            tx.setBranch<float>("bdt_mbboff", readerX->eval(tx));
+            tx.setBranch<float>("mbb", mbb);
+
             return true;
         },
         UNITY);
@@ -1610,95 +1915,9 @@ void VBSHWW::initSRCutflow()
     return;
 }
 
-void VBSHWW::initBDTInputComputation()
-{
 
-    tx.createBranch<float>("lepton1pt");
-    tx.createBranch<float>("lepton2pt");
-    tx.createBranch<float>("lepton1reliso");
-    tx.createBranch<float>("lepton2reliso");
-    tx.createBranch<int>("bjetscoretype");
-    tx.createBranch<float>("dibjetmass");
-    tx.createBranch<float>("bjet1eta");
-    tx.createBranch<float>("bjet2eta");
-    tx.createBranch<float>("dibjetdeltaR");
-    tx.createBranch<float>("dibjetdeta");
-    tx.createBranch<float>("dibjetdphi");
-    tx.createBranch<float>("leadingvbfjetp");
-    tx.createBranch<float>("subleadvbfjetp");
-    tx.createBranch<float>("divbfjetmass");
-    tx.createBranch<float>("divbfjetdeta");
-    tx.createBranch<float>("divbfjetdphi");
-    tx.createBranch<float>("vbfjet1eta");
-    tx.createBranch<float>("vbfjet2eta");
-    tx.createBranch<float>("vbfjet1Pt");
-    tx.createBranch<float>("vbfjet2Pt");
-    tx.createBranch<float>("divbfjetPt");
-    tx.createBranch<float>("divbfjetdeltaR");
 
-    tx.createBranch<int>("lepflavorchannel");
-
-    cutflow.getCut("VBSJetPreselection");
-    cutflow.addCutToLastActiveCut("ComputeBDTInputs",
-            [&]()
-            {
-                // lepton 4-vectors and extra info
-                LV lepton_0 = tx.getBranch<vector<LV>>("good_leptons_p4").at(0);
-                LV lepton_1 = tx.getBranch<vector<LV>>("good_leptons_p4").at(1);
-                int lepton_0_pdgid = tx.getBranch<vector<int>>("good_leptons_pdgid").at(0);
-                int lepton_1_pdgid = tx.getBranch<vector<int>>("good_leptons_pdgid").at(1);
-
-                // b-jets 4-vectors and extra info
-                LV higgs_jet_0 = tx.getBranch<vector<LV>>("higgs_jets_p4").at(0);
-                LV higgs_jet_1 = tx.getBranch<vector<LV>>("higgs_jets_p4").at(1);
-                float higgs_jet_0_btag_score = tx.getBranch<vector<float>>("higgs_jets_btag_score").at(0);
-                float higgs_jet_1_btag_score = tx.getBranch<vector<float>>("higgs_jets_btag_score").at(1);
-
-                // vbf tagged jets 4-vectors
-                LV vbs_jet_0 = tx.getBranch<vector<LV>>("vbs_jets_p4").at(0);
-                LV vbs_jet_1 = tx.getBranch<vector<LV>>("vbs_jets_p4").at(1);
-
-                // Compute various input variables
-                float M_jj = (vbs_jet_0 + vbs_jet_1).M();
-                float deta_jj = vbs_jet_0.eta() - vbs_jet_1.eta();
-                int lepflavorchannel = -1;
-                if (abs(lepton_0_pdgid) == 11 and  abs(lepton_1_pdgid) == 11) lepflavorchannel = 0;
-                if (abs(lepton_0_pdgid) == 13 and  abs(lepton_1_pdgid) == 11) lepflavorchannel = 1;
-                if (abs(lepton_0_pdgid) == 11 and  abs(lepton_1_pdgid) == 13) lepflavorchannel = 2;
-                if (abs(lepton_0_pdgid) == 13 and  abs(lepton_1_pdgid) == 13) lepflavorchannel = 3;
-                // TODO: Compute other objects
-
-                tx.setBranch<float>("lepton1pt", -999); // TODO
-                tx.setBranch<float>("lepton2pt", -999); // TODO
-                tx.setBranch<float>("lepton1reliso", -999); // TODO
-                tx.setBranch<float>("lepton2reliso", -999); // TODO
-                tx.setBranch<int>("bjetscoretype", -999); // TODO
-                tx.setBranch<float>("dibjetmass", -999); // TODO
-                tx.setBranch<float>("bjet1eta", -999); // TODO
-                tx.setBranch<float>("bjet2eta", -999); // TODO
-                tx.setBranch<float>("dibjetdeltaR", -999); // TODO
-                tx.setBranch<float>("dibjetdeta", -999); // TODO
-                tx.setBranch<float>("dibjetdphi", -999); // TODO
-                tx.setBranch<float>("leadingvbfjetp", -999); // TODO
-                tx.setBranch<float>("subleadvbfjetp", -999); // TODO
-                tx.setBranch<float>("divbfjetmass", M_jj);
-                tx.setBranch<float>("divbfjetdeta", deta_jj);
-                tx.setBranch<float>("divbfjetdphi", -999); // TODO
-                tx.setBranch<float>("vbfjet1eta", -999); // TODO
-                tx.setBranch<float>("vbfjet2eta", -999); // TODO
-                tx.setBranch<float>("vbfjet1Pt", -999); // TODO
-                tx.setBranch<float>("vbfjet2Pt", -999); // TODO
-                tx.setBranch<float>("divbfjetPt", -999); // TODO
-                tx.setBranch<float>("divbfjetdeltaR", -999); // TODO
-
-                tx.setBranch<int>("lepflavorchannel", lepflavorchannel);
-
-                return true;
-            },
-            UNITY
-            );
-}
-
+//________________________________________________________________________________________________________________________________________
 void VBSHWW::processGenParticles_VBSWWH()
 {
 
@@ -1844,6 +2063,9 @@ void VBSHWW::processGenParticles_VBSWWH()
     }
 }
 
+
+
+//________________________________________________________________________________________________________________________________________
 void VBSHWW::processGenParticles_TopBackgrounds()
 {
 
@@ -1893,14 +2115,27 @@ void VBSHWW::processGenParticles_TopBackgrounds()
 
 }
 
+
+
+//________________________________________________________________________________________________________________________________________
 void VBSHWW::setBTagSF(std::vector<float> jet_pt, std::vector<float> jet_eta, std::vector<float> jet_score, std::vector<int> jet_flavor)
 {
+
+    // ******
+    // Warning: This function assumes you only pass 2 jets!!
+    // Warning: This function assumes you only pass 2 jets!!
+    // Warning: This function assumes you only pass 2 jets!!
+    // ******
+
     if (nt.isData())
     {
         tx.setBranch<float>("btagsf", 1);
     }
     else
     {
+        int idx_lead_bscore = jet_score[0] > jet_score[1] ? 0 : 1;
+        int idx_subl_bscore = jet_score[0] > jet_score[1] ? 1 : 0;
+
         float btag_prob_MC = 1;
         float btag_prob_DATA = 1;
         for (unsigned ijet = 0; ijet < jet_pt.size(); ++ijet)
@@ -1911,8 +2146,31 @@ void VBSHWW::setBTagSF(std::vector<float> jet_pt, std::vector<float> jet_eta, st
             int flavor = jet_flavor.at(ijet);
             bool is_loose_btagged = score > gconf.WP_DeepFlav_loose;
             bool is_tight_btagged = score > gconf.WP_DeepFlav_tight;
-            float eff_tight = flavor == 5 ? btagEffTight_b->eval(pt, eta) : (flavor == 0 ? btagEffTight_l->eval(pt, eta) : btagEffTight_c->eval(pt, eta));
-            float eff_loose = flavor == 5 ? btagEffLoose_b->eval(pt, eta) : (flavor == 0 ? btagEffLoose_l->eval(pt, eta) : btagEffLoose_c->eval(pt, eta));
+
+            float eff_tight = 1;
+            float eff_loose = 1;
+
+            if (isUL)
+            {
+                if (idx_lead_bscore == ijet)
+                {
+                    eff_tight = flavor == 5 ? btagEffTight_b->eval(pt, eta) : (flavor == 0 ? btagEffTight_l->eval(pt, eta) : btagEffTight_c->eval(pt, eta));
+                    eff_loose = flavor == 5 ? btagEffLoose_b->eval(pt, eta) : (flavor == 0 ? btagEffLoose_l->eval(pt, eta) : btagEffLoose_c->eval(pt, eta));
+                }
+                else
+                {
+                    eff_tight = flavor == 5 ? btagEffTight_b_subl->eval(pt, eta) : (flavor == 0 ? btagEffTight_l_subl->eval(pt, eta) : btagEffTight_c_subl->eval(pt, eta));
+                    eff_loose = flavor == 5 ? btagEffLoose_b_subl->eval(pt, eta) : (flavor == 0 ? btagEffLoose_l_subl->eval(pt, eta) : btagEffLoose_c_subl->eval(pt, eta));
+                }
+                // eff_tight = flavor == 5 ? btagEffTight_b->eval(pt, eta) : (flavor == 0 ? btagEffTight_l->eval(pt, eta) : btagEffTight_c->eval(pt, eta));
+                // eff_loose = flavor == 5 ? btagEffLoose_b->eval(pt, eta) : (flavor == 0 ? btagEffLoose_l->eval(pt, eta) : btagEffLoose_c->eval(pt, eta));
+            }
+            else
+            {
+                eff_tight = flavor == 5 ? btagEffTight_b->eval(pt, eta) : (flavor == 0 ? btagEffTight_l->eval(pt, eta) : btagEffTight_c->eval(pt, eta));
+                eff_loose = flavor == 5 ? btagEffLoose_b->eval(pt, eta) : (flavor == 0 ? btagEffLoose_l->eval(pt, eta) : btagEffLoose_c->eval(pt, eta));
+            }
+
             float sf_tight = 
                 flavor == 5 ? btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_B, eta, pt) : (
                 flavor == 0 ? btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_UDSG, eta, pt) :
@@ -1941,4 +2199,220 @@ void VBSHWW::setBTagSF(std::vector<float> jet_pt, std::vector<float> jet_eta, st
         float btagsf = btag_prob_DATA / btag_prob_MC;
         tx.setBranch<float>("btagsf", btagsf);
     }
+}
+
+
+
+//________________________________________________________________________________________________________________________________________
+// For a given cutname it writes the run, lumi, evt into a textfile based on the output root name
+void VBSHWW::writeEventList(TString cutname)
+{
+    TString eventlist_output_name = output_tfile->GetName(); // get the output file name
+    TString suffix = TString::Format(".%s.txt", cutname.Data());
+    eventlist_output_name.ReplaceAll(".root", suffix); // replace .root with suffix if .root exists
+    if (not eventlist_output_name.Contains(suffix)) eventlist_output_name += suffix; // if no suffix exists, then append suffix
+    cutflow.getCut(cutname).writeEventList(eventlist_output_name);
+}
+
+
+
+//________________________________________________________________________________________________________________________________________
+void VBSHWW::process(TString final_cutname)
+{
+    // Clear the data structure for the event
+    tx.clear();
+
+    // // Set the run lumi and event for this event
+    cutflow.setEventID(nt.run(), nt.luminosityBlock(), nt.event()); // Setting event ID in case we need to keep track of event id
+
+    // Run all the cutflow selections and filling histograms
+    cutflow.fill();
+
+    // Writing skimmed event tree for the data structure we created
+    if (cutflow.getCut(final_cutname).pass)
+    {
+        tx.fill();
+    }
+}
+
+
+
+//________________________________________________________________________________________________________________________________________
+void VBSHWW::parseCLI(int argc, char** argv)
+{
+    //********************************************************************************
+    //
+    // 1. Parsing options
+    //
+    //********************************************************************************
+
+    // cxxopts is just a tool to parse argc, and argv easily
+
+    // Grand option setting
+    cxxopts::Options options("\n  $ doAnalysis",  "\n         **********************\n         *                    *\n         *       Looper       *\n         *                    *\n         **********************\n");
+
+    // Read the options
+    options.add_options()
+        ("i,input"       , "Comma separated input file list OR if just a directory is provided it will glob all in the directory BUT must end with '/' for the path", cxxopts::value<std::string>())
+        ("t,tree"        , "Name of the tree in the root file to open and loop over"                                             , cxxopts::value<std::string>())
+        ("o,output"      , "Output file name"                                                                                    , cxxopts::value<std::string>())
+        ("n,nevents"     , "N events to loop over"                                                                               , cxxopts::value<int>()->default_value("-1"))
+        ("j,nsplit_jobs" , "Enable splitting jobs by N blocks (--job_index must be set)"                                         , cxxopts::value<int>())
+        ("I,job_index"   , "job_index of split jobs (--nsplit_jobs must be set. index starts from 0. i.e. 0, 1, 2, 3, etc...)"   , cxxopts::value<int>())
+        ("s,scale1fb"    , "pass scale1fb of the sample"                                                                         , cxxopts::value<float>())
+        ("d,debug"       , "Run debug job. i.e. overrides output option to 'debug.root' and 'recreate's the file.")
+        ("h,help"        , "Print help")
+        ;
+
+    auto result = options.parse(argc, argv);
+
+    // NOTE: When an option was provided (e.g. -i or --input), then the result.count("<option name>") is more than 0
+    // Therefore, the option can be parsed easily by asking the condition if (result.count("<option name>");
+    // That's how the several options are parsed below
+
+    //_______________________________________________________________________________
+    // --help
+    if (result.count("help"))
+    {
+        std::cout << options.help() << std::endl;
+        exit(1);
+    }
+
+    //_______________________________________________________________________________
+    // --input
+    if (result.count("input"))
+    {
+        input_file_list_tstring = result["input"].as<std::string>();
+    }
+    else
+    {
+        std::cout << options.help() << std::endl;
+        std::cout << "ERROR: Input list is not provided! Check your arguments" << std::endl;
+        exit(1);
+    }
+
+    //_______________________________________________________________________________
+    // --tree
+    if (result.count("tree"))
+    {
+        input_tree_name = result["tree"].as<std::string>();
+    }
+    else
+    {
+        std::cout << options.help() << std::endl;
+        std::cout << "ERROR: Input tree name is not provided! Check your arguments" << std::endl;
+        exit(1);
+    }
+
+    //_______________________________________________________________________________
+    // --scale1fb
+    if (result.count("scale1fb"))
+    {
+        scale1fb = result["scale1fb"].as<float>();
+    }
+
+    //_______________________________________________________________________________
+    // --debug
+    if (result.count("debug"))
+    {
+        output_tfile = new TFile("debug.root", "recreate");
+    }
+    else
+    {
+        //_______________________________________________________________________________
+        // --output
+        if (result.count("output"))
+        {
+            output_tfile = new TFile(result["output"].as<std::string>().c_str(), "create");
+            if (not output_tfile->IsOpen())
+            {
+                std::cout << options.help() << std::endl;
+                std::cout << "ERROR: output already exists! provide new output name or delete old file. OUTPUTFILE=" << result["output"].as<std::string>() << std::endl;
+                exit(1);
+            }
+        }
+        else
+        {
+            std::cout << options.help() << std::endl;
+            std::cout << "ERROR: Output file name is not provided! Check your arguments" << std::endl;
+            exit(1);
+        }
+    }
+
+    //_______________________________________________________________________________
+    // --nevents
+    n_events = result["nevents"].as<int>();
+
+    //_______________________________________________________________________________
+    // --nsplit_jobs
+    if (result.count("nsplit_jobs"))
+    {
+        nsplit_jobs = result["nsplit_jobs"].as<int>();
+        if (nsplit_jobs <= 0)
+        {
+            std::cout << options.help() << std::endl;
+            std::cout << "ERROR: option string --nsplit_jobs" << nsplit_jobs << " has zero or negative value!" << std::endl;
+            std::cout << "I am not sure what this means..." << std::endl;
+            exit(1);
+        }
+    }
+    else
+    {
+        nsplit_jobs = -1;
+    }
+
+    //_______________________________________________________________________________
+    // --nsplit_jobs
+    if (result.count("job_index"))
+    {
+        job_index = result["job_index"].as<int>();
+        if (job_index < 0)
+        {
+            std::cout << options.help() << std::endl;
+            std::cout << "ERROR: option string --job_index" << job_index << " has negative value!" << std::endl;
+            std::cout << "I am not sure what this means..." << std::endl;
+            exit(1);
+        }
+    }
+    else
+    {
+        job_index = -1;
+    }
+
+
+    // Sanity check for split jobs (if one is set the other must be set too)
+    if (result.count("job_index") or result.count("nsplit_jobs"))
+    {
+        // If one is not provided then throw error
+        if ( not (result.count("job_index") and result.count("nsplit_jobs")))
+        {
+            std::cout << options.help() << std::endl;
+            std::cout << "ERROR: option string --job_index and --nsplit_jobs must be set at the same time!" << std::endl;
+            exit(1);
+        }
+        // If it is set then check for sanity
+        else
+        {
+            if (job_index >= nsplit_jobs)
+            {
+                std::cout << options.help() << std::endl;
+                std::cout << "ERROR: --job_index >= --nsplit_jobs ! This does not make sense..." << std::endl;
+                exit(1);
+            }
+        }
+    }
+
+    //
+    // Printing out the option settings overview
+    //
+    std::cout <<  "=========================================================" << std::endl;
+    std::cout <<  " Setting of the analysis job based on provided arguments " << std::endl;
+    std::cout <<  "---------------------------------------------------------" << std::endl;
+    std::cout <<  " input_file_list_tstring: " << input_file_list_tstring <<  std::endl;
+    std::cout <<  " output_tfile: " << output_tfile->GetName() <<  std::endl;
+    std::cout <<  " n_events: " << n_events <<  std::endl;
+    std::cout <<  " nsplit_jobs: " << nsplit_jobs <<  std::endl;
+    std::cout <<  " job_index: " << job_index <<  std::endl;
+    std::cout <<  "=========================================================" << std::endl;
+
 }

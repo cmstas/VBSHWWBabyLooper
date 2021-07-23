@@ -35,13 +35,22 @@ int main(int argc, char** argv)
         }
 
         vbs.process("AK4CategChannels");
-    }
 
+    }
     // Writing output file
     vbs.cutflow.saveOutput();
 
     // Write the data structure to the root file
     vbs.tx.write();
+    // TTree* clone = vbs.tx.getTree()->CloneTree();
+    TTree* variable_train = vbs.tx.getTree()->CopyTree("is_train==1");
+    TTree* variable_test  = vbs.tx.getTree()->CopyTree("is_test==1");
+    variable_train->SetName("variable_train");
+    variable_test->SetName("variable_test");
+    variable_train->SetTitle("variable_train");
+    variable_test->SetTitle("variable_test");
+    variable_train->Write();
+    variable_test->Write();
 
     // Write out the "run:lumi:evt" of the events passing a certain cut into a text file
     // If the output.root is "output/path/dir/name.root"

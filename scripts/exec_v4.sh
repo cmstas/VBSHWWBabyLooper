@@ -15,7 +15,7 @@ TAG=${2}
 # Third argument is DEBUG
 DEBUG=${3}
 
-YEARS="2016 2017 2018"
+YEARS="2016"
 
 EXECUTABLE=./studies/${STUDY}/doAnalysis
 
@@ -64,16 +64,7 @@ DoubleEG_Run2016 \
 DoubleMuon_Run2016 \
 MuonEG_Run2016 \
 SingleElectron_Run2016 \
-SingleMuon_Run2016 \
-DoubleEG_Run2017 \
-DoubleMuon_Run2017 \
-MuonEG_Run2017 \
-SingleElectron_Run2017 \
-SingleMuon_Run2017 \
-EGamma_Run2018 \
-DoubleMuon_Run2018 \
-MuonEG_Run2018 \
-SingleMuon_Run2018"
+SingleMuon_Run2016"
 
 # VBSWmpWmpHToLNuLNu_TuneCP5 \
 

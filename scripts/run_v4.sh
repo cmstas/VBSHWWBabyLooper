@@ -47,5 +47,5 @@ echo "TAG            : ${TAG}"
 echo "DEBUG          : ${DEBUG}"
 echo "================================================"
 
-sh $DIR/exec_v3.sh ${STUDY} ${TAG} ${DEBUG}
-sh $DIR/hadd_v3.sh ${STUDY} ${TAG}
+sh $DIR/exec_v4.sh ${STUDY} ${TAG} ${DEBUG}
+sh $DIR/hadd_v4.sh ${STUDY} ${TAG}

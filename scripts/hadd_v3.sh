@@ -59,6 +59,4 @@ for YEAR in ${YEARS}; do
 
 done
 
-echo "Launching hadd jobs in parallel...."
 xargs.sh .haddjobs.txt
-echo "Done!"

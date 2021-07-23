@@ -1,50 +1,101 @@
+#!/bin/bash
 
-mkdir -p hists/
+if [ -z $1 ]; then
+    echo "Usage:"
+    echo ""
+    echo "  sh $0 VERSION YEAR"
+    echo ""
+    echo "     VERSION    Skim version (e.g. v40)"
+    echo "     YEAR       Year         (e.g. 2016, 2017, 2018, or Run2)"
+    echo "     RUNTAG     Run tag      (e.g. Date, name, or some specifier)"
+    echo ""
+    exit
+fi
 
-MINIDIR=../hadds/createMini_Run2
+TAG=${1}
+YEAR=${2}
+RUNTAG=${3}
+
+HISTDIR=hists/${RUNTAG}/${TAG}/${YEAR}
+
+mkdir -p ${HISTDIR}
+
+MINIDIR=../hadds/${TAG}/createMini_${YEAR}
+
+echo "============================"
+echo "YEAR      : ${YEAR}"
+echo "TAG       : ${TAG}"
+echo "RUNTAG    : ${RUNTAG}"
+echo "============================"
 
 rm -f .jobs.txt
-echo "rm -f hists/tt1l.root          ; ./doAnalysis -t variable -i ${MINIDIR}/tt1l.root           -o hists/tt1l.root           > hists/tt1l.log                 2>&1" >> .jobs.txt
-echo "rm -f hists/tt2l.root          ; ./doAnalysis -t variable -i ${MINIDIR}/tt2l.root           -o hists/tt2l.root           > hists/tt2l.log                 2>&1" >> .jobs.txt
-echo "rm -f hists/tt1lpowheg.root    ; ./doAnalysis -t variable -i ${MINIDIR}/tt1lpowheg.root     -o hists/tt1lpowheg.root     > hists/tt1lpowheg.log           2>&1" >> .jobs.txt
-echo "rm -f hists/tt2lpowheg.root    ; ./doAnalysis -t variable -i ${MINIDIR}/tt2lpowheg.root     -o hists/tt2lpowheg.root     > hists/tt2lpowheg.log           2>&1" >> .jobs.txt
-echo "rm -f hists/ttw_0.root         ; ./doAnalysis -t variable -i ${MINIDIR}/ttw.root            -o hists/ttw_0.root          -j 6 -I 0 > hists/ttw_0.log      2>&1" >> .jobs.txt
-echo "rm -f hists/ttw_1.root         ; ./doAnalysis -t variable -i ${MINIDIR}/ttw.root            -o hists/ttw_1.root          -j 6 -I 1 > hists/ttw_1.log      2>&1" >> .jobs.txt
-echo "rm -f hists/ttw_2.root         ; ./doAnalysis -t variable -i ${MINIDIR}/ttw.root            -o hists/ttw_2.root          -j 6 -I 2 > hists/ttw_2.log      2>&1" >> .jobs.txt
-echo "rm -f hists/ttw_3.root         ; ./doAnalysis -t variable -i ${MINIDIR}/ttw.root            -o hists/ttw_3.root          -j 6 -I 3 > hists/ttw_3.log      2>&1" >> .jobs.txt
-echo "rm -f hists/ttw_4.root         ; ./doAnalysis -t variable -i ${MINIDIR}/ttw.root            -o hists/ttw_4.root          -j 6 -I 4 > hists/ttw_4.log      2>&1" >> .jobs.txt
-echo "rm -f hists/ttw_5.root         ; ./doAnalysis -t variable -i ${MINIDIR}/ttw.root            -o hists/ttw_5.root          -j 6 -I 5 > hists/ttw_5.log      2>&1" >> .jobs.txt
-echo "rm -f hists/ttz_0.root         ; ./doAnalysis -t variable -i ${MINIDIR}/ttz.root            -o hists/ttz_0.root          -j 3 -I 0 > hists/ttz_0.log      2>&1" >> .jobs.txt
-echo "rm -f hists/ttz_1.root         ; ./doAnalysis -t variable -i ${MINIDIR}/ttz.root            -o hists/ttz_1.root          -j 3 -I 1 > hists/ttz_1.log      2>&1" >> .jobs.txt
-echo "rm -f hists/ttz_2.root         ; ./doAnalysis -t variable -i ${MINIDIR}/ttz.root            -o hists/ttz_2.root          -j 3 -I 2 > hists/ttz_2.log      2>&1" >> .jobs.txt
-echo "rm -f hists/raretop_0.root     ; ./doAnalysis -t variable -i ${MINIDIR}/raretop.root        -o hists/raretop_0.root      -j 10 -I 0 > hists/raretop_0.log 2>&1" >> .jobs.txt
-echo "rm -f hists/raretop_1.root     ; ./doAnalysis -t variable -i ${MINIDIR}/raretop.root        -o hists/raretop_1.root      -j 10 -I 1 > hists/raretop_1.log 2>&1" >> .jobs.txt
-echo "rm -f hists/raretop_2.root     ; ./doAnalysis -t variable -i ${MINIDIR}/raretop.root        -o hists/raretop_2.root      -j 10 -I 2 > hists/raretop_2.log 2>&1" >> .jobs.txt
-echo "rm -f hists/raretop_3.root     ; ./doAnalysis -t variable -i ${MINIDIR}/raretop.root        -o hists/raretop_3.root      -j 10 -I 3 > hists/raretop_3.log 2>&1" >> .jobs.txt
-echo "rm -f hists/raretop_4.root     ; ./doAnalysis -t variable -i ${MINIDIR}/raretop.root        -o hists/raretop_4.root      -j 10 -I 4 > hists/raretop_4.log 2>&1" >> .jobs.txt
-echo "rm -f hists/raretop_5.root     ; ./doAnalysis -t variable -i ${MINIDIR}/raretop.root        -o hists/raretop_5.root      -j 10 -I 5 > hists/raretop_5.log 2>&1" >> .jobs.txt
-echo "rm -f hists/raretop_6.root     ; ./doAnalysis -t variable -i ${MINIDIR}/raretop.root        -o hists/raretop_6.root      -j 10 -I 6 > hists/raretop_6.log 2>&1" >> .jobs.txt
-echo "rm -f hists/raretop_7.root     ; ./doAnalysis -t variable -i ${MINIDIR}/raretop.root        -o hists/raretop_7.root      -j 10 -I 7 > hists/raretop_7.log 2>&1" >> .jobs.txt
-echo "rm -f hists/raretop_8.root     ; ./doAnalysis -t variable -i ${MINIDIR}/raretop.root        -o hists/raretop_8.root      -j 10 -I 8 > hists/raretop_8.log 2>&1" >> .jobs.txt
-echo "rm -f hists/raretop_9.root     ; ./doAnalysis -t variable -i ${MINIDIR}/raretop.root        -o hists/raretop_9.root      -j 10 -I 9 > hists/raretop_9.log 2>&1" >> .jobs.txt
-echo "rm -f hists/bosons.root        ; ./doAnalysis -t variable -i ${MINIDIR}/bosons.root         -o hists/bosons.root         > hists/bosons.log               2>&1" >> .jobs.txt
-echo "rm -f hists/data.root          ; ./doAnalysis -t variable -i ${MINIDIR}/data.root           -o hists/data.root           > hists/data.log                 2>&1" >> .jobs.txt
-echo "rm -f hists/vbshww.root        ; ./doAnalysis -t variable -i ${MINIDIR}/vbshww.root         -o hists/vbshww.root         > hists/vbshww.log               2>&1" >> .jobs.txt
-echo "rm -f hists/vbshww_c2v_3.root  ; ./doAnalysis -t variable -i ${MINIDIR}/vbshww_c2v_3.root   -o hists/vbshww_c2v_3.root   > hists/vbshww_c2v_3.log         2>&1" >> .jobs.txt
-echo "rm -f hists/vbshww_c2v_4p5.root; ./doAnalysis -t variable -i ${MINIDIR}/vbshww_c2v_4p5.root -o hists/vbshww_c2v_4p5.root > hists/vbshww_c2v_4p5.log       2>&1" >> .jobs.txt
-echo "rm -f hists/vbshww_c2v_6.root  ; ./doAnalysis -t variable -i ${MINIDIR}/vbshww_c2v_6.root   -o hists/vbshww_c2v_6.root   > hists/vbshww_c2v_6.log         2>&1" >> .jobs.txt
-echo "rm -f hists/vbshww_c2v_m2.root ; ./doAnalysis -t variable -i ${MINIDIR}/vbshww_c2v_m2.root  -o hists/vbshww_c2v_m2.root  > hists/vbshww_c2v_m2.log        2>&1" >> .jobs.txt
+if [[ ${TAG} == *"v2."* ]]; then
+    :
+else
+    NJOBS=3
+    for i in $(seq 0 $((NJOBS-1))); do
+        echo "rm -f ${HISTDIR}/tt1l_${i}.root     ; ./doAnalysis -t variable -i ${MINIDIR}/tt1l.root           -o ${HISTDIR}/tt1l_${i}.root         -j ${NJOBS} -I ${i} > ${HISTDIR}/tt1l_${i}.log            2>&1" >> .jobs.txt
+    done
+    NJOBS=30
+    for i in $(seq 0 $((NJOBS-1))); do
+        echo "rm -f ${HISTDIR}/tt2l_${i}.root     ; ./doAnalysis -t variable -i ${MINIDIR}/tt2l.root           -o ${HISTDIR}/tt2l_${i}.root         -j ${NJOBS} -I ${i} > ${HISTDIR}/tt2l_${i}.log            2>&1" >> .jobs.txt
+    done
+fi
+NJOBS=3
+for i in $(seq 0 $((NJOBS-1))); do
+    echo "rm -f ${HISTDIR}/tt1lpowheg_${i}.root   ; ./doAnalysis -t variable -i ${MINIDIR}/tt1lpowheg.root     -o ${HISTDIR}/tt1lpowheg_${i}.root   -j ${NJOBS} -I ${i} > ${HISTDIR}/tt1lpowheg_${i}.log      2>&1" >> .jobs.txt
+done
+NJOBS=30
+for i in $(seq 0 $((NJOBS-1))); do
+    echo "rm -f ${HISTDIR}/tt2lpowheg_${i}.root   ; ./doAnalysis -t variable -i ${MINIDIR}/tt2lpowheg.root     -o ${HISTDIR}/tt2lpowheg_${i}.root   -j ${NJOBS} -I ${i} > ${HISTDIR}/tt2lpowheg_${i}.log      2>&1" >> .jobs.txt
+done
+NJOBS=10
+for i in $(seq 0 $((NJOBS-1))); do
+    echo "rm -f ${HISTDIR}/ttw_${i}.root          ; ./doAnalysis -t variable -i ${MINIDIR}/ttw.root            -o ${HISTDIR}/ttw_${i}.root          -j ${NJOBS} -I ${i} > ${HISTDIR}/ttw_${i}.log             2>&1" >> .jobs.txt
+done
+NJOBS=10
+for i in $(seq 0 $((NJOBS-1))); do
+    echo "rm -f ${HISTDIR}/ttz_${i}.root          ; ./doAnalysis -t variable -i ${MINIDIR}/ttz.root            -o ${HISTDIR}/ttz_${i}.root          -j ${NJOBS} -I ${i} > ${HISTDIR}/ttz_${i}.log             2>&1" >> .jobs.txt
+done
+NJOBS=20
+for i in $(seq 0 $((NJOBS-1))); do
+    echo "rm -f ${HISTDIR}/raretop_${i}.root      ; ./doAnalysis -t variable -i ${MINIDIR}/raretop.root        -o ${HISTDIR}/raretop_${i}.root      -j ${NJOBS} -I ${i} > ${HISTDIR}/raretop_${i}.log         2>&1" >> .jobs.txt
+done
+NJOBS=4
+for i in $(seq 0 $((NJOBS-1))); do
+    echo "rm -f ${HISTDIR}/bosons_${i}.root       ; ./doAnalysis -t variable -i ${MINIDIR}/bosons.root         -o ${HISTDIR}/bosons_${i}.root       -j ${NJOBS} -I ${i} > ${HISTDIR}/bosons_${i}.log          2>&1" >> .jobs.txt
+done
+NJOBS=10
+for i in $(seq 0 $((NJOBS-1))); do
+    echo "rm -f ${HISTDIR}/data_${i}.root         ; ./doAnalysis -t variable -i ${MINIDIR}/data.root           -o ${HISTDIR}/data_${i}.root         -j ${NJOBS} -I ${i} > ${HISTDIR}/data_${i}.log            2>&1" >> .jobs.txt
+done
+if [[ ${TAG} == *"v2."* ]] || [[ ${TAG}_${YEAR} == *"v70_SS_Run2"* ]]; then
+    echo "rm -f ${HISTDIR}/vbshww_c2v_4p5.root    ; ./doAnalysis -t variable -i ${MINIDIR}/vbshww_c2v_4p5.root -o ${HISTDIR}/vbshww_c2v_4p5.root                        > ${HISTDIR}/vbshww_c2v_4p5.log       2>&1" >> .jobs.txt
+fi
 
 xargs.sh .jobs.txt
 
 rm -f .haddjobs.txt
-echo "hadd -f hists/raretop.root hists/raretop_*.root" >> .haddjobs.txt
-echo "hadd -f hists/ttw.root hists/ttw_*.root" >> .haddjobs.txt
-echo "hadd -f hists/ttz.root hists/ttz_*.root" >> .haddjobs.txt
+echo "hadd -f ${HISTDIR}/raretop.root ${HISTDIR}/raretop_*.root > ${HISTDIR}/raretop.log 2>&1" >> .haddjobs.txt
+echo "hadd -f ${HISTDIR}/ttw.root ${HISTDIR}/ttw_*.root > ${HISTDIR}/ttw.log 2>&1" >> .haddjobs.txt
+echo "hadd -f ${HISTDIR}/ttz.root ${HISTDIR}/ttz_*.root > ${HISTDIR}/ttz.log 2>&1" >> .haddjobs.txt
+echo "hadd -f ${HISTDIR}/bosons.root ${HISTDIR}/bosons_*.root > ${HISTDIR}/bosons.log 2>&1" >> .haddjobs.txt
+echo "hadd -f ${HISTDIR}/data.root ${HISTDIR}/data_*.root > ${HISTDIR}/data.log 2>&1" >> .haddjobs.txt
+if [[ ${TAG} == *"v2."* ]]; then
+    :
+else
+    echo "hadd -f ${HISTDIR}/tt1l.root ${HISTDIR}/tt1l_*.root > ${HISTDIR}/tt1l.log 2>&1" >> .haddjobs.txt
+    echo "hadd -f ${HISTDIR}/tt2l.root ${HISTDIR}/tt2l_*.root > ${HISTDIR}/tt2l.log 2>&1" >> .haddjobs.txt
+fi
+echo "hadd -f ${HISTDIR}/tt1lpowheg.root ${HISTDIR}/tt1lpowheg_*.root > ${HISTDIR}/tt1lpowheg.log 2>&1" >> .haddjobs.txt
+echo "hadd -f ${HISTDIR}/tt2lpowheg.root ${HISTDIR}/tt2lpowheg_*.root > ${HISTDIR}/tt2lpowheg.log 2>&1" >> .haddjobs.txt
 
 xargs.sh .haddjobs.txt
 
-hadd -f hists/totalbkg.root hists/raretop.root hists/ttw.root hists/ttz.root hists/tt1l.root hists/tt2l.root hists/bosons.root
-hadd -f hists/statbkg.root hists/raretop.root hists/ttw.root hists/ttz.root
-hadd -f hists/lowstatbkg.root hists/tt1l.root hists/tt2l.root
+rm -f .haddjobs.txt
+echo "hadd -f ${HISTDIR}/totalbkg.root ${HISTDIR}/raretop.root ${HISTDIR}/ttw.root ${HISTDIR}/ttz.root ${HISTDIR}/tt1lpowheg.root ${HISTDIR}/tt2lpowheg.root ${HISTDIR}/bosons.root > ${HISTDIR}/totalbkg.log 2>&1" >> .haddjobs.txt
+echo "hadd -f ${HISTDIR}/statbkg.root ${HISTDIR}/raretop.root ${HISTDIR}/ttw.root ${HISTDIR}/ttz.root > ${HISTDIR}/statbkg.log 2>&1" >> .haddjobs.txt
+echo "hadd -f ${HISTDIR}/lowstatbkg.root ${HISTDIR}/tt1l.root ${HISTDIR}/tt2l.root > ${HISTDIR}/lowstatbkg.log 2>&1" >> .haddjobs.txt
+
+xargs.sh .haddjobs.txt
 
