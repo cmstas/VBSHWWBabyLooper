@@ -71,7 +71,9 @@ NJOBS=10
 for i in $(seq 0 $((NJOBS-1))); do
     echo "rm -f ${HISTDIR}/data_${i}.root         ; ./doAnalysis -t variable -i ${MINIDIR}/data.root           -o ${HISTDIR}/data_${i}.root         -j ${NJOBS} -I ${i} > ${HISTDIR}/data_${i}.log            2>&1" >> .jobs.txt
 done
-if [[ ${TAG} == *"v2."* ]] || [[ ${TAG}_${YEAR} == *"v70_SS_Run2"* ]]; then
+if [[ ${YEAR} == *"2016"* ]]; then
+    :
+else
     echo "rm -f ${HISTDIR}/vbshww_c2v_4p5.root    ; ./doAnalysis -t variable -i ${MINIDIR}/vbshww_c2v_4p5.root -o ${HISTDIR}/vbshww_c2v_4p5.root                        > ${HISTDIR}/vbshww_c2v_4p5.log       2>&1" >> .jobs.txt
 fi
 

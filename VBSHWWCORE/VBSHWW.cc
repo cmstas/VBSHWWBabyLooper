@@ -1303,31 +1303,31 @@ void VBSHWW::initSRCutflow()
             const int& pdgid0 = tx.getBranchLazy<vector<int>>("good_leptons_pdgid")[0];
             const int& pdgid1 = tx.getBranchLazy<vector<int>>("good_leptons_pdgid").size() == 2 ? tx.getBranchLazy<vector<int>>("good_leptons_pdgid")[1] : tx.getBranchLazy<vector<int>>("good_taus_pdgid")[0];
 
-            if (
-                looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v40/")
-                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v60/")
-                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v70_SS/")
-                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.0_SS/")
-                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.1_SS/")
-                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.2_SS/")
-                )
-            {
-                // Require same sign
-                if (not (pdgid0 * pdgid1 > 0))
-                    return false;
-            }
-            else if (
-                looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v41/")
-                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v44/")
-                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v70_OS/")
-                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.1_OS/")
-                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.2_OS/")
-                )
-            {
-                // Require opposite sign
-                if (not (pdgid0 * pdgid1 < 0))
-                    return false;
-            }
+            // if (
+            //     looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v40/")
+            //     or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v60/")
+            //     or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v70_SS/")
+            //     or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.0_SS/")
+            //     or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.1_SS/")
+            //     or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.2_SS/")
+            //     )
+            // {
+            //     // Require same sign
+            //     if (not (pdgid0 * pdgid1 > 0))
+            //         return false;
+            // }
+            // else if (
+            //     looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v41/")
+            //     or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v44/")
+            //     or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v70_OS/")
+            //     or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.1_OS/")
+            //     or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.2_OS/")
+            //     )
+            // {
+            //     // Require opposite sign
+            //     if (not (pdgid0 * pdgid1 < 0))
+            //         return false;
+            // }
 
             const float& pt0 = tx.getBranchLazy<vector<LV>>("good_leptons_p4")[0].pt();
             const float& pt1 = tx.getBranchLazy<vector<LV>>("good_leptons_p4").size() == 2 ? tx.getBranchLazy<vector<LV>>("good_leptons_p4")[1].pt() : tx.getBranchLazy<vector<LV>>("good_taus_p4")[0].pt();
@@ -1882,15 +1882,38 @@ void VBSHWW::initSRCutflow()
 
             // XSEC SF for when splitting training and testing
             float xsec_sf = 1;
-            if (tx.getBranch<int>("is_test"))
+            if (nt.year() == 2016 and not nt.isData())
             {
-                // Set xsec_sf for only testing events and for the following 5 samples
-                // The following was obtained from https://github.com/sgnoohc/VBSWWHBDT/blob/25763819d8dcf538bdb882fad3a2698b78368108/print_yield.C
-                if (processType == ProcessType::kBosons) xsec_sf = 1.62521;
-                if (processType == ProcessType::kRaretop) xsec_sf = 1.97812;
-                if (processType == ProcessType::kTTW) xsec_sf = 1.98607;
-                if (processType == ProcessType::kTTZ) xsec_sf = 1.86443;
-                if (processType == ProcessType::kSignal) xsec_sf = 1.99914;
+                if (tx.getBranch<int>("is_test"))
+                {
+                    // v2.3_SS
+                    // Processing print_yield.C("bosons")...
+                    //  xsec_sf: 0.412045
+
+                    // Processing print_yield.C("ttz")...
+                    //  xsec_sf: 2.06165
+
+                    // Processing print_yield.C("ttw")...
+                    //  xsec_sf: 2.05014
+
+                    // Processing print_yield.C("raretop")...
+                    //  xsec_sf: 1.99267
+
+                    // Processing print_yield.C("tt1lpowheg")...
+                    //  xsec_sf: 1.4919
+
+                    // Processing print_yield.C("tt2lpowheg")...
+                    //  xsec_sf: 1.46055
+
+                    if (processType == ProcessType::kBosons) xsec_sf = 0.412045; // this is because there are significantly more neg weights in training
+                    if (processType == ProcessType::kRaretop) xsec_sf = 1.99267;
+                    if (processType == ProcessType::kTTW) xsec_sf = 2.05014;
+                    if (processType == ProcessType::kTTZ) xsec_sf = 2.06165;
+                }
+                else
+                {
+                    xsec_sf = 0;
+                }
             }
             tx.setBranch<float>("xsec_sf", xsec_sf);
 

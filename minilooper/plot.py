@@ -91,7 +91,7 @@ signal_labels = [
         # "C_{2V}=-2",
         ]
 
-if "2016" in hadd_dir and "v70" in hadd_dir:
+if "2016" in hadd_dir:
     sigs = []
     signal_labels = None
 
