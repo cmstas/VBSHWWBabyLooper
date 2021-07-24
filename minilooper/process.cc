@@ -242,7 +242,7 @@ int main(int argc, char** argv)
     ana.cutflow.setTFile(ana.output_tfile);
 
     // Splitting events by channels
-    ana.cutflow.addCut("PreselChannel", [&]() { return vbs.channel() >= 0; }, [&]() { return vbs.wgt() * vbs.btagsf() * vbs.lepsf() * (ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.xsec_sf()); } );
+    ana.cutflow.addCut("PreselChannel", [&]() { return vbs.channel() >= 0; }, [&]() { return vbs.wgt() * vbs.btagsf() * vbs.lepsf() * vbs.xsec_sf(); } );
     ana.cutflow.addCutToLastActiveCut("LooseVRChannel", [&]() { return vbs.mjj() > CMJJ  and vbs.detajj() > 3.0 and vbs.channel() >= 0; }, UNITY);
 
     ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("EEChannel" , [&]() { return vbs.lepchannel() == 0 and fabs(vbs.mll() - 91.1874) > 15.; }, UNITY);

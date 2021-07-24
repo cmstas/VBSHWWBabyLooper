@@ -1,8 +1,8 @@
 #!/bin/bash
 
-TAG=v2
-YEAR=2016
-RUNTAG=NominalXsecSF
+TAG=v3
+YEAR=Run2
+RUNTAG=Nominal
 
 rm -f .plotjobs.txt
 echo 'python plot.py v2.3_SS '${YEAR}' '${RUNTAG}' '${TAG}' VRVarBin "LTMbbOff__STVarBin,LTMbbOff__LTVarBin,LTMbbOff__MJJVarBin,LTMbbOff__DEtaJJVarBin"         '                              >> .plotjobs.txt
@@ -33,5 +33,7 @@ echo 'python plot.py v2.3_SS '${YEAR}' '${RUNTAG}' '${TAG}' SRBDT "NegMbbAll__BD
 echo 'python plot.py v2.3_SS '${YEAR}' '${RUNTAG}' '${TAG}' SRYield "LooseVRMbbAllSRB__Channels4Bins,LooseVRMbbOnSRA__Channels5Bins" ' >> .plotjobs.txt
 echo 'python plot.py v2.3_SS '${YEAR}' '${RUNTAG}' '${TAG}' SRKine "LooseVRMbbOnSRA__ST,LooseVRMbbOnSRA__LT,LooseVRMbbOnSRA__MJJ,LooseVRMbbOnSRA__DEtaJJ,LooseVRMbbOnSRA__Mbb,LooseVRMbbOnSRA__*" ' >> .plotjobs.txt
 echo 'python plot.py v2.3_SS '${YEAR}' '${RUNTAG}' '${TAG}' SRBDTKine "LooseVRMbbAllSRB__ST,LooseVRMbbAllSRB__LT,LooseVRMbbAllSRB__MJJ,LooseVRMbbAllSRB__DEtaJJ,LooseVRMbbAllSRB__Mbb,LooseVRMbbAllSRB__*" ' >> .plotjobs.txt
+
+echo 'python plot.py v2.3_SS '${YEAR}' '${RUNTAG}' '${TAG}' AnchorYield "LooseVRMbbOff__Channels4Bins,PreselMbbOff__Channels4Bins" ' >> .plotjobs.txt
 
 xargs.sh .plotjobs.txt
