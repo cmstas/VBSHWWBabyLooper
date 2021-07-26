@@ -97,8 +97,12 @@ void VBS::Init(TTree *tree) {
   if (is_pd_sm_branch) is_pd_sm_branch->SetAddress(&is_pd_sm_);
   isvbswwh_branch = tree->GetBranch("isvbswwh");
   if (isvbswwh_branch) isvbswwh_branch->SetAddress(&isvbswwh_);
+  iswwhlvlvbb_branch = tree->GetBranch("iswwhlvlvbb");
+  if (iswwhlvlvbb_branch) iswwhlvlvbb_branch->SetAddress(&iswwhlvlvbb_);
   genchannel_branch = tree->GetBranch("genchannel");
   if (genchannel_branch) genchannel_branch->SetAddress(&genchannel_);
+  genrewgt_branch = tree->GetBranch("genrewgt");
+  if (genrewgt_branch) genrewgt_branch->SetAddress(&genrewgt_);
   lepsf_branch = tree->GetBranch("lepsf");
   if (lepsf_branch) lepsf_branch->SetAddress(&lepsf_);
   btagsf_branch = tree->GetBranch("btagsf");
@@ -211,6 +215,8 @@ void VBS::Init(TTree *tree) {
   if (pass_blind_branch) pass_blind_branch->SetAddress(&pass_blind_);
   categ_branch = tree->GetBranch("categ");
   if (categ_branch) categ_branch->SetAddress(&categ_);
+  categ_F_branch = tree->GetBranch("categ_F");
+  if (categ_F_branch) categ_F_branch->SetAddress(&categ_F_);
   mbb_branch = tree->GetBranch("mbb");
   if (mbb_branch) mbb_branch->SetAddress(&mbb_);
   dphibb_branch = tree->GetBranch("dphibb");
@@ -326,6 +332,7 @@ void VBS::GetEntry(unsigned int idx) {
   is_pd_sm_isLoaded = false;
   met_p4_isLoaded = false;
   isvbswwh_isLoaded = false;
+  iswwhlvlvbb_isLoaded = false;
   gen_jet0_isLoaded = false;
   gen_jet1_isLoaded = false;
   gen_w0_isLoaded = false;
@@ -339,6 +346,7 @@ void VBS::GetEntry(unsigned int idx) {
   gen_b0_isLoaded = false;
   gen_b1_isLoaded = false;
   genchannel_isLoaded = false;
+  genrewgt_isLoaded = false;
   lepsf_isLoaded = false;
   btagsf_isLoaded = false;
   good_leptons_p4_isLoaded = false;
@@ -409,6 +417,7 @@ void VBS::GetEntry(unsigned int idx) {
   mbbIn_isLoaded = false;
   pass_blind_isLoaded = false;
   categ_isLoaded = false;
+  categ_F_isLoaded = false;
   mbb_isLoaded = false;
   dphibb_isLoaded = false;
   detabb_isLoaded = false;
@@ -477,6 +486,7 @@ void VBS::LoadAllBranches() {
   if (is_pd_sm_branch != 0) is_pd_sm();
   if (met_p4_branch != 0) met_p4();
   if (isvbswwh_branch != 0) isvbswwh();
+  if (iswwhlvlvbb_branch != 0) iswwhlvlvbb();
   if (gen_jet0_branch != 0) gen_jet0();
   if (gen_jet1_branch != 0) gen_jet1();
   if (gen_w0_branch != 0) gen_w0();
@@ -490,6 +500,7 @@ void VBS::LoadAllBranches() {
   if (gen_b0_branch != 0) gen_b0();
   if (gen_b1_branch != 0) gen_b1();
   if (genchannel_branch != 0) genchannel();
+  if (genrewgt_branch != 0) genrewgt();
   if (lepsf_branch != 0) lepsf();
   if (btagsf_branch != 0) btagsf();
   if (good_leptons_p4_branch != 0) good_leptons_p4();
@@ -560,6 +571,7 @@ void VBS::LoadAllBranches() {
   if (mbbIn_branch != 0) mbbIn();
   if (pass_blind_branch != 0) pass_blind();
   if (categ_branch != 0) categ();
+  if (categ_F_branch != 0) categ_F();
   if (mbb_branch != 0) mbb();
   if (dphibb_branch != 0) dphibb();
   if (detabb_branch != 0) detabb();
@@ -866,6 +878,19 @@ const int &VBS::isvbswwh() {
   return isvbswwh_;
 }
 
+const int &VBS::iswwhlvlvbb() {
+  if (not iswwhlvlvbb_isLoaded) {
+    if (iswwhlvlvbb_branch != 0) {
+      iswwhlvlvbb_branch->GetEntry(index);
+    } else {
+      printf("branch iswwhlvlvbb_branch does not exist!\n");
+      exit(1);
+    }
+    iswwhlvlvbb_isLoaded = true;
+  }
+  return iswwhlvlvbb_;
+}
+
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &VBS::gen_jet0() {
   if (not gen_jet0_isLoaded) {
     if (gen_jet0_branch != 0) {
@@ -1033,6 +1058,19 @@ const int &VBS::genchannel() {
     genchannel_isLoaded = true;
   }
   return genchannel_;
+}
+
+const float &VBS::genrewgt() {
+  if (not genrewgt_isLoaded) {
+    if (genrewgt_branch != 0) {
+      genrewgt_branch->GetEntry(index);
+    } else {
+      printf("branch genrewgt_branch does not exist!\n");
+      exit(1);
+    }
+    genrewgt_isLoaded = true;
+  }
+  return genrewgt_;
 }
 
 const float &VBS::lepsf() {
@@ -1945,6 +1983,19 @@ const int &VBS::categ() {
   return categ_;
 }
 
+const float &VBS::categ_F() {
+  if (not categ_F_isLoaded) {
+    if (categ_F_branch != 0) {
+      categ_F_branch->GetEntry(index);
+    } else {
+      printf("branch categ_F_branch does not exist!\n");
+      exit(1);
+    }
+    categ_F_isLoaded = true;
+  }
+  return categ_F_;
+}
+
 const float &VBS::mbb() {
   if (not mbb_isLoaded) {
     if (mbb_branch != 0) {
@@ -2560,6 +2611,7 @@ const int &is_pd_se() { return vbs.is_pd_se(); }
 const int &is_pd_sm() { return vbs.is_pd_sm(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &met_p4() { return vbs.met_p4(); }
 const int &isvbswwh() { return vbs.isvbswwh(); }
+const int &iswwhlvlvbb() { return vbs.iswwhlvlvbb(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_jet0() { return vbs.gen_jet0(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_jet1() { return vbs.gen_jet1(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_w0() { return vbs.gen_w0(); }
@@ -2573,6 +2625,7 @@ const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_nu1() { re
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_b0() { return vbs.gen_b0(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_b1() { return vbs.gen_b1(); }
 const int &genchannel() { return vbs.genchannel(); }
+const float &genrewgt() { return vbs.genrewgt(); }
 const float &lepsf() { return vbs.lepsf(); }
 const float &btagsf() { return vbs.btagsf(); }
 const vector<ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > > &good_leptons_p4() { return vbs.good_leptons_p4(); }
@@ -2643,6 +2696,7 @@ const int &mee_noZ() { return vbs.mee_noZ(); }
 const int &mbbIn() { return vbs.mbbIn(); }
 const int &pass_blind() { return vbs.pass_blind(); }
 const int &categ() { return vbs.categ(); }
+const float &categ_F() { return vbs.categ_F(); }
 const float &mbb() { return vbs.mbb(); }
 const float &dphibb() { return vbs.dphibb(); }
 const float &detabb() { return vbs.detabb(); }

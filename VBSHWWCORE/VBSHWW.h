@@ -115,6 +115,8 @@ public:
     RooUtil::HistMap* btagEffLoose_c_subl; // sublead
     RooUtil::HistMap* btagEffLoose_l_subl; // sublead
 
+    RooUtil::HistMap* sig_rewgt; // signal reweighting
+
     RooUtil::TMVAUtil::ReaderX* readerX;
 
     VBSHWW(int, char**);
@@ -132,6 +134,7 @@ public:
 
     // Select Gen particles for different processes
     void processGenParticles_VBSWWH();
+    void processGenParticles_VBSWWH_UL();
     void processGenParticles_TopBackgrounds();
 
     // b-tagging SF

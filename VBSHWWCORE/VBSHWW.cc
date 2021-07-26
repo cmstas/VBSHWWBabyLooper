@@ -228,6 +228,8 @@ VBSHWW::VBSHWW(int argc, char** argv) :
         RooUtil::error(TString::Format("While setting b-tag efficiencies, found year = %d that is not recognized.", nt.year()));
     }
 
+    sig_rewgt = new RooUtil::HistMap("data/gen_reweight.root:signal_rewgt");
+
     readerX = new RooUtil::TMVAUtil::ReaderX("BDT", "/nfs-7/userdata/yxiang/BDTResult/dataset/weights/TMVAClassification_BDT.weights.xml");
 
 //=============================
@@ -263,6 +265,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
 
     // Create gen particle branches
     tx.createBranch<int>("isvbswwh");
+    tx.createBranch<int>("iswwhlvlvbb");
     tx.createBranch<LV>("gen_jet0");
     tx.createBranch<LV>("gen_jet1");
     tx.createBranch<LV>("gen_w0");
@@ -276,6 +279,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch<LV>("gen_b0");
     tx.createBranch<LV>("gen_b1");
     tx.createBranch<int>("genchannel");
+    tx.createBranch<float>("genrewgt");
 
     // Create scale factor branches
     tx.createBranch<float>("lepsf");
@@ -503,14 +507,14 @@ VBSHWW::VBSHWW(int argc, char** argv) :
             if (charges.size() != 2)
                 return false;
 
-            if (looper.getCurrentFileName().Contains("_SS/"))
-            {
-                if (not (charges[0] * charges[1] > 0))
-                    return false;
-            }
-            else if (looper.getCurrentFileName().Contains("_OS/"))
+            if (looper.getCurrentFileName().Contains("_OS/"))
             {
                 if (not (charges[0] * charges[1] < 0))
+                    return false;
+            }
+            else
+            {
+                if (not (charges[0] * charges[1] > 0))
                     return false;
             }
 
@@ -695,9 +699,13 @@ void VBSHWW::initSRCutflow()
     cutflow.addCutToLastActiveCut("SelectGenPart",
         [&]()
         {
-            if (looper.getCurrentFileName().Contains("VBSWmpWmpHToLNuLNu_C2V") and looper.getCurrentFileName().Contains("RunIIAutumn18"))
+            if (looper.getCurrentFileName().Contains("VBSWmpWmpHToLNuLNu_C2V"))
             {
                 processGenParticles_VBSWWH();
+            }
+            if (looper.getCurrentFileName().Contains("VBSWmpWmpH_C2V"))
+            {
+                processGenParticles_VBSWWH_UL();
             }
             if (looper.getCurrentFileName().Contains("TTWJetsToLNu")
                 or looper.getCurrentFileName().Contains("TTJets_")
@@ -706,6 +714,25 @@ void VBSHWW::initSRCutflow()
             {
                 processGenParticles_TopBackgrounds();
             }
+            return true;
+        }, UNITY);
+
+    // Description: If signal sample, select the gen level particles
+    cutflow.addCutToLastActiveCut("ReweightGen",
+        [&]()
+        {
+            float rewgt = 1;
+            if (looper.getCurrentFileName().Contains("VBSWmpWmpH_C2V"))
+            {
+                if (tx.getBranch<int>("iswwhlvlvbb"))
+                {
+                    if (looper.getCurrentFileName().Contains("VBSWmpWmpH_C2V"))
+                    {
+                        rewgt = sig_rewgt->eval(tx.getBranch<LV>("gen_lep1").pt());
+                    }
+                }
+            }
+            tx.setBranch<float>("genrewgt", rewgt);
             return true;
         }, UNITY);
 
@@ -1948,6 +1975,7 @@ void VBSHWW::processGenParticles_VBSWWH()
 
     bool isvbswwh = nt.GenPart_status()[2] == 23;
     tx.setBranch<int>("isvbswwh", isvbswwh);
+    tx.setBranch<int>("iswwhlvlvbb", isvbswwh); // For VBSWWH v7 sample, this is always true if isvbswwh
     if (isvbswwh)
     {
         const LV& ijet = nt.GenPart_p4()[2];
@@ -2085,6 +2113,177 @@ void VBSHWW::processGenParticles_VBSWWH()
             channel = 5;
         }
         tx.setBranch<int>("genchannel", channel);
+    }
+}
+
+
+
+//________________________________________________________________________________________________________________________________________
+void VBSHWW::processGenParticles_VBSWWH_UL()
+{
+
+    bool isvbswwh = nt.GenPart_status()[2] == 23;
+    tx.setBranch<int>("isvbswwh", isvbswwh);
+    tx.setBranch<int>("iswwhlvlvbb", 0);
+    if (isvbswwh)
+    {
+
+        const LV& ijet = nt.GenPart_p4()[2];
+        const LV& jjet = nt.GenPart_p4()[3];
+        const LV& jet0 = ijet.pt() > jjet.pt() ? ijet : jjet;
+        const LV& jet1 = ijet.pt() > jjet.pt() ? jjet : ijet;
+        tx.setBranch<LV>("gen_jet0", jet0);
+        tx.setBranch<LV>("gen_jet1", jet1);
+        const LV& iW = nt.GenPart_p4()[4];
+        const LV& jW = nt.GenPart_p4()[5];
+        const LV& W0 = iW.pt() > jW.pt() ? iW : jW;
+        const LV& W1 = iW.pt() > jW.pt() ? jW : iW;
+        tx.setBranch<LV>("gen_w0", W0);
+        tx.setBranch<LV>("gen_w1", W1);
+        const LV& h = nt.GenPart_p4()[6];
+        tx.setBranch<LV>("gen_h", h);
+
+        std::vector<LV> h_decay_p4s;
+        std::vector<int> h_decay_pdgIds;
+        std::vector<int> h_decay_statuses;
+        int h_decay_id;
+        for (unsigned int igen = 0; igen < nt.GenPart_p4().size(); ++igen)
+        {
+            int imom = nt.GenPart_genPartIdxMother()[igen];
+            if (abs(nt.GenPart_pdgId()[imom]) == 25 and nt.GenPart_status()[imom] == 62)
+            {
+                int pdgid = nt.GenPart_pdgId()[igen];
+                int status = nt.GenPart_status()[igen];
+                // std::cout << std::endl;
+                // std::cout <<  " pdgid: " << pdgid <<  " status: " << status <<  std::endl;
+                h_decay_p4s.push_back(nt.GenPart_p4()[igen]);
+                h_decay_pdgIds.push_back(nt.GenPart_pdgId()[igen]);
+                h_decay_statuses.push_back(nt.GenPart_status()[igen]);
+            }
+        }
+
+        // sanity check
+        if (h_decay_pdgIds.size() != 2)
+        {
+            std::cout << "NOT " << " " << h_decay_pdgIds.size() << " ";
+            for (auto& id : h_decay_pdgIds)
+                std::cout << id << " ";
+            std::cout << std::endl;
+        }
+
+        bool is_hbb = false;
+        if (abs(h_decay_pdgIds[0]) == 5)
+        {
+            is_hbb = true;
+        }
+
+        const LV& b0 = h_decay_p4s[0].pt() > h_decay_p4s[1].pt() ? h_decay_p4s[0] : h_decay_p4s[1];
+        const LV& b1 = h_decay_p4s[0].pt() > h_decay_p4s[1].pt() ? h_decay_p4s[1] : h_decay_p4s[0];
+
+        std::vector<int> wsidx;
+        int w0idx = -1;
+        int w1idx = -1;
+        for (unsigned int igen = 0; igen < nt.GenPart_p4().size(); ++igen)
+        {
+            if (abs(nt.GenPart_pdgId()[igen]) == 24 and abs(nt.GenPart_status()[igen]) == 62)
+            {
+                wsidx.push_back(igen);
+            }
+        }
+
+        w0idx = wsidx[0];
+        w1idx = wsidx[1];
+
+        std::vector<LV> w0decay_p4s;
+        std::vector<int> w0decay_pdgids;
+        std::vector<LV> w1decay_p4s;
+        std::vector<int> w1decay_pdgids;
+        for (unsigned int igen = 0; igen < nt.GenPart_p4().size(); ++igen)
+        {
+            int midx = nt.GenPart_genPartIdxMother()[igen];
+            if (midx == w0idx)
+            {
+                w0decay_p4s.push_back(nt.GenPart_p4()[igen]);
+                w0decay_pdgids.push_back(nt.GenPart_pdgId()[igen]);
+            }
+            if (midx == w1idx)
+            {
+                w1decay_p4s.push_back(nt.GenPart_p4()[igen]);
+                w1decay_pdgids.push_back(nt.GenPart_pdgId()[igen]);
+            }
+        }
+
+        if (w0decay_pdgids.size() != 2)
+        {
+            std::cout << std::endl;
+            std::cout << "NOT ";
+
+            for (auto& id : w0decay_pdgids)
+            {
+                std::cout << id << " ";
+            }
+            std::cout << std::endl;
+        }
+        if (w1decay_pdgids.size() != 2)
+        {
+            std::cout << std::endl;
+            std::cout << "NOT ";
+
+            for (auto& id : w1decay_pdgids)
+            {
+                std::cout << id << " ";
+            }
+            std::cout << std::endl;
+        }
+
+        bool isw0lep = abs(w0decay_pdgids[0]) == 11 or abs(w0decay_pdgids[0]) == 13 or abs(w0decay_pdgids[0]) == 15;
+        bool isw1lep = abs(w1decay_pdgids[0]) == 11 or abs(w1decay_pdgids[0]) == 13 or abs(w1decay_pdgids[0]) == 15;
+
+        int iswwhlvlvbb = isw0lep and isw1lep and is_hbb;
+        tx.setBranch<int>("iswwhlvlvbb", iswwhlvlvbb);
+
+        if (iswwhlvlvbb)
+        {
+            LV lep0 = w0decay_p4s[0].pt() > w1decay_p4s[0].pt() ? w0decay_p4s[0] : w1decay_p4s[0];
+            LV lep1 = w0decay_p4s[0].pt() > w1decay_p4s[0].pt() ? w1decay_p4s[0] : w0decay_p4s[0];
+            LV nu0 = w0decay_p4s[1].pt() > w1decay_p4s[1].pt() ? w0decay_p4s[1] : w1decay_p4s[1];
+            LV nu1 = w0decay_p4s[1].pt() > w1decay_p4s[1].pt() ? w1decay_p4s[1] : w0decay_p4s[1];
+            LV b0 = h_decay_p4s[0].pt() > h_decay_p4s[1].pt() ? h_decay_p4s[0] : h_decay_p4s[1];
+            LV b1 = h_decay_p4s[0].pt() > h_decay_p4s[1].pt() ? h_decay_p4s[1] : h_decay_p4s[0];
+            tx.setBranch<LV>("gen_lep0", lep0);
+            tx.setBranch<LV>("gen_lep1", lep1);
+            tx.setBranch<LV>("gen_nu0", nu0);
+            tx.setBranch<LV>("gen_nu1", nu1);
+            tx.setBranch<LV>("gen_b0", b0);
+            tx.setBranch<LV>("gen_b1", b1);
+        }
+
+        // int channel = -1;
+        // if (lepton_pdgids[0] * lepton_pdgids[1] == 121)
+        // {
+        //     channel = 0;
+        // }
+        // else if (lepton_pdgids[0] * lepton_pdgids[1] == 143)
+        // {
+        //     channel = 1;
+        // }
+        // else if (lepton_pdgids[0] * lepton_pdgids[1] == 169)
+        // {
+        //     channel = 2;
+        // }
+        // else if (lepton_pdgids[0] * lepton_pdgids[1] == 165)
+        // {
+        //     channel = 3;
+        // }
+        // else if (lepton_pdgids[0] * lepton_pdgids[1] == 195)
+        // {
+        //     channel = 4;
+        // }
+        // else if (lepton_pdgids[0] * lepton_pdgids[1] == 225)
+        // {
+        //     channel = 5;
+        // }
+        // tx.setBranch<int>("genchannel", channel);
     }
 }
 

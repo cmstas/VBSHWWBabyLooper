@@ -242,7 +242,7 @@ int main(int argc, char** argv)
     ana.cutflow.setTFile(ana.output_tfile);
 
     // Splitting events by channels
-    ana.cutflow.addCut("PreselChannel", [&]() { return vbs.channel() >= 0; }, [&]() { return vbs.wgt() * vbs.btagsf() * vbs.lepsf() * vbs.xsec_sf(); } );
+    ana.cutflow.addCut("PreselChannel", [&]() { return vbs.channel() >= 0; }, [&]() { return vbs.wgt() * vbs.btagsf() * vbs.lepsf() * vbs.xsec_sf() * vbs.genrewgt(); } );
     ana.cutflow.addCutToLastActiveCut("LooseVRChannel", [&]() { return vbs.mjj() > CMJJ  and vbs.detajj() > 3.0 and vbs.channel() >= 0; }, UNITY);
 
     ana.cutflow.getCut("LooseVRChannel"); ana.cutflow.addCutToLastActiveCut("EEChannel" , [&]() { return vbs.lepchannel() == 0 and fabs(vbs.mll() - 91.1874) > 15.; }, UNITY);
@@ -308,7 +308,8 @@ int main(int argc, char** argv)
 
     std::vector<std::pair<TString, std::function<bool()>>> kin_regs = {
         std::make_pair("MbbOn",   [&]() { return      (vbs.b0()+vbs.b1()).mass() < 150. and (vbs.b0()+vbs.b1()).mass() > 0.; }),
-        std::make_pair("MbbOff",  [&]() { return not ((vbs.b0()+vbs.b1()).mass() < 150. and (vbs.b0()+vbs.b1()).mass() > 0.); }),
+        std::make_pair("MbbOff",  [&]() { return not (vbs.mbb() <= 150); }),
+        // std::make_pair("MbbOff",  [&]() { return not ((vbs.b0()+vbs.b1()).mass() < 150. and (vbs.b0()+vbs.b1()).mass() > 0.); }),
         std::make_pair("MbbAll",  UNITY),
     };
 
@@ -369,14 +370,14 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("NCenJet30"       , 9   , 0       , 9                                 , [&]() { return vbs.ncenjet30(); } );
     ana.histograms.addHistogram("NJet30"          , 9   , 0       , 9                                 , [&]() { return vbs.njet30(); } );
     ana.histograms.addHistogram("LT"              , 180 , 0       , 2500                              , [&]() { return vbs.lt(); } );
-    ana.histograms.addHistogram("ST"              , 180 , 0       , 2500                              , [&]() { return vbs.st(); } );
+    ana.histograms.addHistogram("ST"              , 180 , 0       , 3500                              , [&]() { return vbs.st(); } );
     ana.histograms.addHistogram("LTVarBin"        , {0., CLTLO, CLTHI, 750}                           , [&]() { return vbs.lt(); } );
     ana.histograms.addHistogram("STVarBin"        , {0., CSTLO, CSTHI, 1500}                          , [&]() { return vbs.st(); } );
     ana.histograms.addHistogram("LTVarBin2"       , {0., CLTLO, CLTMD, CLTHI, 750}                    , [&]() { return vbs.lt(); } );
     ana.histograms.addHistogram("STVarBin2"       , {0., CSTLO, CSTMD, CSTHI, 1500}                   , [&]() { return vbs.st(); } );
     ana.histograms.addHistogram("LTZoom"          , 180 , 0       ,  750                              , [&]() { return vbs.lt(); } );
     ana.histograms.addHistogram("STZoom"          , 180 , 0       , 1500                              , [&]() { return vbs.st(); } );
-    ana.histograms.addHistogram("LeptonPt0"       , 180 , 0       , 600                               , [&]() { return vbs.l0pt(); } );
+    ana.histograms.addHistogram("LeptonPt0"       , 180 , 0       , 1000                              , [&]() { return vbs.l0pt(); } );
     ana.histograms.addHistogram("LeptonPt1"       , 180 , 0       , 600                               , [&]() { return vbs.l1pt(); } );
     ana.histograms.addHistogram("LeptonPt0Zoom"   , 180 , 0       , 250                               , [&]() { return vbs.l0pt(); } );
     ana.histograms.addHistogram("LeptonPt1Zoom"   , 180 , 0       , 250                               , [&]() { return vbs.l1pt(); } );
@@ -393,6 +394,7 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("JetEta1"         , 180 , -5      , 5                                 , [&]() { return vbs.j1().eta(); } );
     ana.histograms.addHistogram("BJetPt0"         , 180 , 0       , 450                               , [&]() { return vbs.b0().pt(); } );
     ana.histograms.addHistogram("BJetPt1"         , 180 , 0       , 250                               , [&]() { return vbs.b1().pt(); } );
+    ana.histograms.addHistogram("Ptbb"            , 180 , 0       , 2000                              , [&]() { return vbs.ptbb(); } );
     ana.histograms.addHistogram("MET"             , 180 , 0       , 500                               , [&]() { return vbs.met(); } );
     ana.histograms.addHistogram("MbbZoom"         , 180 , 0       , 300                               , [&]() { return vbs.mbb(); } );
     ana.histograms.addHistogram("Mbb"             , 180 , 0       , 600                               , [&]() { return vbs.mbb(); } );
