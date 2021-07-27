@@ -278,8 +278,14 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch<LV>("gen_nu1");
     tx.createBranch<LV>("gen_b0");
     tx.createBranch<LV>("gen_b1");
+    tx.createBranch<LV>("gen_lepA");
+    tx.createBranch<LV>("gen_nuA");
+    tx.createBranch<LV>("gen_lepB");
+    tx.createBranch<LV>("gen_nuB");
     tx.createBranch<int>("genchannel");
     tx.createBranch<float>("genrewgt");
+    tx.createBranch<float>("gen_cosThetaStarA");
+    tx.createBranch<float>("gen_cosThetaStarB");
 
     // Create scale factor branches
     tx.createBranch<float>("lepsf");
@@ -728,7 +734,8 @@ void VBSHWW::initSRCutflow()
                 {
                     if (looper.getCurrentFileName().Contains("VBSWmpWmpH_C2V"))
                     {
-                        rewgt = sig_rewgt->eval(tx.getBranch<LV>("gen_lep1").pt());
+                        rewgt = sig_rewgt->eval(tx.getBranch<float>("gen_cosThetaStarA"));
+                        rewgt *= sig_rewgt->eval(tx.getBranch<float>("gen_cosThetaStarB"));
                     }
                 }
             }
@@ -2087,6 +2094,31 @@ void VBSHWW::processGenParticles_VBSWWH()
         tx.setBranch<LV>("gen_b0", b0);
         tx.setBranch<LV>("gen_b1", b1);
 
+        tx.setBranch<LV>("gen_lepA", (leptons[0] + nus[0]).pt() > (leptons[1] + nus[1]).pt() ? leptons[0] : leptons[1]);
+        tx.setBranch<LV>("gen_lepB", (leptons[0] + nus[0]).pt() > (leptons[1] + nus[1]).pt() ? leptons[1] : leptons[0]);
+        tx.setBranch<LV>("gen_nuA" , (leptons[0] + nus[0]).pt() > (leptons[1] + nus[1]).pt() ? nus[0]     : nus[1]    );
+        tx.setBranch<LV>("gen_nuB" , (leptons[0] + nus[0]).pt() > (leptons[1] + nus[1]).pt() ? nus[1]     : nus[0]    );
+        const LV& gen_lepA = tx.getBranch<LV>("gen_lepA");
+        const LV& gen_nuA  = tx.getBranch<LV>("gen_nuA");
+        const LV& gen_lepB = tx.getBranch<LV>("gen_lepB");
+        const LV& gen_nuB  = tx.getBranch<LV>("gen_nuB");
+        TLorentzVector lepA = RooUtil::Calc::getTLV(gen_lepA);
+        TLorentzVector nuA  = RooUtil::Calc::getTLV(gen_nuA);
+        TLorentzVector lepB = RooUtil::Calc::getTLV(gen_lepB);
+        TLorentzVector nuB  = RooUtil::Calc::getTLV(gen_nuB);
+        TLorentzVector WA = lepA + nuA;
+        TLorentzVector WB = lepB + nuB;
+        auto betaA = WA.BoostVector();
+        lepA.Boost(-betaA);
+        nuA.Boost(-betaA);
+        float costhetaA = TMath::Cos(lepA.Angle(WA.Vect()));
+        auto betaB = WB.BoostVector();
+        lepB.Boost(-betaB);
+        nuB.Boost(-betaB);
+        float costhetaB = TMath::Cos(lepB.Angle(WB.Vect()));
+        tx.setBranch<float>("gen_cosThetaStarA", costhetaA);
+        tx.setBranch<float>("gen_cosThetaStarB", costhetaB);
+
         int channel = -1;
         if (lepton_pdgids[0] * lepton_pdgids[1] == 121)
         {
@@ -2256,6 +2288,37 @@ void VBSHWW::processGenParticles_VBSWWH_UL()
             tx.setBranch<LV>("gen_nu1", nu1);
             tx.setBranch<LV>("gen_b0", b0);
             tx.setBranch<LV>("gen_b1", b1);
+
+            tx.setBranch<LV>("gen_lepA", w0decay_p4s[0]);
+            tx.setBranch<LV>("gen_lepB", w1decay_p4s[0]);
+            tx.setBranch<LV>("gen_nuA", w0decay_p4s[1]);
+            tx.setBranch<LV>("gen_nuB", w1decay_p4s[1]);
+
+            tx.setBranch<LV>("gen_lepA", (w0decay_p4s[0] + w0decay_p4s[1]).pt() > (w1decay_p4s[0] + w1decay_p4s[1]).pt() ? w0decay_p4s[0] : w1decay_p4s[0]);
+            tx.setBranch<LV>("gen_lepB", (w0decay_p4s[0] + w0decay_p4s[1]).pt() > (w1decay_p4s[0] + w1decay_p4s[1]).pt() ? w1decay_p4s[0] : w0decay_p4s[0]);
+            tx.setBranch<LV>("gen_nuA" , (w0decay_p4s[0] + w0decay_p4s[1]).pt() > (w1decay_p4s[0] + w1decay_p4s[1]).pt() ? w0decay_p4s[1] : w1decay_p4s[1]);
+            tx.setBranch<LV>("gen_nuB" , (w0decay_p4s[0] + w0decay_p4s[1]).pt() > (w1decay_p4s[0] + w1decay_p4s[1]).pt() ? w1decay_p4s[1] : w0decay_p4s[1]);
+            const LV& gen_lepA = tx.getBranch<LV>("gen_lepA");
+            const LV& gen_nuA  = tx.getBranch<LV>("gen_nuA");
+            const LV& gen_lepB = tx.getBranch<LV>("gen_lepB");
+            const LV& gen_nuB  = tx.getBranch<LV>("gen_nuB");
+            TLorentzVector lepA = RooUtil::Calc::getTLV(gen_lepA);
+            TLorentzVector nuA  = RooUtil::Calc::getTLV(gen_nuA);
+            TLorentzVector lepB = RooUtil::Calc::getTLV(gen_lepB);
+            TLorentzVector nuB  = RooUtil::Calc::getTLV(gen_nuB);
+            TLorentzVector WA = lepA + nuA;
+            TLorentzVector WB = lepB + nuB;
+            auto betaA = WA.BoostVector();
+            lepA.Boost(-betaA);
+            nuA.Boost(-betaA);
+            float costhetaA = TMath::Cos(lepA.Angle(WA.Vect()));
+            auto betaB = WB.BoostVector();
+            lepB.Boost(-betaB);
+            nuB.Boost(-betaB);
+            float costhetaB = TMath::Cos(lepB.Angle(WB.Vect()));
+            tx.setBranch<float>("gen_cosThetaStarA", costhetaA);
+            tx.setBranch<float>("gen_cosThetaStarB", costhetaB);
+
         }
 
         // int channel = -1;
