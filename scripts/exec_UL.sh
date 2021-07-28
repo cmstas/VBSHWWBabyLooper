@@ -119,14 +119,14 @@ DoubleMuon_Run2018 \
 MuonEG_Run2018 \
 SingleMuon_Run2018"
 
-SAMPLES="VBSWmpWmpH_C2V_4p5_TuneCP5 \
-VBSWmpWmpH_C2V_4_TuneCP5 \
-VBSWmpWmpH_C2V_3_TuneCP5 \
-VBSWmpWmpH_C2V_1_TuneCP5 \
-VBSWmpWmpH_C2V_0_TuneCP5 \
-VBSWmpWmpH_C2V_m1_TuneCP5 \
-VBSWmpWmpH_C2V_m2_TuneCP5 \
-VBSWmpWmpH_C2V_m2p5_TuneCP5"
+# SAMPLES="VBSWmpWmpH_C2V_4p5_TuneCP5 \
+# VBSWmpWmpH_C2V_4_TuneCP5 \
+# VBSWmpWmpH_C2V_3_TuneCP5 \
+# VBSWmpWmpH_C2V_1_TuneCP5 \
+# VBSWmpWmpH_C2V_0_TuneCP5 \
+# VBSWmpWmpH_C2V_m1_TuneCP5 \
+# VBSWmpWmpH_C2V_m2_TuneCP5 \
+# VBSWmpWmpH_C2V_m2p5_TuneCP5"
 
 # VBSWmpWmpHToLNuLNu_TuneCP5 \
 
