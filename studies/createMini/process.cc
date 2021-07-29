@@ -55,19 +55,19 @@ int main(int argc, char** argv)
     // Write out the "run:lumi:evt" of the events passing a certain cut into a text file
     // If the output.root is "output/path/dir/name.root"
     // then the text file will be named "output/path/dir/name_CutName.txt"
-    vbs.writeEventList("Root");
-    vbs.writeEventList("Weight");
-    vbs.writeEventList("Preselection");
-    vbs.writeEventList("SelectGenPart");
-    vbs.writeEventList("GoodRunsList");
-    vbs.writeEventList("EventFilters");
-    vbs.writeEventList("SelectLeptons");
-    vbs.writeEventList("SSPreselection");
-    vbs.writeEventList("Trigger");
-    vbs.writeEventList("SelectJets");
-    vbs.writeEventList("AK4CategTagHiggsJets");
-    vbs.writeEventList("AK4CategTagVBSJets");
-    vbs.writeEventList("AK4CategPresel");
+    // vbs.writeEventList("Root");
+    // vbs.writeEventList("Weight");
+    // vbs.writeEventList("Preselection");
+    // vbs.writeEventList("SelectGenPart");
+    // vbs.writeEventList("GoodRunsList");
+    // vbs.writeEventList("EventFilters");
+    // vbs.writeEventList("SelectLeptons");
+    // vbs.writeEventList("SSPreselection");
+    // vbs.writeEventList("Trigger");
+    // vbs.writeEventList("SelectJets");
+    // vbs.writeEventList("AK4CategTagHiggsJets");
+    // vbs.writeEventList("AK4CategTagVBSJets");
+    // vbs.writeEventList("AK4CategPresel");
 
     // The below can be sometimes crucial
     delete vbs.output_tfile;

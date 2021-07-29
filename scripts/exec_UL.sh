@@ -3,7 +3,7 @@ usage()
 {
   echo "ERROR - Usage:"
   echo
-  echo "      sh $(basename $0) STUDYNAME TAG [DEBUG]"
+  echo "      sh $(basename $0) STUDYNAME TAG BABYVERSION [DEBUG]"
   echo
   exit
 }
@@ -12,69 +12,71 @@ if [ -z ${1} ]; then usage; fi
 STUDY=${1}
 if [ -z ${2} ]; then usage; fi
 TAG=${2}
+if [ -z ${3} ]; then usage; fi
+BABYVERSION=${3}
 # Third argument is debug
-DEBUG=${3}
+DEBUG=${4}
 
 # YEARS="2016 2017 2018"
 YEARS="2017 2018"
 
 EXECUTABLE=./studies/${STUDY}/doAnalysis
 
-SAMPLES="TTJets_DiLept \
-TTJets_SingleLeptFromT \
-TTJets_SingleLeptFromTbar \
-TTTo2L2Nu \
-TTToSemiLeptonic \
-TTWJetsToLNu \
-TTZToLLNuNu_M-10 \
-TTZToLL_M-1to10 \
-WZTo3LNu \
-ZZTo4L \
-GluGluHToZZTo4L \
-DYJetsToLL_M-50 \
-DYJetsToLL_M-10to50 \
-WpWpJJ_EWK-QCD \
-ttHToNonbb \
-ttHTobb \
-WJetsToLNu \
-tZq_ll_4f_ckm_NLO \
-ST_tWll_5f_LO \
-TTTT \
-TTWH \
-TTWW \
-TTWZ \
-TTZH \
-TTZZ \
-WWW_4F \
-WWZ \
-WZG \
-WZZ \
-ZZZ \
-WWToLNuQQ \
-WWTo2L2Nu \
-ST_s-channel_4f \
-ST_t-channel_antitop_4f \
-ST_t-channel_top_4f \
-ST_tW_antitop_5f \
-ST_tW_top_5f \
-VBSWmpWmpHToLNuLNu_C2V_6_TuneCP5 \
-VBSWmpWmpHToLNuLNu_C2V_3_TuneCP5 \
-VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5 \
-VBSWmpWmpHToLNuLNu_C2V_m2_TuneCP5 \
-DoubleEG_Run2016 \
-DoubleMuon_Run2016 \
-MuonEG_Run2016 \
-SingleElectron_Run2016 \
-SingleMuon_Run2016 \
-DoubleEG_Run2017 \
-DoubleMuon_Run2017 \
-MuonEG_Run2017 \
-SingleElectron_Run2017 \
-SingleMuon_Run2017 \
-EGamma_Run2018 \
-DoubleMuon_Run2018 \
-MuonEG_Run2018 \
-SingleMuon_Run2018"
+# SAMPLES="TTJets_DiLept \
+# TTJets_SingleLeptFromT \
+# TTJets_SingleLeptFromTbar \
+# TTTo2L2Nu \
+# TTToSemiLeptonic \
+# TTWJetsToLNu \
+# TTZToLLNuNu_M-10 \
+# TTZToLL_M-1to10 \
+# WZTo3LNu \
+# ZZTo4L \
+# GluGluHToZZTo4L \
+# DYJetsToLL_M-50 \
+# DYJetsToLL_M-10to50 \
+# WpWpJJ_EWK-QCD \
+# ttHToNonbb \
+# ttHTobb \
+# WJetsToLNu \
+# tZq_ll_4f_ckm_NLO \
+# ST_tWll_5f_LO \
+# TTTT \
+# TTWH \
+# TTWW \
+# TTWZ \
+# TTZH \
+# TTZZ \
+# WWW_4F \
+# WWZ \
+# WZG \
+# WZZ \
+# ZZZ \
+# WWToLNuQQ \
+# WWTo2L2Nu \
+# ST_s-channel_4f \
+# ST_t-channel_antitop_4f \
+# ST_t-channel_top_4f \
+# ST_tW_antitop_5f \
+# ST_tW_top_5f \
+# VBSWmpWmpHToLNuLNu_C2V_6_TuneCP5 \
+# VBSWmpWmpHToLNuLNu_C2V_3_TuneCP5 \
+# VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5 \
+# VBSWmpWmpHToLNuLNu_C2V_m2_TuneCP5 \
+# DoubleEG_Run2016 \
+# DoubleMuon_Run2016 \
+# MuonEG_Run2016 \
+# SingleElectron_Run2016 \
+# SingleMuon_Run2016 \
+# DoubleEG_Run2017 \
+# DoubleMuon_Run2017 \
+# MuonEG_Run2017 \
+# SingleElectron_Run2017 \
+# SingleMuon_Run2017 \
+# EGamma_Run2018 \
+# DoubleMuon_Run2018 \
+# MuonEG_Run2018 \
+# SingleMuon_Run2018"
 
 SAMPLES="TTTo2L2Nu \
 TTToSemiLeptonic \
@@ -99,7 +101,14 @@ TWZToLL_thad_Wlept_5f_DR \
 TWZToLL_tlept_Whad_5f_DR \
 TTWW \
 TTWZ \
-VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5 \
+VBSWmpWmpH_C2V_4p5_TuneCP5 \
+VBSWmpWmpH_C2V_4_TuneCP5 \
+VBSWmpWmpH_C2V_3_TuneCP5 \
+VBSWmpWmpH_C2V_1_TuneCP5 \
+VBSWmpWmpH_C2V_0_TuneCP5 \
+VBSWmpWmpH_C2V_m1_TuneCP5 \
+VBSWmpWmpH_C2V_m2_TuneCP5 \
+VBSWmpWmpH_C2V_m2p5_TuneCP5 \
 DoubleEG_Run2017 \
 DoubleMuon_Run2017 \
 MuonEG_Run2017 \
@@ -109,6 +118,15 @@ EGamma_Run2018 \
 DoubleMuon_Run2018 \
 MuonEG_Run2018 \
 SingleMuon_Run2018"
+
+# SAMPLES="VBSWmpWmpH_C2V_4p5_TuneCP5 \
+# VBSWmpWmpH_C2V_4_TuneCP5 \
+# VBSWmpWmpH_C2V_3_TuneCP5 \
+# VBSWmpWmpH_C2V_1_TuneCP5 \
+# VBSWmpWmpH_C2V_0_TuneCP5 \
+# VBSWmpWmpH_C2V_m1_TuneCP5 \
+# VBSWmpWmpH_C2V_m2_TuneCP5 \
+# VBSWmpWmpH_C2V_m2p5_TuneCP5"
 
 # VBSWmpWmpHToLNuLNu_TuneCP5 \
 
@@ -122,7 +140,7 @@ for SAMPLE in ${SAMPLES}; do
 
     for YEAR in ${YEARS}; do
 
-        HISTDIR=hists/${TAG}/${STUDY}_${YEAR}
+        HISTDIR=hists/${TAG}/${BABYVERSION}/${STUDY}_${YEAR}
         mkdir -p ${HISTDIR}
 
         # if [[ ${YEAR} == *"2016"* ]]; then NANOTAG=RunIISummer16NanoAOD*; fi
@@ -158,12 +176,36 @@ for SAMPLE in ${SAMPLES}; do
         if [[ ${SAMPLE} == *"WpWpJJ_EWK"* ]]; then XSEC=0.0539; fi
         if [[ ${SAMPLE} == *"SSWW"* ]]; then XSEC=0.02794; fi
         if [[ ${SAMPLE} == *"WZTo3LNu"* ]]; then XSEC=4.4297; fi
-        # if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_TuneCP5"* ]]; then XSEC=0.00001708; fi
-        # if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_6_TuneCP5"* ]]; then XSEC=0.00116*137/59.97; fi
-        # if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_3_TuneCP5"* ]]; then XSEC=0.000203237376*137/59.97; fi
-        if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5"* ]]; then XSEC=0.01021; fi
-        if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5"* ]]; then XSEC=0.01021; fi
-        # if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_m2_TuneCP5"* ]]; then XSEC=0.000418440192*137/59.97; fi
+        if [[ ${SAMPLE} == *"VBSWmpWmpH_C2V_4p5_TuneCP5"* ]]; then XSEC=0.01021; fi
+        if [[ ${SAMPLE} == *"VBSWmpWmpH_C2V_4_TuneCP5"* ]]; then XSEC=0.007546; fi
+        if [[ ${SAMPLE} == *"VBSWmpWmpH_C2V_3_TuneCP5"* ]]; then XSEC=0.003559; fi
+        if [[ ${SAMPLE} == *"VBSWmpWmpH_C2V_1_TuneCP5"* ]]; then XSEC=0.0002943; fi
+        if [[ ${SAMPLE} == *"VBSWmpWmpH_C2V_0_TuneCP5"* ]]; then XSEC=0.001037; fi
+        if [[ ${SAMPLE} == *"VBSWmpWmpH_C2V_m1_TuneCP5"* ]]; then XSEC=0.003359; fi
+        if [[ ${SAMPLE} == *"VBSWmpWmpH_C2V_m2_TuneCP5"* ]]; then XSEC=0.007276; fi
+        if [[ ${SAMPLE} == *"VBSWmpWmpH_C2V_m2p5_TuneCP5"* ]]; then XSEC=0.009797; fi
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_0.log     : Cross-section : 0.001037  + - 2.915e-06 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_0p5.log   : Cross-section : 0.0004695 + - 1.431e-06 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_1.log     : Cross-section : 0.0002943 + - 1.232e-06 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_1p5.log   : Cross-section : 0.0005193 + - 1.475e-06 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_2.log     : Cross-section : 0.001137  + - 3.029e-06 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_2p5.log   : Cross-section : 0.002152  + - 6.152e-06 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_3.log     : Cross-section : 0.003559  + - 9.886e-06 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_3p5.log   : Cross-section : 0.00538   + - 2.129e-05 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_4.log     : Cross-section : 0.007546  + - 2.186e-05 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_4p5.log   : Cross-section : 0.01021   + - 3.775e-05 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_5.log     : Cross-section : 0.01317   + - 5.58e-05 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_5p5.log   : Cross-section : 0.01645   + - 5.464e-05 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_6.log     : Cross-section : 0.02032   + - 6.382e-05 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_m0p5.log  : Cross-section : 0.002008  + - 6.648e-06 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_m1.log    : Cross-section : 0.003359  + - 1.015e-05 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_m1p5.log  : Cross-section : 0.005077  + - 1.826e-05 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_m2.log    : Cross-section : 0.007276  + - 2.386e-05 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_m2p5.log  : Cross-section : 0.009797  + - 3.6e-05 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_m3.log    : Cross-section : 0.01277   + - 4.599e-05 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_m3p5.log  : Cross-section : 0.01614   + - 6.389e-05 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_m4.log    : Cross-section : 0.01981   + - 6.805e-05 pb
+# VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_rewgt.log : Cross-section : 0.007546  + - 2.186e-05 pb
         if [[ ${SAMPLE} == *"ttHJetTobb"* ]]; then XSEC=0.1279; fi
         if [[ ${SAMPLE} == *"ttHJetToNonbb"* ]]; then XSEC=0.215; fi
         if [[ ${SAMPLE} == *"TTTT"* ]]; then XSEC=0.009103; fi
@@ -196,20 +238,14 @@ for SAMPLE in ${SAMPLES}; do
             fi
         fi
 
-        if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_TuneCP5_2016"* ]]; then continue; fi
-        if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_TuneCP5_2018"* ]]; then continue; fi
-
-        if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_6_TuneCP5_2016"* ]]; then continue; fi
-        if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_6_TuneCP5_2017"* ]]; then continue; fi
-
-        if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_3_TuneCP5_2016"* ]]; then continue; fi
-        if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_3_TuneCP5_2017"* ]]; then continue; fi
-
         if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5_2016"* ]]; then continue; fi
-        # if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5_2017"* ]]; then continue; fi
-
+        if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_4_TuneCP5_2016"* ]]; then continue; fi
+        if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_3_TuneCP5_2016"* ]]; then continue; fi
+        if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_1_TuneCP5_2016"* ]]; then continue; fi
+        if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_0_TuneCP5_2016"* ]]; then continue; fi
+        if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_m1_TuneCP5_2016"* ]]; then continue; fi
         if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_m2_TuneCP5_2016"* ]]; then continue; fi
-        if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_m2_TuneCP5_2017"* ]]; then continue; fi
+        if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_m2p5_TuneCP5_2016"* ]]; then continue; fi
 
         if [[ ${SAMPLE}_${YEAR} == *"ZZ_2018"* ]]; then continue; fi
         if [[ ${SAMPLE}_${YEAR} == *"ZZTo4L_2017"* ]]; then continue; fi

@@ -108,20 +108,20 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     // TODO: check that 'embedding' should indeed be false (last bool in the TauIDSFTool constructor)
     if (nt.year() == 2016)
     {
-        tauSF_vsJet = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSjet", "Tight", false, false);
-        tauSF_vsMu = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSmu", "VLoose", false, false);
+        tauSF_vsJet = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSjet", "Medium", false, false);
+        tauSF_vsMu = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSmu", "Loose", false, false);
         tauSF_vsEl = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSe", "VVLoose", false, false); // ttH uses VVVLoose but sfs only available up to VVLoose
     }
     else if (nt.year() == 2017)
     {
-        tauSF_vsJet = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSjet", "Tight", false, false);
-        tauSF_vsMu = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSmu", "VLoose", false, false);
+        tauSF_vsJet = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSjet", "Medium", false, false);
+        tauSF_vsMu = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSmu", "Loose", false, false);
         tauSF_vsEl = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSe", "VVLoose", false, false); // ttH uses VVVLoose but sfs only available up to VVLoose
     }
     else if (nt.year() == 2018)
     {
-        tauSF_vsJet = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSjet", "Tight", false, false);
-        tauSF_vsMu = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSmu", "VLoose", false, false);
+        tauSF_vsJet = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSjet", "Medium", false, false);
+        tauSF_vsMu = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSmu", "Loose", false, false);
         tauSF_vsEl = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSe", "VVLoose", false, false); // ttH uses VVVLoose but sfs only available up to VVLoose
     }
     else
@@ -228,7 +228,9 @@ VBSHWW::VBSHWW(int argc, char** argv) :
         RooUtil::error(TString::Format("While setting b-tag efficiencies, found year = %d that is not recognized.", nt.year()));
     }
 
-    readerX = new RooUtil::TMVAUtil::ReaderX("BDT", "/home/users/phchang/public_html/analysis/hwh/VBSWWHBDT/dataset/weights/TMVAClassification_BDT.weights.xml");
+    sig_rewgt = new RooUtil::HistMap("data/gen_reweight.root:signal_rewgt");
+
+    readerX = new RooUtil::TMVAUtil::ReaderX("BDT", "/nfs-7/userdata/yxiang/BDTResult/dataset/weights/TMVAClassification_BDT.weights.xml");
 
 //=============================
 //
@@ -263,6 +265,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
 
     // Create gen particle branches
     tx.createBranch<int>("isvbswwh");
+    tx.createBranch<int>("iswwhlvlvbb");
     tx.createBranch<LV>("gen_jet0");
     tx.createBranch<LV>("gen_jet1");
     tx.createBranch<LV>("gen_w0");
@@ -275,7 +278,14 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch<LV>("gen_nu1");
     tx.createBranch<LV>("gen_b0");
     tx.createBranch<LV>("gen_b1");
+    tx.createBranch<LV>("gen_lepA");
+    tx.createBranch<LV>("gen_nuA");
+    tx.createBranch<LV>("gen_lepB");
+    tx.createBranch<LV>("gen_nuB");
     tx.createBranch<int>("genchannel");
+    tx.createBranch<float>("genrewgt");
+    tx.createBranch<float>("gen_cosThetaStarA");
+    tx.createBranch<float>("gen_cosThetaStarB");
 
     // Create scale factor branches
     tx.createBranch<float>("lepsf");
@@ -375,6 +385,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch<int>("pass_blind"); // for data, to blind the mbb < 150 region
 
     tx.createBranch<int>("categ"); // categ 0=e+l+ 1=m+l+ 2=t+l+
+    tx.createBranch<float>("categ_F"); // categ 0=e+l+ 1=m+l+ 2=t+l+ (float version)
 
     // Create keyvariables worth computing
     tx.createBranch<float>("mbb");
@@ -502,14 +513,14 @@ VBSHWW::VBSHWW(int argc, char** argv) :
             if (charges.size() != 2)
                 return false;
 
-            if (looper.getCurrentFileName().Contains("_SS/"))
-            {
-                if (not (charges[0] * charges[1] > 0))
-                    return false;
-            }
-            else if (looper.getCurrentFileName().Contains("_OS/"))
+            if (looper.getCurrentFileName().Contains("_OS/"))
             {
                 if (not (charges[0] * charges[1] < 0))
+                    return false;
+            }
+            else
+            {
+                if (not (charges[0] * charges[1] > 0))
                     return false;
             }
 
@@ -694,9 +705,13 @@ void VBSHWW::initSRCutflow()
     cutflow.addCutToLastActiveCut("SelectGenPart",
         [&]()
         {
-            if (looper.getCurrentFileName().Contains("VBSWmpWmpHToLNuLNu_C2V") and looper.getCurrentFileName().Contains("RunIIAutumn18"))
+            if (looper.getCurrentFileName().Contains("VBSWmpWmpHToLNuLNu_C2V"))
             {
                 processGenParticles_VBSWWH();
+            }
+            if (looper.getCurrentFileName().Contains("VBSWmpWmpH_C2V"))
+            {
+                processGenParticles_VBSWWH_UL();
             }
             if (looper.getCurrentFileName().Contains("TTWJetsToLNu")
                 or looper.getCurrentFileName().Contains("TTJets_")
@@ -705,6 +720,26 @@ void VBSHWW::initSRCutflow()
             {
                 processGenParticles_TopBackgrounds();
             }
+            return true;
+        }, UNITY);
+
+    // Description: If signal sample, select the gen level particles
+    cutflow.addCutToLastActiveCut("ReweightGen",
+        [&]()
+        {
+            float rewgt = 1;
+            if (looper.getCurrentFileName().Contains("VBSWmpWmpH_C2V"))
+            {
+                if (tx.getBranch<int>("iswwhlvlvbb"))
+                {
+                    if (looper.getCurrentFileName().Contains("VBSWmpWmpH_C2V"))
+                    {
+                        rewgt = sig_rewgt->eval(tx.getBranch<float>("gen_cosThetaStarA"));
+                        rewgt *= sig_rewgt->eval(tx.getBranch<float>("gen_cosThetaStarB"));
+                    }
+                }
+            }
+            tx.setBranch<float>("genrewgt", rewgt);
             return true;
         }, UNITY);
 
@@ -1302,31 +1337,31 @@ void VBSHWW::initSRCutflow()
             const int& pdgid0 = tx.getBranchLazy<vector<int>>("good_leptons_pdgid")[0];
             const int& pdgid1 = tx.getBranchLazy<vector<int>>("good_leptons_pdgid").size() == 2 ? tx.getBranchLazy<vector<int>>("good_leptons_pdgid")[1] : tx.getBranchLazy<vector<int>>("good_taus_pdgid")[0];
 
-            if (
-                looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v40/")
-                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v60/")
-                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v70_SS/")
-                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.0_SS/")
-                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.1_SS/")
-                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.2_SS/")
-                )
-            {
-                // Require same sign
-                if (not (pdgid0 * pdgid1 > 0))
-                    return false;
-            }
-            else if (
-                looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v41/")
-                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v44/")
-                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v70_OS/")
-                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.1_OS/")
-                or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.2_OS/")
-                )
-            {
-                // Require opposite sign
-                if (not (pdgid0 * pdgid1 < 0))
-                    return false;
-            }
+            // if (
+            //     looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v40/")
+            //     or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v60/")
+            //     or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v70_SS/")
+            //     or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.0_SS/")
+            //     or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.1_SS/")
+            //     or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.2_SS/")
+            //     )
+            // {
+            //     // Require same sign
+            //     if (not (pdgid0 * pdgid1 > 0))
+            //         return false;
+            // }
+            // else if (
+            //     looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v41/")
+            //     or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v44/")
+            //     or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v70_OS/")
+            //     or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.1_OS/")
+            //     or looper.getCurrentFileName().Contains("/VBSHWWNanoSkim_v2.2_OS/")
+            //     )
+            // {
+            //     // Require opposite sign
+            //     if (not (pdgid0 * pdgid1 < 0))
+            //         return false;
+            // }
 
             const float& pt0 = tx.getBranchLazy<vector<LV>>("good_leptons_p4")[0].pt();
             const float& pt1 = tx.getBranchLazy<vector<LV>>("good_leptons_p4").size() == 2 ? tx.getBranchLazy<vector<LV>>("good_leptons_p4")[1].pt() : tx.getBranchLazy<vector<LV>>("good_taus_p4")[0].pt();
@@ -1870,6 +1905,7 @@ void VBSHWW::initSRCutflow()
             else if (leadlepID > 0 and ((btagchannel <= 1 and lepchannel <= 2) or (btagchannel == 0 and lepchannel > 2)))
                 categ = 3;
             tx.setBranch<int>("categ", categ);
+            tx.setBranch<float>("categ_F", categ);
 
             tx.setBranch<int>("is_ttbar_madgraph", processType == ProcessType::kTT1LMadGraph or processType == ProcessType::kTT2LMadGraph);
             tx.setBranch<int>("is_ttbar_powheg", processType == ProcessType::kTT1LPowheg or processType == ProcessType::kTT2LPowheg);
@@ -1880,15 +1916,38 @@ void VBSHWW::initSRCutflow()
 
             // XSEC SF for when splitting training and testing
             float xsec_sf = 1;
-            if (tx.getBranch<int>("is_test"))
+            if (nt.year() == 2016 and not nt.isData())
             {
-                // Set xsec_sf for only testing events and for the following 5 samples
-                // The following was obtained from https://github.com/sgnoohc/VBSWWHBDT/blob/25763819d8dcf538bdb882fad3a2698b78368108/print_yield.C
-                if (processType == ProcessType::kBosons) xsec_sf = 1.62521;
-                if (processType == ProcessType::kRaretop) xsec_sf = 1.97812;
-                if (processType == ProcessType::kTTW) xsec_sf = 1.98607;
-                if (processType == ProcessType::kTTZ) xsec_sf = 1.86443;
-                if (processType == ProcessType::kSignal) xsec_sf = 1.99914;
+                if (tx.getBranch<int>("is_test"))
+                {
+                    // v2.3_SS
+                    // Processing print_yield.C("bosons")...
+                    //  xsec_sf: 0.412045
+
+                    // Processing print_yield.C("ttz")...
+                    //  xsec_sf: 2.06165
+
+                    // Processing print_yield.C("ttw")...
+                    //  xsec_sf: 2.05014
+
+                    // Processing print_yield.C("raretop")...
+                    //  xsec_sf: 1.99267
+
+                    // Processing print_yield.C("tt1lpowheg")...
+                    //  xsec_sf: 1.4919
+
+                    // Processing print_yield.C("tt2lpowheg")...
+                    //  xsec_sf: 1.46055
+
+                    if (processType == ProcessType::kBosons) xsec_sf = 0.412045; // this is because there are significantly more neg weights in training
+                    if (processType == ProcessType::kRaretop) xsec_sf = 1.99267;
+                    if (processType == ProcessType::kTTW) xsec_sf = 2.05014;
+                    if (processType == ProcessType::kTTZ) xsec_sf = 2.06165;
+                }
+                else
+                {
+                    xsec_sf = 0;
+                }
             }
             tx.setBranch<float>("xsec_sf", xsec_sf);
 
@@ -1923,6 +1982,7 @@ void VBSHWW::processGenParticles_VBSWWH()
 
     bool isvbswwh = nt.GenPart_status()[2] == 23;
     tx.setBranch<int>("isvbswwh", isvbswwh);
+    tx.setBranch<int>("iswwhlvlvbb", isvbswwh); // For VBSWWH v7 sample, this is always true if isvbswwh
     if (isvbswwh)
     {
         const LV& ijet = nt.GenPart_p4()[2];
@@ -2034,6 +2094,31 @@ void VBSHWW::processGenParticles_VBSWWH()
         tx.setBranch<LV>("gen_b0", b0);
         tx.setBranch<LV>("gen_b1", b1);
 
+        tx.setBranch<LV>("gen_lepA", (leptons[0] + nus[0]).pt() > (leptons[1] + nus[1]).pt() ? leptons[0] : leptons[1]);
+        tx.setBranch<LV>("gen_lepB", (leptons[0] + nus[0]).pt() > (leptons[1] + nus[1]).pt() ? leptons[1] : leptons[0]);
+        tx.setBranch<LV>("gen_nuA" , (leptons[0] + nus[0]).pt() > (leptons[1] + nus[1]).pt() ? nus[0]     : nus[1]    );
+        tx.setBranch<LV>("gen_nuB" , (leptons[0] + nus[0]).pt() > (leptons[1] + nus[1]).pt() ? nus[1]     : nus[0]    );
+        const LV& gen_lepA = tx.getBranch<LV>("gen_lepA");
+        const LV& gen_nuA  = tx.getBranch<LV>("gen_nuA");
+        const LV& gen_lepB = tx.getBranch<LV>("gen_lepB");
+        const LV& gen_nuB  = tx.getBranch<LV>("gen_nuB");
+        TLorentzVector lepA = RooUtil::Calc::getTLV(gen_lepA);
+        TLorentzVector nuA  = RooUtil::Calc::getTLV(gen_nuA);
+        TLorentzVector lepB = RooUtil::Calc::getTLV(gen_lepB);
+        TLorentzVector nuB  = RooUtil::Calc::getTLV(gen_nuB);
+        TLorentzVector WA = lepA + nuA;
+        TLorentzVector WB = lepB + nuB;
+        auto betaA = WA.BoostVector();
+        lepA.Boost(-betaA);
+        nuA.Boost(-betaA);
+        float costhetaA = TMath::Cos(lepA.Angle(WA.Vect()));
+        auto betaB = WB.BoostVector();
+        lepB.Boost(-betaB);
+        nuB.Boost(-betaB);
+        float costhetaB = TMath::Cos(lepB.Angle(WB.Vect()));
+        tx.setBranch<float>("gen_cosThetaStarA", costhetaA);
+        tx.setBranch<float>("gen_cosThetaStarB", costhetaB);
+
         int channel = -1;
         if (lepton_pdgids[0] * lepton_pdgids[1] == 121)
         {
@@ -2060,6 +2145,208 @@ void VBSHWW::processGenParticles_VBSWWH()
             channel = 5;
         }
         tx.setBranch<int>("genchannel", channel);
+    }
+}
+
+
+
+//________________________________________________________________________________________________________________________________________
+void VBSHWW::processGenParticles_VBSWWH_UL()
+{
+
+    bool isvbswwh = nt.GenPart_status()[2] == 23;
+    tx.setBranch<int>("isvbswwh", isvbswwh);
+    tx.setBranch<int>("iswwhlvlvbb", 0);
+    if (isvbswwh)
+    {
+
+        const LV& ijet = nt.GenPart_p4()[2];
+        const LV& jjet = nt.GenPart_p4()[3];
+        const LV& jet0 = ijet.pt() > jjet.pt() ? ijet : jjet;
+        const LV& jet1 = ijet.pt() > jjet.pt() ? jjet : ijet;
+        tx.setBranch<LV>("gen_jet0", jet0);
+        tx.setBranch<LV>("gen_jet1", jet1);
+        const LV& iW = nt.GenPart_p4()[4];
+        const LV& jW = nt.GenPart_p4()[5];
+        const LV& W0 = iW.pt() > jW.pt() ? iW : jW;
+        const LV& W1 = iW.pt() > jW.pt() ? jW : iW;
+        tx.setBranch<LV>("gen_w0", W0);
+        tx.setBranch<LV>("gen_w1", W1);
+        const LV& h = nt.GenPart_p4()[6];
+        tx.setBranch<LV>("gen_h", h);
+
+        std::vector<LV> h_decay_p4s;
+        std::vector<int> h_decay_pdgIds;
+        std::vector<int> h_decay_statuses;
+        int h_decay_id;
+        for (unsigned int igen = 0; igen < nt.GenPart_p4().size(); ++igen)
+        {
+            int imom = nt.GenPart_genPartIdxMother()[igen];
+            if (abs(nt.GenPart_pdgId()[imom]) == 25 and nt.GenPart_status()[imom] == 62)
+            {
+                int pdgid = nt.GenPart_pdgId()[igen];
+                int status = nt.GenPart_status()[igen];
+                // std::cout << std::endl;
+                // std::cout <<  " pdgid: " << pdgid <<  " status: " << status <<  std::endl;
+                h_decay_p4s.push_back(nt.GenPart_p4()[igen]);
+                h_decay_pdgIds.push_back(nt.GenPart_pdgId()[igen]);
+                h_decay_statuses.push_back(nt.GenPart_status()[igen]);
+            }
+        }
+
+        // sanity check
+        if (h_decay_pdgIds.size() != 2)
+        {
+            std::cout << "NOT " << " " << h_decay_pdgIds.size() << " ";
+            for (auto& id : h_decay_pdgIds)
+                std::cout << id << " ";
+            std::cout << std::endl;
+        }
+
+        bool is_hbb = false;
+        if (abs(h_decay_pdgIds[0]) == 5)
+        {
+            is_hbb = true;
+        }
+
+        const LV& b0 = h_decay_p4s[0].pt() > h_decay_p4s[1].pt() ? h_decay_p4s[0] : h_decay_p4s[1];
+        const LV& b1 = h_decay_p4s[0].pt() > h_decay_p4s[1].pt() ? h_decay_p4s[1] : h_decay_p4s[0];
+
+        std::vector<int> wsidx;
+        int w0idx = -1;
+        int w1idx = -1;
+        for (unsigned int igen = 0; igen < nt.GenPart_p4().size(); ++igen)
+        {
+            if (abs(nt.GenPart_pdgId()[igen]) == 24 and abs(nt.GenPart_status()[igen]) == 62)
+            {
+                wsidx.push_back(igen);
+            }
+        }
+
+        w0idx = wsidx[0];
+        w1idx = wsidx[1];
+
+        std::vector<LV> w0decay_p4s;
+        std::vector<int> w0decay_pdgids;
+        std::vector<LV> w1decay_p4s;
+        std::vector<int> w1decay_pdgids;
+        for (unsigned int igen = 0; igen < nt.GenPart_p4().size(); ++igen)
+        {
+            int midx = nt.GenPart_genPartIdxMother()[igen];
+            if (midx == w0idx)
+            {
+                w0decay_p4s.push_back(nt.GenPart_p4()[igen]);
+                w0decay_pdgids.push_back(nt.GenPart_pdgId()[igen]);
+            }
+            if (midx == w1idx)
+            {
+                w1decay_p4s.push_back(nt.GenPart_p4()[igen]);
+                w1decay_pdgids.push_back(nt.GenPart_pdgId()[igen]);
+            }
+        }
+
+        if (w0decay_pdgids.size() != 2)
+        {
+            std::cout << std::endl;
+            std::cout << "NOT ";
+
+            for (auto& id : w0decay_pdgids)
+            {
+                std::cout << id << " ";
+            }
+            std::cout << std::endl;
+        }
+        if (w1decay_pdgids.size() != 2)
+        {
+            std::cout << std::endl;
+            std::cout << "NOT ";
+
+            for (auto& id : w1decay_pdgids)
+            {
+                std::cout << id << " ";
+            }
+            std::cout << std::endl;
+        }
+
+        bool isw0lep = abs(w0decay_pdgids[0]) == 11 or abs(w0decay_pdgids[0]) == 13 or abs(w0decay_pdgids[0]) == 15;
+        bool isw1lep = abs(w1decay_pdgids[0]) == 11 or abs(w1decay_pdgids[0]) == 13 or abs(w1decay_pdgids[0]) == 15;
+
+        int iswwhlvlvbb = isw0lep and isw1lep and is_hbb;
+        tx.setBranch<int>("iswwhlvlvbb", iswwhlvlvbb);
+
+        if (iswwhlvlvbb)
+        {
+            LV lep0 = w0decay_p4s[0].pt() > w1decay_p4s[0].pt() ? w0decay_p4s[0] : w1decay_p4s[0];
+            LV lep1 = w0decay_p4s[0].pt() > w1decay_p4s[0].pt() ? w1decay_p4s[0] : w0decay_p4s[0];
+            LV nu0 = w0decay_p4s[1].pt() > w1decay_p4s[1].pt() ? w0decay_p4s[1] : w1decay_p4s[1];
+            LV nu1 = w0decay_p4s[1].pt() > w1decay_p4s[1].pt() ? w1decay_p4s[1] : w0decay_p4s[1];
+            LV b0 = h_decay_p4s[0].pt() > h_decay_p4s[1].pt() ? h_decay_p4s[0] : h_decay_p4s[1];
+            LV b1 = h_decay_p4s[0].pt() > h_decay_p4s[1].pt() ? h_decay_p4s[1] : h_decay_p4s[0];
+            tx.setBranch<LV>("gen_lep0", lep0);
+            tx.setBranch<LV>("gen_lep1", lep1);
+            tx.setBranch<LV>("gen_nu0", nu0);
+            tx.setBranch<LV>("gen_nu1", nu1);
+            tx.setBranch<LV>("gen_b0", b0);
+            tx.setBranch<LV>("gen_b1", b1);
+
+            tx.setBranch<LV>("gen_lepA", w0decay_p4s[0]);
+            tx.setBranch<LV>("gen_lepB", w1decay_p4s[0]);
+            tx.setBranch<LV>("gen_nuA", w0decay_p4s[1]);
+            tx.setBranch<LV>("gen_nuB", w1decay_p4s[1]);
+
+            tx.setBranch<LV>("gen_lepA", (w0decay_p4s[0] + w0decay_p4s[1]).pt() > (w1decay_p4s[0] + w1decay_p4s[1]).pt() ? w0decay_p4s[0] : w1decay_p4s[0]);
+            tx.setBranch<LV>("gen_lepB", (w0decay_p4s[0] + w0decay_p4s[1]).pt() > (w1decay_p4s[0] + w1decay_p4s[1]).pt() ? w1decay_p4s[0] : w0decay_p4s[0]);
+            tx.setBranch<LV>("gen_nuA" , (w0decay_p4s[0] + w0decay_p4s[1]).pt() > (w1decay_p4s[0] + w1decay_p4s[1]).pt() ? w0decay_p4s[1] : w1decay_p4s[1]);
+            tx.setBranch<LV>("gen_nuB" , (w0decay_p4s[0] + w0decay_p4s[1]).pt() > (w1decay_p4s[0] + w1decay_p4s[1]).pt() ? w1decay_p4s[1] : w0decay_p4s[1]);
+            const LV& gen_lepA = tx.getBranch<LV>("gen_lepA");
+            const LV& gen_nuA  = tx.getBranch<LV>("gen_nuA");
+            const LV& gen_lepB = tx.getBranch<LV>("gen_lepB");
+            const LV& gen_nuB  = tx.getBranch<LV>("gen_nuB");
+            TLorentzVector lepA = RooUtil::Calc::getTLV(gen_lepA);
+            TLorentzVector nuA  = RooUtil::Calc::getTLV(gen_nuA);
+            TLorentzVector lepB = RooUtil::Calc::getTLV(gen_lepB);
+            TLorentzVector nuB  = RooUtil::Calc::getTLV(gen_nuB);
+            TLorentzVector WA = lepA + nuA;
+            TLorentzVector WB = lepB + nuB;
+            auto betaA = WA.BoostVector();
+            lepA.Boost(-betaA);
+            nuA.Boost(-betaA);
+            float costhetaA = TMath::Cos(lepA.Angle(WA.Vect()));
+            auto betaB = WB.BoostVector();
+            lepB.Boost(-betaB);
+            nuB.Boost(-betaB);
+            float costhetaB = TMath::Cos(lepB.Angle(WB.Vect()));
+            tx.setBranch<float>("gen_cosThetaStarA", costhetaA);
+            tx.setBranch<float>("gen_cosThetaStarB", costhetaB);
+
+        }
+
+        // int channel = -1;
+        // if (lepton_pdgids[0] * lepton_pdgids[1] == 121)
+        // {
+        //     channel = 0;
+        // }
+        // else if (lepton_pdgids[0] * lepton_pdgids[1] == 143)
+        // {
+        //     channel = 1;
+        // }
+        // else if (lepton_pdgids[0] * lepton_pdgids[1] == 169)
+        // {
+        //     channel = 2;
+        // }
+        // else if (lepton_pdgids[0] * lepton_pdgids[1] == 165)
+        // {
+        //     channel = 3;
+        // }
+        // else if (lepton_pdgids[0] * lepton_pdgids[1] == 195)
+        // {
+        //     channel = 4;
+        // }
+        // else if (lepton_pdgids[0] * lepton_pdgids[1] == 225)
+        // {
+        //     channel = 5;
+        // }
+        // tx.setBranch<int>("genchannel", channel);
     }
 }
 

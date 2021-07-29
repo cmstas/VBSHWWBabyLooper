@@ -5,9 +5,10 @@ if [ -z $1 ]; then
     echo ""
     echo "  sh $0 VERSION YEAR"
     echo ""
-    echo "     VERSION    Skim version (e.g. v40)"
-    echo "     YEAR       Year         (e.g. 2016, 2017, 2018, or Run2)"
-    echo "     RUNTAG     Run tag      (e.g. Date, name, or some specifier)"
+    echo "     VERSION       Skim version   (e.g. v40)"
+    echo "     YEAR          Year           (e.g. 2016, 2017, 2018, or Run2)"
+    echo "     RUNTAG        Run tag        (e.g. Date, name, or some specifier)"
+    echo "     BABYVERSION   Baby version   (e.g. v1)"
     echo ""
     exit
 fi
@@ -15,12 +16,13 @@ fi
 TAG=${1}
 YEAR=${2}
 RUNTAG=${3}
+BABYVERSION=${4}
 
-HISTDIR=hists/${RUNTAG}/${TAG}/${YEAR}
+HISTDIR=hists/${RUNTAG}/${TAG}/${BABYVERSION}/${YEAR}
 
 mkdir -p ${HISTDIR}
 
-MINIDIR=../hadds/${TAG}/createMini_${YEAR}
+MINIDIR=../hadds/${TAG}/${BABYVERSION}/createMini_${YEAR}
 
 echo "============================"
 echo "YEAR      : ${YEAR}"
@@ -69,8 +71,17 @@ NJOBS=10
 for i in $(seq 0 $((NJOBS-1))); do
     echo "rm -f ${HISTDIR}/data_${i}.root         ; ./doAnalysis -t variable -i ${MINIDIR}/data.root           -o ${HISTDIR}/data_${i}.root         -j ${NJOBS} -I ${i} > ${HISTDIR}/data_${i}.log            2>&1" >> .jobs.txt
 done
-if [[ ${TAG} == *"v2."* ]] || [[ ${TAG}_${YEAR} == *"v70_SS_Run2"* ]]; then
-    echo "rm -f ${HISTDIR}/vbshww_c2v_4p5.root    ; ./doAnalysis -t variable -i ${MINIDIR}/vbshww_c2v_4p5.root -o ${HISTDIR}/vbshww_c2v_4p5.root                        > ${HISTDIR}/vbshww_c2v_4p5.log       2>&1" >> .jobs.txt
+if [[ ${YEAR} == *"2016"* ]]; then
+    :
+else
+    echo "rm -f ${HISTDIR}/vbshww_c2v_4p5.root   ; ./doAnalysis -t variable -i ${MINIDIR}/vbshww_c2v_4p5.root -o ${HISTDIR}/vbshww_c2v_4p5.root                    > ${HISTDIR}/vbshww_c2v_4p5.log       2>&1" >> .jobs.txt
+    echo "rm -f ${HISTDIR}/vbshww_c2v_4.root     ; ./doAnalysis -t variable -i ${MINIDIR}/vbshww_c2v_4.root -o ${HISTDIR}/vbshww_c2v_4.root                        > ${HISTDIR}/vbshww_c2v_4.log       2>&1" >> .jobs.txt
+    echo "rm -f ${HISTDIR}/vbshww_c2v_3.root     ; ./doAnalysis -t variable -i ${MINIDIR}/vbshww_c2v_3.root -o ${HISTDIR}/vbshww_c2v_3.root                        > ${HISTDIR}/vbshww_c2v_3.log       2>&1" >> .jobs.txt
+    echo "rm -f ${HISTDIR}/vbshww_c2v_1.root     ; ./doAnalysis -t variable -i ${MINIDIR}/vbshww_c2v_1.root -o ${HISTDIR}/vbshww_c2v_1.root                        > ${HISTDIR}/vbshww_c2v_1.log       2>&1" >> .jobs.txt
+    echo "rm -f ${HISTDIR}/vbshww_c2v_0.root     ; ./doAnalysis -t variable -i ${MINIDIR}/vbshww_c2v_0.root -o ${HISTDIR}/vbshww_c2v_0.root                        > ${HISTDIR}/vbshww_c2v_0.log       2>&1" >> .jobs.txt
+    echo "rm -f ${HISTDIR}/vbshww_c2v_m1.root    ; ./doAnalysis -t variable -i ${MINIDIR}/vbshww_c2v_m1.root -o ${HISTDIR}/vbshww_c2v_m1.root                      > ${HISTDIR}/vbshww_c2v_m1.log       2>&1" >> .jobs.txt
+    echo "rm -f ${HISTDIR}/vbshww_c2v_m2.root    ; ./doAnalysis -t variable -i ${MINIDIR}/vbshww_c2v_m2.root -o ${HISTDIR}/vbshww_c2v_m2.root                      > ${HISTDIR}/vbshww_c2v_m2.log       2>&1" >> .jobs.txt
+    echo "rm -f ${HISTDIR}/vbshww_c2v_m2p5.root  ; ./doAnalysis -t variable -i ${MINIDIR}/vbshww_c2v_m2p5.root -o ${HISTDIR}/vbshww_c2v_m2p5.root                  > ${HISTDIR}/vbshww_c2v_m2p5.log       2>&1" >> .jobs.txt
 fi
 
 xargs.sh .jobs.txt

@@ -13,6 +13,7 @@ usage()
   echo "Options with arguments:"
   echo "  -h    Help                   (Display this message)"
   echo "  -s    study name             (Name of the studiy in studies/ e.g. mainAnalysis, extraJets, philipSR, etc.)"
+  echo "  -a    baby ntup version tag  (Baby ntuple version tag)"
   echo "  -t    skim ntup tag UL       (Skimmed ntuple tag e.g. v2.0_SS)"
   echo "  -T    skim ntup tag non-UL   (Skimmed ntuple tag e.g. v70_SS)"
   echo "  -d    Debug run              (Runs only a subset of the events)"
@@ -21,10 +22,11 @@ usage()
 }
 
 # Command-line opts
-while getopts ":t:T:s:dh" OPTION; do
+while getopts ":a:t:T:s:dh" OPTION; do
   case $OPTION in
     s) STUDY=${OPTARG};;
     t) ULTAG=${OPTARG};;
+    a) BABYVERSION=${OPTARG};;
     T) v7TAG=${OPTARG};;
     d) DEBUG=true;;
     h) usage;;
@@ -35,6 +37,7 @@ done
 if [ -z ${STUDY} ]; then usage; fi
 if [ -z ${ULTAG} ]; then usage; fi
 if [ -z ${v7TAG} ]; then usage; fi
+if [ -z ${BABYVERSION} ]; then usage; fi
 
 # to shift away the parsed options
 shift $(($OPTIND - 1))
@@ -48,9 +51,10 @@ echo "------------------------------------------------"
 echo "STUDY          : ${STUDY}"
 echo "ULTAG          : ${ULTAG}"
 echo "v7TAG          : ${v7TAG}"
+echo "BABYVERSION    : ${BABYVERSION}"
 echo "DEBUG          : ${DEBUG}"
 echo "================================================"
 
-sh $DIR/exec_UL.sh ${STUDY} ${ULTAG} ${DEBUG}
-sh $DIR/hadd_UL.sh ${STUDY} ${ULTAG}
-sh $DIR/special_hadd_UL.sh ${STUDY} ${ULTAG} ${v7TAG}
+sh $DIR/exec_UL.sh ${STUDY} ${ULTAG} ${BABYVERSION} ${DEBUG}
+sh $DIR/hadd_UL.sh ${STUDY} ${ULTAG} ${BABYVERSION}
+sh $DIR/special_hadd_UL.sh ${STUDY} ${ULTAG} ${v7TAG} ${BABYVERSION}

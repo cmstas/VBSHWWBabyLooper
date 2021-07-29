@@ -1,6 +1,6 @@
 // -*- C++ -*-
 // This is a header file generated with the command:
-// makeCMS3ClassFiles("/home/users/phchang/public_html/analysis/hwh/VBSHWWBabyLooper__/hadds/v70_SS/createMini_Run2/data.root", "variable", "VBS", "tas", "vbs")
+// makeCMS3ClassFiles("/home/users/phchang/public_html/analysis/hwh/VBSHWWBabyLooper____/hists/v2.3_SS/v5/createMini_2018/VBSWmpWmpH_C2V_4p5_TuneCP5_output_0.root", "variable", "VBS", "tas", "vbs")
 
 #ifndef VBS_H
 #define VBS_H
@@ -83,6 +83,9 @@ class VBS {
   int      isvbswwh_;
   TBranch *isvbswwh_branch;
   bool     isvbswwh_isLoaded;
+  int      iswwhlvlvbb_;
+  TBranch *iswwhlvlvbb_branch;
+  bool     iswwhlvlvbb_isLoaded;
   ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > *gen_jet0_;
   TBranch *gen_jet0_branch;
   bool     gen_jet0_isLoaded;
@@ -122,6 +125,9 @@ class VBS {
   int      genchannel_;
   TBranch *genchannel_branch;
   bool     genchannel_isLoaded;
+  float    genrewgt_;
+  TBranch *genrewgt_branch;
+  bool     genrewgt_isLoaded;
   float    lepsf_;
   TBranch *lepsf_branch;
   bool     lepsf_isLoaded;
@@ -332,6 +338,9 @@ class VBS {
   int      categ_;
   TBranch *categ_branch;
   bool     categ_isLoaded;
+  float    categ_F_;
+  TBranch *categ_F_branch;
+  bool     categ_F_isLoaded;
   float    mbb_;
   TBranch *mbb_branch;
   bool     mbb_isLoaded;
@@ -488,6 +497,7 @@ void LoadAllBranches();
   const int &is_pd_sm();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &met_p4();
   const int &isvbswwh();
+  const int &iswwhlvlvbb();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_jet0();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_jet1();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_w0();
@@ -501,6 +511,7 @@ void LoadAllBranches();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_b0();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_b1();
   const int &genchannel();
+  const float &genrewgt();
   const float &lepsf();
   const float &btagsf();
   const vector<ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > > &good_leptons_p4();
@@ -571,6 +582,7 @@ void LoadAllBranches();
   const int &mbbIn();
   const int &pass_blind();
   const int &categ();
+  const float &categ_F();
   const float &mbb();
   const float &dphibb();
   const float &detabb();
@@ -644,6 +656,7 @@ namespace tas {
   const int &is_pd_sm();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &met_p4();
   const int &isvbswwh();
+  const int &iswwhlvlvbb();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_jet0();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_jet1();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_w0();
@@ -657,6 +670,7 @@ namespace tas {
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_b0();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_b1();
   const int &genchannel();
+  const float &genrewgt();
   const float &lepsf();
   const float &btagsf();
   const vector<ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > > &good_leptons_p4();
@@ -727,6 +741,7 @@ namespace tas {
   const int &mbbIn();
   const int &pass_blind();
   const int &categ();
+  const float &categ_F();
   const float &mbb();
   const float &dphibb();
   const float &detabb();
