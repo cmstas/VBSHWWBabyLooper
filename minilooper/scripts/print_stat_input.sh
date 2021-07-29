@@ -1,9 +1,8 @@
 #!/bin/bash
 
-TAG=v2.3_SS
+TAG=v2.4_SS
 RUNTAG=Nominal
-BABYVERSION=v5
-
+BABYVERSION=v1
 
 PLOTNAME=LooseVRMbbAllSRB__Channels4Bins
 python ../rooutil/yield_for_keynote.py plots/${RUNTAG}/${TAG}/${BABYVERSION}/Run2/SRYield/${PLOTNAME}.txt | tr ',' ' ' | col 29 | tail -n 5 | head -n 4 | echo "sigs    = ["$(paste -d"," - - - -)"]"

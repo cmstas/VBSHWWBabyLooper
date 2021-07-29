@@ -269,6 +269,8 @@ int main(int argc, char** argv)
     ana.cutflow.getCut("PreselChannel"); ana.cutflow.addCutToLastActiveCut("PSMuChannel" , [&]() { return vbs.categ() == 1; }, UNITY);
     ana.cutflow.getCut("PreselChannel"); ana.cutflow.addCutToLastActiveCut("PSTauChannel", [&]() { return vbs.categ() == 2; }, UNITY);
     ana.cutflow.getCut("PreselChannel"); ana.cutflow.addCutToLastActiveCut("PSNegChannel", [&]() { return vbs.categ() == 3; }, UNITY);
+    ana.cutflow.getCut("PreselChannel"); ana.cutflow.addCutToLastActiveCut("PSMTPosChannel" , [&]() { return vbs.lepchannel() == 4 and vbs.leadlepID() < 0; }, UNITY);
+    ana.cutflow.getCut("PreselChannel"); ana.cutflow.addCutToLastActiveCut("PSMTNegChannel" , [&]() { return vbs.lepchannel() == 4 and vbs.leadlepID() > 0; }, UNITY);
 
     ana.cutflow.getCut("PreselChannel"); ana.cutflow.addCutToLastActiveCut("TestEvents", [&]() { return vbs.is_test(); }, UNITY);
     ana.cutflow.getCut("PreselChannel"); ana.cutflow.addCutToLastActiveCut("TrainEvents", [&]() { return vbs.is_train(); }, UNITY);
@@ -289,6 +291,8 @@ int main(int argc, char** argv)
             "PSMu",
             "PSTau", 
             "PSNeg", 
+            "PSMTPos",
+            "PSMTNeg",
 
             "LooseVR", // All channels included
             "LL",
@@ -381,6 +385,8 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("LeptonPt1"       , 180 , 0       , 600                               , [&]() { return vbs.l1pt(); } );
     ana.histograms.addHistogram("LeptonPt0Zoom"   , 180 , 0       , 250                               , [&]() { return vbs.l0pt(); } );
     ana.histograms.addHistogram("LeptonPt1Zoom"   , 180 , 0       , 250                               , [&]() { return vbs.l1pt(); } );
+    ana.histograms.addHistogram("LeptonPtAZoom"   , 180 , 0       , 250                               , [&]() { return vbs.lep0().pt(); } );
+    ana.histograms.addHistogram("LeptonPtBZoom"   , 180 , 0       , 250                               , [&]() { return vbs.lep1().pt(); } );
     ana.histograms.addHistogram("LeptonEta0"      , 180 , -3      , 3                                 , [&]() { return vbs.leadlep().eta(); } );
     ana.histograms.addHistogram("LeptonEta1"      , 180 , -3      , 3                                 , [&]() { return vbs.subllep().eta(); } );
     ana.histograms.addHistogram("MJJ"             , 180 , 0       , 4500                              , [&]() { return vbs.mjj(); } );

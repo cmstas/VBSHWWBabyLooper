@@ -15,8 +15,8 @@ def run(doBDT):
 
     #_____________________________________________________________________________________
     # Toggle options
-    Tag = "v2.3_SS"
-    BabyVersion = "v5"
+    Tag = "v2.4_SS"
+    BabyVersion = "v1"
     inputHistBaseDir = "/home/users/phchang/public_html/analysis/hwh/VBSHWWBabyLooper____/minilooper/"
     inputHistDir = "{}/hists/Nominal/{}/{}/Run2/".format(inputHistBaseDir, Tag, BabyVersion)
 

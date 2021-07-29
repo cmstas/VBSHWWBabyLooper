@@ -119,7 +119,7 @@ sig_run2 = 137. / (59.97+41.3)
 
 blind = False
 signal_scale = 1
-if year == "Run2" and tag == "v2.3_SS":
+if year == "Run2" and tag == "v2.4_SS":
     signal_scale = 137. / (59.97+41.3)
 
 if "_SS" in tag:

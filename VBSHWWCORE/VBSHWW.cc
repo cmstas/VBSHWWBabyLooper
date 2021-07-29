@@ -108,20 +108,20 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     // TODO: check that 'embedding' should indeed be false (last bool in the TauIDSFTool constructor)
     if (nt.year() == 2016)
     {
-        tauSF_vsJet = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSjet", "Tight", false, false);
-        tauSF_vsMu = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSmu", "VLoose", false, false);
+        tauSF_vsJet = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSjet", "Medium", false, false);
+        tauSF_vsMu = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSmu", "Loose", false, false);
         tauSF_vsEl = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSe", "VVLoose", false, false); // ttH uses VVVLoose but sfs only available up to VVLoose
     }
     else if (nt.year() == 2017)
     {
-        tauSF_vsJet = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSjet", "Tight", false, false);
-        tauSF_vsMu = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSmu", "VLoose", false, false);
+        tauSF_vsJet = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSjet", "Medium", false, false);
+        tauSF_vsMu = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSmu", "Loose", false, false);
         tauSF_vsEl = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSe", "VVLoose", false, false); // ttH uses VVVLoose but sfs only available up to VVLoose
     }
     else if (nt.year() == 2018)
     {
-        tauSF_vsJet = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSjet", "Tight", false, false);
-        tauSF_vsMu = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSmu", "VLoose", false, false);
+        tauSF_vsJet = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSjet", "Medium", false, false);
+        tauSF_vsMu = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSmu", "Loose", false, false);
         tauSF_vsEl = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSe", "VVLoose", false, false); // ttH uses VVVLoose but sfs only available up to VVLoose
     }
     else
