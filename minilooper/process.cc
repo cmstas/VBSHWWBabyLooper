@@ -267,10 +267,9 @@ int main(int argc, char** argv)
     ana.cutflow.getCut("PreselChannel"); ana.cutflow.addCutToLastActiveCut("PSLTChannel" , [&]() { return vbs.lepchannel() >= 3; }, UNITY);
     ana.cutflow.getCut("PreselChannel"); ana.cutflow.addCutToLastActiveCut("PSElChannel" , [&]() { return vbs.categ() == 0; }, UNITY);
     ana.cutflow.getCut("PreselChannel"); ana.cutflow.addCutToLastActiveCut("PSMuChannel" , [&]() { return vbs.categ() == 1; }, UNITY);
+    ana.cutflow.getCut("PreselChannel"); ana.cutflow.addCutToLastActiveCut("PSLgtChannel", [&]() { return vbs.categ() == 0 or vbs.categ() == 1; }, UNITY);
     ana.cutflow.getCut("PreselChannel"); ana.cutflow.addCutToLastActiveCut("PSTauChannel", [&]() { return vbs.categ() == 2; }, UNITY);
     ana.cutflow.getCut("PreselChannel"); ana.cutflow.addCutToLastActiveCut("PSNegChannel", [&]() { return vbs.categ() == 3; }, UNITY);
-    ana.cutflow.getCut("PreselChannel"); ana.cutflow.addCutToLastActiveCut("PSMTPosChannel" , [&]() { return vbs.lepchannel() == 4 and vbs.leadlepID() < 0; }, UNITY);
-    ana.cutflow.getCut("PreselChannel"); ana.cutflow.addCutToLastActiveCut("PSMTNegChannel" , [&]() { return vbs.lepchannel() == 4 and vbs.leadlepID() > 0; }, UNITY);
 
     ana.cutflow.getCut("PreselChannel"); ana.cutflow.addCutToLastActiveCut("TestEvents", [&]() { return vbs.is_test(); }, UNITY);
     ana.cutflow.getCut("PreselChannel"); ana.cutflow.addCutToLastActiveCut("TrainEvents", [&]() { return vbs.is_train(); }, UNITY);
@@ -289,10 +288,9 @@ int main(int argc, char** argv)
             "PSLT",
             "PSEl",
             "PSMu",
+            "PSLgt",
             "PSTau", 
             "PSNeg", 
-            "PSMTPos",
-            "PSMTNeg",
 
             "LooseVR", // All channels included
             "LL",
