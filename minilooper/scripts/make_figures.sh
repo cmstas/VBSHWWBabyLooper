@@ -14,6 +14,13 @@ echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRVarB
 echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRVarBin "PSLTMbbOff__STVarBin,PSLTMbbOff__LTVarBin,PSLTMbbOff__MJJVarBin,PSLTMbbOff__DEtaJJVarBin" '                              >> .plotjobs.txt
 echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRVarBin "PSLLMbbOff__STVarBin,PSLLMbbOff__LTVarBin,PSLLMbbOff__MJJVarBin,PSLLMbbOff__DEtaJJVarBin" '                              >> .plotjobs.txt
 
+echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRVarBin "LgtMbbOff__STVarBin,LgtMbbOff__LTVarBin,LgtMbbOff__MJJVarBin,LgtMbbOff__DEtaJJVarBin"     '                              >> .plotjobs.txt
+echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRVarBin "TauMbbOff__STVarBin,TauMbbOff__LTVarBin,TauMbbOff__MJJVarBin,TauMbbOff__DEtaJJVarBin"     '                              >> .plotjobs.txt
+echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRVarBin "NegMbbOff__STVarBin,NegMbbOff__LTVarBin,NegMbbOff__MJJVarBin,NegMbbOff__DEtaJJVarBin"     '                              >> .plotjobs.txt
+echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRVarBin "PSLgtMbbOff__STVarBin,PSLgtMbbOff__LTVarBin,PSLgtMbbOff__MJJVarBin,PSLgtMbbOff__DEtaJJVarBin"     '                      >> .plotjobs.txt
+echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRVarBin "PSTauMbbOff__STVarBin,PSTauMbbOff__LTVarBin,PSTauMbbOff__MJJVarBin,PSTauMbbOff__DEtaJJVarBin"     '                      >> .plotjobs.txt
+echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRVarBin "PSNegMbbOff__STVarBin,PSNegMbbOff__LTVarBin,PSNegMbbOff__MJJVarBin,PSNegMbbOff__DEtaJJVarBin"     '                      >> .plotjobs.txt
+
 echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRShatKine "LTMbbOff__LeptonPt0Zoom,LTMbbOff__LeptonPt1Zoom,LTMbbOff__BJetPt0,LTMbbOff__BJetPt1,LTMbbOff__MET" '                   >> .plotjobs.txt
 echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRShatKine "LLMbbOff__LeptonPt0Zoom,LLMbbOff__LeptonPt1Zoom,LLMbbOff__BJetPt0,LLMbbOff__BJetPt1,LLMbbOff__MET" '                   >> .plotjobs.txt
 echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRShatKine "PSLTMbbOff__LeptonPt0Zoom,PSLTMbbOff__LeptonPt1Zoom,PSLTMbbOff__BJetPt0,PSLTMbbOff__BJetPt1,PSLTMbbOff__MET" '         >> .plotjobs.txt
@@ -28,6 +35,13 @@ echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRBDT 
 echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRBDT "LLMbbOff__BDTVarBin" '   >> .plotjobs.txt
 echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRBDT "PSLTMbbOff__BDTVarBin2" ' >> .plotjobs.txt
 echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRBDT "PSLLMbbOff__BDTVarBin2" ' >> .plotjobs.txt
+
+echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRBDT "LgtMbbOff__BDTVarBin" '   >> .plotjobs.txt
+echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRBDT "TauMbbOff__BDTVarBin" '   >> .plotjobs.txt
+echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRBDT "NegMbbOff__BDTVarBin" '   >> .plotjobs.txt
+echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRBDT "PSLgtMbbOff__BDTVarBin2" '   >> .plotjobs.txt
+echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRBDT "PSTauMbbOff__BDTVarBin2" '   >> .plotjobs.txt
+echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRBDT "PSNegMbbOff__BDTVarBin2" '   >> .plotjobs.txt
 
 echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' SRBDT "ElMbbAll__BDT" '  >> .plotjobs.txt
 echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' SRBDT "MuMbbAll__BDT" '  >> .plotjobs.txt
