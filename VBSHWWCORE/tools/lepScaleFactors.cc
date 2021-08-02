@@ -326,7 +326,19 @@ float ttH::getElecTTHSFErrEta(float eta, int year) {
 }
 
 float ttH::getElecTTHSFErr(float eta, float pt, int year) {
-    return std::max(ttH::getElecTTHSFErrPt(pt, year), ttH::getElecTTHSFErrEta(eta, year)) 
+    float max_err = std::max(ttH::getElecTTHSFErrPt(pt, year), ttH::getElecTTHSFErrEta(eta, year));
+    if (up)
+    {
+        // sf_up = sf*max_err 
+        // --> (sf + err_up*sf) = sf*max_err --> err_up = max_err - 1
+        return (max_err - 1);
+    }
+    else
+    {
+        // sf_up = sf/max_err 
+        // --> (sf - err_down*sf) = sf/max_err --> err_down = 1 - 1/max_err
+        return (1 - 1./max_err);
+    }
 }
 
 float ttH::getElecPOGLooseSF(float eta, float pt, int year) {
@@ -1606,9 +1618,21 @@ float ttH::getMuonTTHSFErrEta(float eta, int year) {
     return 0.0;
 }
 
-float ttH::getMuonTTHSFErr(float eta, float pt, int year)
+float ttH::getMuonTTHSFErr(float eta, float pt, int year, bool up)
 {
-    return max(ttH::getMuonTTHSFErrPt(pt, year), ttH::getMuonTTHSFErrEta(eta, year));
+    float max_err = max(ttH::getMuonTTHSFErrPt(pt, year), ttH::getMuonTTHSFErrEta(eta, year));
+    if (up)
+    {
+        // sf_up = sf*max_err 
+        // --> (sf + err_up*sf) = sf*max_err --> err_up = max_err - 1
+        return (max_err - 1);
+    }
+    else
+    {
+        // sf_up = sf/max_err 
+        // --> (sf - err_down*sf) = sf/max_err --> err_down = 1 - 1/max_err
+        return (1 - 1./max_err);
+    }
 }
 
 float ttH::getMuonPOGMediumSF2016GH(float eta, float pt) {
@@ -1960,6 +1984,32 @@ float ttH::getMuonPOGMediumSF(float eta, float pt, int year) {
         return 0.45*ttH::getMuonPOGMediumSF2016GH(eta, pt) + 0.55*ttH::getMuonPOGMediumSF2016BCDEF(eta, pt);
     }
     if (year == 2017) {
+        if (pt >= 20 && pt < 25 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.99463;
+        if (pt >= 20 && pt < 25 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 1.00461;
+        if (pt >= 20 && pt < 25 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.995538;
+        if (pt >= 20 && pt < 25 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.975997;
+        if (pt >= 25 && pt < 30 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.99427;
+        if (pt >= 25 && pt < 30 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.996305;
+        if (pt >= 25 && pt < 30 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.99353;
+        if (pt >= 25 && pt < 30 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.974567;
+        if (pt >= 30 && pt < 40 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.998511;
+        if (pt >= 30 && pt < 40 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.999489;
+        if (pt >= 30 && pt < 40 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.998242;
+        if (pt >= 30 && pt < 40 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.979122;
+        if (pt >= 40 && pt < 50 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.996668;
+        if (pt >= 40 && pt < 50 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.997511;
+        if (pt >= 40 && pt < 50 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.995924;
+        if (pt >= 40 && pt < 50 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.976367;
+        if (pt >= 50 && pt < 60 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.993758;
+        if (pt >= 50 && pt < 60 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.99674;
+        if (pt >= 50 && pt < 60 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.994647;
+        if (pt >= 50 && pt < 60 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.971127;
+        if (pt >= 60 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.997312;
+        if (pt >= 60 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.995674;
+        if (pt >= 60 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.996436;
+        if (pt >= 60 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.981027;
+    }
+    if (year == 2018) {
         if (pt >= 15 && pt < 20 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.997092;
         if (pt >= 15 && pt < 20 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.996501;
         if (pt >= 15 && pt < 20 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.995491;
@@ -1988,32 +2038,6 @@ float ttH::getMuonPOGMediumSF(float eta, float pt, int year) {
         if (pt >= 60 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.995734;
         if (pt >= 60 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.99517;
         if (pt >= 60 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.974546;
-    }
-    if (year == 2018) {
-        if (pt >= 20 && pt < 25 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.99463;
-        if (pt >= 20 && pt < 25 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 1.00461;
-        if (pt >= 20 && pt < 25 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.995538;
-        if (pt >= 20 && pt < 25 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.975997;
-        if (pt >= 25 && pt < 30 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.99427;
-        if (pt >= 25 && pt < 30 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.996305;
-        if (pt >= 25 && pt < 30 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.99353;
-        if (pt >= 25 && pt < 30 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.974567;
-        if (pt >= 30 && pt < 40 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.998511;
-        if (pt >= 30 && pt < 40 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.999489;
-        if (pt >= 30 && pt < 40 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.998242;
-        if (pt >= 30 && pt < 40 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.979122;
-        if (pt >= 40 && pt < 50 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.996668;
-        if (pt >= 40 && pt < 50 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.997511;
-        if (pt >= 40 && pt < 50 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.995924;
-        if (pt >= 40 && pt < 50 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.976367;
-        if (pt >= 50 && pt < 60 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.993758;
-        if (pt >= 50 && pt < 60 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.99674;
-        if (pt >= 50 && pt < 60 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.994647;
-        if (pt >= 50 && pt < 60 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.971127;
-        if (pt >= 60 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.997312;
-        if (pt >= 60 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.995674;
-        if (pt >= 60 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.996436;
-        if (pt >= 60 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.981027;
     }
     return 0.0;
 }
@@ -2364,9 +2388,35 @@ float ttH::getMuonPOGMediumSFErr2016BCDEF(float eta, float pt) {
 
 float ttH::getMuonPOGMediumSFErr(float eta, float pt, int year) {
     if (year == 2016) {
-        return 0.45*ttH::getMuonPOGMediumSFErr2016GH(eta, pt, year) + 0.55*ttH::getMuonPOGMediumSFErr2016BCDEF(eta, pt, year);
+        return 0.45*ttH::getMuonPOGMediumSFErr2016GH(eta, pt) + 0.55*ttH::getMuonPOGMediumSFErr2016BCDEF(eta, pt);
     }
     if (year == 2017) {
+        if (pt >= 20 && pt < 25 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.00281666;
+        if (pt >= 20 && pt < 25 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.00189045;
+        if (pt >= 20 && pt < 25 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.000500461;
+        if (pt >= 20 && pt < 25 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.00115982;
+        if (pt >= 25 && pt < 30 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.00121876;
+        if (pt >= 25 && pt < 30 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.000718471;
+        if (pt >= 25 && pt < 30 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.000701502;
+        if (pt >= 25 && pt < 30 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.000912595;
+        if (pt >= 30 && pt < 40 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.00259007;
+        if (pt >= 30 && pt < 40 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.00234456;
+        if (pt >= 30 && pt < 40 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.0101469;
+        if (pt >= 30 && pt < 40 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.00292217;
+        if (pt >= 40 && pt < 50 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.000294741;
+        if (pt >= 40 && pt < 50 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.000357216;
+        if (pt >= 40 && pt < 50 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.000583199;
+        if (pt >= 40 && pt < 50 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.000290145;
+        if (pt >= 50 && pt < 60 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.000489858;
+        if (pt >= 50 && pt < 60 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.000451104;
+        if (pt >= 50 && pt < 60 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.000538325;
+        if (pt >= 50 && pt < 60 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.000931727;
+        if (pt >= 60 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.00268338;
+        if (pt >= 60 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.00270982;
+        if (pt >= 60 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.00190607;
+        if (pt >= 60 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.00360928;
+    }
+    if (year == 2018) {
         if (pt >= 20 && pt < 25 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.00488758;
         if (pt >= 20 && pt < 25 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.00618851;
         if (pt >= 20 && pt < 25 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.00584054;
@@ -2392,7 +2442,80 @@ float ttH::getMuonPOGMediumSFErr(float eta, float pt, int year) {
         if (pt >= 60 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.000374201;
         if (pt >= 60 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.00431623;
     }
+    return 0.0;
+}
+
+float ttH::getMuonPOGMediumSFUL(float eta, float pt, int year) {
+    if (year == 2016) {
+        std::cout << "ERROR:: getMuonPOGMediumSFUL has not been implemented for year = " << year << std::endl;
+        std::abort();
+    }
+    if (year == 2017) {
+        if (pt >= 20 && pt < 25 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.99474;
+        if (pt >= 20 && pt < 25 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 1.00432;
+        if (pt >= 20 && pt < 25 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.995308;
+        if (pt >= 20 && pt < 25 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.975682;
+        if (pt >= 25 && pt < 30 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.994224;
+        if (pt >= 25 && pt < 30 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.994884;
+        if (pt >= 25 && pt < 30 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.992425;
+        if (pt >= 25 && pt < 30 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.972963;
+        if (pt >= 30 && pt < 40 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.998368;
+        if (pt >= 30 && pt < 40 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.999368;
+        if (pt >= 30 && pt < 40 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.998152;
+        if (pt >= 30 && pt < 40 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.978816;
+        if (pt >= 40 && pt < 50 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.99662;
+        if (pt >= 40 && pt < 50 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.997412;
+        if (pt >= 40 && pt < 50 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.995787;
+        if (pt >= 40 && pt < 50 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.975957;
+        if (pt >= 50 && pt < 60 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.993871;
+        if (pt >= 50 && pt < 60 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.996636;
+        if (pt >= 50 && pt < 60 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.994629;
+        if (pt >= 50 && pt < 60 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.970755;
+        if (pt >= 60 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.997299;
+        if (pt >= 60 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.995576;
+        if (pt >= 60 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.99654;
+        if (pt >= 60 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.980947;
+    }
     if (year == 2018) {
+        if (pt >= 0 && pt < 0.9 && fabs(eta) >= 15 && fabs(eta) < 20) return 0.997504;
+        if (pt >= 0 && pt < 0.9 && fabs(eta) >= 20 && fabs(eta) < 25) return 0.99701;
+        if (pt >= 0 && pt < 0.9 && fabs(eta) >= 25 && fabs(eta) < 30) return 0.996704;
+        if (pt >= 0 && pt < 0.9 && fabs(eta) >= 30 && fabs(eta) < 40) return 0.996807;
+        if (pt >= 0 && pt < 0.9 && fabs(eta) >= 40 && fabs(eta) < 50) return 0.996751;
+        if (pt >= 0 && pt < 0.9 && fabs(eta) >= 50 && fabs(eta) < 60) return 0.996623;
+        if (pt >= 0 && pt < 0.9 && fabs(eta) >= 60 && fabs(eta) < 120) return 0.99604;
+        if (pt >= 0.9 && pt < 1.2 && fabs(eta) >= 15 && fabs(eta) < 20) return 0.994669;
+        if (pt >= 0.9 && pt < 1.2 && fabs(eta) >= 20 && fabs(eta) < 25) return 0.99459;
+        if (pt >= 0.9 && pt < 1.2 && fabs(eta) >= 25 && fabs(eta) < 30) return 0.994912;
+        if (pt >= 0.9 && pt < 1.2 && fabs(eta) >= 30 && fabs(eta) < 40) return 0.995685;
+        if (pt >= 0.9 && pt < 1.2 && fabs(eta) >= 40 && fabs(eta) < 50) return 0.995313;
+        if (pt >= 0.9 && pt < 1.2 && fabs(eta) >= 50 && fabs(eta) < 60) return 0.995345;
+        if (pt >= 0.9 && pt < 1.2 && fabs(eta) >= 60 && fabs(eta) < 120) return 0.99525;
+        if (pt >= 1.2 && pt < 2.1 && fabs(eta) >= 15 && fabs(eta) < 20) return 0.993506;
+        if (pt >= 1.2 && pt < 2.1 && fabs(eta) >= 20 && fabs(eta) < 25) return 0.993896;
+        if (pt >= 1.2 && pt < 2.1 && fabs(eta) >= 25 && fabs(eta) < 30) return 0.994077;
+        if (pt >= 1.2 && pt < 2.1 && fabs(eta) >= 30 && fabs(eta) < 40) return 0.994188;
+        if (pt >= 1.2 && pt < 2.1 && fabs(eta) >= 40 && fabs(eta) < 50) return 0.994774;
+        if (pt >= 1.2 && pt < 2.1 && fabs(eta) >= 50 && fabs(eta) < 60) return 0.994464;
+        if (pt >= 1.2 && pt < 2.1 && fabs(eta) >= 60 && fabs(eta) < 120) return 0.994432;
+        if (pt >= 2.1 && fabs(eta) >= 15 && fabs(eta) < 20) return 0.974119;
+        if (pt >= 2.1 && fabs(eta) >= 20 && fabs(eta) < 25) return 0.972713;
+        if (pt >= 2.1 && fabs(eta) >= 25 && fabs(eta) < 30) return 0.97398;
+        if (pt >= 2.1 && fabs(eta) >= 30 && fabs(eta) < 40) return 0.975072;
+        if (pt >= 2.1 && fabs(eta) >= 40 && fabs(eta) < 50) return 0.974798;
+        if (pt >= 2.1 && fabs(eta) >= 50 && fabs(eta) < 60) return 0.974375;
+        if (pt >= 2.1 && fabs(eta) >= 60 && fabs(eta) < 120) return 0.970208;
+    }
+    return 0.0;
+}
+
+
+float ttH::getMuonPOGMediumSFULErr(float eta, float pt, int year) {
+    if (year == 2016) {
+        std::cout << "ERROR:: getMuonPOGMediumSFULErr has not been implemented for year = " << year << std::endl;
+        std::abort();
+    }
+    if (year == 2017) {
         if (pt >= 20 && pt < 25 && fabs(eta) >= 0 && fabs(eta) < 0.9) return 0.00281666;
         if (pt >= 20 && pt < 25 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.00189045;
         if (pt >= 20 && pt < 25 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.000500461;
@@ -2417,6 +2540,36 @@ float ttH::getMuonPOGMediumSFErr(float eta, float pt, int year) {
         if (pt >= 60 && fabs(eta) >= 0.9 && fabs(eta) < 1.2) return 0.00270982;
         if (pt >= 60 && fabs(eta) >= 1.2 && fabs(eta) < 2.1) return 0.00190607;
         if (pt >= 60 && fabs(eta) >= 2.1 && fabs(eta) < 2.4) return 0.00360928;
+    }
+    if (year == 2018) {
+        if (pt >= 0 && pt < 0.9 && fabs(eta) >= 15 && fabs(eta) < 20) return 0.00050508;
+        if (pt >= 0 && pt < 0.9 && fabs(eta) >= 20 && fabs(eta) < 25) return 0.000195432;
+        if (pt >= 0 && pt < 0.9 && fabs(eta) >= 25 && fabs(eta) < 30) return 0.000171392;
+        if (pt >= 0 && pt < 0.9 && fabs(eta) >= 30 && fabs(eta) < 40) return 4.8882e-05;
+        if (pt >= 0 && pt < 0.9 && fabs(eta) >= 40 && fabs(eta) < 50) return 7.08443e-05;
+        if (pt >= 0 && pt < 0.9 && fabs(eta) >= 50 && fabs(eta) < 60) return 0.00037453;
+        if (pt >= 0 && pt < 0.9 && fabs(eta) >= 60 && fabs(eta) < 120) return 0.000381967;
+        if (pt >= 0.9 && pt < 1.2 && fabs(eta) >= 15 && fabs(eta) < 20) return 0.000819175;
+        if (pt >= 0.9 && pt < 1.2 && fabs(eta) >= 20 && fabs(eta) < 25) return 0.000477995;
+        if (pt >= 0.9 && pt < 1.2 && fabs(eta) >= 25 && fabs(eta) < 30) return 0.000235668;
+        if (pt >= 0.9 && pt < 1.2 && fabs(eta) >= 30 && fabs(eta) < 40) return 8.37075e-05;
+        if (pt >= 0.9 && pt < 1.2 && fabs(eta) >= 40 && fabs(eta) < 50) return 0.00015996;
+        if (pt >= 0.9 && pt < 1.2 && fabs(eta) >= 50 && fabs(eta) < 60) return 0.000505516;
+        if (pt >= 0.9 && pt < 1.2 && fabs(eta) >= 60 && fabs(eta) < 120) return 0.000233399;
+        if (pt >= 1.2 && pt < 2.1 && fabs(eta) >= 15 && fabs(eta) < 20) return 0.000871954;
+        if (pt >= 1.2 && pt < 2.1 && fabs(eta) >= 20 && fabs(eta) < 25) return 0.000283127;
+        if (pt >= 1.2 && pt < 2.1 && fabs(eta) >= 25 && fabs(eta) < 30) return 0.000440414;
+        if (pt >= 1.2 && pt < 2.1 && fabs(eta) >= 30 && fabs(eta) < 40) return 0.000108217;
+        if (pt >= 1.2 && pt < 2.1 && fabs(eta) >= 40 && fabs(eta) < 50) return 5.01619e-05;
+        if (pt >= 1.2 && pt < 2.1 && fabs(eta) >= 50 && fabs(eta) < 60) return 0.000330558;
+        if (pt >= 1.2 && pt < 2.1 && fabs(eta) >= 60 && fabs(eta) < 120) return 0.00067956;
+        if (pt >= 2.1 && fabs(eta) >= 15 && fabs(eta) < 20) return 0.00221004;
+        if (pt >= 2.1 && fabs(eta) >= 20 && fabs(eta) < 25) return 0.00204853;
+        if (pt >= 2.1 && fabs(eta) >= 25 && fabs(eta) < 30) return 0.00100515;
+        if (pt >= 2.1 && fabs(eta) >= 30 && fabs(eta) < 40) return 0.00066568;
+        if (pt >= 2.1 && fabs(eta) >= 40 && fabs(eta) < 50) return 0.000417652;
+        if (pt >= 2.1 && fabs(eta) >= 50 && fabs(eta) < 60) return 0.00168733;
+        if (pt >= 2.1 && fabs(eta) >= 60 && fabs(eta) < 120) return 0.00514916;
     }
     return 0.0;
 }
