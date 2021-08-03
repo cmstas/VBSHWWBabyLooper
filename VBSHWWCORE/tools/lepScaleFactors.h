@@ -9,8 +9,8 @@ namespace ttH {
     float getElecLooseSF(float eta, float pt, int year);
     float getElecTTHSFErrPt(float pt, int year);
     float getElecTTHSFErrEta(float eta, int year);
-    float getElecTTHSFErr(float eta, float pt, int year, bool iup); // Note: use this one!
-    // Electron POG loose-WP sfs
+    float getElecTTHSFErr(float eta, float pt, int year, bool up); // Note: use this one!
+    // Electron POG loose-WP sfs (using files from ttH, loose WP not available from POG)
     float getElecPOGLooseSF(float eta, float pt, int year);
     float getElecPOGLooseSFErr(float eta, float pt, int year);
     // Electron reco eff sfs

@@ -325,7 +325,7 @@ float ttH::getElecTTHSFErrEta(float eta, int year) {
     return 0.0;
 }
 
-float ttH::getElecTTHSFErr(float eta, float pt, int year) {
+float ttH::getElecTTHSFErr(float eta, float pt, int year, bool up) {
     float max_err = std::max(ttH::getElecTTHSFErrPt(pt, year), ttH::getElecTTHSFErrEta(eta, year));
     if (up)
     {
