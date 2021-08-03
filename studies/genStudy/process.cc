@@ -87,6 +87,18 @@ int main(int argc, char** argv)
                                return false;
                            return true;
                        }, UNITY);
+    vbs.cutflow.getCut("rewgt");
+    vbs.cutflow.addCutToLastActiveCut("pp",
+                       [&]()
+                       {
+                           return vbs.tx.getBranch<int>("gen_sign") == 1;
+                       }, UNITY);
+    vbs.cutflow.getCut("rewgt");
+    vbs.cutflow.addCutToLastActiveCut("mm",
+                       [&]()
+                       {
+                           return vbs.tx.getBranch<int>("gen_sign") == 0;
+                       }, UNITY);
 
     vbs.histograms.addHistogram("GenLepPt0"        , 180 , 0  , 1500 , [&]() { return vbs.tx.getBranch<LV>("gen_lep0").pt();  } );
     vbs.histograms.addHistogram("GenLepPt1"        , 180 , 0  , 1500 , [&]() { return vbs.tx.getBranch<LV>("gen_lep1").pt();  } );

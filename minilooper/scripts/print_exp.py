@@ -2,6 +2,11 @@
 
 import math
 
+# RunTag = "Nominal"
+RunTag = "BkgCompStudy"
+Syst="LgtTopBkgUp"
+Syst=""
+
 def get_yield(fname):
     f = open(fname)
     lines = f.readlines()
@@ -18,17 +23,17 @@ def get_yield(fname):
             break
     return float(y), float(e), float(ny), float(ne), float(d)
 
-El_SR_y , El_SR_e  , El_SR_ny , El_SR_ne , El_SR_d  = get_yield("plots/Nominal/v2.4_SS/v1/Run2/SRYield/ElMbbOnSRA__Yield.txt")
-Mu_SR_y , Mu_SR_e  , Mu_SR_ny , Mu_SR_ne , Mu_SR_d  = get_yield("plots/Nominal/v2.4_SS/v1/Run2/SRYield/MuMbbOnSRA__Yield.txt")
-Tau_SR_y, Tau_SR_e , Tau_SR_ny, Tau_SR_ne, Tau_SR_d = get_yield("plots/Nominal/v2.4_SS/v1/Run2/SRYield/TauMbbOnSRA__Yield.txt")
-Neg_SR_y, Neg_SR_e , Neg_SR_ny, Neg_SR_ne, Neg_SR_d = get_yield("plots/Nominal/v2.4_SS/v1/Run2/SRYield/NegMbbOnSRA__Yield.txt")
-Lgt_SR_y, Lgt_SR_e , Lgt_SR_ny, Lgt_SR_ne, Lgt_SR_d = get_yield("plots/Nominal/v2.4_SS/v1/Run2/SRYield/LgtMbbOnSRA2__Yield.txt")
+El_SR_y , El_SR_e  , El_SR_ny , El_SR_ne , El_SR_d  = get_yield("plots/{}/v2.4_SS/v1/Run2/SRYield/ElMbbOnSRA1{}__Yield.txt".format(RunTag, Syst))
+Mu_SR_y , Mu_SR_e  , Mu_SR_ny , Mu_SR_ne , Mu_SR_d  = get_yield("plots/{}/v2.4_SS/v1/Run2/SRYield/MuMbbOnSRA1{}__Yield.txt".format(RunTag, Syst))
+Tau_SR_y, Tau_SR_e , Tau_SR_ny, Tau_SR_ne, Tau_SR_d = get_yield("plots/{}/v2.4_SS/v1/Run2/SRYield/TauMbbOnSRA1{}__Yield.txt".format(RunTag, Syst))
+Neg_SR_y, Neg_SR_e , Neg_SR_ny, Neg_SR_ne, Neg_SR_d = get_yield("plots/{}/v2.4_SS/v1/Run2/SRYield/NegMbbOnSRA1{}__Yield.txt".format(RunTag, Syst))
+Lgt_SR_y, Lgt_SR_e , Lgt_SR_ny, Lgt_SR_ne, Lgt_SR_d = get_yield("plots/{}/v2.4_SS/v1/Run2/SRYield/LgtMbbOnSRA2{}__Yield.txt".format(RunTag, Syst))
 
-El_CR_y , El_CR_e  , El_CR_ny , El_CR_ne , El_CR_d  = get_yield("plots/Nominal/v2.4_SS/v1/Run2/AnchorYield/ElMbbOffCRA__Yield.txt")
-Mu_CR_y , Mu_CR_e  , Mu_CR_ny , Mu_CR_ne , Mu_CR_d  = get_yield("plots/Nominal/v2.4_SS/v1/Run2/AnchorYield/MuMbbOffCRA__Yield.txt")
-Tau_CR_y, Tau_CR_e , Tau_CR_ny, Tau_CR_ne, Tau_CR_d = get_yield("plots/Nominal/v2.4_SS/v1/Run2/AnchorYield/TauMbbOffCRA__Yield.txt")
-Neg_CR_y, Neg_CR_e , Neg_CR_ny, Neg_CR_ne, Neg_CR_d = get_yield("plots/Nominal/v2.4_SS/v1/Run2/AnchorYield/NegMbbOffCRA__Yield.txt")
-Lgt_CR_y, Lgt_CR_e , Lgt_CR_ny, Lgt_CR_ne, Lgt_CR_d = get_yield("plots/Nominal/v2.4_SS/v1/Run2/AnchorYield/LgtMbbOffCRA__Yield.txt")
+El_CR_y , El_CR_e  , El_CR_ny , El_CR_ne , El_CR_d  = get_yield("plots/{}/v2.4_SS/v1/Run2/AnchorYield/ElMbbOffCRA{}__Yield.txt".format(RunTag, Syst))
+Mu_CR_y , Mu_CR_e  , Mu_CR_ny , Mu_CR_ne , Mu_CR_d  = get_yield("plots/{}/v2.4_SS/v1/Run2/AnchorYield/MuMbbOffCRA{}__Yield.txt".format(RunTag, Syst))
+Tau_CR_y, Tau_CR_e , Tau_CR_ny, Tau_CR_ne, Tau_CR_d = get_yield("plots/{}/v2.4_SS/v1/Run2/AnchorYield/TauMbbOffCRA{}__Yield.txt".format(RunTag, Syst))
+Neg_CR_y, Neg_CR_e , Neg_CR_ny, Neg_CR_ne, Neg_CR_d = get_yield("plots/{}/v2.4_SS/v1/Run2/AnchorYield/NegMbbOffCRA{}__Yield.txt".format(RunTag, Syst))
+Lgt_CR_y, Lgt_CR_e , Lgt_CR_ny, Lgt_CR_ne, Lgt_CR_d = get_yield("plots/{}/v2.4_SS/v1/Run2/AnchorYield/LgtMbbOffCRA{}__Yield.txt".format(RunTag, Syst))
 
 def bd(ny, ne, d):
     if d == 0:
@@ -107,6 +112,12 @@ Mu_bdsrfracerr  = Mu_bdsrerr  / Mu_bdsr   * 100.
 Tau_bdsrfracerr = Tau_bdsrerr / Tau_bdsr  * 100.
 Neg_bdsrfracerr = Neg_bdsrerr / Neg_bdsr  * 100.
 Lgt_bdsrfracerr = Lgt_bdsrerr / Lgt_bdsr  * 100.
+
+print("{:.3g}".format(El_alpha))
+print("{:.3g}".format(Mu_alpha))
+print("{:.3g}".format(Tau_alpha))
+print("{:.3g}".format(Neg_alpha))
+print("{:.3g}".format(Lgt_alpha))
 
 result = """
 \\begin{{table}}[H]

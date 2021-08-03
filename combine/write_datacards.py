@@ -33,11 +33,11 @@ def run(doBDT):
     if doBDT:
         # BDT
         nbins = 4
-        histname = "LooseVRMbbAllSRB__Channels4Bins"
+        histname = "LooseVR__BDTSR"
     else:
         # Cutbased
         nbins = 5
-        histname = "LooseVRMbbOnSRA__Channels5Bins"
+        histname = "LooseVR__CutSR"
 
     ######################################################################################
     #
@@ -46,7 +46,8 @@ def run(doBDT):
     ######################################################################################
 
     # Define list of processes
-    topbkgs    = ["tt1lpowheg", "tt2lpowheg", "ttw", "ttz", "raretop", ]
+    # topbkgs    = ["tt1lpowheg", "tt2lpowheg", "ttw", "ttz", "raretop", ]
+    topbkgs    = ["topbkg"]
     nontopbkgs = ["bosons", ]
     sigs       = ["vbshww_c2v_4p5", ]
     bkgs       = topbkgs + nontopbkgs
