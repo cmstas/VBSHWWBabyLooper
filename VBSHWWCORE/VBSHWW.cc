@@ -289,6 +289,8 @@ VBSHWW::VBSHWW(int argc, char** argv) :
 
     // Create scale factor branches
     tx.createBranch<float>("lepsf");
+    tx.createBranch<float>("lepsf_up");
+    tx.createBranch<float>("lepsf_dn");
     tx.createBranch<float>("btagsf");
 
     // Create lepton branches
@@ -824,8 +826,11 @@ void VBSHWW::initSRCutflow()
     cutflow.addCutToLastActiveCut("SelectLeptons",
         [&]()
         {
-
+            // Lepton sf
             float lepsf = 1.;
+            // Percent errors (up/down) on sf
+            float err_up = 0.;
+            float err_dn = 0.;
 
             // Select muons
             for (unsigned int imu = 0; imu < nt.Muon_pt().size(); ++imu)
@@ -842,8 +847,13 @@ void VBSHWW::initSRCutflow()
                     tx.pushbackToBranch<float>("good_leptons_jetPtRelv2", nt.Muon_jetPtRelv2()[imu]);
                     tx.pushbackToBranch<float>("good_leptons_jetRelIso", nt.Muon_jetRelIso()[imu]);
                     tx.pushbackToBranch<float>("good_leptons_miniPFRelIso_all", nt.Muon_miniPFRelIso_all()[imu]);
-                    lepsf *= ttH::getMuonLooseSF(nt.Muon_p4()[imu].eta(), nt.Muon_p4()[imu].pt(), nt.year());     // reco -> loose ttH ID
-                    lepsf *= ttH::getMuonTightSF(nt.Muon_p4()[imu].eta(), nt.Muon_p4()[imu].pt(), nt.year());     // loose ttH ID -> tight ttH ID
+                    float mu_eta = nt.Muon_eta()[imu];
+                    float mu_pt = nt.Muon_pt()[imu];
+                    // medium POG ID -> loose ttH ID -> tight ttH ID
+                    lepsf *= ttH::getMuonLooseSF(mu_eta, mu_pt, nt.year());
+                    lepsf *= ttH::getMuonTightSF(mu_eta, mu_pt, nt.year());
+                    err_up += std::pow(ttH::getMuonTTHSFErr(mu_eta, mu_pt, nt.year(), true), 2);
+                    err_dn += std::pow(ttH::getMuonTTHSFErr(mu_eta, mu_pt, nt.year(), false), 2);
                 }
             }
 
@@ -862,13 +872,31 @@ void VBSHWW::initSRCutflow()
                     tx.pushbackToBranch<float>("good_leptons_jetPtRelv2", nt.Electron_jetPtRelv2()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_jetRelIso", nt.Electron_jetRelIso()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_miniPFRelIso_all", nt.Electron_miniPFRelIso_all()[iel]);
+                    float el_eta = nt.Electron_eta()[iel];
+                    float el_pt = nt.Electron_pt()[iel];
                     if (isUL)
-                        lepsf *= ttH::getElecRecoEffSFUL(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());  // event -> reco
+                    {
+                        // event -> reco
+                        lepsf *= ttH::getElecRecoEffSFUL(el_eta, el_pt, nt.year());
+                        err_up += std::pow(ttH::getElecRecoEffSFULErr(el_eta, el_pt, nt.year()), 2);
+                        err_dn += std::pow(ttH::getElecRecoEffSFULErr(el_eta, el_pt, nt.year()), 2);
+                    }
                     else
-                        lepsf *= ttH::getElecRecoEffSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());  // event -> reco
-                    lepsf *= ttH::getElecPOGLooseSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year()); // reco -> loose POG ID
-                    lepsf *= ttH::getElecLooseSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());    // loose POG ID -> loose ttH ID
-                    lepsf *= ttH::getElecTightSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());    // loose ttH ID -> tight ttH ID
+                    {
+                        // event -> reco
+                        lepsf *= ttH::getElecRecoEffSF(el_eta, el_pt, nt.year());
+                        err_up += std::pow(ttH::getElecRecoEffSFErr(el_eta, el_pt, nt.year()), 2);
+                        err_dn += std::pow(ttH::getElecRecoEffSFErr(el_eta, el_pt, nt.year()), 2);
+                    }
+                    // reco -> loose POG ID
+                    lepsf *= ttH::getElecPOGLooseSF(el_eta, el_pt, nt.year());
+                    err_up += std::pow(ttH::getElecPOGLooseSFErr(el_eta, el_pt, nt.year()), 2);
+                    err_dn += std::pow(ttH::getElecPOGLooseSFErr(el_eta, el_pt, nt.year()), 2);
+                    // loose POG ID -> loose ttH ID -> tight ttH ID
+                    lepsf *= ttH::getElecLooseSF(el_eta, el_pt, nt.year());
+                    lepsf *= ttH::getElecTightSF(el_eta, el_pt, nt.year());
+                    err_up += std::pow(ttH::getElecTTHSFErr(el_eta, el_pt, nt.year(), true), 2);
+                    err_dn += std::pow(ttH::getElecTTHSFErr(el_eta, el_pt, nt.year(), false), 2);
                 }
             }
 
@@ -924,9 +952,24 @@ void VBSHWW::initSRCutflow()
                     tx.pushbackToBranch<int>("good_taus_pdgid", (-nt.Tau_charge()[itau]) * 15);
                     tx.pushbackToBranch<int>("good_taus_tight", ttH::tauID(itau, ttH::IDtight, nt.year()));
                     tx.pushbackToBranch<int>("good_taus_jetIdx", nt.Tau_jetIdx()[itau]);
-                    lepsf *= (nt.isData() ? 1. : tauSF_vsJet->getSFvsPT(nt.Tau_pt()[itau], nt.Tau_genPartFlav()[itau]));
-                    lepsf *= (nt.isData() ? 1. : tauSF_vsMu->getSFvsEta(fabs(nt.Tau_eta()[itau]), nt.Tau_genPartFlav()[itau]));
-                    lepsf *= (nt.isData() ? 1. : tauSF_vsEl->getSFvsEta(fabs(nt.Tau_eta()[itau]), nt.Tau_genPartFlav()[itau]));
+                    float tau_pt = nt.Tau_pt()[itau];
+                    float tau_eta = nt.Tau_eta()[itau];
+                    float tau_gflav = nt.Tau_genPartFlav()[itau];
+                    // DeepTau vs. jets sf
+                    float vs_jet_sf = tauSF_vsJet->getSFvsPT(tau_pt, tau_gflav);
+                    lepsf *= vs_jet_sf;
+                    err_up += std::pow((tauSF_vsJet->getSFvsPT(tau_pt, tau_gflav, "Up") - vs_jet_sf)/vs_jet_sf, 2);
+                    err_dn += std::pow((vs_jet_sf - tauSF_vsJet->getSFvsPT(tau_pt, tau_gflav, "Down"))/vs_jet_sf, 2);
+                    // DeepTau vs. muons sf
+                    float vs_mu_sf = tauSF_vsMu->getSFvsEta(fabs(tau_eta), tau_gflav);
+                    lepsf *= vs_mu_sf;
+                    err_up += std::pow((tauSF_vsMu->getSFvsEta(fabs(tau_eta), tau_gflav, "Up") - vs_mu_sf)/vs_mu_sf, 2);
+                    err_dn += std::pow((vs_mu_sf - tauSF_vsMu->getSFvsEta(fabs(tau_eta), tau_gflav, "Down"))/vs_mu_sf, 2);
+                    // DeepTau vs. electrons sf
+                    float vs_el_sf = tauSF_vsEl->getSFvsEta(fabs(tau_eta), tau_gflav);
+                    lepsf *= vs_el_sf;
+                    err_up += std::pow((tauSF_vsEl->getSFvsEta(fabs(tau_eta), tau_gflav, "Up") - vs_el_sf)/vs_el_sf, 2);
+                    err_dn += std::pow((vs_el_sf - tauSF_vsEl->getSFvsEta(fabs(tau_eta), tau_gflav, "Down"))/vs_el_sf, 2);
                 }
             }
 
@@ -945,9 +988,15 @@ void VBSHWW::initSRCutflow()
                 /* names of any associated vector<bool>  branches to sort along */
                 {}
                 );
+            
+            // Finish the error computation
+            err_up = std::sqrt(err_up);
+            err_dn = std::sqrt(err_dn);
 
             // Set the lepton scale factor weight
             tx.setBranch<float>("lepsf", nt.isData() ? 1. : lepsf);
+            tx.setBranch<float>("lepsf_up", nt.isData() ? 1. : lepsf + err_up);
+            tx.setBranch<float>("lepsf_dn", nt.isData() ? 1. : lepsf - err_dn);
 
             return true;
 
