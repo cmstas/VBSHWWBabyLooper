@@ -6,41 +6,51 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 TAG=v1
 YEAR=Run2
 RUNTAG=Nominal
+# RUNTAG=BkgCompStudyv2
 SKIMTAG=v2.4_SS
+# SYST=LgtTopBkgUp
+SYST=
 
 rm -f .plotjobs.txt
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRVarBin "LTMbbOff__STVarBin,LTMbbOff__LTVarBin,LTMbbOff__MJJVarBin,LTMbbOff__DEtaJJVarBin"         '                              >> .plotjobs.txt
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRVarBin "LLMbbOff__STVarBin,LLMbbOff__LTVarBin,LLMbbOff__MJJVarBin,LLMbbOff__DEtaJJVarBin"         '                              >> .plotjobs.txt
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRVarBin "PSLTMbbOff__STVarBin,PSLTMbbOff__LTVarBin,PSLTMbbOff__MJJVarBin,PSLTMbbOff__DEtaJJVarBin" '                              >> .plotjobs.txt
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRVarBin "PSLLMbbOff__STVarBin,PSLLMbbOff__LTVarBin,PSLLMbbOff__MJJVarBin,PSLLMbbOff__DEtaJJVarBin" '                              >> .plotjobs.txt
 
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRShatKine "LTMbbOff__LeptonPt0Zoom,LTMbbOff__LeptonPt1Zoom,LTMbbOff__BJetPt0,LTMbbOff__BJetPt1,LTMbbOff__MET" '                   >> .plotjobs.txt
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRShatKine "LLMbbOff__LeptonPt0Zoom,LLMbbOff__LeptonPt1Zoom,LLMbbOff__BJetPt0,LLMbbOff__BJetPt1,LLMbbOff__MET" '                   >> .plotjobs.txt
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRShatKine "PSLTMbbOff__LeptonPt0Zoom,PSLTMbbOff__LeptonPt1Zoom,PSLTMbbOff__BJetPt0,PSLTMbbOff__BJetPt1,PSLTMbbOff__MET" '         >> .plotjobs.txt
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRShatKine "PSLLMbbOff__LeptonPt0Zoom,PSLLMbbOff__LeptonPt1Zoom,PSLLMbbOff__BJetPt0,PSLLMbbOff__BJetPt1,PSLLMbbOff__MET" '         >> .plotjobs.txt
+book_plot()
+{
+    PLOTDIR=$1
+    REGIONS=$2
+    MBBREG=$3
+    VARS=$4
+    for REGION in ${REGIONS}; do
+        HISTNAMES=""
+        for VAR in ${VARS}; do
+            HISTNAMES="${HISTNAMES} ${REGION}${MBBREG}__${VAR}"
+        done
+        HISTNAMES=$(echo ${HISTNAMES} | tr ' ' ',')
+        echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' '${PLOTDIR}' '"${HISTNAMES}"' ' >> .plotjobs.txt;
+    done
+}
 
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRVBFKine "LTMbbOff__MJJZoom,LTMbbOff__DEtaJJ,LTMbbOff__JetPt0,LTMbbOff__JetPt1,LTMbbOff__JetEta0,LTMbbOff__JetEta1" '             >> .plotjobs.txt
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRVBFKine "LLMbbOff__MJJZoom,LLMbbOff__DEtaJJ,LLMbbOff__JetPt0,LLMbbOff__JetPt1,LLMbbOff__JetEta0,LLMbbOff__JetEta1" '             >> .plotjobs.txt
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRVBFKine "PSLTMbbOff__MJJZoom,PSLTMbbOff__DEtaJJ,PSLTMbbOff__JetPt0,PSLTMbbOff__JetPt1,PSLTMbbOff__JetEta0,PSLTMbbOff__JetEta1" ' >> .plotjobs.txt
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRVBFKine "PSLLMbbOff__MJJZoom,PSLLMbbOff__DEtaJJ,PSLLMbbOff__JetPt0,PSLLMbbOff__JetPt1,PSLLMbbOff__JetEta0,PSLLMbbOff__JetEta1" ' >> .plotjobs.txt
-
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRBDT "LTMbbOff__BDTVarBin" '   >> .plotjobs.txt
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRBDT "LLMbbOff__BDTVarBin" '   >> .plotjobs.txt
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRBDT "PSLTMbbOff__BDTVarBin2" ' >> .plotjobs.txt
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' VRBDT "PSLLMbbOff__BDTVarBin2" ' >> .plotjobs.txt
-
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' SRBDT "ElMbbAll__BDT" '  >> .plotjobs.txt
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' SRBDT "MuMbbAll__BDT" '  >> .plotjobs.txt
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' SRBDT "TauMbbAll__BDT" ' >> .plotjobs.txt
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' SRBDT "NegMbbAll__BDT" ' >> .plotjobs.txt
-
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' SRYield "LooseVRMbbAllSRB__Channels4Bins,LooseVRMbbOnSRA__Channels5Bins" ' >> .plotjobs.txt
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' SRKine "LooseVRMbbOnSRA__ST,LooseVRMbbOnSRA__LT,LooseVRMbbOnSRA__MJJ,LooseVRMbbOnSRA__DEtaJJ,LooseVRMbbOnSRA__Mbb,LooseVRMbbOnSRA__*" ' >> .plotjobs.txt
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' SRBDTKine "LooseVRMbbAllSRB__ST,LooseVRMbbAllSRB__LT,LooseVRMbbAllSRB__MJJ,LooseVRMbbAllSRB__DEtaJJ,LooseVRMbbAllSRB__Mbb,LooseVRMbbAllSRB__*" ' >> .plotjobs.txt
-
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' AnchorYield "LooseVRMbbOff__Channels4Bins,PreselMbbOff__Channels4Bins" ' >> .plotjobs.txt
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' PreselYield "LooseVRMbbAll__Channels4Bins" ' >> .plotjobs.txt
-
-echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' SigKine "PreselMbbAll__LT,PreselMbbAll__ST,PreselMbbAll__Ptbb,PreselMbbAll__MJJ,PreselMbbAll__DEtaJJ,PreselMbbAll__LeptonPt0,PreselMbbAll__LeptonPt1" ' >> .plotjobs.txt
+book_plot VRVarBin    "Lgt Tau Neg"               MbbOff${SYST}     "STVarBin3 STVarBin LTVarBin MJJVarBin DEtaJJVarBin"
+book_plot VRShatKine  "Lgt Tau Neg"               MbbOff${SYST}     "LeptonPt0Zoom LeptonPt1Zoom BJetPt0 BJetPt1 MET LT ST"
+book_plot VRVBFKine   "Lgt Tau Neg"               MbbOff${SYST}     "MJJZoom DEtaJJ JetPt0 JetPt1 JetEta0 JetEta1"
+book_plot VRBDT       "    Tau Neg"               MbbOff${SYST}     "BDTVarBin"
+book_plot VRBDT       "Lgt"                       MbbOff${SYST}     "BDTVarBin4"
+book_plot SRBDT       "El Mu Tau Neg"             ""${SYST}         "BDT"
+book_plot SRYield     "LooseVR"                   ""${SYST}         "BDTSR BDTSR2"
+book_plot SRYield     "LooseVR"                   ""${SYST}         "CutSR CutSR2"
+book_plot SRBDTKine   "LooseVR"                   ""${SYST}         "ST LT MJJ DEtaJJ Mbb"
+book_plot Alpha       "LooseVR"                   ""${SYST}         "CutSREl CutSR2El"
+book_plot Alpha       "LooseVR"                   ""${SYST}         "CutSRMu CutSR2Mu"
+book_plot Alpha       "LooseVR"                   ""${SYST}         "CutSRTau CutSR2Tau"
+book_plot Alpha       "LooseVR"                   ""${SYST}         "CutSRNeg CutSR2Neg"
+book_plot Alpha       "LooseVR"                   ""${SYST}         "CutSRLgt"
+book_plot Alpha       "LooseVR"                   ""${SYST}         "BDTSREl BDTSR2El"
+book_plot Alpha       "LooseVR"                   ""${SYST}         "BDTSRMu BDTSR2Mu"
+book_plot Alpha       "LooseVR"                   ""${SYST}         "BDTSRTau BDTSR2Tau"
+book_plot Alpha       "LooseVR"                   ""${SYST}         "BDTSRNeg BDTSR2Neg"
+book_plot SRKine      "Presel"                    ""                "ST LT Ptbb MJJ DEtaJJ LeptonPt0 LeptonPt1 Mbb"
+book_plot Fit         "LooseVR"                   ""${SYST}         "BDTSR"
+book_plot Fit         "LooseVR"                   ""${SYST}         "CutSR"
 
 xargs.sh .plotjobs.txt
+
+tar czf plots.tar.gz plots/${RUNTAG}/${SKIMTAG}/${TAG}/${YEAR}/

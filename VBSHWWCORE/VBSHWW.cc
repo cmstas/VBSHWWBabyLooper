@@ -282,6 +282,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch<LV>("gen_nuA");
     tx.createBranch<LV>("gen_lepB");
     tx.createBranch<LV>("gen_nuB");
+    tx.createBranch<int>("gen_sign");
     tx.createBranch<int>("genchannel");
     tx.createBranch<float>("genrewgt");
     tx.createBranch<float>("gen_cosThetaStarA");
@@ -2000,6 +2001,9 @@ void VBSHWW::processGenParticles_VBSWWH()
         const LV& h = nt.GenPart_p4()[6];
         tx.setBranch<LV>("gen_h", h);
 
+        int gen_sign = nt.GenPart_pdgId()[4] > 0;
+        tx.setBranch<int>("gen_sign", gen_sign);
+
         std::vector<LV> leptons;
         std::vector<int> lepton_pdgids;
         for (unsigned int igen = 0; igen < nt.GenPart_p4().size(); ++igen)
@@ -2174,6 +2178,9 @@ void VBSHWW::processGenParticles_VBSWWH_UL()
         tx.setBranch<LV>("gen_w1", W1);
         const LV& h = nt.GenPart_p4()[6];
         tx.setBranch<LV>("gen_h", h);
+
+        int gen_sign = nt.GenPart_pdgId()[4] > 0;
+        tx.setBranch<int>("gen_sign", gen_sign);
 
         std::vector<LV> h_decay_p4s;
         std::vector<int> h_decay_pdgIds;

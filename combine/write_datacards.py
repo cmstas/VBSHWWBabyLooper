@@ -33,11 +33,11 @@ def run(doBDT):
     if doBDT:
         # BDT
         nbins = 4
-        histname = "LooseVRMbbAllSRB__Channels4Bins"
+        histname = "LooseVR__BDTSR"
     else:
         # Cutbased
         nbins = 5
-        histname = "LooseVRMbbOnSRA__Channels5Bins"
+        histname = "LooseVR__CutSR"
 
     ######################################################################################
     #
@@ -46,7 +46,8 @@ def run(doBDT):
     ######################################################################################
 
     # Define list of processes
-    topbkgs    = ["tt1lpowheg", "tt2lpowheg", "ttw", "ttz", "raretop", ]
+    # topbkgs    = ["tt1lpowheg", "tt2lpowheg", "ttw", "ttz", "raretop", ]
+    topbkgs    = ["topbkg"]
     nontopbkgs = ["bosons", ]
     sigs       = ["vbshww_c2v_4p5", ]
     bkgs       = topbkgs + nontopbkgs
@@ -92,15 +93,26 @@ def run(doBDT):
     systs = []
 
     # 60% symmetric error on all top backgrounds
-    syst = 0.6 # 60%
-    flat60pSystHists = {}
+    flat60pSyst = 0.6 # 60%
+    flat60pSystMap = {}
     for process in processes:
         if process in topbkgs:
-            flat60pSystHists[process] = "{}".format(1. + syst)
+            flat60pSystMap[process] = "{}".format(1. + flat60pSyst)
         else:
-            flat60pSystHists[process] = 0
+            flat60pSystMap[process] = 0
     # Add the 60% systematics to the grand systs list
-    systs.append( ("flat60pSystHists", "lnN", [], flat60pSystHists) )
+    systs.append( ("flat60pSyst", "lnN", [], flat60pSystMap) )
+
+    # 20% symmetric error on signal
+    flat20pSyst = 0.2 # 20%
+    flat20pSystMap = {}
+    for process in processes:
+        if process in sigs:
+            flat20pSystMap[process] = "{}".format(1. + flat20pSyst)
+        else:
+            flat20pSystMap[process] = 0
+    # Add the 20% systematics to the grand systs list
+    systs.append( ("flat20pSyst", "lnN", [], flat20pSystMap) )
 
     # create the data card writer tool
     d = dw.DataCardWriter(

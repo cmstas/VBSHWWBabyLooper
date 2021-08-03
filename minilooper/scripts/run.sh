@@ -105,6 +105,17 @@ xargs.sh .haddjobs.txt
 
 rm -f .haddjobs.txt
 echo "hadd -f ${HISTDIR}/totalbkg.root ${HISTDIR}/raretop.root ${HISTDIR}/ttw.root ${HISTDIR}/ttz.root ${HISTDIR}/tt1lpowheg.root ${HISTDIR}/tt2lpowheg.root ${HISTDIR}/bosons.root > ${HISTDIR}/totalbkg.log 2>&1" >> .haddjobs.txt
+echo "hadd -f ${HISTDIR}/topbkg_mttw.root ${HISTDIR}/raretop.root ${HISTDIR}/ttz.root ${HISTDIR}/tt1lpowheg.root ${HISTDIR}/tt2lpowheg.root > ${HISTDIR}/totalbkg.log 2>&1" >> .haddjobs.txt
+echo "hadd -f ${HISTDIR}/topbkg_pttw.root ${HISTDIR}/raretop.root ${HISTDIR}/ttw.root ${HISTDIR}/ttw.root ${HISTDIR}/ttz.root ${HISTDIR}/tt1lpowheg.root ${HISTDIR}/tt2lpowheg.root > ${HISTDIR}/totalbkg.log 2>&1" >> .haddjobs.txt
+echo "hadd -f ${HISTDIR}/topbkg_mttz.root ${HISTDIR}/raretop.root ${HISTDIR}/ttw.root ${HISTDIR}/tt1lpowheg.root ${HISTDIR}/tt2lpowheg.root > ${HISTDIR}/totalbkg.log 2>&1" >> .haddjobs.txt
+echo "hadd -f ${HISTDIR}/topbkg_pttz.root ${HISTDIR}/raretop.root ${HISTDIR}/ttz.root ${HISTDIR}/ttz.root ${HISTDIR}/ttw.root ${HISTDIR}/tt1lpowheg.root ${HISTDIR}/tt2lpowheg.root > ${HISTDIR}/totalbkg.log 2>&1" >> .haddjobs.txt
+echo "hadd -f ${HISTDIR}/topbkg_mtt1l.root ${HISTDIR}/raretop.root ${HISTDIR}/ttw.root ${HISTDIR}/ttz.root ${HISTDIR}/tt2lpowheg.root > ${HISTDIR}/totalbkg.log 2>&1" >> .haddjobs.txt
+echo "hadd -f ${HISTDIR}/topbkg_ptt1l.root ${HISTDIR}/raretop.root ${HISTDIR}/ttw.root ${HISTDIR}/ttz.root ${HISTDIR}/tt1lpowheg.root ${HISTDIR}/tt1lpowheg.root ${HISTDIR}/tt2lpowheg.root > ${HISTDIR}/totalbkg.log 2>&1" >> .haddjobs.txt
+echo "hadd -f ${HISTDIR}/topbkg_mtt2l.root ${HISTDIR}/raretop.root ${HISTDIR}/ttw.root ${HISTDIR}/ttz.root ${HISTDIR}/tt1lpowheg.root > ${HISTDIR}/totalbkg.log 2>&1" >> .haddjobs.txt
+echo "hadd -f ${HISTDIR}/topbkg_ptt2l.root ${HISTDIR}/raretop.root ${HISTDIR}/ttw.root ${HISTDIR}/ttz.root ${HISTDIR}/tt1lpowheg.root ${HISTDIR}/tt2lpowheg.root ${HISTDIR}/tt2lpowheg.root > ${HISTDIR}/totalbkg.log 2>&1" >> .haddjobs.txt
+echo "hadd -f ${HISTDIR}/topbkg_mraretop.root ${HISTDIR}/ttw.root ${HISTDIR}/ttz.root ${HISTDIR}/tt1lpowheg.root ${HISTDIR}/tt2lpowheg.root > ${HISTDIR}/totalbkg.log 2>&1" >> .haddjobs.txt
+echo "hadd -f ${HISTDIR}/topbkg_praretop.root ${HISTDIR}/raretop.root ${HISTDIR}/raretop.root ${HISTDIR}/ttw.root ${HISTDIR}/ttz.root ${HISTDIR}/tt1lpowheg.root ${HISTDIR}/tt2lpowheg.root > ${HISTDIR}/totalbkg.log 2>&1" >> .haddjobs.txt
+echo "hadd -f ${HISTDIR}/topbkg.root ${HISTDIR}/raretop.root ${HISTDIR}/ttw.root ${HISTDIR}/ttz.root ${HISTDIR}/tt1lpowheg.root ${HISTDIR}/tt2lpowheg.root > ${HISTDIR}/topbkg.log 2>&1" >> .haddjobs.txt
 echo "hadd -f ${HISTDIR}/statbkg.root ${HISTDIR}/raretop.root ${HISTDIR}/ttw.root ${HISTDIR}/ttz.root > ${HISTDIR}/statbkg.log 2>&1" >> .haddjobs.txt
 echo "hadd -f ${HISTDIR}/lowstatbkg.root ${HISTDIR}/tt1l.root ${HISTDIR}/tt2l.root > ${HISTDIR}/lowstatbkg.log 2>&1" >> .haddjobs.txt
 
