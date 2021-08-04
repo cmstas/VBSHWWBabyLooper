@@ -851,6 +851,7 @@ void VBSHWW::initSRCutflow()
                     float mu_eta = nt.Muon_eta()[imu];
                     float mu_pt = nt.Muon_pt()[imu];
                     // medium POG ID -> loose ttH ID -> tight ttH ID
+                    // NOTE: POG ID SF are folded into the ttH
                     lepsf *= ttH::getMuonLooseSF(mu_eta, mu_pt, nt.year());
                     lepsf *= ttH::getMuonTightSF(mu_eta, mu_pt, nt.year());
                     err_up += std::pow(ttH::getMuonTTHSFErr(mu_eta, mu_pt, nt.year(), true), 2);
@@ -996,8 +997,8 @@ void VBSHWW::initSRCutflow()
 
             // Set the lepton scale factor weight
             tx.setBranch<float>("lepsf", nt.isData() ? 1. : lepsf);
-            tx.setBranch<float>("lepsf_up", nt.isData() ? 1. : lepsf + err_up);
-            tx.setBranch<float>("lepsf_dn", nt.isData() ? 1. : lepsf - err_dn);
+            tx.setBranch<float>("lepsf_up", nt.isData() ? 1. : lepsf + err_up * lepsf);
+            tx.setBranch<float>("lepsf_dn", nt.isData() ? 1. : lepsf - err_dn * lepsf);
 
             return true;
 

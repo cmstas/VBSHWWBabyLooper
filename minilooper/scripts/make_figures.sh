@@ -29,6 +29,26 @@ book_plot()
     done
 }
 
+book_plot_alpha()
+{
+    PLOTDIRS="BkgComp BkgCompIndivid"
+    CHANNELS="El Mu Tau Neg Lgt"
+    REGIONS="BDTSR BDTSR2 CutSR CutSR2"
+# echo ' python scripts/plot_topbkg_compare.py v2.4_SS Run2 Nominal v1 BkgComp LooseVR__BDTSREl       ' >> .plot.jobs.txt
+# echo ' python scripts/plot_topbkg_compare.py v2.4_SS Run2 Nominal v1 BkgComp LooseVR__BDTSRMu       ' >> .plot.jobs.txt
+# echo ' python scripts/plot_topbkg_compare.py v2.4_SS Run2 Nominal v1 BkgComp LooseVR__BDTSRTau      ' >> .plot.jobs.txt
+# echo ' python scripts/plot_topbkg_compare.py v2.4_SS Run2 Nominal v1 BkgComp LooseVR__BDTSRNeg      ' >> .plot.jobs.txt
+# echo ' python scripts/plot_topbkg_compare.py v2.4_SS Run2 Nominal v1 BkgComp LooseVR__BDTSRLgt      ' >> .plot.jobs.txt
+
+    for PLOTDIR in ${PLOTDIRS}; do
+        for CHANNEL in ${CHANNELS}; do
+            for REGION in ${REGIONS}; do
+                echo ' python '${DIR}'/plot_topbkg_compare.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' '${PLOTDIR}' LooseVR__'${REGION}${CHANNEL}'       ' >> .plot.jobs.txt
+            done
+        done
+    done
+}
+
 book_plot VRVarBin    "Lgt Tau Neg"               MbbOff${SYST}     "STVarBin3 STVarBin LTVarBin MJJVarBin DEtaJJVarBin"
 book_plot VRShatKine  "Lgt Tau Neg"               MbbOff${SYST}     "LeptonPt0Zoom LeptonPt1Zoom BJetPt0 BJetPt1 MET LT ST"
 book_plot VRVBFKine   "Lgt Tau Neg"               MbbOff${SYST}     "MJJZoom DEtaJJ JetPt0 JetPt1 JetEta0 JetEta1"
@@ -50,6 +70,7 @@ book_plot Alpha       "LooseVR"                   ""${SYST}         "BDTSRNeg BD
 book_plot SRKine      "Presel"                    ""                "ST LT Ptbb MJJ DEtaJJ LeptonPt0 LeptonPt1 Mbb"
 book_plot Fit         "LooseVR"                   ""${SYST}         "BDTSR"
 book_plot Fit         "LooseVR"                   ""${SYST}         "CutSR"
+book_plot_alpha
 
 xargs.sh .plotjobs.txt
 

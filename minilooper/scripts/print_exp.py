@@ -95,17 +95,17 @@ Tau_bderr = bderr(Tau_CR_ny , Tau_CR_ne , Tau_CR_d)
 Neg_bderr = bderr(Neg_CR_ny , Neg_CR_ne , Neg_CR_d)
 Lgt_bderr = bderr(Lgt_CR_ny , Lgt_CR_ne , Lgt_CR_d)
 
-El_bdsr  = bdsr(El_alpha  , El_alphaerr  , 0.25*El_alpha  , 0.25*El_alpha , El_bd  , El_bderr )
-Mu_bdsr  = bdsr(Mu_alpha  , Mu_alphaerr  , 0.25*Mu_alpha  , 0.25*Mu_alpha , Mu_bd  , Mu_bderr )
-Tau_bdsr = bdsr(Tau_alpha , Tau_alphaerr , 0.45*Tau_alpha , 0.45*Tau_alpha, Tau_bd , Tau_bderr)
-Neg_bdsr = bdsr(Neg_alpha , Neg_alphaerr , 0.70*Neg_alpha , 0.70*Neg_alpha, Neg_bd , Neg_bderr)
-Lgt_bdsr = bdsr(Lgt_alpha , Lgt_alphaerr , 0.25*Lgt_alpha , 0.25*Lgt_alpha, Lgt_bd , Lgt_bderr)
+El_bdsr  = bdsr(El_alpha  , El_alphaerr  , 0.25*El_alpha  , 0.11*El_alpha , El_bd  , El_bderr )
+Mu_bdsr  = bdsr(Mu_alpha  , Mu_alphaerr  , 0.25*Mu_alpha  , 0.11*Mu_alpha , Mu_bd  , Mu_bderr )
+Tau_bdsr = bdsr(Tau_alpha , Tau_alphaerr , 0.45*Tau_alpha , 0.12*Tau_alpha, Tau_bd , Tau_bderr)
+Neg_bdsr = bdsr(Neg_alpha , Neg_alphaerr , 0.70*Neg_alpha , 0.16*Neg_alpha, Neg_bd , Neg_bderr)
+Lgt_bdsr = bdsr(Lgt_alpha , Lgt_alphaerr , 0.25*Lgt_alpha , 0.11*Lgt_alpha, Lgt_bd , Lgt_bderr)
 
-El_bdsrerr  = bdsrerr(El_alpha  , El_alphaerr  , 0.25*El_alpha  , 0.25*El_alpha , El_bd  , El_bderr )
-Mu_bdsrerr  = bdsrerr(Mu_alpha  , Mu_alphaerr  , 0.25*Mu_alpha  , 0.25*Mu_alpha , Mu_bd  , Mu_bderr )
-Tau_bdsrerr = bdsrerr(Tau_alpha , Tau_alphaerr , 0.45*Tau_alpha , 0.45*Tau_alpha, Tau_bd , Tau_bderr)
-Neg_bdsrerr = bdsrerr(Neg_alpha , Neg_alphaerr , 0.70*Neg_alpha , 0.70*Neg_alpha, Neg_bd , Neg_bderr)
-Lgt_bdsrerr = bdsrerr(Lgt_alpha , Lgt_alphaerr , 0.25*Lgt_alpha , 0.25*Lgt_alpha, Lgt_bd , Lgt_bderr)
+El_bdsrerr  = bdsrerr(El_alpha  , El_alphaerr  , 0.25*El_alpha  , 0.11*El_alpha , El_bd  , El_bderr )
+Mu_bdsrerr  = bdsrerr(Mu_alpha  , Mu_alphaerr  , 0.25*Mu_alpha  , 0.11*Mu_alpha , Mu_bd  , Mu_bderr )
+Tau_bdsrerr = bdsrerr(Tau_alpha , Tau_alphaerr , 0.45*Tau_alpha , 0.12*Tau_alpha, Tau_bd , Tau_bderr)
+Neg_bdsrerr = bdsrerr(Neg_alpha , Neg_alphaerr , 0.70*Neg_alpha , 0.16*Neg_alpha, Neg_bd , Neg_bderr)
+Lgt_bdsrerr = bdsrerr(Lgt_alpha , Lgt_alphaerr , 0.25*Lgt_alpha , 0.11*Lgt_alpha, Lgt_bd , Lgt_bderr)
 
 El_bdsrfracerr  = El_bdsrerr  / El_bdsr   * 100.
 Mu_bdsrfracerr  = Mu_bdsrerr  / Mu_bdsr   * 100.
@@ -138,11 +138,11 @@ result = """
 \\caption{{\\label{{tab:extrapolation}} Extrapolation factors}}
 \\end{{table}}
 """.format(
-        El_SR_y  , El_SR_e  , El_CR_y  , El_CR_e  , El_alpha  , El_alphaerr  , 0.25*100 , 0.25*100 , El_bd  , El_bderr  , El_bdsr  , El_bdsrerr  ,El_bdsrfracerr, 
-        Mu_SR_y  , Mu_SR_e  , Mu_CR_y  , Mu_CR_e  , Mu_alpha  , Mu_alphaerr  , 0.25*100 , 0.25*100 , Mu_bd  , Mu_bderr  , Mu_bdsr  , Mu_bdsrerr  ,Mu_bdsrfracerr, 
-        Tau_SR_y , Tau_SR_e , Tau_CR_y , Tau_CR_e , Tau_alpha , Tau_alphaerr , 0.45*100 , 0.45*100 , Tau_bd , Tau_bderr , Tau_bdsr , Tau_bdsrerr ,Tau_bdsrfracerr, 
-        Neg_SR_y , Neg_SR_e , Neg_CR_y , Neg_CR_e , Neg_alpha , Neg_alphaerr , 0.70*100 , 0.70*100 , Neg_bd , Neg_bderr , Neg_bdsr , Neg_bdsrerr ,Neg_bdsrfracerr, 
-        Lgt_SR_y , Lgt_SR_e , Lgt_CR_y , Lgt_CR_e , Lgt_alpha , Lgt_alphaerr , 0.25*100 , 0.25*100 , Lgt_bd , Lgt_bderr , Lgt_bdsr , Lgt_bdsrerr ,Lgt_bdsrfracerr, 
+        El_SR_y  , El_SR_e  , El_CR_y  , El_CR_e  , El_alpha  , El_alphaerr  , 0.25*100 , 0.11*100 , El_bd  , El_bderr  , El_bdsr  , El_bdsrerr  ,El_bdsrfracerr, 
+        Mu_SR_y  , Mu_SR_e  , Mu_CR_y  , Mu_CR_e  , Mu_alpha  , Mu_alphaerr  , 0.25*100 , 0.11*100 , Mu_bd  , Mu_bderr  , Mu_bdsr  , Mu_bdsrerr  ,Mu_bdsrfracerr, 
+        Tau_SR_y , Tau_SR_e , Tau_CR_y , Tau_CR_e , Tau_alpha , Tau_alphaerr , 0.45*100 , 0.12*100 , Tau_bd , Tau_bderr , Tau_bdsr , Tau_bdsrerr ,Tau_bdsrfracerr, 
+        Neg_SR_y , Neg_SR_e , Neg_CR_y , Neg_CR_e , Neg_alpha , Neg_alphaerr , 0.70*100 , 0.16*100 , Neg_bd , Neg_bderr , Neg_bdsr , Neg_bdsrerr ,Neg_bdsrfracerr, 
+        Lgt_SR_y , Lgt_SR_e , Lgt_CR_y , Lgt_CR_e , Lgt_alpha , Lgt_alphaerr , 0.25*100 , 0.11*100 , Lgt_bd , Lgt_bderr , Lgt_bdsr , Lgt_bdsrerr ,Lgt_bdsrfracerr, 
         )
 
 
