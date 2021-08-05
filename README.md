@@ -1,6 +1,6 @@
 # Running MiniLooper
 
-    git clone --recursive git@github.com:sgnoohc/VBSHWWBabyLooper.git
+    git clone --recursive git@github.com:cmstas/VBSHWWBabyLooper.git
     cd VBSHWWBabyLooper
     source setup.sh
     cd minilooper
@@ -16,7 +16,7 @@ If you wish to create a new baby ntuple and loop over a new baby ntuple
 
 # Producing baby ntuple
 
-    git clone --recursive git@github.com:sgnoohc/VBSHWWBabyLooper.git
+    git clone --recursive git@github.com:cmstas/VBSHWWBabyLooper.git
     cd VBSHWWBabyLooper
     source setup.sh
     make clean
