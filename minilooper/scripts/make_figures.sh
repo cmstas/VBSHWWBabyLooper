@@ -3,7 +3,7 @@
 # $DIR is the path to the directory where this specific script is sitting
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-TAG=v1
+TAG=v3
 YEAR=Run2
 RUNTAG=Nominal
 SKIMTAG=v2.4_SS

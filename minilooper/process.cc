@@ -16,29 +16,39 @@ int main(int argc, char** argv)
     // Set the cutflow object output file
     ana.cutflow.setTFile(ana.output_tfile);
 
-    // Splitting events by channels
+    // Preselection
+    //____________________________________________________________________________________________________________________________________________________________
     ana.cutflow.addCut("Presel", [&]() { return vbs.channel() >= 0; }, [&]() { return vbs.wgt() * vbs.btagsf() * vbs.lepsf() * vbs.xsec_sf() * vbs.genrewgt(); } );
     ana.cutflow.addCutToLastActiveCut("LooseVR", [&]() { return vbs.is_ps(); }, UNITY);
 
-    ana.cutflow.getCut("LooseVR"); ana.cutflow.addCutToLastActiveCut("El" , [&]() { return vbs.is_ps_el(); }, UNITY);
-    ana.cutflow.getCut("LooseVR"); ana.cutflow.addCutToLastActiveCut("Mu" , [&]() { return vbs.is_ps_mu(); }, UNITY);
-    ana.cutflow.getCut("LooseVR"); ana.cutflow.addCutToLastActiveCut("Lgt", [&]() { return vbs.is_ps_lgt(); }, UNITY);
-                                   ana.cutflow.addCutToLastActiveCut("LgtMbbOff", [&]() { return vbs.mbb() > 150; }, UNITY);
-    ana.cutflow.getCut("LooseVR"); ana.cutflow.addCutToLastActiveCut("Tau", [&]() { return vbs.is_ps_tau(); }, UNITY);
-                                   ana.cutflow.addCutToLastActiveCut("TauMbbOff", [&]() { return vbs.mbb() > 150; }, UNITY);
-    ana.cutflow.getCut("LooseVR"); ana.cutflow.addCutToLastActiveCut("Neg", [&]() { return vbs.is_ps_neg(); }, UNITY);
-                                   ana.cutflow.addCutToLastActiveCut("NegMbbOff", [&]() { return vbs.mbb() > 150; }, UNITY);
+    ana.cutflow.getCut("LooseVR");
+    ana.cutflow.addCutToLastActiveCut("El" , [&]() { return vbs.is_ps_el(); }, UNITY);
+
+    ana.cutflow.getCut("LooseVR");
+    ana.cutflow.addCutToLastActiveCut("Mu" , [&]() { return vbs.is_ps_mu(); }, UNITY);
+
+    ana.cutflow.getCut("LooseVR");
+    ana.cutflow.addCutToLastActiveCut("Lgt", [&]() { return vbs.is_ps_lgt(); }, UNITY);
+    ana.cutflow.addCutToLastActiveCut("LgtMbbOff", [&]() { return vbs.mbb() > 150; }, UNITY);
+
+    ana.cutflow.getCut("LooseVR");
+    ana.cutflow.addCutToLastActiveCut("Tau", [&]() { return vbs.is_ps_tau(); }, UNITY);
+    ana.cutflow.addCutToLastActiveCut("TauMbbOff", [&]() { return vbs.mbb() > 150; }, UNITY);
+
+    ana.cutflow.getCut("LooseVR");
+    ana.cutflow.addCutToLastActiveCut("Neg", [&]() { return vbs.is_ps_neg(); }, UNITY);
+    ana.cutflow.addCutToLastActiveCut("NegMbbOff", [&]() { return vbs.mbb() > 150; }, UNITY);
 
     // Function to categorize events into bins
     auto cut_bin = [&]()
     {
-        if (vbs.is_cut_sr_el())  return 0;
-        if (vbs.is_cut_sr_mu())  return 1;
-        if (vbs.is_cut_sr_tau()) return 2;
-        if (vbs.is_cut_sr_neg()) return 3;
-        if (vbs.is_cut_sr_lgt()) return 4;
-        if (vbs.is_cut_cr_el())  return -1;
-        if (vbs.is_cut_cr_mu())  return -2;
+        if (vbs.is_cut_sr_el()  and vbs.pass_blind()) return 0;
+        if (vbs.is_cut_sr_mu()  and vbs.pass_blind()) return 1;
+        if (vbs.is_cut_sr_tau() and vbs.pass_blind()) return 2;
+        if (vbs.is_cut_sr_neg() and vbs.pass_blind()) return 3;
+        if (vbs.is_cut_sr_lgt() and vbs.pass_blind()) return 4;
+        if (vbs.is_cut_cr_el() ) return -1;
+        if (vbs.is_cut_cr_mu() ) return -2;
         if (vbs.is_cut_cr_tau()) return -3;
         if (vbs.is_cut_cr_neg()) return -4;
         return -999;
@@ -47,12 +57,12 @@ int main(int argc, char** argv)
     // Weaker classification
     auto cut_bin_2 = [&]()
     {
-        if (vbs.is_cut_sr2_el())  return 0;
-        if (vbs.is_cut_sr2_mu())  return 1;
-        if (vbs.is_cut_sr2_tau()) return 2;
-        if (vbs.is_cut_sr2_neg()) return 3;
-        if (vbs.is_cut_cr2_el())  return -1;
-        if (vbs.is_cut_cr2_mu())  return -2;
+        if (vbs.is_cut_sr2_el()  and vbs.pass_blind()) return 0;
+        if (vbs.is_cut_sr2_mu()  and vbs.pass_blind()) return 1;
+        if (vbs.is_cut_sr2_tau() and vbs.pass_blind()) return 2;
+        if (vbs.is_cut_sr2_neg() and vbs.pass_blind()) return 3;
+        if (vbs.is_cut_cr2_el() ) return -1;
+        if (vbs.is_cut_cr2_mu() ) return -2;
         if (vbs.is_cut_cr2_tau()) return -3;
         if (vbs.is_cut_cr2_neg()) return -4;
         return -999;
@@ -61,12 +71,12 @@ int main(int argc, char** argv)
     // BDT cut
     auto bdt_bin = [&]()
     {
-        if (vbs.is_bdt_sr_el())  return 0;
-        if (vbs.is_bdt_sr_mu())  return 1;
-        if (vbs.is_bdt_sr_tau()) return 2;
-        if (vbs.is_bdt_sr_neg()) return 3;
-        if (vbs.is_bdt_cr_el())  return -1;
-        if (vbs.is_bdt_cr_mu())  return -2;
+        if (vbs.is_bdt_sr_el()  and vbs.pass_blind_bdt()) return 0;
+        if (vbs.is_bdt_sr_mu()  and vbs.pass_blind_bdt()) return 1;
+        if (vbs.is_bdt_sr_tau() and vbs.pass_blind_bdt()) return 2;
+        if (vbs.is_bdt_sr_neg() and vbs.pass_blind_bdt()) return 3;
+        if (vbs.is_bdt_cr_el() ) return -1;
+        if (vbs.is_bdt_cr_mu() ) return -2;
         if (vbs.is_bdt_cr_tau()) return -3;
         if (vbs.is_bdt_cr_neg()) return -4;
         return -999;
@@ -75,12 +85,12 @@ int main(int argc, char** argv)
     // BDT cut weaker classification
     auto bdt_bin_2 = [&]()
     {
-        if (vbs.is_bdt_sr2_el())  return 0;
-        if (vbs.is_bdt_sr2_mu())  return 1;
-        if (vbs.is_bdt_sr2_tau()) return 2;
-        if (vbs.is_bdt_sr2_neg()) return 3;
-        if (vbs.is_bdt_cr2_el())  return -1;
-        if (vbs.is_bdt_cr2_mu())  return -2;
+        if (vbs.is_bdt_sr2_el()  and vbs.pass_blind_bdt()) return 0;
+        if (vbs.is_bdt_sr2_mu()  and vbs.pass_blind_bdt()) return 1;
+        if (vbs.is_bdt_sr2_tau() and vbs.pass_blind_bdt()) return 2;
+        if (vbs.is_bdt_sr2_neg() and vbs.pass_blind_bdt()) return 3;
+        if (vbs.is_bdt_cr2_el() ) return -1;
+        if (vbs.is_bdt_cr2_mu() ) return -2;
         if (vbs.is_bdt_cr2_tau()) return -3;
         if (vbs.is_bdt_cr2_neg()) return -4;
         return -999;
