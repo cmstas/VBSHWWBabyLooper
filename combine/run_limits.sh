@@ -21,6 +21,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 ANALYSIS=bdt
 BIN=Combined
+BIN=2
 
 ACCURACYOPTION="--rAbsAcc=0.01 --rRelAcc=0.03 "
 # ACCURACYOPTION=""
