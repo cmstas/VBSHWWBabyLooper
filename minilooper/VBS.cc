@@ -28,6 +28,14 @@ void VBS::Init(TTree *tree) {
   if (gen_b0_branch) gen_b0_branch->SetAddress(&gen_b0_);
   gen_b1_branch = tree->GetBranch("gen_b1");
   if (gen_b1_branch) gen_b1_branch->SetAddress(&gen_b1_);
+  gen_lepA_branch = tree->GetBranch("gen_lepA");
+  if (gen_lepA_branch) gen_lepA_branch->SetAddress(&gen_lepA_);
+  gen_nuA_branch = tree->GetBranch("gen_nuA");
+  if (gen_nuA_branch) gen_nuA_branch->SetAddress(&gen_nuA_);
+  gen_lepB_branch = tree->GetBranch("gen_lepB");
+  if (gen_lepB_branch) gen_lepB_branch->SetAddress(&gen_lepB_);
+  gen_nuB_branch = tree->GetBranch("gen_nuB");
+  if (gen_nuB_branch) gen_nuB_branch->SetAddress(&gen_nuB_);
   good_leptons_p4_branch = tree->GetBranch("good_leptons_p4");
   if (good_leptons_p4_branch) good_leptons_p4_branch->SetAddress(&good_leptons_p4_);
   good_taus_p4_branch = tree->GetBranch("good_taus_p4");
@@ -99,12 +107,22 @@ void VBS::Init(TTree *tree) {
   if (isvbswwh_branch) isvbswwh_branch->SetAddress(&isvbswwh_);
   iswwhlvlvbb_branch = tree->GetBranch("iswwhlvlvbb");
   if (iswwhlvlvbb_branch) iswwhlvlvbb_branch->SetAddress(&iswwhlvlvbb_);
+  gen_sign_branch = tree->GetBranch("gen_sign");
+  if (gen_sign_branch) gen_sign_branch->SetAddress(&gen_sign_);
   genchannel_branch = tree->GetBranch("genchannel");
   if (genchannel_branch) genchannel_branch->SetAddress(&genchannel_);
   genrewgt_branch = tree->GetBranch("genrewgt");
   if (genrewgt_branch) genrewgt_branch->SetAddress(&genrewgt_);
+  gen_cosThetaStarA_branch = tree->GetBranch("gen_cosThetaStarA");
+  if (gen_cosThetaStarA_branch) gen_cosThetaStarA_branch->SetAddress(&gen_cosThetaStarA_);
+  gen_cosThetaStarB_branch = tree->GetBranch("gen_cosThetaStarB");
+  if (gen_cosThetaStarB_branch) gen_cosThetaStarB_branch->SetAddress(&gen_cosThetaStarB_);
   lepsf_branch = tree->GetBranch("lepsf");
   if (lepsf_branch) lepsf_branch->SetAddress(&lepsf_);
+  lepsf_up_branch = tree->GetBranch("lepsf_up");
+  if (lepsf_up_branch) lepsf_up_branch->SetAddress(&lepsf_up_);
+  lepsf_dn_branch = tree->GetBranch("lepsf_dn");
+  if (lepsf_dn_branch) lepsf_dn_branch->SetAddress(&lepsf_dn_);
   btagsf_branch = tree->GetBranch("btagsf");
   if (btagsf_branch) btagsf_branch->SetAddress(&btagsf_);
   good_leptons_pdgid_branch = tree->GetBranch("good_leptons_pdgid");
@@ -299,6 +317,102 @@ void VBS::Init(TTree *tree) {
   if (is_signal_branch) is_signal_branch->SetAddress(&is_signal_);
   is_background_branch = tree->GetBranch("is_background");
   if (is_background_branch) is_background_branch->SetAddress(&is_background_);
+  is_ps_el_branch = tree->GetBranch("is_ps_el");
+  if (is_ps_el_branch) is_ps_el_branch->SetAddress(&is_ps_el_);
+  is_ps_mu_branch = tree->GetBranch("is_ps_mu");
+  if (is_ps_mu_branch) is_ps_mu_branch->SetAddress(&is_ps_mu_);
+  is_ps_tau_branch = tree->GetBranch("is_ps_tau");
+  if (is_ps_tau_branch) is_ps_tau_branch->SetAddress(&is_ps_tau_);
+  is_ps_neg_branch = tree->GetBranch("is_ps_neg");
+  if (is_ps_neg_branch) is_ps_neg_branch->SetAddress(&is_ps_neg_);
+  is_ps_lgt_branch = tree->GetBranch("is_ps_lgt");
+  if (is_ps_lgt_branch) is_ps_lgt_branch->SetAddress(&is_ps_lgt_);
+  is_cut_sr_el_branch = tree->GetBranch("is_cut_sr_el");
+  if (is_cut_sr_el_branch) is_cut_sr_el_branch->SetAddress(&is_cut_sr_el_);
+  is_cut_sr_mu_branch = tree->GetBranch("is_cut_sr_mu");
+  if (is_cut_sr_mu_branch) is_cut_sr_mu_branch->SetAddress(&is_cut_sr_mu_);
+  is_cut_sr_tau_branch = tree->GetBranch("is_cut_sr_tau");
+  if (is_cut_sr_tau_branch) is_cut_sr_tau_branch->SetAddress(&is_cut_sr_tau_);
+  is_cut_sr_neg_branch = tree->GetBranch("is_cut_sr_neg");
+  if (is_cut_sr_neg_branch) is_cut_sr_neg_branch->SetAddress(&is_cut_sr_neg_);
+  is_cut_sr_lgt_branch = tree->GetBranch("is_cut_sr_lgt");
+  if (is_cut_sr_lgt_branch) is_cut_sr_lgt_branch->SetAddress(&is_cut_sr_lgt_);
+  is_cut_cr_el_branch = tree->GetBranch("is_cut_cr_el");
+  if (is_cut_cr_el_branch) is_cut_cr_el_branch->SetAddress(&is_cut_cr_el_);
+  is_cut_cr_mu_branch = tree->GetBranch("is_cut_cr_mu");
+  if (is_cut_cr_mu_branch) is_cut_cr_mu_branch->SetAddress(&is_cut_cr_mu_);
+  is_cut_cr_tau_branch = tree->GetBranch("is_cut_cr_tau");
+  if (is_cut_cr_tau_branch) is_cut_cr_tau_branch->SetAddress(&is_cut_cr_tau_);
+  is_cut_cr_neg_branch = tree->GetBranch("is_cut_cr_neg");
+  if (is_cut_cr_neg_branch) is_cut_cr_neg_branch->SetAddress(&is_cut_cr_neg_);
+  is_cut_cr_lgt_branch = tree->GetBranch("is_cut_cr_lgt");
+  if (is_cut_cr_lgt_branch) is_cut_cr_lgt_branch->SetAddress(&is_cut_cr_lgt_);
+  is_cut_sr2_el_branch = tree->GetBranch("is_cut_sr2_el");
+  if (is_cut_sr2_el_branch) is_cut_sr2_el_branch->SetAddress(&is_cut_sr2_el_);
+  is_cut_sr2_mu_branch = tree->GetBranch("is_cut_sr2_mu");
+  if (is_cut_sr2_mu_branch) is_cut_sr2_mu_branch->SetAddress(&is_cut_sr2_mu_);
+  is_cut_sr2_tau_branch = tree->GetBranch("is_cut_sr2_tau");
+  if (is_cut_sr2_tau_branch) is_cut_sr2_tau_branch->SetAddress(&is_cut_sr2_tau_);
+  is_cut_sr2_neg_branch = tree->GetBranch("is_cut_sr2_neg");
+  if (is_cut_sr2_neg_branch) is_cut_sr2_neg_branch->SetAddress(&is_cut_sr2_neg_);
+  is_cut_cr2_el_branch = tree->GetBranch("is_cut_cr2_el");
+  if (is_cut_cr2_el_branch) is_cut_cr2_el_branch->SetAddress(&is_cut_cr2_el_);
+  is_cut_cr2_mu_branch = tree->GetBranch("is_cut_cr2_mu");
+  if (is_cut_cr2_mu_branch) is_cut_cr2_mu_branch->SetAddress(&is_cut_cr2_mu_);
+  is_cut_cr2_tau_branch = tree->GetBranch("is_cut_cr2_tau");
+  if (is_cut_cr2_tau_branch) is_cut_cr2_tau_branch->SetAddress(&is_cut_cr2_tau_);
+  is_cut_cr2_neg_branch = tree->GetBranch("is_cut_cr2_neg");
+  if (is_cut_cr2_neg_branch) is_cut_cr2_neg_branch->SetAddress(&is_cut_cr2_neg_);
+  is_bdt_sr_el_branch = tree->GetBranch("is_bdt_sr_el");
+  if (is_bdt_sr_el_branch) is_bdt_sr_el_branch->SetAddress(&is_bdt_sr_el_);
+  is_bdt_sr_mu_branch = tree->GetBranch("is_bdt_sr_mu");
+  if (is_bdt_sr_mu_branch) is_bdt_sr_mu_branch->SetAddress(&is_bdt_sr_mu_);
+  is_bdt_sr_tau_branch = tree->GetBranch("is_bdt_sr_tau");
+  if (is_bdt_sr_tau_branch) is_bdt_sr_tau_branch->SetAddress(&is_bdt_sr_tau_);
+  is_bdt_sr_neg_branch = tree->GetBranch("is_bdt_sr_neg");
+  if (is_bdt_sr_neg_branch) is_bdt_sr_neg_branch->SetAddress(&is_bdt_sr_neg_);
+  is_bdt_cr_el_branch = tree->GetBranch("is_bdt_cr_el");
+  if (is_bdt_cr_el_branch) is_bdt_cr_el_branch->SetAddress(&is_bdt_cr_el_);
+  is_bdt_cr_mu_branch = tree->GetBranch("is_bdt_cr_mu");
+  if (is_bdt_cr_mu_branch) is_bdt_cr_mu_branch->SetAddress(&is_bdt_cr_mu_);
+  is_bdt_cr_tau_branch = tree->GetBranch("is_bdt_cr_tau");
+  if (is_bdt_cr_tau_branch) is_bdt_cr_tau_branch->SetAddress(&is_bdt_cr_tau_);
+  is_bdt_cr_neg_branch = tree->GetBranch("is_bdt_cr_neg");
+  if (is_bdt_cr_neg_branch) is_bdt_cr_neg_branch->SetAddress(&is_bdt_cr_neg_);
+  is_bdt_sr2_el_branch = tree->GetBranch("is_bdt_sr2_el");
+  if (is_bdt_sr2_el_branch) is_bdt_sr2_el_branch->SetAddress(&is_bdt_sr2_el_);
+  is_bdt_sr2_mu_branch = tree->GetBranch("is_bdt_sr2_mu");
+  if (is_bdt_sr2_mu_branch) is_bdt_sr2_mu_branch->SetAddress(&is_bdt_sr2_mu_);
+  is_bdt_sr2_tau_branch = tree->GetBranch("is_bdt_sr2_tau");
+  if (is_bdt_sr2_tau_branch) is_bdt_sr2_tau_branch->SetAddress(&is_bdt_sr2_tau_);
+  is_bdt_sr2_neg_branch = tree->GetBranch("is_bdt_sr2_neg");
+  if (is_bdt_sr2_neg_branch) is_bdt_sr2_neg_branch->SetAddress(&is_bdt_sr2_neg_);
+  is_bdt_cr2_el_branch = tree->GetBranch("is_bdt_cr2_el");
+  if (is_bdt_cr2_el_branch) is_bdt_cr2_el_branch->SetAddress(&is_bdt_cr2_el_);
+  is_bdt_cr2_mu_branch = tree->GetBranch("is_bdt_cr2_mu");
+  if (is_bdt_cr2_mu_branch) is_bdt_cr2_mu_branch->SetAddress(&is_bdt_cr2_mu_);
+  is_bdt_cr2_tau_branch = tree->GetBranch("is_bdt_cr2_tau");
+  if (is_bdt_cr2_tau_branch) is_bdt_cr2_tau_branch->SetAddress(&is_bdt_cr2_tau_);
+  is_bdt_cr2_neg_branch = tree->GetBranch("is_bdt_cr2_neg");
+  if (is_bdt_cr2_neg_branch) is_bdt_cr2_neg_branch->SetAddress(&is_bdt_cr2_neg_);
+  is_ps_branch = tree->GetBranch("is_ps");
+  if (is_ps_branch) is_ps_branch->SetAddress(&is_ps_);
+  is_cut_sr_branch = tree->GetBranch("is_cut_sr");
+  if (is_cut_sr_branch) is_cut_sr_branch->SetAddress(&is_cut_sr_);
+  is_cut_cr_branch = tree->GetBranch("is_cut_cr");
+  if (is_cut_cr_branch) is_cut_cr_branch->SetAddress(&is_cut_cr_);
+  is_cut_sr2_branch = tree->GetBranch("is_cut_sr2");
+  if (is_cut_sr2_branch) is_cut_sr2_branch->SetAddress(&is_cut_sr2_);
+  is_cut_cr2_branch = tree->GetBranch("is_cut_cr2");
+  if (is_cut_cr2_branch) is_cut_cr2_branch->SetAddress(&is_cut_cr2_);
+  is_bdt_sr_branch = tree->GetBranch("is_bdt_sr");
+  if (is_bdt_sr_branch) is_bdt_sr_branch->SetAddress(&is_bdt_sr_);
+  is_bdt_cr_branch = tree->GetBranch("is_bdt_cr");
+  if (is_bdt_cr_branch) is_bdt_cr_branch->SetAddress(&is_bdt_cr_);
+  is_bdt_sr2_branch = tree->GetBranch("is_bdt_sr2");
+  if (is_bdt_sr2_branch) is_bdt_sr2_branch->SetAddress(&is_bdt_sr2_);
+  is_bdt_cr2_branch = tree->GetBranch("is_bdt_cr2");
+  if (is_bdt_cr2_branch) is_bdt_cr2_branch->SetAddress(&is_bdt_cr2_);
   xsec_sf_branch = tree->GetBranch("xsec_sf");
   if (xsec_sf_branch) xsec_sf_branch->SetAddress(&xsec_sf_);
   bdt_branch = tree->GetBranch("bdt");
@@ -345,9 +459,18 @@ void VBS::GetEntry(unsigned int idx) {
   gen_nu1_isLoaded = false;
   gen_b0_isLoaded = false;
   gen_b1_isLoaded = false;
+  gen_lepA_isLoaded = false;
+  gen_nuA_isLoaded = false;
+  gen_lepB_isLoaded = false;
+  gen_nuB_isLoaded = false;
+  gen_sign_isLoaded = false;
   genchannel_isLoaded = false;
   genrewgt_isLoaded = false;
+  gen_cosThetaStarA_isLoaded = false;
+  gen_cosThetaStarB_isLoaded = false;
   lepsf_isLoaded = false;
+  lepsf_up_isLoaded = false;
+  lepsf_dn_isLoaded = false;
   btagsf_isLoaded = false;
   good_leptons_p4_isLoaded = false;
   good_leptons_pdgid_isLoaded = false;
@@ -459,6 +582,54 @@ void VBS::GetEntry(unsigned int idx) {
   is_test_isLoaded = false;
   is_signal_isLoaded = false;
   is_background_isLoaded = false;
+  is_ps_el_isLoaded = false;
+  is_ps_mu_isLoaded = false;
+  is_ps_tau_isLoaded = false;
+  is_ps_neg_isLoaded = false;
+  is_ps_lgt_isLoaded = false;
+  is_cut_sr_el_isLoaded = false;
+  is_cut_sr_mu_isLoaded = false;
+  is_cut_sr_tau_isLoaded = false;
+  is_cut_sr_neg_isLoaded = false;
+  is_cut_sr_lgt_isLoaded = false;
+  is_cut_cr_el_isLoaded = false;
+  is_cut_cr_mu_isLoaded = false;
+  is_cut_cr_tau_isLoaded = false;
+  is_cut_cr_neg_isLoaded = false;
+  is_cut_cr_lgt_isLoaded = false;
+  is_cut_sr2_el_isLoaded = false;
+  is_cut_sr2_mu_isLoaded = false;
+  is_cut_sr2_tau_isLoaded = false;
+  is_cut_sr2_neg_isLoaded = false;
+  is_cut_cr2_el_isLoaded = false;
+  is_cut_cr2_mu_isLoaded = false;
+  is_cut_cr2_tau_isLoaded = false;
+  is_cut_cr2_neg_isLoaded = false;
+  is_bdt_sr_el_isLoaded = false;
+  is_bdt_sr_mu_isLoaded = false;
+  is_bdt_sr_tau_isLoaded = false;
+  is_bdt_sr_neg_isLoaded = false;
+  is_bdt_cr_el_isLoaded = false;
+  is_bdt_cr_mu_isLoaded = false;
+  is_bdt_cr_tau_isLoaded = false;
+  is_bdt_cr_neg_isLoaded = false;
+  is_bdt_sr2_el_isLoaded = false;
+  is_bdt_sr2_mu_isLoaded = false;
+  is_bdt_sr2_tau_isLoaded = false;
+  is_bdt_sr2_neg_isLoaded = false;
+  is_bdt_cr2_el_isLoaded = false;
+  is_bdt_cr2_mu_isLoaded = false;
+  is_bdt_cr2_tau_isLoaded = false;
+  is_bdt_cr2_neg_isLoaded = false;
+  is_ps_isLoaded = false;
+  is_cut_sr_isLoaded = false;
+  is_cut_cr_isLoaded = false;
+  is_cut_sr2_isLoaded = false;
+  is_cut_cr2_isLoaded = false;
+  is_bdt_sr_isLoaded = false;
+  is_bdt_cr_isLoaded = false;
+  is_bdt_sr2_isLoaded = false;
+  is_bdt_cr2_isLoaded = false;
   xsec_sf_isLoaded = false;
   bdt_isLoaded = false;
   bdt_mbboff_isLoaded = false;
@@ -499,9 +670,18 @@ void VBS::LoadAllBranches() {
   if (gen_nu1_branch != 0) gen_nu1();
   if (gen_b0_branch != 0) gen_b0();
   if (gen_b1_branch != 0) gen_b1();
+  if (gen_lepA_branch != 0) gen_lepA();
+  if (gen_nuA_branch != 0) gen_nuA();
+  if (gen_lepB_branch != 0) gen_lepB();
+  if (gen_nuB_branch != 0) gen_nuB();
+  if (gen_sign_branch != 0) gen_sign();
   if (genchannel_branch != 0) genchannel();
   if (genrewgt_branch != 0) genrewgt();
+  if (gen_cosThetaStarA_branch != 0) gen_cosThetaStarA();
+  if (gen_cosThetaStarB_branch != 0) gen_cosThetaStarB();
   if (lepsf_branch != 0) lepsf();
+  if (lepsf_up_branch != 0) lepsf_up();
+  if (lepsf_dn_branch != 0) lepsf_dn();
   if (btagsf_branch != 0) btagsf();
   if (good_leptons_p4_branch != 0) good_leptons_p4();
   if (good_leptons_pdgid_branch != 0) good_leptons_pdgid();
@@ -613,6 +793,54 @@ void VBS::LoadAllBranches() {
   if (is_test_branch != 0) is_test();
   if (is_signal_branch != 0) is_signal();
   if (is_background_branch != 0) is_background();
+  if (is_ps_el_branch != 0) is_ps_el();
+  if (is_ps_mu_branch != 0) is_ps_mu();
+  if (is_ps_tau_branch != 0) is_ps_tau();
+  if (is_ps_neg_branch != 0) is_ps_neg();
+  if (is_ps_lgt_branch != 0) is_ps_lgt();
+  if (is_cut_sr_el_branch != 0) is_cut_sr_el();
+  if (is_cut_sr_mu_branch != 0) is_cut_sr_mu();
+  if (is_cut_sr_tau_branch != 0) is_cut_sr_tau();
+  if (is_cut_sr_neg_branch != 0) is_cut_sr_neg();
+  if (is_cut_sr_lgt_branch != 0) is_cut_sr_lgt();
+  if (is_cut_cr_el_branch != 0) is_cut_cr_el();
+  if (is_cut_cr_mu_branch != 0) is_cut_cr_mu();
+  if (is_cut_cr_tau_branch != 0) is_cut_cr_tau();
+  if (is_cut_cr_neg_branch != 0) is_cut_cr_neg();
+  if (is_cut_cr_lgt_branch != 0) is_cut_cr_lgt();
+  if (is_cut_sr2_el_branch != 0) is_cut_sr2_el();
+  if (is_cut_sr2_mu_branch != 0) is_cut_sr2_mu();
+  if (is_cut_sr2_tau_branch != 0) is_cut_sr2_tau();
+  if (is_cut_sr2_neg_branch != 0) is_cut_sr2_neg();
+  if (is_cut_cr2_el_branch != 0) is_cut_cr2_el();
+  if (is_cut_cr2_mu_branch != 0) is_cut_cr2_mu();
+  if (is_cut_cr2_tau_branch != 0) is_cut_cr2_tau();
+  if (is_cut_cr2_neg_branch != 0) is_cut_cr2_neg();
+  if (is_bdt_sr_el_branch != 0) is_bdt_sr_el();
+  if (is_bdt_sr_mu_branch != 0) is_bdt_sr_mu();
+  if (is_bdt_sr_tau_branch != 0) is_bdt_sr_tau();
+  if (is_bdt_sr_neg_branch != 0) is_bdt_sr_neg();
+  if (is_bdt_cr_el_branch != 0) is_bdt_cr_el();
+  if (is_bdt_cr_mu_branch != 0) is_bdt_cr_mu();
+  if (is_bdt_cr_tau_branch != 0) is_bdt_cr_tau();
+  if (is_bdt_cr_neg_branch != 0) is_bdt_cr_neg();
+  if (is_bdt_sr2_el_branch != 0) is_bdt_sr2_el();
+  if (is_bdt_sr2_mu_branch != 0) is_bdt_sr2_mu();
+  if (is_bdt_sr2_tau_branch != 0) is_bdt_sr2_tau();
+  if (is_bdt_sr2_neg_branch != 0) is_bdt_sr2_neg();
+  if (is_bdt_cr2_el_branch != 0) is_bdt_cr2_el();
+  if (is_bdt_cr2_mu_branch != 0) is_bdt_cr2_mu();
+  if (is_bdt_cr2_tau_branch != 0) is_bdt_cr2_tau();
+  if (is_bdt_cr2_neg_branch != 0) is_bdt_cr2_neg();
+  if (is_ps_branch != 0) is_ps();
+  if (is_cut_sr_branch != 0) is_cut_sr();
+  if (is_cut_cr_branch != 0) is_cut_cr();
+  if (is_cut_sr2_branch != 0) is_cut_sr2();
+  if (is_cut_cr2_branch != 0) is_cut_cr2();
+  if (is_bdt_sr_branch != 0) is_bdt_sr();
+  if (is_bdt_cr_branch != 0) is_bdt_cr();
+  if (is_bdt_sr2_branch != 0) is_bdt_sr2();
+  if (is_bdt_cr2_branch != 0) is_bdt_cr2();
   if (xsec_sf_branch != 0) xsec_sf();
   if (bdt_branch != 0) bdt();
   if (bdt_mbboff_branch != 0) bdt_mbboff();
@@ -1047,6 +1275,71 @@ const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &VBS::gen_b1() 
   return *gen_b1_;
 }
 
+const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &VBS::gen_lepA() {
+  if (not gen_lepA_isLoaded) {
+    if (gen_lepA_branch != 0) {
+      gen_lepA_branch->GetEntry(index);
+    } else {
+      printf("branch gen_lepA_branch does not exist!\n");
+      exit(1);
+    }
+    gen_lepA_isLoaded = true;
+  }
+  return *gen_lepA_;
+}
+
+const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &VBS::gen_nuA() {
+  if (not gen_nuA_isLoaded) {
+    if (gen_nuA_branch != 0) {
+      gen_nuA_branch->GetEntry(index);
+    } else {
+      printf("branch gen_nuA_branch does not exist!\n");
+      exit(1);
+    }
+    gen_nuA_isLoaded = true;
+  }
+  return *gen_nuA_;
+}
+
+const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &VBS::gen_lepB() {
+  if (not gen_lepB_isLoaded) {
+    if (gen_lepB_branch != 0) {
+      gen_lepB_branch->GetEntry(index);
+    } else {
+      printf("branch gen_lepB_branch does not exist!\n");
+      exit(1);
+    }
+    gen_lepB_isLoaded = true;
+  }
+  return *gen_lepB_;
+}
+
+const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &VBS::gen_nuB() {
+  if (not gen_nuB_isLoaded) {
+    if (gen_nuB_branch != 0) {
+      gen_nuB_branch->GetEntry(index);
+    } else {
+      printf("branch gen_nuB_branch does not exist!\n");
+      exit(1);
+    }
+    gen_nuB_isLoaded = true;
+  }
+  return *gen_nuB_;
+}
+
+const int &VBS::gen_sign() {
+  if (not gen_sign_isLoaded) {
+    if (gen_sign_branch != 0) {
+      gen_sign_branch->GetEntry(index);
+    } else {
+      printf("branch gen_sign_branch does not exist!\n");
+      exit(1);
+    }
+    gen_sign_isLoaded = true;
+  }
+  return gen_sign_;
+}
+
 const int &VBS::genchannel() {
   if (not genchannel_isLoaded) {
     if (genchannel_branch != 0) {
@@ -1073,6 +1366,32 @@ const float &VBS::genrewgt() {
   return genrewgt_;
 }
 
+const float &VBS::gen_cosThetaStarA() {
+  if (not gen_cosThetaStarA_isLoaded) {
+    if (gen_cosThetaStarA_branch != 0) {
+      gen_cosThetaStarA_branch->GetEntry(index);
+    } else {
+      printf("branch gen_cosThetaStarA_branch does not exist!\n");
+      exit(1);
+    }
+    gen_cosThetaStarA_isLoaded = true;
+  }
+  return gen_cosThetaStarA_;
+}
+
+const float &VBS::gen_cosThetaStarB() {
+  if (not gen_cosThetaStarB_isLoaded) {
+    if (gen_cosThetaStarB_branch != 0) {
+      gen_cosThetaStarB_branch->GetEntry(index);
+    } else {
+      printf("branch gen_cosThetaStarB_branch does not exist!\n");
+      exit(1);
+    }
+    gen_cosThetaStarB_isLoaded = true;
+  }
+  return gen_cosThetaStarB_;
+}
+
 const float &VBS::lepsf() {
   if (not lepsf_isLoaded) {
     if (lepsf_branch != 0) {
@@ -1084,6 +1403,32 @@ const float &VBS::lepsf() {
     lepsf_isLoaded = true;
   }
   return lepsf_;
+}
+
+const float &VBS::lepsf_up() {
+  if (not lepsf_up_isLoaded) {
+    if (lepsf_up_branch != 0) {
+      lepsf_up_branch->GetEntry(index);
+    } else {
+      printf("branch lepsf_up_branch does not exist!\n");
+      exit(1);
+    }
+    lepsf_up_isLoaded = true;
+  }
+  return lepsf_up_;
+}
+
+const float &VBS::lepsf_dn() {
+  if (not lepsf_dn_isLoaded) {
+    if (lepsf_dn_branch != 0) {
+      lepsf_dn_branch->GetEntry(index);
+    } else {
+      printf("branch lepsf_dn_branch does not exist!\n");
+      exit(1);
+    }
+    lepsf_dn_isLoaded = true;
+  }
+  return lepsf_dn_;
 }
 
 const float &VBS::btagsf() {
@@ -2529,6 +2874,630 @@ const int &VBS::is_background() {
   return is_background_;
 }
 
+const int &VBS::is_ps_el() {
+  if (not is_ps_el_isLoaded) {
+    if (is_ps_el_branch != 0) {
+      is_ps_el_branch->GetEntry(index);
+    } else {
+      printf("branch is_ps_el_branch does not exist!\n");
+      exit(1);
+    }
+    is_ps_el_isLoaded = true;
+  }
+  return is_ps_el_;
+}
+
+const int &VBS::is_ps_mu() {
+  if (not is_ps_mu_isLoaded) {
+    if (is_ps_mu_branch != 0) {
+      is_ps_mu_branch->GetEntry(index);
+    } else {
+      printf("branch is_ps_mu_branch does not exist!\n");
+      exit(1);
+    }
+    is_ps_mu_isLoaded = true;
+  }
+  return is_ps_mu_;
+}
+
+const int &VBS::is_ps_tau() {
+  if (not is_ps_tau_isLoaded) {
+    if (is_ps_tau_branch != 0) {
+      is_ps_tau_branch->GetEntry(index);
+    } else {
+      printf("branch is_ps_tau_branch does not exist!\n");
+      exit(1);
+    }
+    is_ps_tau_isLoaded = true;
+  }
+  return is_ps_tau_;
+}
+
+const int &VBS::is_ps_neg() {
+  if (not is_ps_neg_isLoaded) {
+    if (is_ps_neg_branch != 0) {
+      is_ps_neg_branch->GetEntry(index);
+    } else {
+      printf("branch is_ps_neg_branch does not exist!\n");
+      exit(1);
+    }
+    is_ps_neg_isLoaded = true;
+  }
+  return is_ps_neg_;
+}
+
+const int &VBS::is_ps_lgt() {
+  if (not is_ps_lgt_isLoaded) {
+    if (is_ps_lgt_branch != 0) {
+      is_ps_lgt_branch->GetEntry(index);
+    } else {
+      printf("branch is_ps_lgt_branch does not exist!\n");
+      exit(1);
+    }
+    is_ps_lgt_isLoaded = true;
+  }
+  return is_ps_lgt_;
+}
+
+const int &VBS::is_cut_sr_el() {
+  if (not is_cut_sr_el_isLoaded) {
+    if (is_cut_sr_el_branch != 0) {
+      is_cut_sr_el_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_sr_el_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_sr_el_isLoaded = true;
+  }
+  return is_cut_sr_el_;
+}
+
+const int &VBS::is_cut_sr_mu() {
+  if (not is_cut_sr_mu_isLoaded) {
+    if (is_cut_sr_mu_branch != 0) {
+      is_cut_sr_mu_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_sr_mu_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_sr_mu_isLoaded = true;
+  }
+  return is_cut_sr_mu_;
+}
+
+const int &VBS::is_cut_sr_tau() {
+  if (not is_cut_sr_tau_isLoaded) {
+    if (is_cut_sr_tau_branch != 0) {
+      is_cut_sr_tau_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_sr_tau_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_sr_tau_isLoaded = true;
+  }
+  return is_cut_sr_tau_;
+}
+
+const int &VBS::is_cut_sr_neg() {
+  if (not is_cut_sr_neg_isLoaded) {
+    if (is_cut_sr_neg_branch != 0) {
+      is_cut_sr_neg_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_sr_neg_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_sr_neg_isLoaded = true;
+  }
+  return is_cut_sr_neg_;
+}
+
+const int &VBS::is_cut_sr_lgt() {
+  if (not is_cut_sr_lgt_isLoaded) {
+    if (is_cut_sr_lgt_branch != 0) {
+      is_cut_sr_lgt_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_sr_lgt_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_sr_lgt_isLoaded = true;
+  }
+  return is_cut_sr_lgt_;
+}
+
+const int &VBS::is_cut_cr_el() {
+  if (not is_cut_cr_el_isLoaded) {
+    if (is_cut_cr_el_branch != 0) {
+      is_cut_cr_el_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_cr_el_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_cr_el_isLoaded = true;
+  }
+  return is_cut_cr_el_;
+}
+
+const int &VBS::is_cut_cr_mu() {
+  if (not is_cut_cr_mu_isLoaded) {
+    if (is_cut_cr_mu_branch != 0) {
+      is_cut_cr_mu_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_cr_mu_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_cr_mu_isLoaded = true;
+  }
+  return is_cut_cr_mu_;
+}
+
+const int &VBS::is_cut_cr_tau() {
+  if (not is_cut_cr_tau_isLoaded) {
+    if (is_cut_cr_tau_branch != 0) {
+      is_cut_cr_tau_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_cr_tau_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_cr_tau_isLoaded = true;
+  }
+  return is_cut_cr_tau_;
+}
+
+const int &VBS::is_cut_cr_neg() {
+  if (not is_cut_cr_neg_isLoaded) {
+    if (is_cut_cr_neg_branch != 0) {
+      is_cut_cr_neg_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_cr_neg_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_cr_neg_isLoaded = true;
+  }
+  return is_cut_cr_neg_;
+}
+
+const int &VBS::is_cut_cr_lgt() {
+  if (not is_cut_cr_lgt_isLoaded) {
+    if (is_cut_cr_lgt_branch != 0) {
+      is_cut_cr_lgt_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_cr_lgt_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_cr_lgt_isLoaded = true;
+  }
+  return is_cut_cr_lgt_;
+}
+
+const int &VBS::is_cut_sr2_el() {
+  if (not is_cut_sr2_el_isLoaded) {
+    if (is_cut_sr2_el_branch != 0) {
+      is_cut_sr2_el_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_sr2_el_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_sr2_el_isLoaded = true;
+  }
+  return is_cut_sr2_el_;
+}
+
+const int &VBS::is_cut_sr2_mu() {
+  if (not is_cut_sr2_mu_isLoaded) {
+    if (is_cut_sr2_mu_branch != 0) {
+      is_cut_sr2_mu_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_sr2_mu_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_sr2_mu_isLoaded = true;
+  }
+  return is_cut_sr2_mu_;
+}
+
+const int &VBS::is_cut_sr2_tau() {
+  if (not is_cut_sr2_tau_isLoaded) {
+    if (is_cut_sr2_tau_branch != 0) {
+      is_cut_sr2_tau_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_sr2_tau_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_sr2_tau_isLoaded = true;
+  }
+  return is_cut_sr2_tau_;
+}
+
+const int &VBS::is_cut_sr2_neg() {
+  if (not is_cut_sr2_neg_isLoaded) {
+    if (is_cut_sr2_neg_branch != 0) {
+      is_cut_sr2_neg_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_sr2_neg_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_sr2_neg_isLoaded = true;
+  }
+  return is_cut_sr2_neg_;
+}
+
+const int &VBS::is_cut_cr2_el() {
+  if (not is_cut_cr2_el_isLoaded) {
+    if (is_cut_cr2_el_branch != 0) {
+      is_cut_cr2_el_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_cr2_el_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_cr2_el_isLoaded = true;
+  }
+  return is_cut_cr2_el_;
+}
+
+const int &VBS::is_cut_cr2_mu() {
+  if (not is_cut_cr2_mu_isLoaded) {
+    if (is_cut_cr2_mu_branch != 0) {
+      is_cut_cr2_mu_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_cr2_mu_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_cr2_mu_isLoaded = true;
+  }
+  return is_cut_cr2_mu_;
+}
+
+const int &VBS::is_cut_cr2_tau() {
+  if (not is_cut_cr2_tau_isLoaded) {
+    if (is_cut_cr2_tau_branch != 0) {
+      is_cut_cr2_tau_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_cr2_tau_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_cr2_tau_isLoaded = true;
+  }
+  return is_cut_cr2_tau_;
+}
+
+const int &VBS::is_cut_cr2_neg() {
+  if (not is_cut_cr2_neg_isLoaded) {
+    if (is_cut_cr2_neg_branch != 0) {
+      is_cut_cr2_neg_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_cr2_neg_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_cr2_neg_isLoaded = true;
+  }
+  return is_cut_cr2_neg_;
+}
+
+const int &VBS::is_bdt_sr_el() {
+  if (not is_bdt_sr_el_isLoaded) {
+    if (is_bdt_sr_el_branch != 0) {
+      is_bdt_sr_el_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_sr_el_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_sr_el_isLoaded = true;
+  }
+  return is_bdt_sr_el_;
+}
+
+const int &VBS::is_bdt_sr_mu() {
+  if (not is_bdt_sr_mu_isLoaded) {
+    if (is_bdt_sr_mu_branch != 0) {
+      is_bdt_sr_mu_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_sr_mu_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_sr_mu_isLoaded = true;
+  }
+  return is_bdt_sr_mu_;
+}
+
+const int &VBS::is_bdt_sr_tau() {
+  if (not is_bdt_sr_tau_isLoaded) {
+    if (is_bdt_sr_tau_branch != 0) {
+      is_bdt_sr_tau_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_sr_tau_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_sr_tau_isLoaded = true;
+  }
+  return is_bdt_sr_tau_;
+}
+
+const int &VBS::is_bdt_sr_neg() {
+  if (not is_bdt_sr_neg_isLoaded) {
+    if (is_bdt_sr_neg_branch != 0) {
+      is_bdt_sr_neg_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_sr_neg_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_sr_neg_isLoaded = true;
+  }
+  return is_bdt_sr_neg_;
+}
+
+const int &VBS::is_bdt_cr_el() {
+  if (not is_bdt_cr_el_isLoaded) {
+    if (is_bdt_cr_el_branch != 0) {
+      is_bdt_cr_el_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_cr_el_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_cr_el_isLoaded = true;
+  }
+  return is_bdt_cr_el_;
+}
+
+const int &VBS::is_bdt_cr_mu() {
+  if (not is_bdt_cr_mu_isLoaded) {
+    if (is_bdt_cr_mu_branch != 0) {
+      is_bdt_cr_mu_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_cr_mu_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_cr_mu_isLoaded = true;
+  }
+  return is_bdt_cr_mu_;
+}
+
+const int &VBS::is_bdt_cr_tau() {
+  if (not is_bdt_cr_tau_isLoaded) {
+    if (is_bdt_cr_tau_branch != 0) {
+      is_bdt_cr_tau_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_cr_tau_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_cr_tau_isLoaded = true;
+  }
+  return is_bdt_cr_tau_;
+}
+
+const int &VBS::is_bdt_cr_neg() {
+  if (not is_bdt_cr_neg_isLoaded) {
+    if (is_bdt_cr_neg_branch != 0) {
+      is_bdt_cr_neg_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_cr_neg_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_cr_neg_isLoaded = true;
+  }
+  return is_bdt_cr_neg_;
+}
+
+const int &VBS::is_bdt_sr2_el() {
+  if (not is_bdt_sr2_el_isLoaded) {
+    if (is_bdt_sr2_el_branch != 0) {
+      is_bdt_sr2_el_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_sr2_el_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_sr2_el_isLoaded = true;
+  }
+  return is_bdt_sr2_el_;
+}
+
+const int &VBS::is_bdt_sr2_mu() {
+  if (not is_bdt_sr2_mu_isLoaded) {
+    if (is_bdt_sr2_mu_branch != 0) {
+      is_bdt_sr2_mu_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_sr2_mu_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_sr2_mu_isLoaded = true;
+  }
+  return is_bdt_sr2_mu_;
+}
+
+const int &VBS::is_bdt_sr2_tau() {
+  if (not is_bdt_sr2_tau_isLoaded) {
+    if (is_bdt_sr2_tau_branch != 0) {
+      is_bdt_sr2_tau_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_sr2_tau_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_sr2_tau_isLoaded = true;
+  }
+  return is_bdt_sr2_tau_;
+}
+
+const int &VBS::is_bdt_sr2_neg() {
+  if (not is_bdt_sr2_neg_isLoaded) {
+    if (is_bdt_sr2_neg_branch != 0) {
+      is_bdt_sr2_neg_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_sr2_neg_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_sr2_neg_isLoaded = true;
+  }
+  return is_bdt_sr2_neg_;
+}
+
+const int &VBS::is_bdt_cr2_el() {
+  if (not is_bdt_cr2_el_isLoaded) {
+    if (is_bdt_cr2_el_branch != 0) {
+      is_bdt_cr2_el_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_cr2_el_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_cr2_el_isLoaded = true;
+  }
+  return is_bdt_cr2_el_;
+}
+
+const int &VBS::is_bdt_cr2_mu() {
+  if (not is_bdt_cr2_mu_isLoaded) {
+    if (is_bdt_cr2_mu_branch != 0) {
+      is_bdt_cr2_mu_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_cr2_mu_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_cr2_mu_isLoaded = true;
+  }
+  return is_bdt_cr2_mu_;
+}
+
+const int &VBS::is_bdt_cr2_tau() {
+  if (not is_bdt_cr2_tau_isLoaded) {
+    if (is_bdt_cr2_tau_branch != 0) {
+      is_bdt_cr2_tau_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_cr2_tau_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_cr2_tau_isLoaded = true;
+  }
+  return is_bdt_cr2_tau_;
+}
+
+const int &VBS::is_bdt_cr2_neg() {
+  if (not is_bdt_cr2_neg_isLoaded) {
+    if (is_bdt_cr2_neg_branch != 0) {
+      is_bdt_cr2_neg_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_cr2_neg_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_cr2_neg_isLoaded = true;
+  }
+  return is_bdt_cr2_neg_;
+}
+
+const int &VBS::is_ps() {
+  if (not is_ps_isLoaded) {
+    if (is_ps_branch != 0) {
+      is_ps_branch->GetEntry(index);
+    } else {
+      printf("branch is_ps_branch does not exist!\n");
+      exit(1);
+    }
+    is_ps_isLoaded = true;
+  }
+  return is_ps_;
+}
+
+const int &VBS::is_cut_sr() {
+  if (not is_cut_sr_isLoaded) {
+    if (is_cut_sr_branch != 0) {
+      is_cut_sr_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_sr_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_sr_isLoaded = true;
+  }
+  return is_cut_sr_;
+}
+
+const int &VBS::is_cut_cr() {
+  if (not is_cut_cr_isLoaded) {
+    if (is_cut_cr_branch != 0) {
+      is_cut_cr_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_cr_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_cr_isLoaded = true;
+  }
+  return is_cut_cr_;
+}
+
+const int &VBS::is_cut_sr2() {
+  if (not is_cut_sr2_isLoaded) {
+    if (is_cut_sr2_branch != 0) {
+      is_cut_sr2_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_sr2_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_sr2_isLoaded = true;
+  }
+  return is_cut_sr2_;
+}
+
+const int &VBS::is_cut_cr2() {
+  if (not is_cut_cr2_isLoaded) {
+    if (is_cut_cr2_branch != 0) {
+      is_cut_cr2_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_cr2_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_cr2_isLoaded = true;
+  }
+  return is_cut_cr2_;
+}
+
+const int &VBS::is_bdt_sr() {
+  if (not is_bdt_sr_isLoaded) {
+    if (is_bdt_sr_branch != 0) {
+      is_bdt_sr_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_sr_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_sr_isLoaded = true;
+  }
+  return is_bdt_sr_;
+}
+
+const int &VBS::is_bdt_cr() {
+  if (not is_bdt_cr_isLoaded) {
+    if (is_bdt_cr_branch != 0) {
+      is_bdt_cr_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_cr_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_cr_isLoaded = true;
+  }
+  return is_bdt_cr_;
+}
+
+const int &VBS::is_bdt_sr2() {
+  if (not is_bdt_sr2_isLoaded) {
+    if (is_bdt_sr2_branch != 0) {
+      is_bdt_sr2_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_sr2_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_sr2_isLoaded = true;
+  }
+  return is_bdt_sr2_;
+}
+
+const int &VBS::is_bdt_cr2() {
+  if (not is_bdt_cr2_isLoaded) {
+    if (is_bdt_cr2_branch != 0) {
+      is_bdt_cr2_branch->GetEntry(index);
+    } else {
+      printf("branch is_bdt_cr2_branch does not exist!\n");
+      exit(1);
+    }
+    is_bdt_cr2_isLoaded = true;
+  }
+  return is_bdt_cr2_;
+}
+
 const float &VBS::xsec_sf() {
   if (not xsec_sf_isLoaded) {
     if (xsec_sf_branch != 0) {
@@ -2624,9 +3593,18 @@ const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_nu0() { re
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_nu1() { return vbs.gen_nu1(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_b0() { return vbs.gen_b0(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_b1() { return vbs.gen_b1(); }
+const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_lepA() { return vbs.gen_lepA(); }
+const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_nuA() { return vbs.gen_nuA(); }
+const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_lepB() { return vbs.gen_lepB(); }
+const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &gen_nuB() { return vbs.gen_nuB(); }
+const int &gen_sign() { return vbs.gen_sign(); }
 const int &genchannel() { return vbs.genchannel(); }
 const float &genrewgt() { return vbs.genrewgt(); }
+const float &gen_cosThetaStarA() { return vbs.gen_cosThetaStarA(); }
+const float &gen_cosThetaStarB() { return vbs.gen_cosThetaStarB(); }
 const float &lepsf() { return vbs.lepsf(); }
+const float &lepsf_up() { return vbs.lepsf_up(); }
+const float &lepsf_dn() { return vbs.lepsf_dn(); }
 const float &btagsf() { return vbs.btagsf(); }
 const vector<ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > > &good_leptons_p4() { return vbs.good_leptons_p4(); }
 const vector<int> &good_leptons_pdgid() { return vbs.good_leptons_pdgid(); }
@@ -2738,6 +3716,54 @@ const int &is_train() { return vbs.is_train(); }
 const int &is_test() { return vbs.is_test(); }
 const int &is_signal() { return vbs.is_signal(); }
 const int &is_background() { return vbs.is_background(); }
+const int &is_ps_el() { return vbs.is_ps_el(); }
+const int &is_ps_mu() { return vbs.is_ps_mu(); }
+const int &is_ps_tau() { return vbs.is_ps_tau(); }
+const int &is_ps_neg() { return vbs.is_ps_neg(); }
+const int &is_ps_lgt() { return vbs.is_ps_lgt(); }
+const int &is_cut_sr_el() { return vbs.is_cut_sr_el(); }
+const int &is_cut_sr_mu() { return vbs.is_cut_sr_mu(); }
+const int &is_cut_sr_tau() { return vbs.is_cut_sr_tau(); }
+const int &is_cut_sr_neg() { return vbs.is_cut_sr_neg(); }
+const int &is_cut_sr_lgt() { return vbs.is_cut_sr_lgt(); }
+const int &is_cut_cr_el() { return vbs.is_cut_cr_el(); }
+const int &is_cut_cr_mu() { return vbs.is_cut_cr_mu(); }
+const int &is_cut_cr_tau() { return vbs.is_cut_cr_tau(); }
+const int &is_cut_cr_neg() { return vbs.is_cut_cr_neg(); }
+const int &is_cut_cr_lgt() { return vbs.is_cut_cr_lgt(); }
+const int &is_cut_sr2_el() { return vbs.is_cut_sr2_el(); }
+const int &is_cut_sr2_mu() { return vbs.is_cut_sr2_mu(); }
+const int &is_cut_sr2_tau() { return vbs.is_cut_sr2_tau(); }
+const int &is_cut_sr2_neg() { return vbs.is_cut_sr2_neg(); }
+const int &is_cut_cr2_el() { return vbs.is_cut_cr2_el(); }
+const int &is_cut_cr2_mu() { return vbs.is_cut_cr2_mu(); }
+const int &is_cut_cr2_tau() { return vbs.is_cut_cr2_tau(); }
+const int &is_cut_cr2_neg() { return vbs.is_cut_cr2_neg(); }
+const int &is_bdt_sr_el() { return vbs.is_bdt_sr_el(); }
+const int &is_bdt_sr_mu() { return vbs.is_bdt_sr_mu(); }
+const int &is_bdt_sr_tau() { return vbs.is_bdt_sr_tau(); }
+const int &is_bdt_sr_neg() { return vbs.is_bdt_sr_neg(); }
+const int &is_bdt_cr_el() { return vbs.is_bdt_cr_el(); }
+const int &is_bdt_cr_mu() { return vbs.is_bdt_cr_mu(); }
+const int &is_bdt_cr_tau() { return vbs.is_bdt_cr_tau(); }
+const int &is_bdt_cr_neg() { return vbs.is_bdt_cr_neg(); }
+const int &is_bdt_sr2_el() { return vbs.is_bdt_sr2_el(); }
+const int &is_bdt_sr2_mu() { return vbs.is_bdt_sr2_mu(); }
+const int &is_bdt_sr2_tau() { return vbs.is_bdt_sr2_tau(); }
+const int &is_bdt_sr2_neg() { return vbs.is_bdt_sr2_neg(); }
+const int &is_bdt_cr2_el() { return vbs.is_bdt_cr2_el(); }
+const int &is_bdt_cr2_mu() { return vbs.is_bdt_cr2_mu(); }
+const int &is_bdt_cr2_tau() { return vbs.is_bdt_cr2_tau(); }
+const int &is_bdt_cr2_neg() { return vbs.is_bdt_cr2_neg(); }
+const int &is_ps() { return vbs.is_ps(); }
+const int &is_cut_sr() { return vbs.is_cut_sr(); }
+const int &is_cut_cr() { return vbs.is_cut_cr(); }
+const int &is_cut_sr2() { return vbs.is_cut_sr2(); }
+const int &is_cut_cr2() { return vbs.is_cut_cr2(); }
+const int &is_bdt_sr() { return vbs.is_bdt_sr(); }
+const int &is_bdt_cr() { return vbs.is_bdt_cr(); }
+const int &is_bdt_sr2() { return vbs.is_bdt_sr2(); }
+const int &is_bdt_cr2() { return vbs.is_bdt_cr2(); }
 const float &xsec_sf() { return vbs.xsec_sf(); }
 const float &bdt() { return vbs.bdt(); }
 const float &bdt_mbboff() { return vbs.bdt_mbboff(); }

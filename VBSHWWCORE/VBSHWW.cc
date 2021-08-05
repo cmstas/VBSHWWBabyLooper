@@ -238,212 +238,274 @@ VBSHWW::VBSHWW(int argc, char** argv) :
 //
 //=============================
 
+    //=====================================================================================
+    //            Branch Type                    Branch Name                    WriteToTree
+    //=====================================================================================
     // Create event level branches
-    tx.createBranch<int>("run");
-    tx.createBranch<int>("lumi");
-    tx.createBranch<unsigned long long>("evt");
-    tx.createBranch<float>("wgt");
-    tx.createBranch<vector<float>>("scalewgts");
-    tx.createBranch<vector<float>>("pswgts");
+    tx.createBranch  < int                 >   ( "run"                           , true  );
+    tx.createBranch  < int                 >   ( "lumi"                          , true  );
+    tx.createBranch  < unsigned long long  >   ( "evt"                           , true  );
+    tx.createBranch  < float               >   ( "wgt"                           , true  );
+    tx.createBranch  < vector<float>       >   ( "scalewgts"                     , true  );
+    tx.createBranch  < vector<float>       >   ( "pswgts"                        , true  );
 
     // Create trigger branches
-    tx.createBranch<int>("trig_ee");
-    tx.createBranch<int>("trig_em");
-    tx.createBranch<int>("trig_mm");
-    tx.createBranch<int>("trig_se");
-    tx.createBranch<int>("trig_sm");
-    tx.createBranch<int>("pass_duplicate_ee_em_mm");
-    tx.createBranch<int>("pass_duplicate_mm_em_ee");
-    tx.createBranch<int>("is_pd_ee");
-    tx.createBranch<int>("is_pd_em");
-    tx.createBranch<int>("is_pd_mm");
-    tx.createBranch<int>("is_pd_se");
-    tx.createBranch<int>("is_pd_sm");
+    tx.createBranch  < int                 >   ( "trig_ee"                       , false );
+    tx.createBranch  < int                 >   ( "trig_em"                       , false );
+    tx.createBranch  < int                 >   ( "trig_mm"                       , false );
+    tx.createBranch  < int                 >   ( "trig_se"                       , false );
+    tx.createBranch  < int                 >   ( "trig_sm"                       , false );
+    tx.createBranch  < int                 >   ( "pass_duplicate_ee_em_mm"       , false );
+    tx.createBranch  < int                 >   ( "pass_duplicate_mm_em_ee"       , false );
+    tx.createBranch  < int                 >   ( "is_pd_ee"                      , false );
+    tx.createBranch  < int                 >   ( "is_pd_em"                      , false );
+    tx.createBranch  < int                 >   ( "is_pd_mm"                      , false );
+    tx.createBranch  < int                 >   ( "is_pd_se"                      , false );
+    tx.createBranch  < int                 >   ( "is_pd_sm"                      , false );
 
     // Create met branches
-    tx.createBranch<LV>("met_p4");
+    tx.createBranch  < LV                  >   ( "met_p4"                        , true  );
 
     // Create gen particle branches
-    tx.createBranch<int>("isvbswwh");
-    tx.createBranch<int>("iswwhlvlvbb");
-    tx.createBranch<LV>("gen_jet0");
-    tx.createBranch<LV>("gen_jet1");
-    tx.createBranch<LV>("gen_w0");
-    tx.createBranch<LV>("gen_w1");
-    tx.createBranch<LV>("gen_h");
-    tx.createBranch<LV>("gen_lep0");
-    tx.createBranch<LV>("gen_lep1");
-    tx.createBranch<LV>("gen_lep2");
-    tx.createBranch<LV>("gen_nu0");
-    tx.createBranch<LV>("gen_nu1");
-    tx.createBranch<LV>("gen_b0");
-    tx.createBranch<LV>("gen_b1");
-    tx.createBranch<LV>("gen_lepA");
-    tx.createBranch<LV>("gen_nuA");
-    tx.createBranch<LV>("gen_lepB");
-    tx.createBranch<LV>("gen_nuB");
-    tx.createBranch<int>("gen_sign");
-    tx.createBranch<int>("genchannel");
-    tx.createBranch<float>("genrewgt");
-    tx.createBranch<float>("gen_cosThetaStarA");
-    tx.createBranch<float>("gen_cosThetaStarB");
+    tx.createBranch  < int                 >   ( "isvbswwh"                      , true  );
+    tx.createBranch  < int                 >   ( "iswwhlvlvbb"                   , true  );
+    tx.createBranch  < LV                  >   ( "gen_jet0"                      , true  );
+    tx.createBranch  < LV                  >   ( "gen_jet1"                      , true  );
+    tx.createBranch  < LV                  >   ( "gen_w0"                        , true  );
+    tx.createBranch  < LV                  >   ( "gen_w1"                        , true  );
+    tx.createBranch  < LV                  >   ( "gen_h"                         , true  );
+    tx.createBranch  < LV                  >   ( "gen_lep0"                      , true  );
+    tx.createBranch  < LV                  >   ( "gen_lep1"                      , true  );
+    tx.createBranch  < LV                  >   ( "gen_lep2"                      , true  );
+    tx.createBranch  < LV                  >   ( "gen_nu0"                       , true  );
+    tx.createBranch  < LV                  >   ( "gen_nu1"                       , true  );
+    tx.createBranch  < LV                  >   ( "gen_b0"                        , true  );
+    tx.createBranch  < LV                  >   ( "gen_b1"                        , true  );
+    tx.createBranch  < LV                  >   ( "gen_lepA"                      , true  );
+    tx.createBranch  < LV                  >   ( "gen_nuA"                       , true  );
+    tx.createBranch  < LV                  >   ( "gen_lepB"                      , true  );
+    tx.createBranch  < LV                  >   ( "gen_nuB"                       , true  );
+    tx.createBranch  < int                 >   ( "gen_sign"                      , true  );
+    tx.createBranch  < int                 >   ( "genchannel"                    , true  );
+    tx.createBranch  < float               >   ( "genrewgt"                      , true  );
+    tx.createBranch  < float               >   ( "gen_cosThetaStarA"             , true  );
+    tx.createBranch  < float               >   ( "gen_cosThetaStarB"             , true  );
 
     // Create scale factor branches
-    tx.createBranch<float>("lepsf");
-    tx.createBranch<float>("btagsf");
+    tx.createBranch  < float               >   ( "lepsf"                         , true  );
+    tx.createBranch  < float               >   ( "lepsf_up"                      , true  );
+    tx.createBranch  < float               >   ( "lepsf_dn"                      , true  );
+    tx.createBranch  < float               >   ( "btagsf"                        , true  );
 
     // Create lepton branches
-    tx.createBranch<vector<LV>>("good_leptons_p4");
-    tx.createBranch<vector<int>>("good_leptons_pdgid");
-    tx.createBranch<vector<int>>("good_leptons_tight");
-    tx.createBranch<vector<int>>("good_leptons_jetIdx");
-    tx.createBranch<vector<int>>("good_leptons_genPartFlav");
-    tx.createBranch<vector<float>>("good_leptons_pfRelIso03_all");
-    tx.createBranch<vector<float>>("good_leptons_pfRelIso03_chg");
-    tx.createBranch<vector<float>>("good_leptons_jetPtRelv2");
-    tx.createBranch<vector<float>>("good_leptons_jetRelIso");
-    tx.createBranch<vector<float>>("good_leptons_miniPFRelIso_all");
+    tx.createBranch  < vector<LV>          >   ( "good_leptons_p4"               , false );
+    tx.createBranch  < vector<int>         >   ( "good_leptons_pdgid"            , false );
+    tx.createBranch  < vector<int>         >   ( "good_leptons_tight"            , false );
+    tx.createBranch  < vector<int>         >   ( "good_leptons_jetIdx"           , false );
+    tx.createBranch  < vector<int>         >   ( "good_leptons_genPartFlav"      , false );
+    tx.createBranch  < vector<float>       >   ( "good_leptons_pfRelIso03_all"   , false );
+    tx.createBranch  < vector<float>       >   ( "good_leptons_pfRelIso03_chg"   , false );
+    tx.createBranch  < vector<float>       >   ( "good_leptons_jetPtRelv2"       , false );
+    tx.createBranch  < vector<float>       >   ( "good_leptons_jetRelIso"        , false );
+    tx.createBranch  < vector<float>       >   ( "good_leptons_miniPFRelIso_all" , false );
 
     // Create tau branches
-    tx.createBranch<vector<LV>>("good_taus_p4");
-    tx.createBranch<vector<int>>("good_taus_pdgid");
-    tx.createBranch<vector<int>>("good_taus_tight");
-    tx.createBranch<vector<int>>("good_taus_jetIdx");
-    tx.createBranch<vector<int>>("good_taus_genPartFlav");
+    tx.createBranch  < vector<LV>          >   ( "good_taus_p4"                  , false );
+    tx.createBranch  < vector<int>         >   ( "good_taus_pdgid"               , false );
+    tx.createBranch  < vector<int>         >   ( "good_taus_tight"               , false );
+    tx.createBranch  < vector<int>         >   ( "good_taus_jetIdx"              , false );
+    tx.createBranch  < vector<int>         >   ( "good_taus_genPartFlav"         , false );
 
-    // Create jet branches (NOTE: > 20 GeV jets are saved)
-    tx.createBranch<vector<LV>>("good_jets_p4");
-    tx.createBranch<vector<int>>("good_jets_loose_btagged");
-    tx.createBranch<vector<int>>("good_jets_medium_btagged");
-    tx.createBranch<vector<int>>("good_jets_tight_btagged");
-    tx.createBranch<vector<float>>("good_jets_btag_score");
-    tx.createBranch<vector<float>>("good_jets_qg_disc");
-    tx.createBranch<vector<int>>("good_jets_flavor");
+    // Create jet branches
+    tx.createBranch  < vector<LV>          >   ( "good_jets_p4"                  , false );
+    tx.createBranch  < vector<int>         >   ( "good_jets_loose_btagged"       , false );
+    tx.createBranch  < vector<int>         >   ( "good_jets_medium_btagged"      , false );
+    tx.createBranch  < vector<int>         >   ( "good_jets_tight_btagged"       , false );
+    tx.createBranch  < vector<float>       >   ( "good_jets_btag_score"          , false );
+    tx.createBranch  < vector<float>       >   ( "good_jets_qg_disc"             , false );
+    tx.createBranch  < vector<int>         >   ( "good_jets_flavor"              , false );
 
-    // Create fatjet branches (NOTE: > 20 GeV jets are saved)
-    tx.createBranch<vector<LV>>("good_fatjets_p4");
-    tx.createBranch<vector<int>>("good_fatjets_loose");
-    tx.createBranch<vector<int>>("good_fatjets_medium");
-    tx.createBranch<vector<int>>("good_fatjets_tight");
-    tx.createBranch<vector<float>>("good_fatjets_msd");
+    // Create fatjet branches
+    tx.createBranch  < vector<LV>          >   ( "good_fatjets_p4"               , false );
+    tx.createBranch  < vector<int>         >   ( "good_fatjets_loose"            , false );
+    tx.createBranch  < vector<int>         >   ( "good_fatjets_medium"           , false );
+    tx.createBranch  < vector<int>         >   ( "good_fatjets_tight"            , false );
+    tx.createBranch  < vector<float>       >   ( "good_fatjets_msd"              , false );
 
     // Create higgs tagged jet branches
-    tx.createBranch<vector<LV>>("higgs_jets_p4");
-    tx.createBranch<vector<int>>("higgs_jets_loose_btagged");
-    tx.createBranch<vector<int>>("higgs_jets_medium_btagged");
-    tx.createBranch<vector<int>>("higgs_jets_tight_btagged");
-    tx.createBranch<vector<float>>("higgs_jets_btag_score");
-    tx.createBranch<vector<int>>("higgs_jets_flavor");
-    tx.createBranch<vector<int>>("higgs_jets_good_jets_idx");
-    tx.createBranch<vector<int>>("higgs_jets_genmatched");
-    tx.createBranch<vector<float>>("higgs_jets_genmatched_dr");
+    tx.createBranch  < vector<LV>          >   ( "higgs_jets_p4"                 , false );
+    tx.createBranch  < vector<int>         >   ( "higgs_jets_loose_btagged"      , false );
+    tx.createBranch  < vector<int>         >   ( "higgs_jets_medium_btagged"     , false );
+    tx.createBranch  < vector<int>         >   ( "higgs_jets_tight_btagged"      , false );
+    tx.createBranch  < vector<float>       >   ( "higgs_jets_btag_score"         , false );
+    tx.createBranch  < vector<int>         >   ( "higgs_jets_flavor"             , false );
+    tx.createBranch  < vector<int>         >   ( "higgs_jets_good_jets_idx"      , false );
+    tx.createBranch  < vector<int>         >   ( "higgs_jets_genmatched"         , false );
+    tx.createBranch  < vector<float>       >   ( "higgs_jets_genmatched_dr"      , false );
 
     // Create vbs tagged jet branches
-    tx.createBranch<vector<LV>>("vbs_jets_p4");
-    tx.createBranch<vector<int>>("vbs_jets_good_jets_idx");
+    tx.createBranch  < vector<LV>          >   ( "vbs_jets_p4"                   , false );
+    tx.createBranch  < vector<int>         >   ( "vbs_jets_good_jets_idx"        , false );
 
     // Create number of b-tagged jets branches
-    tx.createBranch<int>("nbloose");
-    tx.createBranch<int>("nbmedium");
-    tx.createBranch<int>("nbtight");
+    tx.createBranch  < int                 >   ( "nbloose"                       , true  );
+    tx.createBranch  < int                 >   ( "nbmedium"                      , true  );
+    tx.createBranch  < int                 >   ( "nbtight"                       , true  );
 
     // Create jet multiplicity branches
-    tx.createBranch<int>("ncenjet30");
-    tx.createBranch<int>("njet30");
+    tx.createBranch  < int                 >   ( "ncenjet30"                     , true  );
+    tx.createBranch  < int                 >   ( "njet30"                        , true  );
 
     // Create 6 fermion vectors
-    //==================================================
     // lep0 is lead if same flavor
     // lep1 is sublead if same flavor
     // lep0 is electron if emu
     // lep1 is muon if emu
     // lep0 is e or mu if lep-tau
     // lep1 is tau if lep-tau
-    tx.createBranch<LV>("lep0");
-    tx.createBranch<LV>("lep1");
-    tx.createBranch<int>("lep0ID");
-    tx.createBranch<int>("lep1ID");
-    tx.createBranch<int>("lep0GenPartFlav"); // Truth MC information
-    tx.createBranch<int>("lep1GenPartFlav"); // Truth MC information
-    //==================================================
-    tx.createBranch<LV>("leadlep"); // leading in pt
-    tx.createBranch<LV>("subllep"); // subleading in pt
-    tx.createBranch<int>("leadlepID"); // PDGID of the lepton leading in pt
-    tx.createBranch<int>("subllepID"); // PDGID of the lepton subleading in pt
-    tx.createBranch<int>("leadlepGenPartFlav"); // Truth MC information
-    tx.createBranch<int>("subllepGenPartFlav"); // Truth MC information
-    tx.createBranch<LV>("b0"); // leading in pt
-    tx.createBranch<LV>("b1"); // subleading in pt
-    tx.createBranch<LV>("j0"); // leading in pt
-    tx.createBranch<LV>("j1"); // subleading in pt
-    tx.createBranch<int>("channel"); // 0=tight-ee 1=tight-em 2=tight-mm 3=loose-ee 4=loose-em 5=loose-mm 6=tight-etau 7=tight-mutau
-    tx.createBranch<int>("channeldetail"); // 2 * channel + (Mbb in ? 1 : 0)
-    tx.createBranch<int>("lepchannel"); // 0=ee 1=em 2=mm 3=etau 4=mtau
-    tx.createBranch<int>("btagchannel"); // 0=tight 1=loose
-    tx.createBranch<int>("bmatchcateg"); // Truth MC information
-    tx.createBranch<int>("mee_noZ"); // if dielectron is ee channel, is the ee within Z mass?
-    tx.createBranch<int>("mbbIn"); // mbb < 150? or not?
-    tx.createBranch<int>("pass_blind"); // for data, to blind the mbb < 150 region
+    tx.createBranch  < LV                  >   ( "lep0"                          , true  );
+    tx.createBranch  < LV                  >   ( "lep1"                          , true  );
+    tx.createBranch  < int                 >   ( "lep0ID"                        , true  );
+    tx.createBranch  < int                 >   ( "lep1ID"                        , true  );
+    tx.createBranch  < int                 >   ( "lep0GenPartFlav"               , true  ); // Truth MC information
+    tx.createBranch  < int                 >   ( "lep1GenPartFlav"               , true  ); // Truth MC information
+    tx.createBranch  < LV                  >   ( "leadlep"                       , true  ); // leading in pt
+    tx.createBranch  < LV                  >   ( "subllep"                       , true  ); // subleading in pt
+    tx.createBranch  < int                 >   ( "leadlepID"                     , true  ); // PDGID of the lepton leading in pt
+    tx.createBranch  < int                 >   ( "subllepID"                     , true  ); // PDGID of the lepton subleading in pt
+    tx.createBranch  < int                 >   ( "leadlepGenPartFlav"            , true  ); // Truth MC information
+    tx.createBranch  < int                 >   ( "subllepGenPartFlav"            , true  ); // Truth MC information
+    tx.createBranch  < LV                  >   ( "b0"                            , true  ); // leading in pt
+    tx.createBranch  < LV                  >   ( "b1"                            , true  ); // subleading in pt
+    tx.createBranch  < LV                  >   ( "j0"                            , true  ); // leading in pt
+    tx.createBranch  < LV                  >   ( "j1"                            , true  ); // subleading in pt
+    tx.createBranch  < int                 >   ( "channel"                       , true  ); // 0=tight-ee 1=tight-em 2=tight-mm 3=loose-ee 4=loose-em 5=loose-mm 6=tight-etau 7=tight-mutau
+    tx.createBranch  < int                 >   ( "channeldetail"                 , true  ); // 2 * channel +                                                                                ( Mbb in ? 1 : 0)
+    tx.createBranch  < int                 >   ( "lepchannel"                    , true  ); // 0=ee 1=em 2=mm 3=etau 4=mtau
+    tx.createBranch  < int                 >   ( "btagchannel"                   , true  ); // 0=tight 1=loose
+    tx.createBranch  < int                 >   ( "bmatchcateg"                   , true  ); // Truth MC information
+    tx.createBranch  < int                 >   ( "mee_noZ"                       , true  ); // if dielectron is ee channel, is the ee within Z mass?
+    tx.createBranch  < int                 >   ( "mbbIn"                         , true  ); // mbb < 150? or not?
+    tx.createBranch  < int                 >   ( "pass_blind"                    , true  ); // for data, to blind the mbb < 150 region
+    tx.createBranch  < int                 >   ( "pass_blind_bdt"                , true  ); // for data, to blind the bdt > 0.545 region or mbb < 150
 
-    tx.createBranch<int>("categ"); // categ 0=e+l+ 1=m+l+ 2=t+l+
-    tx.createBranch<float>("categ_F"); // categ 0=e+l+ 1=m+l+ 2=t+l+ (float version)
+    tx.createBranch  < int                 >   ( "categ"                         , true  ); // categ 0=e+l+ 1=m+l+ 2=t+l+
+    tx.createBranch  < float               >   ( "categ_F"                       , true  ); // categ 0=e+l+ 1=m+l+ 2=t+l+                                                                   ( float version)
 
     // Create keyvariables worth computing
-    tx.createBranch<float>("mbb");
-    tx.createBranch<float>("dphibb");
-    tx.createBranch<float>("detabb");
-    tx.createBranch<float>("drbb");
-    tx.createBranch<float>("ptbb");
+    tx.createBranch  < float               >   ( "mbb"                           , true  );
+    tx.createBranch  < float               >   ( "dphibb"                        , true  );
+    tx.createBranch  < float               >   ( "detabb"                        , true  );
+    tx.createBranch  < float               >   ( "drbb"                          , true  );
+    tx.createBranch  < float               >   ( "ptbb"                          , true  );
 
-    tx.createBranch<float>("b0pt");
-    tx.createBranch<float>("b1pt");
-    tx.createBranch<int>("b0tight"); // is the leading in pt b-quark tight tagged
-    tx.createBranch<int>("b1tight"); // is the leading in pt b-quark tight tagged
+    tx.createBranch  < float               >   ( "b0pt"                          , true  );
+    tx.createBranch  < float               >   ( "b1pt"                          , true  );
+    tx.createBranch  < int                 >   ( "b0tight"                       , true  ); // is the leading in pt b-quark tight tagged
+    tx.createBranch  < int                 >   ( "b1tight"                       , true  ); // is the leading in pt b-quark tight tagged
 
-    tx.createBranch<float>("mjj");
-    tx.createBranch<float>("dphijj");
-    tx.createBranch<float>("detajj");
-    tx.createBranch<float>("drjj");
-    tx.createBranch<float>("ptjj");
+    tx.createBranch  < float               >   ( "mjj"                           , true  );
+    tx.createBranch  < float               >   ( "dphijj"                        , true  );
+    tx.createBranch  < float               >   ( "detajj"                        , true  );
+    tx.createBranch  < float               >   ( "drjj"                          , true  );
+    tx.createBranch  < float               >   ( "ptjj"                          , true  );
 
-    tx.createBranch<float>("j0pt");
-    tx.createBranch<float>("j1pt");
-    tx.createBranch<float>("j_lead_p"); // jet momentum of the jet leading in momentum
-    tx.createBranch<float>("j_sublead_p"); // jet momentum of the jet subleading in momentum
+    tx.createBranch  < float               >   ( "j0pt"                          , true  );
+    tx.createBranch  < float               >   ( "j1pt"                          , true  );
+    tx.createBranch  < float               >   ( "j_lead_p"                      , true  ); // jet momentum of the jet leading in momentum
+    tx.createBranch  < float               >   ( "j_sublead_p"                   , true  ); // jet momentum of the jet subleading in momentum
 
-    tx.createBranch<float>("mll");
-    tx.createBranch<float>("dphill");
-    tx.createBranch<float>("detall");
-    tx.createBranch<float>("drll");
-    tx.createBranch<float>("ptll");
+    tx.createBranch  < float               >   ( "mll"                           , true  );
+    tx.createBranch  < float               >   ( "dphill"                        , true  );
+    tx.createBranch  < float               >   ( "detall"                        , true  );
+    tx.createBranch  < float               >   ( "drll"                          , true  );
+    tx.createBranch  < float               >   ( "ptll"                          , true  );
 
-    tx.createBranch<float>("l0pt");
-    tx.createBranch<float>("l1pt");
+    tx.createBranch  < float               >   ( "l0pt"                          , true  );
+    tx.createBranch  < float               >   ( "l1pt"                          , true  );
 
-    tx.createBranch<float>("met");
+    tx.createBranch  < float               >   ( "met"                           , true  );
 
-    tx.createBranch<float>("lt");
-    tx.createBranch<float>("st");
-    tx.createBranch<float>("mvvh");
-    tx.createBranch<float>("mtvvh");
-    tx.createBranch<float>("ptvvh");
+    tx.createBranch  < float               >   ( "lt"                            , true  );
+    tx.createBranch  < float               >   ( "st"                            , true  );
+    tx.createBranch  < float               >   ( "mvvh"                          , true  );
+    tx.createBranch  < float               >   ( "mtvvh"                         , true  );
+    tx.createBranch  < float               >   ( "ptvvh"                         , true  );
 
-    tx.createBranch<float>("v0pt");
-    tx.createBranch<float>("v1pt");
+    tx.createBranch  < float               >   ( "v0pt"                          , true  );
+    tx.createBranch  < float               >   ( "v1pt"                          , true  );
 
-    tx.createBranch<float>("w0mass");
-    tx.createBranch<float>("w1mass");
+    tx.createBranch  < float               >   ( "w0mass"                        , true  );
+    tx.createBranch  < float               >   ( "w1mass"                        , true  );
 
-    tx.createBranch<int>("is_ttbar_madgraph");
-    tx.createBranch<int>("is_ttbar_powheg");
-    tx.createBranch<int>("is_train");
-    tx.createBranch<int>("is_test");
-    tx.createBranch<int>("is_signal");
-    tx.createBranch<int>("is_background");
+    tx.createBranch  < int                 >   ( "is_ttbar_madgraph"             , true  );
+    tx.createBranch  < int                 >   ( "is_ttbar_powheg"               , true  );
+    tx.createBranch  < int                 >   ( "is_train"                      , true  );
+    tx.createBranch  < int                 >   ( "is_test"                       , true  );
+    tx.createBranch  < int                 >   ( "is_signal"                     , true  );
+    tx.createBranch  < int                 >   ( "is_background"                 , true  );
 
-    tx.createBranch<float>("xsec_sf");
-    tx.createBranch<float>("bdt");
-    tx.createBranch<float>("bdt_mbboff");
+    tx.createBranch  < int                 >   ( "is_ps_el"                      , true  );
+    tx.createBranch  < int                 >   ( "is_ps_mu"                      , true  );
+    tx.createBranch  < int                 >   ( "is_ps_tau"                     , true  );
+    tx.createBranch  < int                 >   ( "is_ps_neg"                     , true  );
+    tx.createBranch  < int                 >   ( "is_ps_lgt"                     , true  );
+
+    tx.createBranch  < int                 >   ( "is_cut_sr_el"                  , true  );
+    tx.createBranch  < int                 >   ( "is_cut_sr_mu"                  , true  );
+    tx.createBranch  < int                 >   ( "is_cut_sr_tau"                 , true  );
+    tx.createBranch  < int                 >   ( "is_cut_sr_neg"                 , true  );
+    tx.createBranch  < int                 >   ( "is_cut_sr_lgt"                 , true  );
+
+    tx.createBranch  < int                 >   ( "is_cut_cr_el"                  , true  );
+    tx.createBranch  < int                 >   ( "is_cut_cr_mu"                  , true  );
+    tx.createBranch  < int                 >   ( "is_cut_cr_tau"                 , true  );
+    tx.createBranch  < int                 >   ( "is_cut_cr_neg"                 , true  );
+    tx.createBranch  < int                 >   ( "is_cut_cr_lgt"                 , true  );
+
+    tx.createBranch  < int                 >   ( "is_cut_sr2_el"                 , true  );
+    tx.createBranch  < int                 >   ( "is_cut_sr2_mu"                 , true  );
+    tx.createBranch  < int                 >   ( "is_cut_sr2_tau"                , true  );
+    tx.createBranch  < int                 >   ( "is_cut_sr2_neg"                , true  );
+
+    tx.createBranch  < int                 >   ( "is_cut_cr2_el"                 , true  );
+    tx.createBranch  < int                 >   ( "is_cut_cr2_mu"                 , true  );
+    tx.createBranch  < int                 >   ( "is_cut_cr2_tau"                , true  );
+    tx.createBranch  < int                 >   ( "is_cut_cr2_neg"                , true  );
+
+    tx.createBranch  < int                 >   ( "is_bdt_sr_el"                  , true  );
+    tx.createBranch  < int                 >   ( "is_bdt_sr_mu"                  , true  );
+    tx.createBranch  < int                 >   ( "is_bdt_sr_tau"                 , true  );
+    tx.createBranch  < int                 >   ( "is_bdt_sr_neg"                 , true  );
+
+    tx.createBranch  < int                 >   ( "is_bdt_cr_el"                  , true  );
+    tx.createBranch  < int                 >   ( "is_bdt_cr_mu"                  , true  );
+    tx.createBranch  < int                 >   ( "is_bdt_cr_tau"                 , true  );
+    tx.createBranch  < int                 >   ( "is_bdt_cr_neg"                 , true  );
+
+    tx.createBranch  < int                 >   ( "is_bdt_sr2_el"                 , true  );
+    tx.createBranch  < int                 >   ( "is_bdt_sr2_mu"                 , true  );
+    tx.createBranch  < int                 >   ( "is_bdt_sr2_tau"                , true  );
+    tx.createBranch  < int                 >   ( "is_bdt_sr2_neg"                , true  );
+
+    tx.createBranch  < int                 >   ( "is_bdt_cr2_el"                 , true  );
+    tx.createBranch  < int                 >   ( "is_bdt_cr2_mu"                 , true  );
+    tx.createBranch  < int                 >   ( "is_bdt_cr2_tau"                , true  );
+    tx.createBranch  < int                 >   ( "is_bdt_cr2_neg"                , true  );
+
+    tx.createBranch  < int                 >   ( "is_ps"                         , true  );
+    tx.createBranch  < int                 >   ( "is_cut_sr"                     , true  );
+    tx.createBranch  < int                 >   ( "is_cut_cr"                     , true  );
+    tx.createBranch  < int                 >   ( "is_cut_sr2"                    , true  );
+    tx.createBranch  < int                 >   ( "is_cut_cr2"                    , true  );
+    tx.createBranch  < int                 >   ( "is_bdt_sr"                     , true  );
+    tx.createBranch  < int                 >   ( "is_bdt_cr"                     , true  );
+    tx.createBranch  < int                 >   ( "is_bdt_sr2"                    , true  );
+    tx.createBranch  < int                 >   ( "is_bdt_cr2"                    , true  );
+
+    tx.createBranch  < float               >   ( "xsec_sf"                       , true  );
+    tx.createBranch  < float               >   ( "bdt"                           , true  );
+    tx.createBranch  < float               >   ( "bdt_mbboff"                    , true  );
 
 //=============================
 //
@@ -451,11 +513,30 @@ VBSHWW::VBSHWW(int argc, char** argv) :
 //
 //=============================
 
+    //********************************
+    // - Signal Gen Level Particles
+    //********************************
+    // Description: If signal sample, select the gen level particles
+    cutflow.addCut("SelectSignalGenPart",
+        [&]()
+        {
+            if (looper.getCurrentFileName().Contains("VBSWmpWmpHToLNuLNu_C2V"))
+            {
+                processGenParticles_VBSWWH();
+            }
+            if (looper.getCurrentFileName().Contains("VBSWmpWmpH_C2V"))
+            {
+                processGenParticles_VBSWWH_UL();
+            }
+            return true;
+        }, UNITY);
+
+
     //*****************************
     // Weighting each MC event
     //*****************************
     // Description: Weighting each event to 137/fb
-    cutflow.addCut("InitialFilter",
+    cutflow.addCutToLastActiveCut("InitialFilter",
         [&]()
         {
 
@@ -706,14 +787,6 @@ void VBSHWW::initSRCutflow()
     cutflow.addCutToLastActiveCut("SelectGenPart",
         [&]()
         {
-            if (looper.getCurrentFileName().Contains("VBSWmpWmpHToLNuLNu_C2V"))
-            {
-                processGenParticles_VBSWWH();
-            }
-            if (looper.getCurrentFileName().Contains("VBSWmpWmpH_C2V"))
-            {
-                processGenParticles_VBSWWH_UL();
-            }
             if (looper.getCurrentFileName().Contains("TTWJetsToLNu")
                 or looper.getCurrentFileName().Contains("TTJets_")
                 or looper.getCurrentFileName().Contains("TTZTo")
@@ -825,8 +898,11 @@ void VBSHWW::initSRCutflow()
     cutflow.addCutToLastActiveCut("SelectLeptons",
         [&]()
         {
-
+            // Lepton sf
             float lepsf = 1.;
+            // Percent errors (up/down) on sf
+            float err_up = 0.;
+            float err_dn = 0.;
 
             // Select muons
             for (unsigned int imu = 0; imu < nt.Muon_pt().size(); ++imu)
@@ -843,8 +919,14 @@ void VBSHWW::initSRCutflow()
                     tx.pushbackToBranch<float>("good_leptons_jetPtRelv2", nt.Muon_jetPtRelv2()[imu]);
                     tx.pushbackToBranch<float>("good_leptons_jetRelIso", nt.Muon_jetRelIso()[imu]);
                     tx.pushbackToBranch<float>("good_leptons_miniPFRelIso_all", nt.Muon_miniPFRelIso_all()[imu]);
-                    lepsf *= ttH::getMuonLooseSF(nt.Muon_p4()[imu].eta(), nt.Muon_p4()[imu].pt(), nt.year());     // reco -> loose ttH ID
-                    lepsf *= ttH::getMuonTightSF(nt.Muon_p4()[imu].eta(), nt.Muon_p4()[imu].pt(), nt.year());     // loose ttH ID -> tight ttH ID
+                    float mu_eta = nt.Muon_eta()[imu];
+                    float mu_pt = nt.Muon_pt()[imu];
+                    // medium POG ID -> loose ttH ID -> tight ttH ID
+                    // NOTE: POG ID SF are folded into the ttH
+                    lepsf *= ttH::getMuonLooseSF(mu_eta, mu_pt, nt.year());
+                    lepsf *= ttH::getMuonTightSF(mu_eta, mu_pt, nt.year());
+                    err_up += std::pow(ttH::getMuonTTHSFErr(mu_eta, mu_pt, nt.year(), true), 2);
+                    err_dn += std::pow(ttH::getMuonTTHSFErr(mu_eta, mu_pt, nt.year(), false), 2);
                 }
             }
 
@@ -863,13 +945,31 @@ void VBSHWW::initSRCutflow()
                     tx.pushbackToBranch<float>("good_leptons_jetPtRelv2", nt.Electron_jetPtRelv2()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_jetRelIso", nt.Electron_jetRelIso()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_miniPFRelIso_all", nt.Electron_miniPFRelIso_all()[iel]);
+                    float el_eta = nt.Electron_eta()[iel];
+                    float el_pt = nt.Electron_pt()[iel];
                     if (isUL)
-                        lepsf *= ttH::getElecRecoEffSFUL(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());  // event -> reco
+                    {
+                        // event -> reco
+                        lepsf *= ttH::getElecRecoEffSFUL(el_eta, el_pt, nt.year());
+                        err_up += std::pow(ttH::getElecRecoEffSFULErr(el_eta, el_pt, nt.year()), 2);
+                        err_dn += std::pow(ttH::getElecRecoEffSFULErr(el_eta, el_pt, nt.year()), 2);
+                    }
                     else
-                        lepsf *= ttH::getElecRecoEffSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());  // event -> reco
-                    lepsf *= ttH::getElecPOGLooseSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year()); // reco -> loose POG ID
-                    lepsf *= ttH::getElecLooseSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());    // loose POG ID -> loose ttH ID
-                    lepsf *= ttH::getElecTightSF(nt.Electron_p4()[iel].eta(), nt.Electron_p4()[iel].pt(), nt.year());    // loose ttH ID -> tight ttH ID
+                    {
+                        // event -> reco
+                        lepsf *= ttH::getElecRecoEffSF(el_eta, el_pt, nt.year());
+                        err_up += std::pow(ttH::getElecRecoEffSFErr(el_eta, el_pt, nt.year()), 2);
+                        err_dn += std::pow(ttH::getElecRecoEffSFErr(el_eta, el_pt, nt.year()), 2);
+                    }
+                    // reco -> loose POG ID
+                    lepsf *= ttH::getElecPOGLooseSF(el_eta, el_pt, nt.year());
+                    err_up += std::pow(ttH::getElecPOGLooseSFErr(el_eta, el_pt, nt.year()), 2);
+                    err_dn += std::pow(ttH::getElecPOGLooseSFErr(el_eta, el_pt, nt.year()), 2);
+                    // loose POG ID -> loose ttH ID -> tight ttH ID
+                    lepsf *= ttH::getElecLooseSF(el_eta, el_pt, nt.year());
+                    lepsf *= ttH::getElecTightSF(el_eta, el_pt, nt.year());
+                    err_up += std::pow(ttH::getElecTTHSFErr(el_eta, el_pt, nt.year(), true), 2);
+                    err_dn += std::pow(ttH::getElecTTHSFErr(el_eta, el_pt, nt.year(), false), 2);
                 }
             }
 
@@ -925,9 +1025,24 @@ void VBSHWW::initSRCutflow()
                     tx.pushbackToBranch<int>("good_taus_pdgid", (-nt.Tau_charge()[itau]) * 15);
                     tx.pushbackToBranch<int>("good_taus_tight", ttH::tauID(itau, ttH::IDtight, nt.year()));
                     tx.pushbackToBranch<int>("good_taus_jetIdx", nt.Tau_jetIdx()[itau]);
-                    lepsf *= (nt.isData() ? 1. : tauSF_vsJet->getSFvsPT(nt.Tau_pt()[itau], nt.Tau_genPartFlav()[itau]));
-                    lepsf *= (nt.isData() ? 1. : tauSF_vsMu->getSFvsEta(fabs(nt.Tau_eta()[itau]), nt.Tau_genPartFlav()[itau]));
-                    lepsf *= (nt.isData() ? 1. : tauSF_vsEl->getSFvsEta(fabs(nt.Tau_eta()[itau]), nt.Tau_genPartFlav()[itau]));
+                    float tau_pt = nt.Tau_pt()[itau];
+                    float tau_eta = nt.Tau_eta()[itau];
+                    float tau_gflav = nt.isData() ? -999 : nt.Tau_genPartFlav()[itau];
+                    // DeepTau vs. jets sf
+                    float vs_jet_sf = nt.isData() ? 1 : tauSF_vsJet->getSFvsPT(tau_pt, tau_gflav);
+                    lepsf *= vs_jet_sf;
+                    err_up += nt.isData() ? 0 : std::pow((tauSF_vsJet->getSFvsPT(tau_pt, tau_gflav, "Up") - vs_jet_sf)/vs_jet_sf, 2);
+                    err_dn += nt.isData() ? 0 : std::pow((vs_jet_sf - tauSF_vsJet->getSFvsPT(tau_pt, tau_gflav, "Down"))/vs_jet_sf, 2);
+                    // DeepTau vs. muons sf
+                    float vs_mu_sf = nt.isData() ? 1 : tauSF_vsMu->getSFvsEta(fabs(tau_eta), tau_gflav);
+                    lepsf *= vs_mu_sf;
+                    err_up += nt.isData() ? 0 : std::pow((tauSF_vsMu->getSFvsEta(fabs(tau_eta), tau_gflav, "Up") - vs_mu_sf)/vs_mu_sf, 2);
+                    err_dn += nt.isData() ? 0 : std::pow((vs_mu_sf - tauSF_vsMu->getSFvsEta(fabs(tau_eta), tau_gflav, "Down"))/vs_mu_sf, 2);
+                    // DeepTau vs. electrons sf
+                    float vs_el_sf = nt.isData() ? 1 : tauSF_vsEl->getSFvsEta(fabs(tau_eta), tau_gflav);
+                    lepsf *= vs_el_sf;
+                    err_up += nt.isData() ? 0 : std::pow((tauSF_vsEl->getSFvsEta(fabs(tau_eta), tau_gflav, "Up") - vs_el_sf)/vs_el_sf, 2);
+                    err_dn += nt.isData() ? 0 : std::pow((vs_el_sf - tauSF_vsEl->getSFvsEta(fabs(tau_eta), tau_gflav, "Down"))/vs_el_sf, 2);
                 }
             }
 
@@ -947,8 +1062,14 @@ void VBSHWW::initSRCutflow()
                 {}
                 );
 
+            // Finish the error computation
+            err_up = std::sqrt(err_up);
+            err_dn = std::sqrt(err_dn);
+
             // Set the lepton scale factor weight
             tx.setBranch<float>("lepsf", nt.isData() ? 1. : lepsf);
+            tx.setBranch<float>("lepsf_up", nt.isData() ? 1. : lepsf + err_up * lepsf);
+            tx.setBranch<float>("lepsf_dn", nt.isData() ? 1. : lepsf - err_dn * lepsf);
 
             return true;
 
@@ -1532,7 +1653,7 @@ void VBSHWW::initSRCutflow()
             // Sort the pairs
             std::sort(btag_jets.begin(), btag_jets.end(),
                     [](const std::pair<float, int> & a, const std::pair<float, int> & b) -> bool
-                    { 
+                    {
                         return a.first > b.first;
                     });
 
@@ -1741,21 +1862,6 @@ void VBSHWW::initSRCutflow()
             float detajj = fabs(RooUtil::Calc::DeltaEta(tx.getBranch<LV>("j0"), tx.getBranch<LV>("j1")));
             float leppt0 = tx.getBranch<LV>("leadlep").pt();
             float leppt1 = tx.getBranch<LV>("subllep").pt();
-            int mbbIn = tx.getBranch<int>("mbbIn");
-            int isSS = (tx.getBranch<int>("lep0ID") * tx.getBranch<int>("lep1ID")) > 0;
-            tx.setBranch<int>("pass_blind", nt.isData() and isSS ? not (mbbIn): 1);
-            // if (mjj > 400 and detajj > 3 and nt.event() == 30)
-            // {
-            //     std::cout <<  " nt.run(): " << nt.run() <<  std::endl;
-            //     std::cout <<  " nt.luminosityBlock(): " << nt.luminosityBlock() <<  std::endl;
-            //     std::cout <<  " nt.event(): " << nt.event() <<  std::endl;
-            //     std::cout <<  " looper.getCurrentEventIndex(): " << looper.getCurrentEventIndex() <<  std::endl;
-            //     std::cout <<  " tx.getBranch<LV>('b0').pt(): " << tx.getBranch<LV>("b0").pt() <<  " tx.getBranch<LV>('b1').pt(): " << tx.getBranch<LV>("b1").pt() <<  std::endl;
-            //     std::cout <<  " tx.getBranch<LV>('j0').pt(): " << tx.getBranch<LV>("j0").pt() <<  " tx.getBranch<LV>('j1').pt(): " << tx.getBranch<LV>("j1").pt() <<  std::endl;
-            //     std::cout <<  " tx.getBranch<LV>('j0').eta(): " << tx.getBranch<LV>("j0").eta() <<  " tx.getBranch<LV>('j1').eta(): " << tx.getBranch<LV>("j1").eta() <<  std::endl;
-            //     std::cout <<  " tx.getBranch<vector<LV>>('good_jets_p4').size(): " << tx.getBranch<vector<LV>>("good_jets_p4").size() <<  std::endl;
-            //     std::cout <<  " mjj: " << mjj <<  " detajj: " << detajj <<  std::endl;
-            // }
             return true;
 
         },
@@ -1764,37 +1870,36 @@ void VBSHWW::initSRCutflow()
     cutflow.addCutToLastActiveCut("AK4CategChannels",
         [&]()
         {
-            const int& pass_blind = tx.getBranch<int>("pass_blind");
             const int& btagchannel = tx.getBranch<int>("btagchannel");
             const int& lepchannel = tx.getBranch<int>("lepchannel");
             const int& mbbIn = tx.getBranch<int>("mbbIn");
             int channel = -1;
-            if (pass_blind and btagchannel == 0 and lepchannel <= 2 and     mbbIn) channel = 0;
-            if (pass_blind and btagchannel == 0 and lepchannel <= 2 and not mbbIn) channel = 1;
-            if (pass_blind and btagchannel == 1 and lepchannel <= 2 and     mbbIn) channel = 2;
-            if (pass_blind and btagchannel == 1 and lepchannel <= 2 and not mbbIn) channel = 3;
-            if (pass_blind and btagchannel == 0 and lepchannel == 3 and     mbbIn) channel = 4;
-            if (pass_blind and btagchannel == 0 and lepchannel == 3 and not mbbIn) channel = 5;
-            if (pass_blind and btagchannel == 0 and lepchannel == 4 and     mbbIn) channel = 6;
-            if (pass_blind and btagchannel == 0 and lepchannel == 4 and not mbbIn) channel = 7;
+            if (btagchannel == 0 and lepchannel <= 2 and     mbbIn) channel = 0;
+            if (btagchannel == 0 and lepchannel <= 2 and not mbbIn) channel = 1;
+            if (btagchannel == 1 and lepchannel <= 2 and     mbbIn) channel = 2;
+            if (btagchannel == 1 and lepchannel <= 2 and not mbbIn) channel = 3;
+            if (btagchannel == 0 and lepchannel == 3 and     mbbIn) channel = 4;
+            if (btagchannel == 0 and lepchannel == 3 and not mbbIn) channel = 5;
+            if (btagchannel == 0 and lepchannel == 4 and     mbbIn) channel = 6;
+            if (btagchannel == 0 and lepchannel == 4 and not mbbIn) channel = 7;
             tx.setBranch<int>("channel", channel);
             int channeldetail = -1;
-            if (pass_blind and btagchannel == 0 and lepchannel == 0 and     mbbIn) channeldetail = 0;
-            if (pass_blind and btagchannel == 0 and lepchannel == 0 and not mbbIn) channeldetail = 1;
-            if (pass_blind and btagchannel == 0 and lepchannel == 1 and     mbbIn) channeldetail = 2;
-            if (pass_blind and btagchannel == 0 and lepchannel == 1 and not mbbIn) channeldetail = 3;
-            if (pass_blind and btagchannel == 0 and lepchannel == 2 and     mbbIn) channeldetail = 4;
-            if (pass_blind and btagchannel == 0 and lepchannel == 2 and not mbbIn) channeldetail = 5;
-            if (pass_blind and btagchannel == 1 and lepchannel == 0 and     mbbIn) channeldetail = 6;
-            if (pass_blind and btagchannel == 1 and lepchannel == 0 and not mbbIn) channeldetail = 7;
-            if (pass_blind and btagchannel == 1 and lepchannel == 1 and     mbbIn) channeldetail = 8;
-            if (pass_blind and btagchannel == 1 and lepchannel == 1 and not mbbIn) channeldetail = 9;
-            if (pass_blind and btagchannel == 1 and lepchannel == 2 and     mbbIn) channeldetail = 10;
-            if (pass_blind and btagchannel == 1 and lepchannel == 2 and not mbbIn) channeldetail = 11;
-            if (pass_blind and btagchannel == 0 and lepchannel == 3 and     mbbIn) channeldetail = 12;
-            if (pass_blind and btagchannel == 0 and lepchannel == 3 and not mbbIn) channeldetail = 13;
-            if (pass_blind and btagchannel == 0 and lepchannel == 4 and     mbbIn) channeldetail = 14;
-            if (pass_blind and btagchannel == 0 and lepchannel == 4 and not mbbIn) channeldetail = 15;
+            if (btagchannel == 0 and lepchannel == 0 and     mbbIn) channeldetail = 0;
+            if (btagchannel == 0 and lepchannel == 0 and not mbbIn) channeldetail = 1;
+            if (btagchannel == 0 and lepchannel == 1 and     mbbIn) channeldetail = 2;
+            if (btagchannel == 0 and lepchannel == 1 and not mbbIn) channeldetail = 3;
+            if (btagchannel == 0 and lepchannel == 2 and     mbbIn) channeldetail = 4;
+            if (btagchannel == 0 and lepchannel == 2 and not mbbIn) channeldetail = 5;
+            if (btagchannel == 1 and lepchannel == 0 and     mbbIn) channeldetail = 6;
+            if (btagchannel == 1 and lepchannel == 0 and not mbbIn) channeldetail = 7;
+            if (btagchannel == 1 and lepchannel == 1 and     mbbIn) channeldetail = 8;
+            if (btagchannel == 1 and lepchannel == 1 and not mbbIn) channeldetail = 9;
+            if (btagchannel == 1 and lepchannel == 2 and     mbbIn) channeldetail = 10;
+            if (btagchannel == 1 and lepchannel == 2 and not mbbIn) channeldetail = 11;
+            if (btagchannel == 0 and lepchannel == 3 and     mbbIn) channeldetail = 12;
+            if (btagchannel == 0 and lepchannel == 3 and not mbbIn) channeldetail = 13;
+            if (btagchannel == 0 and lepchannel == 4 and     mbbIn) channeldetail = 14;
+            if (btagchannel == 0 and lepchannel == 4 and not mbbIn) channeldetail = 15;
             tx.setBranch<int>("channeldetail", channeldetail);
 
             // Create keyvariables worth computing
@@ -1958,20 +2063,84 @@ void VBSHWW::initSRCutflow()
             tx.setBranch<float>("bdt_mbboff", readerX->eval(tx));
             tx.setBranch<float>("mbb", mbb);
 
-            return true;
+
+            const float& mjj = tx.getBranch<float>("mjj");
+            const float& detajj = tx.getBranch<float>("detajj");
+            const float& lt = tx.getBranch<float>("lt");
+            const float& st = tx.getBranch<float>("st");
+            const float& bdt = tx.getBranch<float>("bdt");
+
+            int is_preselection = channel >= 0 and mjj > 500 and detajj > 3;
+
+            int islgt = categ == 0 or categ == 1;
+
+            tx.setBranch<int>("is_ps_el"  , is_preselection and (categ == 0) );
+            tx.setBranch<int>("is_ps_mu"  , is_preselection and (categ == 1) );
+            tx.setBranch<int>("is_ps_tau" , is_preselection and (categ == 2) );
+            tx.setBranch<int>("is_ps_neg" , is_preselection and (categ == 3) );
+            tx.setBranch<int>("is_ps_lgt" , is_preselection and (islgt == 1) );
+
+            tx.setBranch<int>("is_cut_sr_el"   , is_preselection and (categ == 0) and (mbb < 150) and detajj > 5 and lt > 500 and st > 900 );
+            tx.setBranch<int>("is_cut_sr_mu"   , is_preselection and (categ == 1) and (mbb < 150) and detajj > 5 and lt > 500 and st > 900 );
+            tx.setBranch<int>("is_cut_sr_tau"  , is_preselection and (categ == 2) and (mbb < 150) and detajj > 5 and lt > 500 and st > 900 );
+            tx.setBranch<int>("is_cut_sr_neg"  , is_preselection and (categ == 3) and (mbb < 150) and detajj > 5 and lt > 500 and st > 900 );
+            tx.setBranch<int>("is_cut_sr_lgt"  , is_preselection and (islgt == 1) and (mbb < 150) and detajj > 5 and lt > 300 and st > 700 and not (lt > 500 and st > 900) );
+
+            tx.setBranch<int>("is_cut_cr_el"   , is_preselection and (categ == 0) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_cr_mu"   , is_preselection and (categ == 1) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_cr_tau"  , is_preselection and (categ == 2) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_cr_neg"  , is_preselection and (categ == 3) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_cr_lgt"  , is_preselection and (islgt == 1) and (mbb > 150) );
+
+            tx.setBranch<int>("is_cut_sr2_el"  , is_preselection and (categ == 0) and (mbb < 150) and detajj > 4 and lt > 300 and st > 700 );
+            tx.setBranch<int>("is_cut_sr2_mu"  , is_preselection and (categ == 1) and (mbb < 150) and detajj > 4 and lt > 300 and st > 700 );
+            tx.setBranch<int>("is_cut_sr2_tau" , is_preselection and (categ == 2) and (mbb < 150) and detajj > 4 and lt > 300 and st > 700 );
+            tx.setBranch<int>("is_cut_sr2_neg" , is_preselection and (categ == 3) and (mbb < 150) and detajj > 4 and lt > 300 and st > 700 );
+
+            tx.setBranch<int>("is_cut_cr2_el"  , is_preselection and (categ == 0) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_cr2_mu"  , is_preselection and (categ == 1) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_cr2_tau" , is_preselection and (categ == 2) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_cr2_neg" , is_preselection and (categ == 3) and (mbb > 150) );
+
+            tx.setBranch<int>("is_bdt_sr_el"   , is_preselection and (categ == 0) and                 (bdt > 0.545) );
+            tx.setBranch<int>("is_bdt_sr_mu"   , is_preselection and (categ == 1) and                 (bdt > 0.545) );
+            tx.setBranch<int>("is_bdt_sr_tau"  , is_preselection and (categ == 2) and                 (bdt > 0.545) );
+            tx.setBranch<int>("is_bdt_sr_neg"  , is_preselection and (categ == 3) and                 (bdt > 0.545) );
+
+            tx.setBranch<int>("is_bdt_cr_el"   , is_preselection and (categ == 0) and (mbb > 150) and (bdt < 0.545) );
+            tx.setBranch<int>("is_bdt_cr_mu"   , is_preselection and (categ == 1) and (mbb > 150) and (bdt < 0.545) );
+            tx.setBranch<int>("is_bdt_cr_tau"  , is_preselection and (categ == 2) and (mbb > 150) and (bdt < 0.545) );
+            tx.setBranch<int>("is_bdt_cr_neg"  , is_preselection and (categ == 3) and (mbb > 150) and (bdt < 0.545) );
+
+            tx.setBranch<int>("is_bdt_sr2_el"  , is_preselection and (categ == 0) and                 (bdt > 0.52) );
+            tx.setBranch<int>("is_bdt_sr2_mu"  , is_preselection and (categ == 1) and                 (bdt > 0.52) );
+            tx.setBranch<int>("is_bdt_sr2_tau" , is_preselection and (categ == 2) and                 (bdt > 0.52) );
+            tx.setBranch<int>("is_bdt_sr2_neg" , is_preselection and (categ == 3) and                 (bdt > 0.52) );
+
+            tx.setBranch<int>("is_bdt_cr2_el"  , is_preselection and (categ == 0) and (mbb > 150) and (bdt < 0.52) );
+            tx.setBranch<int>("is_bdt_cr2_mu"  , is_preselection and (categ == 1) and (mbb > 150) and (bdt < 0.52) );
+            tx.setBranch<int>("is_bdt_cr2_tau" , is_preselection and (categ == 2) and (mbb > 150) and (bdt < 0.52) );
+            tx.setBranch<int>("is_bdt_cr2_neg" , is_preselection and (categ == 3) and (mbb > 150) and (bdt < 0.52) );
+
+            tx.setBranch<int>("is_ps"      , tx.getBranch<int>("is_ps_el")      or tx.getBranch<int>("is_ps_mu")      or tx.getBranch<int>("is_ps_tau")      or tx.getBranch<int>("is_ps_neg")      );
+            tx.setBranch<int>("is_cut_sr"  , tx.getBranch<int>("is_cut_sr_el")  or tx.getBranch<int>("is_cut_sr_mu")  or tx.getBranch<int>("is_cut_sr_tau")  or tx.getBranch<int>("is_cut_sr_neg")  );
+            tx.setBranch<int>("is_cut_cr"  , tx.getBranch<int>("is_cut_cr_el")  or tx.getBranch<int>("is_cut_cr_mu")  or tx.getBranch<int>("is_cut_cr_tau")  or tx.getBranch<int>("is_cut_cr_neg")  );
+            tx.setBranch<int>("is_cut_sr2" , tx.getBranch<int>("is_cut_sr2_el") or tx.getBranch<int>("is_cut_sr2_mu") or tx.getBranch<int>("is_cut_sr2_tau") or tx.getBranch<int>("is_cut_sr2_neg") );
+            tx.setBranch<int>("is_cut_cr2" , tx.getBranch<int>("is_cut_cr2_el") or tx.getBranch<int>("is_cut_cr2_mu") or tx.getBranch<int>("is_cut_cr2_tau") or tx.getBranch<int>("is_cut_cr2_neg") );
+            tx.setBranch<int>("is_bdt_sr"  , tx.getBranch<int>("is_bdt_sr_el")  or tx.getBranch<int>("is_bdt_sr_mu")  or tx.getBranch<int>("is_bdt_sr_tau")  or tx.getBranch<int>("is_bdt_sr_neg")  );
+            tx.setBranch<int>("is_bdt_cr"  , tx.getBranch<int>("is_bdt_cr_el")  or tx.getBranch<int>("is_bdt_cr_mu")  or tx.getBranch<int>("is_bdt_cr_tau")  or tx.getBranch<int>("is_bdt_cr_neg")  );
+            tx.setBranch<int>("is_bdt_sr2" , tx.getBranch<int>("is_bdt_sr2_el") or tx.getBranch<int>("is_bdt_sr2_mu") or tx.getBranch<int>("is_bdt_sr2_tau") or tx.getBranch<int>("is_bdt_sr2_neg") );
+            tx.setBranch<int>("is_bdt_cr2" , tx.getBranch<int>("is_bdt_cr2_el") or tx.getBranch<int>("is_bdt_cr2_mu") or tx.getBranch<int>("is_bdt_cr2_tau") or tx.getBranch<int>("is_bdt_cr2_neg") );
+
+            int isSS = (tx.getBranch<int>("lep0ID") * tx.getBranch<int>("lep1ID")) > 0;
+            tx.setBranch<int>("pass_blind", nt.isData() and isSS ? not (mbbIn): 1);
+            tx.setBranch<int>("pass_blind_bdt", nt.isData() and isSS ? not (mbbIn or bdt > 0.545): 1);
+
+            return tx.getBranch<int>("is_ps");
         },
         UNITY);
 
-    cutflow.addCutToLastActiveCut("AK4CategPresel",
-        [&]()
-        {
-            int channel = tx.getBranch<int>("channel");
-            if (channel < 0)
-                return false;
-            else
-                return true;
-        },
-        [&]() { return tx.getBranch<float>("btagsf"); } );
+    cutflow.addCutToLastActiveCut("AK4CategPresel", [&]() { return tx.getBranch<int>("is_ps"); }, [&]() { return tx.getBranch<float>("btagsf"); } );
     return;
 }
 
@@ -2327,33 +2496,6 @@ void VBSHWW::processGenParticles_VBSWWH_UL()
             tx.setBranch<float>("gen_cosThetaStarB", costhetaB);
 
         }
-
-        // int channel = -1;
-        // if (lepton_pdgids[0] * lepton_pdgids[1] == 121)
-        // {
-        //     channel = 0;
-        // }
-        // else if (lepton_pdgids[0] * lepton_pdgids[1] == 143)
-        // {
-        //     channel = 1;
-        // }
-        // else if (lepton_pdgids[0] * lepton_pdgids[1] == 169)
-        // {
-        //     channel = 2;
-        // }
-        // else if (lepton_pdgids[0] * lepton_pdgids[1] == 165)
-        // {
-        //     channel = 3;
-        // }
-        // else if (lepton_pdgids[0] * lepton_pdgids[1] == 195)
-        // {
-        //     channel = 4;
-        // }
-        // else if (lepton_pdgids[0] * lepton_pdgids[1] == 225)
-        // {
-        //     channel = 5;
-        // }
-        // tx.setBranch<int>("genchannel", channel);
     }
 }
 
@@ -2465,11 +2607,11 @@ void VBSHWW::setBTagSF(std::vector<float> jet_pt, std::vector<float> jet_eta, st
                 eff_loose = flavor == 5 ? btagEffLoose_b->eval(pt, eta) : (flavor == 0 ? btagEffLoose_l->eval(pt, eta) : btagEffLoose_c->eval(pt, eta));
             }
 
-            float sf_tight = 
+            float sf_tight =
                 flavor == 5 ? btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_B, eta, pt) : (
                 flavor == 0 ? btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_UDSG, eta, pt) :
                               btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_C, eta, pt));
-            float sf_loose = 
+            float sf_loose =
                 flavor == 5 ? btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_B, eta, pt) : (
                 flavor == 0 ? btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_UDSG, eta, pt) :
                               btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_C, eta, pt));

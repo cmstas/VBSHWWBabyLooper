@@ -3,13 +3,32 @@
 # $DIR is the path to the directory where this specific script is sitting
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-TAG=v1
-YEAR=Run2
-RUNTAG=Nominal
-# RUNTAG=BkgCompStudyv2
-SKIMTAG=v2.4_SS
-# SYST=LgtTopBkgUp
-SYST=
+if [ -z $1 ]; then
+    echo "Usage:"
+    echo ""
+    echo "  sh $0 YOURTAG [SKIMVERSION=v2.4_SS] [BABYVERSION=v3] [YEAR=Run2]"
+    echo ""
+    echo "     YOURTAG       Minilooper run tag       (e.g. Date, name, or some specifier. Provide something you want to keep it unique)"
+    echo "     SKIMVERSION   Skim version             (e.g. v2.4_SS                      [Default=v2.4_SS])"
+    echo "     BABYVERSION   Baby version             (e.g. v3                           [Default=v3])"
+    echo "     YEAR          Year                     (e.g. 2016, 2017, 2018, or Run2    [Default=Run2])"
+    echo ""
+    exit
+fi
+
+YOURTAG=${1}
+SKIMVERSION=${2}
+BABYVERSION=${3}
+YEAR=${4}
+if [ -z ${SKIMVERSION} ]; then
+    SKIMVERSION=v2.4_SS
+fi
+if [ -z ${BABYVERSION} ]; then
+    BABYVERSION=v3
+fi
+if [ -z ${YEAR} ]; then
+    YEAR=Run2
+fi
 
 rm -f .plotjobs.txt
 
@@ -25,7 +44,21 @@ book_plot()
             HISTNAMES="${HISTNAMES} ${REGION}${MBBREG}__${VAR}"
         done
         HISTNAMES=$(echo ${HISTNAMES} | tr ' ' ',')
-        echo 'python '${DIR}'/plot.py '${SKIMTAG}' '${YEAR}' '${RUNTAG}' '${TAG}' '${PLOTDIR}' '"${HISTNAMES}"' ' >> .plotjobs.txt;
+        echo 'python '${DIR}'/plot.py '${SKIMVERSION}' '${YEAR}' '${YOURTAG}' '${BABYVERSION}' '${PLOTDIR}' '"${HISTNAMES}"' ' >> .plotjobs.txt;
+    done
+}
+
+book_plot_alpha()
+{
+    PLOTDIRS="BkgComp BkgCompIndivid"
+    CHANNELS="El Mu Tau Neg Lgt"
+    REGIONS="BDTSR BDTSR2 CutSR CutSR2"
+    for PLOTDIR in ${PLOTDIRS}; do
+        for CHANNEL in ${CHANNELS}; do
+            for REGION in ${REGIONS}; do
+                echo ' python '${DIR}'/plot_topbkg_compare.py '${SKIMVERSION}' '${YEAR}' '${YOURTAG}' '${BABYVERSION}' '${PLOTDIR}' LooseVR__'${REGION}${CHANNEL}'       ' >> .plot.jobs.txt
+            done
+        done
     done
 }
 
@@ -50,7 +83,8 @@ book_plot Alpha       "LooseVR"                   ""${SYST}         "BDTSRNeg BD
 book_plot SRKine      "Presel"                    ""                "ST LT Ptbb MJJ DEtaJJ LeptonPt0 LeptonPt1 Mbb"
 book_plot Fit         "LooseVR"                   ""${SYST}         "BDTSR"
 book_plot Fit         "LooseVR"                   ""${SYST}         "CutSR"
+book_plot_alpha
 
 xargs.sh .plotjobs.txt
 
-tar czf plots.tar.gz plots/${RUNTAG}/${SKIMTAG}/${TAG}/${YEAR}/
+tar czf plots.tar.gz plots/${YOURTAG}/${SKIMVERSION}/${BABYVERSION}/${YEAR}/

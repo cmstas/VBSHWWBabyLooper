@@ -3,35 +3,51 @@
 if [ -z $1 ]; then
     echo "Usage:"
     echo ""
-    echo "  sh $0 VERSION YEAR"
+    echo "  sh $0 YOURTAG [SKIMVERSION=v2.4_SS] [BABYVERSION=v3] [YEAR=Run2] [USERNAME=phchang]"
     echo ""
-    echo "     VERSION       Skim version   (e.g. v40)"
-    echo "     YEAR          Year           (e.g. 2016, 2017, 2018, or Run2)"
-    echo "     RUNTAG        Run tag        (e.g. Date, name, or some specifier)"
-    echo "     BABYVERSION   Baby version   (e.g. v1)"
+    echo "     YOURTAG       Minilooper run tag       (e.g. Date, name, or some specifier. Provide something you want to keep it unique)"
+    echo "     SKIMVERSION   Skim version             (e.g. v2.4_SS                      [Default=v2.4_SS])"
+    echo "     BABYVERSION   Baby version             (e.g. v3                           [Default=v3])"
+    echo "     YEAR          Year                     (e.g. 2016, 2017, 2018, or Run2    [Default=Run2])"
+    echo "     USERNAME      Username of baby creator (e.g. phchang                      [Default=phchang] )"
     echo ""
     exit
 fi
 
-TAG=${1}
-YEAR=${2}
-RUNTAG=${3}
-BABYVERSION=${4}
+YOURTAG=${1}
+SKIMVERSION=${2}
+BABYVERSION=${3}
+YEAR=${4}
+USERNAME=${5}
+if [ -z ${SKIMVERSION} ]; then
+    SKIMVERSION=v2.4_SS
+fi
+if [ -z ${BABYVERSION} ]; then
+    BABYVERSION=v3
+fi
+if [ -z ${YEAR} ]; then
+    YEAR=Run2
+fi
+if [ -z ${USERNAME} ]; then
+    USERNAME=phchang
+fi
 
-HISTDIR=hists/${RUNTAG}/${TAG}/${BABYVERSION}/${YEAR}
+HISTDIR=hists/${YOURTAG}/${SKIMVERSION}/${BABYVERSION}/${YEAR}
 
 mkdir -p ${HISTDIR}
 
-MINIDIR=../hadds/${TAG}/${BABYVERSION}/createMini_${YEAR}
+MINIDIR=/nfs-7/userdata/${USERNAME}/VBSHWWBaby/${SKIMVERSION}/${BABYVERSION}/createMini_${YEAR}
 
 echo "============================"
-echo "YEAR      : ${YEAR}"
-echo "TAG       : ${TAG}"
-echo "RUNTAG    : ${RUNTAG}"
+echo "YOURTAG      : ${YOURTAG}"
+echo "SKIMVERSION  : ${SKIMVERSION}"
+echo "BABYVERSION  : ${BABYVERSION}"
+echo "YEAR         : ${YEAR}"
+echo "USERNAME     : ${USERNAME}"
 echo "============================"
 
 rm -f .jobs.txt
-if [[ ${TAG} == *"v2."* ]]; then
+if [[ ${SKIMVERSION} == *"v2."* ]]; then
     :
 else
     NJOBS=3
@@ -92,7 +108,7 @@ echo "hadd -f ${HISTDIR}/ttw.root ${HISTDIR}/ttw_*.root > ${HISTDIR}/ttw.log 2>&
 echo "hadd -f ${HISTDIR}/ttz.root ${HISTDIR}/ttz_*.root > ${HISTDIR}/ttz.log 2>&1" >> .haddjobs.txt
 echo "hadd -f ${HISTDIR}/bosons.root ${HISTDIR}/bosons_*.root > ${HISTDIR}/bosons.log 2>&1" >> .haddjobs.txt
 echo "hadd -f ${HISTDIR}/data.root ${HISTDIR}/data_*.root > ${HISTDIR}/data.log 2>&1" >> .haddjobs.txt
-if [[ ${TAG} == *"v2."* ]]; then
+if [[ ${SKIMVERSION} == *"v2."* ]]; then
     :
 else
     echo "hadd -f ${HISTDIR}/tt1l.root ${HISTDIR}/tt1l_*.root > ${HISTDIR}/tt1l.log 2>&1" >> .haddjobs.txt
