@@ -5,7 +5,7 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 TAG=v1
 YEAR=Run2
-RUNTAG=NominalNew
+RUNTAG=Nominal
 SKIMTAG=v2.4_SS
 SYST=
 
