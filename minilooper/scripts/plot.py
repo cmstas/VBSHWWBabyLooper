@@ -48,7 +48,7 @@ except:
 import ROOT as r
 r.gROOT.SetBatch(True)
 
-hadd_dir = "hists/{}/{}/{}/{}/".format(runtag, tag, babyversion, year)
+hadd_dir = "hists/{}/{}/{}/{}/".format(tag, babyversion, year, runtag)
 
 bkgs_fit = [
         "{}/topbkg.root".format(hadd_dir),
@@ -286,7 +286,7 @@ p.dump_plot(
     legend_labels_tex=bkg_labels_tex,
     signal_labels=signal_labels,
     signal_labels_tex=signal_labels_tex,
-    dirname="cutscans/{}/{}/{}/{}/{}".format(runtag, tag, babyversion, year, subdir) if do_cut_scan else "plots/{}/{}/{}/{}/{}".format(runtag, tag, babyversion, year, subdir),
+    dirname="cutscans/{}/{}/{}/{}/{}".format(tag, babyversion, year, runtag, subdir) if do_cut_scan else "plots/{}/{}/{}/{}/{}".format(tag, babyversion, year, runtag, subdir),
     filter_pattern=filter_pattern,
     dogrep=dogrep,
     usercolors=colors,

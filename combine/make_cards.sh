@@ -11,11 +11,11 @@ combineCards.py -S \
     > datacards/cut_combined.txt
 
 combineCards.py -S \
+    b1=datacards/bdt/datacard_bin1.txt \
     b2=datacards/bdt/datacard_bin2.txt \
+    b3=datacards/bdt/datacard_bin3.txt \
     b4=datacards/bdt/datacard_bin4.txt \
     > datacards/bdt_combined.txt
-    # b1=datacards/bdt/datacard_bin1.txt \
-    # b3=datacards/bdt/datacard_bin3.txt \
 
 echo "Cut-based analysis data card written here:"
 echo "   datacards/cut_combined.txt"

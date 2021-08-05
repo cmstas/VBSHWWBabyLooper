@@ -67,4 +67,4 @@ fi
 
 cp -r ${BABYDIR} ${NFSAREA}/${SKIMVERSION}
 
-echo "Done!"
+echo "Done copying to ${NFSAREA}/${SKIMVERSION}/${BABYVERSION}"
