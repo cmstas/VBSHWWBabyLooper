@@ -12,30 +12,32 @@ usage()
 {
   echo "ERROR - Usage:"
   echo
-  echo "      sh $(basename $0) SKIMVERSION BABYVERSION"
+  echo "      sh $(basename $0) BABYVERSION [SKIMVERSION=v2.4_SS]"
   echo
   echo "Arguments:"
-  echo "  SKIMVERSION    (e.g. v2.4_SS, v2.4_OS, etc.)"
   echo "  BABYVERSION    (e.g. v1 v2 v3 etc.)"
+  echo "  SKIMVERSION    (e.g. v2.4_SS, v2.4_OS, etc. [DEFAULT=v2.4_SS])"
   echo
   exit
 }
 
 if [ -z $1 ]; then usage; fi
-if [ -z $2 ]; then usage; fi
 
-
-SKIMVERSION=$1
-BABYVERSION=$2
+BABYVERSION=$1
+SKIMVERSION=$2
 NFSAREA=/nfs-7/userdata/${USER}/VBSHWWBaby
+
+if [ -z ${SKIMVERSION} ]; then
+    SKIMVERSION=v2.4_SS
+fi
 
 # Verbose
 date
 echo "================================================"
 echo "$(basename $0) $*"
 echo "------------------------------------------------"
-echo "SKIMVERSION    : ${SKIMVERSION}"
 echo "BABYVERSION    : ${BABYVERSION}"
+echo "SKIMVERSION    : ${SKIMVERSION}"
 echo "================================================"
 
 # Create the base directory if it doesn't exist
@@ -62,7 +64,7 @@ else
     echo "Check your SKIMVERSION and BABYVERSION argument!"
     usage
 fi
-    
+
 cp -r ${BABYDIR} ${NFSAREA}/${SKIMVERSION}
 
 echo "Done!"
