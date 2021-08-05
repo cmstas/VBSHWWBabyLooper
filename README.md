@@ -7,7 +7,7 @@
     make clean
     make -j
     sh scripts/run.sh Nominal           # Nominal is the tag you provide
-    sh scripts/make_figure.sh Nominal   # Nominal is the tag you provided
+    sh scripts/make_figures.sh Nominal  # Nominal is the tag you provided
 
 If you wish to create a new baby ntuple and loop over a new baby ntuple
 
