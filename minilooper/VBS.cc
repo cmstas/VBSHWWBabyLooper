@@ -36,18 +36,6 @@ void VBS::Init(TTree *tree) {
   if (gen_lepB_branch) gen_lepB_branch->SetAddress(&gen_lepB_);
   gen_nuB_branch = tree->GetBranch("gen_nuB");
   if (gen_nuB_branch) gen_nuB_branch->SetAddress(&gen_nuB_);
-  good_leptons_p4_branch = tree->GetBranch("good_leptons_p4");
-  if (good_leptons_p4_branch) good_leptons_p4_branch->SetAddress(&good_leptons_p4_);
-  good_taus_p4_branch = tree->GetBranch("good_taus_p4");
-  if (good_taus_p4_branch) good_taus_p4_branch->SetAddress(&good_taus_p4_);
-  good_jets_p4_branch = tree->GetBranch("good_jets_p4");
-  if (good_jets_p4_branch) good_jets_p4_branch->SetAddress(&good_jets_p4_);
-  good_fatjets_p4_branch = tree->GetBranch("good_fatjets_p4");
-  if (good_fatjets_p4_branch) good_fatjets_p4_branch->SetAddress(&good_fatjets_p4_);
-  higgs_jets_p4_branch = tree->GetBranch("higgs_jets_p4");
-  if (higgs_jets_p4_branch) higgs_jets_p4_branch->SetAddress(&higgs_jets_p4_);
-  vbs_jets_p4_branch = tree->GetBranch("vbs_jets_p4");
-  if (vbs_jets_p4_branch) vbs_jets_p4_branch->SetAddress(&vbs_jets_p4_);
   lep0_branch = tree->GetBranch("lep0");
   if (lep0_branch) lep0_branch->SetAddress(&lep0_);
   lep1_branch = tree->GetBranch("lep1");
@@ -79,30 +67,6 @@ void VBS::Init(TTree *tree) {
   if (scalewgts_branch) scalewgts_branch->SetAddress(&scalewgts_);
   pswgts_branch = tree->GetBranch("pswgts");
   if (pswgts_branch) pswgts_branch->SetAddress(&pswgts_);
-  trig_ee_branch = tree->GetBranch("trig_ee");
-  if (trig_ee_branch) trig_ee_branch->SetAddress(&trig_ee_);
-  trig_em_branch = tree->GetBranch("trig_em");
-  if (trig_em_branch) trig_em_branch->SetAddress(&trig_em_);
-  trig_mm_branch = tree->GetBranch("trig_mm");
-  if (trig_mm_branch) trig_mm_branch->SetAddress(&trig_mm_);
-  trig_se_branch = tree->GetBranch("trig_se");
-  if (trig_se_branch) trig_se_branch->SetAddress(&trig_se_);
-  trig_sm_branch = tree->GetBranch("trig_sm");
-  if (trig_sm_branch) trig_sm_branch->SetAddress(&trig_sm_);
-  pass_duplicate_ee_em_mm_branch = tree->GetBranch("pass_duplicate_ee_em_mm");
-  if (pass_duplicate_ee_em_mm_branch) pass_duplicate_ee_em_mm_branch->SetAddress(&pass_duplicate_ee_em_mm_);
-  pass_duplicate_mm_em_ee_branch = tree->GetBranch("pass_duplicate_mm_em_ee");
-  if (pass_duplicate_mm_em_ee_branch) pass_duplicate_mm_em_ee_branch->SetAddress(&pass_duplicate_mm_em_ee_);
-  is_pd_ee_branch = tree->GetBranch("is_pd_ee");
-  if (is_pd_ee_branch) is_pd_ee_branch->SetAddress(&is_pd_ee_);
-  is_pd_em_branch = tree->GetBranch("is_pd_em");
-  if (is_pd_em_branch) is_pd_em_branch->SetAddress(&is_pd_em_);
-  is_pd_mm_branch = tree->GetBranch("is_pd_mm");
-  if (is_pd_mm_branch) is_pd_mm_branch->SetAddress(&is_pd_mm_);
-  is_pd_se_branch = tree->GetBranch("is_pd_se");
-  if (is_pd_se_branch) is_pd_se_branch->SetAddress(&is_pd_se_);
-  is_pd_sm_branch = tree->GetBranch("is_pd_sm");
-  if (is_pd_sm_branch) is_pd_sm_branch->SetAddress(&is_pd_sm_);
   isvbswwh_branch = tree->GetBranch("isvbswwh");
   if (isvbswwh_branch) isvbswwh_branch->SetAddress(&isvbswwh_);
   iswwhlvlvbb_branch = tree->GetBranch("iswwhlvlvbb");
@@ -125,70 +89,6 @@ void VBS::Init(TTree *tree) {
   if (lepsf_dn_branch) lepsf_dn_branch->SetAddress(&lepsf_dn_);
   btagsf_branch = tree->GetBranch("btagsf");
   if (btagsf_branch) btagsf_branch->SetAddress(&btagsf_);
-  good_leptons_pdgid_branch = tree->GetBranch("good_leptons_pdgid");
-  if (good_leptons_pdgid_branch) good_leptons_pdgid_branch->SetAddress(&good_leptons_pdgid_);
-  good_leptons_tight_branch = tree->GetBranch("good_leptons_tight");
-  if (good_leptons_tight_branch) good_leptons_tight_branch->SetAddress(&good_leptons_tight_);
-  good_leptons_jetIdx_branch = tree->GetBranch("good_leptons_jetIdx");
-  if (good_leptons_jetIdx_branch) good_leptons_jetIdx_branch->SetAddress(&good_leptons_jetIdx_);
-  good_leptons_genPartFlav_branch = tree->GetBranch("good_leptons_genPartFlav");
-  if (good_leptons_genPartFlav_branch) good_leptons_genPartFlav_branch->SetAddress(&good_leptons_genPartFlav_);
-  good_leptons_pfRelIso03_all_branch = tree->GetBranch("good_leptons_pfRelIso03_all");
-  if (good_leptons_pfRelIso03_all_branch) good_leptons_pfRelIso03_all_branch->SetAddress(&good_leptons_pfRelIso03_all_);
-  good_leptons_pfRelIso03_chg_branch = tree->GetBranch("good_leptons_pfRelIso03_chg");
-  if (good_leptons_pfRelIso03_chg_branch) good_leptons_pfRelIso03_chg_branch->SetAddress(&good_leptons_pfRelIso03_chg_);
-  good_leptons_jetPtRelv2_branch = tree->GetBranch("good_leptons_jetPtRelv2");
-  if (good_leptons_jetPtRelv2_branch) good_leptons_jetPtRelv2_branch->SetAddress(&good_leptons_jetPtRelv2_);
-  good_leptons_jetRelIso_branch = tree->GetBranch("good_leptons_jetRelIso");
-  if (good_leptons_jetRelIso_branch) good_leptons_jetRelIso_branch->SetAddress(&good_leptons_jetRelIso_);
-  good_leptons_miniPFRelIso_all_branch = tree->GetBranch("good_leptons_miniPFRelIso_all");
-  if (good_leptons_miniPFRelIso_all_branch) good_leptons_miniPFRelIso_all_branch->SetAddress(&good_leptons_miniPFRelIso_all_);
-  good_taus_pdgid_branch = tree->GetBranch("good_taus_pdgid");
-  if (good_taus_pdgid_branch) good_taus_pdgid_branch->SetAddress(&good_taus_pdgid_);
-  good_taus_tight_branch = tree->GetBranch("good_taus_tight");
-  if (good_taus_tight_branch) good_taus_tight_branch->SetAddress(&good_taus_tight_);
-  good_taus_jetIdx_branch = tree->GetBranch("good_taus_jetIdx");
-  if (good_taus_jetIdx_branch) good_taus_jetIdx_branch->SetAddress(&good_taus_jetIdx_);
-  good_taus_genPartFlav_branch = tree->GetBranch("good_taus_genPartFlav");
-  if (good_taus_genPartFlav_branch) good_taus_genPartFlav_branch->SetAddress(&good_taus_genPartFlav_);
-  good_jets_loose_btagged_branch = tree->GetBranch("good_jets_loose_btagged");
-  if (good_jets_loose_btagged_branch) good_jets_loose_btagged_branch->SetAddress(&good_jets_loose_btagged_);
-  good_jets_medium_btagged_branch = tree->GetBranch("good_jets_medium_btagged");
-  if (good_jets_medium_btagged_branch) good_jets_medium_btagged_branch->SetAddress(&good_jets_medium_btagged_);
-  good_jets_tight_btagged_branch = tree->GetBranch("good_jets_tight_btagged");
-  if (good_jets_tight_btagged_branch) good_jets_tight_btagged_branch->SetAddress(&good_jets_tight_btagged_);
-  good_jets_btag_score_branch = tree->GetBranch("good_jets_btag_score");
-  if (good_jets_btag_score_branch) good_jets_btag_score_branch->SetAddress(&good_jets_btag_score_);
-  good_jets_qg_disc_branch = tree->GetBranch("good_jets_qg_disc");
-  if (good_jets_qg_disc_branch) good_jets_qg_disc_branch->SetAddress(&good_jets_qg_disc_);
-  good_jets_flavor_branch = tree->GetBranch("good_jets_flavor");
-  if (good_jets_flavor_branch) good_jets_flavor_branch->SetAddress(&good_jets_flavor_);
-  good_fatjets_loose_branch = tree->GetBranch("good_fatjets_loose");
-  if (good_fatjets_loose_branch) good_fatjets_loose_branch->SetAddress(&good_fatjets_loose_);
-  good_fatjets_medium_branch = tree->GetBranch("good_fatjets_medium");
-  if (good_fatjets_medium_branch) good_fatjets_medium_branch->SetAddress(&good_fatjets_medium_);
-  good_fatjets_tight_branch = tree->GetBranch("good_fatjets_tight");
-  if (good_fatjets_tight_branch) good_fatjets_tight_branch->SetAddress(&good_fatjets_tight_);
-  good_fatjets_msd_branch = tree->GetBranch("good_fatjets_msd");
-  if (good_fatjets_msd_branch) good_fatjets_msd_branch->SetAddress(&good_fatjets_msd_);
-  higgs_jets_loose_btagged_branch = tree->GetBranch("higgs_jets_loose_btagged");
-  if (higgs_jets_loose_btagged_branch) higgs_jets_loose_btagged_branch->SetAddress(&higgs_jets_loose_btagged_);
-  higgs_jets_medium_btagged_branch = tree->GetBranch("higgs_jets_medium_btagged");
-  if (higgs_jets_medium_btagged_branch) higgs_jets_medium_btagged_branch->SetAddress(&higgs_jets_medium_btagged_);
-  higgs_jets_tight_btagged_branch = tree->GetBranch("higgs_jets_tight_btagged");
-  if (higgs_jets_tight_btagged_branch) higgs_jets_tight_btagged_branch->SetAddress(&higgs_jets_tight_btagged_);
-  higgs_jets_btag_score_branch = tree->GetBranch("higgs_jets_btag_score");
-  if (higgs_jets_btag_score_branch) higgs_jets_btag_score_branch->SetAddress(&higgs_jets_btag_score_);
-  higgs_jets_flavor_branch = tree->GetBranch("higgs_jets_flavor");
-  if (higgs_jets_flavor_branch) higgs_jets_flavor_branch->SetAddress(&higgs_jets_flavor_);
-  higgs_jets_good_jets_idx_branch = tree->GetBranch("higgs_jets_good_jets_idx");
-  if (higgs_jets_good_jets_idx_branch) higgs_jets_good_jets_idx_branch->SetAddress(&higgs_jets_good_jets_idx_);
-  higgs_jets_genmatched_branch = tree->GetBranch("higgs_jets_genmatched");
-  if (higgs_jets_genmatched_branch) higgs_jets_genmatched_branch->SetAddress(&higgs_jets_genmatched_);
-  higgs_jets_genmatched_dr_branch = tree->GetBranch("higgs_jets_genmatched_dr");
-  if (higgs_jets_genmatched_dr_branch) higgs_jets_genmatched_dr_branch->SetAddress(&higgs_jets_genmatched_dr_);
-  vbs_jets_good_jets_idx_branch = tree->GetBranch("vbs_jets_good_jets_idx");
-  if (vbs_jets_good_jets_idx_branch) vbs_jets_good_jets_idx_branch->SetAddress(&vbs_jets_good_jets_idx_);
   nbloose_branch = tree->GetBranch("nbloose");
   if (nbloose_branch) nbloose_branch->SetAddress(&nbloose_);
   nbmedium_branch = tree->GetBranch("nbmedium");
@@ -231,6 +131,8 @@ void VBS::Init(TTree *tree) {
   if (mbbIn_branch) mbbIn_branch->SetAddress(&mbbIn_);
   pass_blind_branch = tree->GetBranch("pass_blind");
   if (pass_blind_branch) pass_blind_branch->SetAddress(&pass_blind_);
+  pass_blind_bdt_branch = tree->GetBranch("pass_blind_bdt");
+  if (pass_blind_bdt_branch) pass_blind_bdt_branch->SetAddress(&pass_blind_bdt_);
   categ_branch = tree->GetBranch("categ");
   if (categ_branch) categ_branch->SetAddress(&categ_);
   categ_F_branch = tree->GetBranch("categ_F");
@@ -432,18 +334,6 @@ void VBS::GetEntry(unsigned int idx) {
   wgt_isLoaded = false;
   scalewgts_isLoaded = false;
   pswgts_isLoaded = false;
-  trig_ee_isLoaded = false;
-  trig_em_isLoaded = false;
-  trig_mm_isLoaded = false;
-  trig_se_isLoaded = false;
-  trig_sm_isLoaded = false;
-  pass_duplicate_ee_em_mm_isLoaded = false;
-  pass_duplicate_mm_em_ee_isLoaded = false;
-  is_pd_ee_isLoaded = false;
-  is_pd_em_isLoaded = false;
-  is_pd_mm_isLoaded = false;
-  is_pd_se_isLoaded = false;
-  is_pd_sm_isLoaded = false;
   met_p4_isLoaded = false;
   isvbswwh_isLoaded = false;
   iswwhlvlvbb_isLoaded = false;
@@ -472,44 +362,6 @@ void VBS::GetEntry(unsigned int idx) {
   lepsf_up_isLoaded = false;
   lepsf_dn_isLoaded = false;
   btagsf_isLoaded = false;
-  good_leptons_p4_isLoaded = false;
-  good_leptons_pdgid_isLoaded = false;
-  good_leptons_tight_isLoaded = false;
-  good_leptons_jetIdx_isLoaded = false;
-  good_leptons_genPartFlav_isLoaded = false;
-  good_leptons_pfRelIso03_all_isLoaded = false;
-  good_leptons_pfRelIso03_chg_isLoaded = false;
-  good_leptons_jetPtRelv2_isLoaded = false;
-  good_leptons_jetRelIso_isLoaded = false;
-  good_leptons_miniPFRelIso_all_isLoaded = false;
-  good_taus_p4_isLoaded = false;
-  good_taus_pdgid_isLoaded = false;
-  good_taus_tight_isLoaded = false;
-  good_taus_jetIdx_isLoaded = false;
-  good_taus_genPartFlav_isLoaded = false;
-  good_jets_p4_isLoaded = false;
-  good_jets_loose_btagged_isLoaded = false;
-  good_jets_medium_btagged_isLoaded = false;
-  good_jets_tight_btagged_isLoaded = false;
-  good_jets_btag_score_isLoaded = false;
-  good_jets_qg_disc_isLoaded = false;
-  good_jets_flavor_isLoaded = false;
-  good_fatjets_p4_isLoaded = false;
-  good_fatjets_loose_isLoaded = false;
-  good_fatjets_medium_isLoaded = false;
-  good_fatjets_tight_isLoaded = false;
-  good_fatjets_msd_isLoaded = false;
-  higgs_jets_p4_isLoaded = false;
-  higgs_jets_loose_btagged_isLoaded = false;
-  higgs_jets_medium_btagged_isLoaded = false;
-  higgs_jets_tight_btagged_isLoaded = false;
-  higgs_jets_btag_score_isLoaded = false;
-  higgs_jets_flavor_isLoaded = false;
-  higgs_jets_good_jets_idx_isLoaded = false;
-  higgs_jets_genmatched_isLoaded = false;
-  higgs_jets_genmatched_dr_isLoaded = false;
-  vbs_jets_p4_isLoaded = false;
-  vbs_jets_good_jets_idx_isLoaded = false;
   nbloose_isLoaded = false;
   nbmedium_isLoaded = false;
   nbtight_isLoaded = false;
@@ -539,6 +391,7 @@ void VBS::GetEntry(unsigned int idx) {
   mee_noZ_isLoaded = false;
   mbbIn_isLoaded = false;
   pass_blind_isLoaded = false;
+  pass_blind_bdt_isLoaded = false;
   categ_isLoaded = false;
   categ_F_isLoaded = false;
   mbb_isLoaded = false;
@@ -643,18 +496,6 @@ void VBS::LoadAllBranches() {
   if (wgt_branch != 0) wgt();
   if (scalewgts_branch != 0) scalewgts();
   if (pswgts_branch != 0) pswgts();
-  if (trig_ee_branch != 0) trig_ee();
-  if (trig_em_branch != 0) trig_em();
-  if (trig_mm_branch != 0) trig_mm();
-  if (trig_se_branch != 0) trig_se();
-  if (trig_sm_branch != 0) trig_sm();
-  if (pass_duplicate_ee_em_mm_branch != 0) pass_duplicate_ee_em_mm();
-  if (pass_duplicate_mm_em_ee_branch != 0) pass_duplicate_mm_em_ee();
-  if (is_pd_ee_branch != 0) is_pd_ee();
-  if (is_pd_em_branch != 0) is_pd_em();
-  if (is_pd_mm_branch != 0) is_pd_mm();
-  if (is_pd_se_branch != 0) is_pd_se();
-  if (is_pd_sm_branch != 0) is_pd_sm();
   if (met_p4_branch != 0) met_p4();
   if (isvbswwh_branch != 0) isvbswwh();
   if (iswwhlvlvbb_branch != 0) iswwhlvlvbb();
@@ -683,44 +524,6 @@ void VBS::LoadAllBranches() {
   if (lepsf_up_branch != 0) lepsf_up();
   if (lepsf_dn_branch != 0) lepsf_dn();
   if (btagsf_branch != 0) btagsf();
-  if (good_leptons_p4_branch != 0) good_leptons_p4();
-  if (good_leptons_pdgid_branch != 0) good_leptons_pdgid();
-  if (good_leptons_tight_branch != 0) good_leptons_tight();
-  if (good_leptons_jetIdx_branch != 0) good_leptons_jetIdx();
-  if (good_leptons_genPartFlav_branch != 0) good_leptons_genPartFlav();
-  if (good_leptons_pfRelIso03_all_branch != 0) good_leptons_pfRelIso03_all();
-  if (good_leptons_pfRelIso03_chg_branch != 0) good_leptons_pfRelIso03_chg();
-  if (good_leptons_jetPtRelv2_branch != 0) good_leptons_jetPtRelv2();
-  if (good_leptons_jetRelIso_branch != 0) good_leptons_jetRelIso();
-  if (good_leptons_miniPFRelIso_all_branch != 0) good_leptons_miniPFRelIso_all();
-  if (good_taus_p4_branch != 0) good_taus_p4();
-  if (good_taus_pdgid_branch != 0) good_taus_pdgid();
-  if (good_taus_tight_branch != 0) good_taus_tight();
-  if (good_taus_jetIdx_branch != 0) good_taus_jetIdx();
-  if (good_taus_genPartFlav_branch != 0) good_taus_genPartFlav();
-  if (good_jets_p4_branch != 0) good_jets_p4();
-  if (good_jets_loose_btagged_branch != 0) good_jets_loose_btagged();
-  if (good_jets_medium_btagged_branch != 0) good_jets_medium_btagged();
-  if (good_jets_tight_btagged_branch != 0) good_jets_tight_btagged();
-  if (good_jets_btag_score_branch != 0) good_jets_btag_score();
-  if (good_jets_qg_disc_branch != 0) good_jets_qg_disc();
-  if (good_jets_flavor_branch != 0) good_jets_flavor();
-  if (good_fatjets_p4_branch != 0) good_fatjets_p4();
-  if (good_fatjets_loose_branch != 0) good_fatjets_loose();
-  if (good_fatjets_medium_branch != 0) good_fatjets_medium();
-  if (good_fatjets_tight_branch != 0) good_fatjets_tight();
-  if (good_fatjets_msd_branch != 0) good_fatjets_msd();
-  if (higgs_jets_p4_branch != 0) higgs_jets_p4();
-  if (higgs_jets_loose_btagged_branch != 0) higgs_jets_loose_btagged();
-  if (higgs_jets_medium_btagged_branch != 0) higgs_jets_medium_btagged();
-  if (higgs_jets_tight_btagged_branch != 0) higgs_jets_tight_btagged();
-  if (higgs_jets_btag_score_branch != 0) higgs_jets_btag_score();
-  if (higgs_jets_flavor_branch != 0) higgs_jets_flavor();
-  if (higgs_jets_good_jets_idx_branch != 0) higgs_jets_good_jets_idx();
-  if (higgs_jets_genmatched_branch != 0) higgs_jets_genmatched();
-  if (higgs_jets_genmatched_dr_branch != 0) higgs_jets_genmatched_dr();
-  if (vbs_jets_p4_branch != 0) vbs_jets_p4();
-  if (vbs_jets_good_jets_idx_branch != 0) vbs_jets_good_jets_idx();
   if (nbloose_branch != 0) nbloose();
   if (nbmedium_branch != 0) nbmedium();
   if (nbtight_branch != 0) nbtight();
@@ -750,6 +553,7 @@ void VBS::LoadAllBranches() {
   if (mee_noZ_branch != 0) mee_noZ();
   if (mbbIn_branch != 0) mbbIn();
   if (pass_blind_branch != 0) pass_blind();
+  if (pass_blind_bdt_branch != 0) pass_blind_bdt();
   if (categ_branch != 0) categ();
   if (categ_F_branch != 0) categ_F();
   if (mbb_branch != 0) mbb();
@@ -922,162 +726,6 @@ const vector<float> &VBS::pswgts() {
     pswgts_isLoaded = true;
   }
   return *pswgts_;
-}
-
-const int &VBS::trig_ee() {
-  if (not trig_ee_isLoaded) {
-    if (trig_ee_branch != 0) {
-      trig_ee_branch->GetEntry(index);
-    } else {
-      printf("branch trig_ee_branch does not exist!\n");
-      exit(1);
-    }
-    trig_ee_isLoaded = true;
-  }
-  return trig_ee_;
-}
-
-const int &VBS::trig_em() {
-  if (not trig_em_isLoaded) {
-    if (trig_em_branch != 0) {
-      trig_em_branch->GetEntry(index);
-    } else {
-      printf("branch trig_em_branch does not exist!\n");
-      exit(1);
-    }
-    trig_em_isLoaded = true;
-  }
-  return trig_em_;
-}
-
-const int &VBS::trig_mm() {
-  if (not trig_mm_isLoaded) {
-    if (trig_mm_branch != 0) {
-      trig_mm_branch->GetEntry(index);
-    } else {
-      printf("branch trig_mm_branch does not exist!\n");
-      exit(1);
-    }
-    trig_mm_isLoaded = true;
-  }
-  return trig_mm_;
-}
-
-const int &VBS::trig_se() {
-  if (not trig_se_isLoaded) {
-    if (trig_se_branch != 0) {
-      trig_se_branch->GetEntry(index);
-    } else {
-      printf("branch trig_se_branch does not exist!\n");
-      exit(1);
-    }
-    trig_se_isLoaded = true;
-  }
-  return trig_se_;
-}
-
-const int &VBS::trig_sm() {
-  if (not trig_sm_isLoaded) {
-    if (trig_sm_branch != 0) {
-      trig_sm_branch->GetEntry(index);
-    } else {
-      printf("branch trig_sm_branch does not exist!\n");
-      exit(1);
-    }
-    trig_sm_isLoaded = true;
-  }
-  return trig_sm_;
-}
-
-const int &VBS::pass_duplicate_ee_em_mm() {
-  if (not pass_duplicate_ee_em_mm_isLoaded) {
-    if (pass_duplicate_ee_em_mm_branch != 0) {
-      pass_duplicate_ee_em_mm_branch->GetEntry(index);
-    } else {
-      printf("branch pass_duplicate_ee_em_mm_branch does not exist!\n");
-      exit(1);
-    }
-    pass_duplicate_ee_em_mm_isLoaded = true;
-  }
-  return pass_duplicate_ee_em_mm_;
-}
-
-const int &VBS::pass_duplicate_mm_em_ee() {
-  if (not pass_duplicate_mm_em_ee_isLoaded) {
-    if (pass_duplicate_mm_em_ee_branch != 0) {
-      pass_duplicate_mm_em_ee_branch->GetEntry(index);
-    } else {
-      printf("branch pass_duplicate_mm_em_ee_branch does not exist!\n");
-      exit(1);
-    }
-    pass_duplicate_mm_em_ee_isLoaded = true;
-  }
-  return pass_duplicate_mm_em_ee_;
-}
-
-const int &VBS::is_pd_ee() {
-  if (not is_pd_ee_isLoaded) {
-    if (is_pd_ee_branch != 0) {
-      is_pd_ee_branch->GetEntry(index);
-    } else {
-      printf("branch is_pd_ee_branch does not exist!\n");
-      exit(1);
-    }
-    is_pd_ee_isLoaded = true;
-  }
-  return is_pd_ee_;
-}
-
-const int &VBS::is_pd_em() {
-  if (not is_pd_em_isLoaded) {
-    if (is_pd_em_branch != 0) {
-      is_pd_em_branch->GetEntry(index);
-    } else {
-      printf("branch is_pd_em_branch does not exist!\n");
-      exit(1);
-    }
-    is_pd_em_isLoaded = true;
-  }
-  return is_pd_em_;
-}
-
-const int &VBS::is_pd_mm() {
-  if (not is_pd_mm_isLoaded) {
-    if (is_pd_mm_branch != 0) {
-      is_pd_mm_branch->GetEntry(index);
-    } else {
-      printf("branch is_pd_mm_branch does not exist!\n");
-      exit(1);
-    }
-    is_pd_mm_isLoaded = true;
-  }
-  return is_pd_mm_;
-}
-
-const int &VBS::is_pd_se() {
-  if (not is_pd_se_isLoaded) {
-    if (is_pd_se_branch != 0) {
-      is_pd_se_branch->GetEntry(index);
-    } else {
-      printf("branch is_pd_se_branch does not exist!\n");
-      exit(1);
-    }
-    is_pd_se_isLoaded = true;
-  }
-  return is_pd_se_;
-}
-
-const int &VBS::is_pd_sm() {
-  if (not is_pd_sm_isLoaded) {
-    if (is_pd_sm_branch != 0) {
-      is_pd_sm_branch->GetEntry(index);
-    } else {
-      printf("branch is_pd_sm_branch does not exist!\n");
-      exit(1);
-    }
-    is_pd_sm_isLoaded = true;
-  }
-  return is_pd_sm_;
 }
 
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &VBS::met_p4() {
@@ -1442,500 +1090,6 @@ const float &VBS::btagsf() {
     btagsf_isLoaded = true;
   }
   return btagsf_;
-}
-
-const vector<ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > > &VBS::good_leptons_p4() {
-  if (not good_leptons_p4_isLoaded) {
-    if (good_leptons_p4_branch != 0) {
-      good_leptons_p4_branch->GetEntry(index);
-    } else {
-      printf("branch good_leptons_p4_branch does not exist!\n");
-      exit(1);
-    }
-    good_leptons_p4_isLoaded = true;
-  }
-  return *good_leptons_p4_;
-}
-
-const vector<int> &VBS::good_leptons_pdgid() {
-  if (not good_leptons_pdgid_isLoaded) {
-    if (good_leptons_pdgid_branch != 0) {
-      good_leptons_pdgid_branch->GetEntry(index);
-    } else {
-      printf("branch good_leptons_pdgid_branch does not exist!\n");
-      exit(1);
-    }
-    good_leptons_pdgid_isLoaded = true;
-  }
-  return *good_leptons_pdgid_;
-}
-
-const vector<int> &VBS::good_leptons_tight() {
-  if (not good_leptons_tight_isLoaded) {
-    if (good_leptons_tight_branch != 0) {
-      good_leptons_tight_branch->GetEntry(index);
-    } else {
-      printf("branch good_leptons_tight_branch does not exist!\n");
-      exit(1);
-    }
-    good_leptons_tight_isLoaded = true;
-  }
-  return *good_leptons_tight_;
-}
-
-const vector<int> &VBS::good_leptons_jetIdx() {
-  if (not good_leptons_jetIdx_isLoaded) {
-    if (good_leptons_jetIdx_branch != 0) {
-      good_leptons_jetIdx_branch->GetEntry(index);
-    } else {
-      printf("branch good_leptons_jetIdx_branch does not exist!\n");
-      exit(1);
-    }
-    good_leptons_jetIdx_isLoaded = true;
-  }
-  return *good_leptons_jetIdx_;
-}
-
-const vector<int> &VBS::good_leptons_genPartFlav() {
-  if (not good_leptons_genPartFlav_isLoaded) {
-    if (good_leptons_genPartFlav_branch != 0) {
-      good_leptons_genPartFlav_branch->GetEntry(index);
-    } else {
-      printf("branch good_leptons_genPartFlav_branch does not exist!\n");
-      exit(1);
-    }
-    good_leptons_genPartFlav_isLoaded = true;
-  }
-  return *good_leptons_genPartFlav_;
-}
-
-const vector<float> &VBS::good_leptons_pfRelIso03_all() {
-  if (not good_leptons_pfRelIso03_all_isLoaded) {
-    if (good_leptons_pfRelIso03_all_branch != 0) {
-      good_leptons_pfRelIso03_all_branch->GetEntry(index);
-    } else {
-      printf("branch good_leptons_pfRelIso03_all_branch does not exist!\n");
-      exit(1);
-    }
-    good_leptons_pfRelIso03_all_isLoaded = true;
-  }
-  return *good_leptons_pfRelIso03_all_;
-}
-
-const vector<float> &VBS::good_leptons_pfRelIso03_chg() {
-  if (not good_leptons_pfRelIso03_chg_isLoaded) {
-    if (good_leptons_pfRelIso03_chg_branch != 0) {
-      good_leptons_pfRelIso03_chg_branch->GetEntry(index);
-    } else {
-      printf("branch good_leptons_pfRelIso03_chg_branch does not exist!\n");
-      exit(1);
-    }
-    good_leptons_pfRelIso03_chg_isLoaded = true;
-  }
-  return *good_leptons_pfRelIso03_chg_;
-}
-
-const vector<float> &VBS::good_leptons_jetPtRelv2() {
-  if (not good_leptons_jetPtRelv2_isLoaded) {
-    if (good_leptons_jetPtRelv2_branch != 0) {
-      good_leptons_jetPtRelv2_branch->GetEntry(index);
-    } else {
-      printf("branch good_leptons_jetPtRelv2_branch does not exist!\n");
-      exit(1);
-    }
-    good_leptons_jetPtRelv2_isLoaded = true;
-  }
-  return *good_leptons_jetPtRelv2_;
-}
-
-const vector<float> &VBS::good_leptons_jetRelIso() {
-  if (not good_leptons_jetRelIso_isLoaded) {
-    if (good_leptons_jetRelIso_branch != 0) {
-      good_leptons_jetRelIso_branch->GetEntry(index);
-    } else {
-      printf("branch good_leptons_jetRelIso_branch does not exist!\n");
-      exit(1);
-    }
-    good_leptons_jetRelIso_isLoaded = true;
-  }
-  return *good_leptons_jetRelIso_;
-}
-
-const vector<float> &VBS::good_leptons_miniPFRelIso_all() {
-  if (not good_leptons_miniPFRelIso_all_isLoaded) {
-    if (good_leptons_miniPFRelIso_all_branch != 0) {
-      good_leptons_miniPFRelIso_all_branch->GetEntry(index);
-    } else {
-      printf("branch good_leptons_miniPFRelIso_all_branch does not exist!\n");
-      exit(1);
-    }
-    good_leptons_miniPFRelIso_all_isLoaded = true;
-  }
-  return *good_leptons_miniPFRelIso_all_;
-}
-
-const vector<ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > > &VBS::good_taus_p4() {
-  if (not good_taus_p4_isLoaded) {
-    if (good_taus_p4_branch != 0) {
-      good_taus_p4_branch->GetEntry(index);
-    } else {
-      printf("branch good_taus_p4_branch does not exist!\n");
-      exit(1);
-    }
-    good_taus_p4_isLoaded = true;
-  }
-  return *good_taus_p4_;
-}
-
-const vector<int> &VBS::good_taus_pdgid() {
-  if (not good_taus_pdgid_isLoaded) {
-    if (good_taus_pdgid_branch != 0) {
-      good_taus_pdgid_branch->GetEntry(index);
-    } else {
-      printf("branch good_taus_pdgid_branch does not exist!\n");
-      exit(1);
-    }
-    good_taus_pdgid_isLoaded = true;
-  }
-  return *good_taus_pdgid_;
-}
-
-const vector<int> &VBS::good_taus_tight() {
-  if (not good_taus_tight_isLoaded) {
-    if (good_taus_tight_branch != 0) {
-      good_taus_tight_branch->GetEntry(index);
-    } else {
-      printf("branch good_taus_tight_branch does not exist!\n");
-      exit(1);
-    }
-    good_taus_tight_isLoaded = true;
-  }
-  return *good_taus_tight_;
-}
-
-const vector<int> &VBS::good_taus_jetIdx() {
-  if (not good_taus_jetIdx_isLoaded) {
-    if (good_taus_jetIdx_branch != 0) {
-      good_taus_jetIdx_branch->GetEntry(index);
-    } else {
-      printf("branch good_taus_jetIdx_branch does not exist!\n");
-      exit(1);
-    }
-    good_taus_jetIdx_isLoaded = true;
-  }
-  return *good_taus_jetIdx_;
-}
-
-const vector<int> &VBS::good_taus_genPartFlav() {
-  if (not good_taus_genPartFlav_isLoaded) {
-    if (good_taus_genPartFlav_branch != 0) {
-      good_taus_genPartFlav_branch->GetEntry(index);
-    } else {
-      printf("branch good_taus_genPartFlav_branch does not exist!\n");
-      exit(1);
-    }
-    good_taus_genPartFlav_isLoaded = true;
-  }
-  return *good_taus_genPartFlav_;
-}
-
-const vector<ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > > &VBS::good_jets_p4() {
-  if (not good_jets_p4_isLoaded) {
-    if (good_jets_p4_branch != 0) {
-      good_jets_p4_branch->GetEntry(index);
-    } else {
-      printf("branch good_jets_p4_branch does not exist!\n");
-      exit(1);
-    }
-    good_jets_p4_isLoaded = true;
-  }
-  return *good_jets_p4_;
-}
-
-const vector<int> &VBS::good_jets_loose_btagged() {
-  if (not good_jets_loose_btagged_isLoaded) {
-    if (good_jets_loose_btagged_branch != 0) {
-      good_jets_loose_btagged_branch->GetEntry(index);
-    } else {
-      printf("branch good_jets_loose_btagged_branch does not exist!\n");
-      exit(1);
-    }
-    good_jets_loose_btagged_isLoaded = true;
-  }
-  return *good_jets_loose_btagged_;
-}
-
-const vector<int> &VBS::good_jets_medium_btagged() {
-  if (not good_jets_medium_btagged_isLoaded) {
-    if (good_jets_medium_btagged_branch != 0) {
-      good_jets_medium_btagged_branch->GetEntry(index);
-    } else {
-      printf("branch good_jets_medium_btagged_branch does not exist!\n");
-      exit(1);
-    }
-    good_jets_medium_btagged_isLoaded = true;
-  }
-  return *good_jets_medium_btagged_;
-}
-
-const vector<int> &VBS::good_jets_tight_btagged() {
-  if (not good_jets_tight_btagged_isLoaded) {
-    if (good_jets_tight_btagged_branch != 0) {
-      good_jets_tight_btagged_branch->GetEntry(index);
-    } else {
-      printf("branch good_jets_tight_btagged_branch does not exist!\n");
-      exit(1);
-    }
-    good_jets_tight_btagged_isLoaded = true;
-  }
-  return *good_jets_tight_btagged_;
-}
-
-const vector<float> &VBS::good_jets_btag_score() {
-  if (not good_jets_btag_score_isLoaded) {
-    if (good_jets_btag_score_branch != 0) {
-      good_jets_btag_score_branch->GetEntry(index);
-    } else {
-      printf("branch good_jets_btag_score_branch does not exist!\n");
-      exit(1);
-    }
-    good_jets_btag_score_isLoaded = true;
-  }
-  return *good_jets_btag_score_;
-}
-
-const vector<float> &VBS::good_jets_qg_disc() {
-  if (not good_jets_qg_disc_isLoaded) {
-    if (good_jets_qg_disc_branch != 0) {
-      good_jets_qg_disc_branch->GetEntry(index);
-    } else {
-      printf("branch good_jets_qg_disc_branch does not exist!\n");
-      exit(1);
-    }
-    good_jets_qg_disc_isLoaded = true;
-  }
-  return *good_jets_qg_disc_;
-}
-
-const vector<int> &VBS::good_jets_flavor() {
-  if (not good_jets_flavor_isLoaded) {
-    if (good_jets_flavor_branch != 0) {
-      good_jets_flavor_branch->GetEntry(index);
-    } else {
-      printf("branch good_jets_flavor_branch does not exist!\n");
-      exit(1);
-    }
-    good_jets_flavor_isLoaded = true;
-  }
-  return *good_jets_flavor_;
-}
-
-const vector<ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > > &VBS::good_fatjets_p4() {
-  if (not good_fatjets_p4_isLoaded) {
-    if (good_fatjets_p4_branch != 0) {
-      good_fatjets_p4_branch->GetEntry(index);
-    } else {
-      printf("branch good_fatjets_p4_branch does not exist!\n");
-      exit(1);
-    }
-    good_fatjets_p4_isLoaded = true;
-  }
-  return *good_fatjets_p4_;
-}
-
-const vector<int> &VBS::good_fatjets_loose() {
-  if (not good_fatjets_loose_isLoaded) {
-    if (good_fatjets_loose_branch != 0) {
-      good_fatjets_loose_branch->GetEntry(index);
-    } else {
-      printf("branch good_fatjets_loose_branch does not exist!\n");
-      exit(1);
-    }
-    good_fatjets_loose_isLoaded = true;
-  }
-  return *good_fatjets_loose_;
-}
-
-const vector<int> &VBS::good_fatjets_medium() {
-  if (not good_fatjets_medium_isLoaded) {
-    if (good_fatjets_medium_branch != 0) {
-      good_fatjets_medium_branch->GetEntry(index);
-    } else {
-      printf("branch good_fatjets_medium_branch does not exist!\n");
-      exit(1);
-    }
-    good_fatjets_medium_isLoaded = true;
-  }
-  return *good_fatjets_medium_;
-}
-
-const vector<int> &VBS::good_fatjets_tight() {
-  if (not good_fatjets_tight_isLoaded) {
-    if (good_fatjets_tight_branch != 0) {
-      good_fatjets_tight_branch->GetEntry(index);
-    } else {
-      printf("branch good_fatjets_tight_branch does not exist!\n");
-      exit(1);
-    }
-    good_fatjets_tight_isLoaded = true;
-  }
-  return *good_fatjets_tight_;
-}
-
-const vector<float> &VBS::good_fatjets_msd() {
-  if (not good_fatjets_msd_isLoaded) {
-    if (good_fatjets_msd_branch != 0) {
-      good_fatjets_msd_branch->GetEntry(index);
-    } else {
-      printf("branch good_fatjets_msd_branch does not exist!\n");
-      exit(1);
-    }
-    good_fatjets_msd_isLoaded = true;
-  }
-  return *good_fatjets_msd_;
-}
-
-const vector<ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > > &VBS::higgs_jets_p4() {
-  if (not higgs_jets_p4_isLoaded) {
-    if (higgs_jets_p4_branch != 0) {
-      higgs_jets_p4_branch->GetEntry(index);
-    } else {
-      printf("branch higgs_jets_p4_branch does not exist!\n");
-      exit(1);
-    }
-    higgs_jets_p4_isLoaded = true;
-  }
-  return *higgs_jets_p4_;
-}
-
-const vector<int> &VBS::higgs_jets_loose_btagged() {
-  if (not higgs_jets_loose_btagged_isLoaded) {
-    if (higgs_jets_loose_btagged_branch != 0) {
-      higgs_jets_loose_btagged_branch->GetEntry(index);
-    } else {
-      printf("branch higgs_jets_loose_btagged_branch does not exist!\n");
-      exit(1);
-    }
-    higgs_jets_loose_btagged_isLoaded = true;
-  }
-  return *higgs_jets_loose_btagged_;
-}
-
-const vector<int> &VBS::higgs_jets_medium_btagged() {
-  if (not higgs_jets_medium_btagged_isLoaded) {
-    if (higgs_jets_medium_btagged_branch != 0) {
-      higgs_jets_medium_btagged_branch->GetEntry(index);
-    } else {
-      printf("branch higgs_jets_medium_btagged_branch does not exist!\n");
-      exit(1);
-    }
-    higgs_jets_medium_btagged_isLoaded = true;
-  }
-  return *higgs_jets_medium_btagged_;
-}
-
-const vector<int> &VBS::higgs_jets_tight_btagged() {
-  if (not higgs_jets_tight_btagged_isLoaded) {
-    if (higgs_jets_tight_btagged_branch != 0) {
-      higgs_jets_tight_btagged_branch->GetEntry(index);
-    } else {
-      printf("branch higgs_jets_tight_btagged_branch does not exist!\n");
-      exit(1);
-    }
-    higgs_jets_tight_btagged_isLoaded = true;
-  }
-  return *higgs_jets_tight_btagged_;
-}
-
-const vector<float> &VBS::higgs_jets_btag_score() {
-  if (not higgs_jets_btag_score_isLoaded) {
-    if (higgs_jets_btag_score_branch != 0) {
-      higgs_jets_btag_score_branch->GetEntry(index);
-    } else {
-      printf("branch higgs_jets_btag_score_branch does not exist!\n");
-      exit(1);
-    }
-    higgs_jets_btag_score_isLoaded = true;
-  }
-  return *higgs_jets_btag_score_;
-}
-
-const vector<int> &VBS::higgs_jets_flavor() {
-  if (not higgs_jets_flavor_isLoaded) {
-    if (higgs_jets_flavor_branch != 0) {
-      higgs_jets_flavor_branch->GetEntry(index);
-    } else {
-      printf("branch higgs_jets_flavor_branch does not exist!\n");
-      exit(1);
-    }
-    higgs_jets_flavor_isLoaded = true;
-  }
-  return *higgs_jets_flavor_;
-}
-
-const vector<int> &VBS::higgs_jets_good_jets_idx() {
-  if (not higgs_jets_good_jets_idx_isLoaded) {
-    if (higgs_jets_good_jets_idx_branch != 0) {
-      higgs_jets_good_jets_idx_branch->GetEntry(index);
-    } else {
-      printf("branch higgs_jets_good_jets_idx_branch does not exist!\n");
-      exit(1);
-    }
-    higgs_jets_good_jets_idx_isLoaded = true;
-  }
-  return *higgs_jets_good_jets_idx_;
-}
-
-const vector<int> &VBS::higgs_jets_genmatched() {
-  if (not higgs_jets_genmatched_isLoaded) {
-    if (higgs_jets_genmatched_branch != 0) {
-      higgs_jets_genmatched_branch->GetEntry(index);
-    } else {
-      printf("branch higgs_jets_genmatched_branch does not exist!\n");
-      exit(1);
-    }
-    higgs_jets_genmatched_isLoaded = true;
-  }
-  return *higgs_jets_genmatched_;
-}
-
-const vector<float> &VBS::higgs_jets_genmatched_dr() {
-  if (not higgs_jets_genmatched_dr_isLoaded) {
-    if (higgs_jets_genmatched_dr_branch != 0) {
-      higgs_jets_genmatched_dr_branch->GetEntry(index);
-    } else {
-      printf("branch higgs_jets_genmatched_dr_branch does not exist!\n");
-      exit(1);
-    }
-    higgs_jets_genmatched_dr_isLoaded = true;
-  }
-  return *higgs_jets_genmatched_dr_;
-}
-
-const vector<ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > > &VBS::vbs_jets_p4() {
-  if (not vbs_jets_p4_isLoaded) {
-    if (vbs_jets_p4_branch != 0) {
-      vbs_jets_p4_branch->GetEntry(index);
-    } else {
-      printf("branch vbs_jets_p4_branch does not exist!\n");
-      exit(1);
-    }
-    vbs_jets_p4_isLoaded = true;
-  }
-  return *vbs_jets_p4_;
-}
-
-const vector<int> &VBS::vbs_jets_good_jets_idx() {
-  if (not vbs_jets_good_jets_idx_isLoaded) {
-    if (vbs_jets_good_jets_idx_branch != 0) {
-      vbs_jets_good_jets_idx_branch->GetEntry(index);
-    } else {
-      printf("branch vbs_jets_good_jets_idx_branch does not exist!\n");
-      exit(1);
-    }
-    vbs_jets_good_jets_idx_isLoaded = true;
-  }
-  return *vbs_jets_good_jets_idx_;
 }
 
 const int &VBS::nbloose() {
@@ -2313,6 +1467,19 @@ const int &VBS::pass_blind() {
     pass_blind_isLoaded = true;
   }
   return pass_blind_;
+}
+
+const int &VBS::pass_blind_bdt() {
+  if (not pass_blind_bdt_isLoaded) {
+    if (pass_blind_bdt_branch != 0) {
+      pass_blind_bdt_branch->GetEntry(index);
+    } else {
+      printf("branch pass_blind_bdt_branch does not exist!\n");
+      exit(1);
+    }
+    pass_blind_bdt_isLoaded = true;
+  }
+  return pass_blind_bdt_;
 }
 
 const int &VBS::categ() {
@@ -3566,18 +2733,6 @@ const unsigned long long &evt() { return vbs.evt(); }
 const float &wgt() { return vbs.wgt(); }
 const vector<float> &scalewgts() { return vbs.scalewgts(); }
 const vector<float> &pswgts() { return vbs.pswgts(); }
-const int &trig_ee() { return vbs.trig_ee(); }
-const int &trig_em() { return vbs.trig_em(); }
-const int &trig_mm() { return vbs.trig_mm(); }
-const int &trig_se() { return vbs.trig_se(); }
-const int &trig_sm() { return vbs.trig_sm(); }
-const int &pass_duplicate_ee_em_mm() { return vbs.pass_duplicate_ee_em_mm(); }
-const int &pass_duplicate_mm_em_ee() { return vbs.pass_duplicate_mm_em_ee(); }
-const int &is_pd_ee() { return vbs.is_pd_ee(); }
-const int &is_pd_em() { return vbs.is_pd_em(); }
-const int &is_pd_mm() { return vbs.is_pd_mm(); }
-const int &is_pd_se() { return vbs.is_pd_se(); }
-const int &is_pd_sm() { return vbs.is_pd_sm(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &met_p4() { return vbs.met_p4(); }
 const int &isvbswwh() { return vbs.isvbswwh(); }
 const int &iswwhlvlvbb() { return vbs.iswwhlvlvbb(); }
@@ -3606,44 +2761,6 @@ const float &lepsf() { return vbs.lepsf(); }
 const float &lepsf_up() { return vbs.lepsf_up(); }
 const float &lepsf_dn() { return vbs.lepsf_dn(); }
 const float &btagsf() { return vbs.btagsf(); }
-const vector<ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > > &good_leptons_p4() { return vbs.good_leptons_p4(); }
-const vector<int> &good_leptons_pdgid() { return vbs.good_leptons_pdgid(); }
-const vector<int> &good_leptons_tight() { return vbs.good_leptons_tight(); }
-const vector<int> &good_leptons_jetIdx() { return vbs.good_leptons_jetIdx(); }
-const vector<int> &good_leptons_genPartFlav() { return vbs.good_leptons_genPartFlav(); }
-const vector<float> &good_leptons_pfRelIso03_all() { return vbs.good_leptons_pfRelIso03_all(); }
-const vector<float> &good_leptons_pfRelIso03_chg() { return vbs.good_leptons_pfRelIso03_chg(); }
-const vector<float> &good_leptons_jetPtRelv2() { return vbs.good_leptons_jetPtRelv2(); }
-const vector<float> &good_leptons_jetRelIso() { return vbs.good_leptons_jetRelIso(); }
-const vector<float> &good_leptons_miniPFRelIso_all() { return vbs.good_leptons_miniPFRelIso_all(); }
-const vector<ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > > &good_taus_p4() { return vbs.good_taus_p4(); }
-const vector<int> &good_taus_pdgid() { return vbs.good_taus_pdgid(); }
-const vector<int> &good_taus_tight() { return vbs.good_taus_tight(); }
-const vector<int> &good_taus_jetIdx() { return vbs.good_taus_jetIdx(); }
-const vector<int> &good_taus_genPartFlav() { return vbs.good_taus_genPartFlav(); }
-const vector<ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > > &good_jets_p4() { return vbs.good_jets_p4(); }
-const vector<int> &good_jets_loose_btagged() { return vbs.good_jets_loose_btagged(); }
-const vector<int> &good_jets_medium_btagged() { return vbs.good_jets_medium_btagged(); }
-const vector<int> &good_jets_tight_btagged() { return vbs.good_jets_tight_btagged(); }
-const vector<float> &good_jets_btag_score() { return vbs.good_jets_btag_score(); }
-const vector<float> &good_jets_qg_disc() { return vbs.good_jets_qg_disc(); }
-const vector<int> &good_jets_flavor() { return vbs.good_jets_flavor(); }
-const vector<ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > > &good_fatjets_p4() { return vbs.good_fatjets_p4(); }
-const vector<int> &good_fatjets_loose() { return vbs.good_fatjets_loose(); }
-const vector<int> &good_fatjets_medium() { return vbs.good_fatjets_medium(); }
-const vector<int> &good_fatjets_tight() { return vbs.good_fatjets_tight(); }
-const vector<float> &good_fatjets_msd() { return vbs.good_fatjets_msd(); }
-const vector<ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > > &higgs_jets_p4() { return vbs.higgs_jets_p4(); }
-const vector<int> &higgs_jets_loose_btagged() { return vbs.higgs_jets_loose_btagged(); }
-const vector<int> &higgs_jets_medium_btagged() { return vbs.higgs_jets_medium_btagged(); }
-const vector<int> &higgs_jets_tight_btagged() { return vbs.higgs_jets_tight_btagged(); }
-const vector<float> &higgs_jets_btag_score() { return vbs.higgs_jets_btag_score(); }
-const vector<int> &higgs_jets_flavor() { return vbs.higgs_jets_flavor(); }
-const vector<int> &higgs_jets_good_jets_idx() { return vbs.higgs_jets_good_jets_idx(); }
-const vector<int> &higgs_jets_genmatched() { return vbs.higgs_jets_genmatched(); }
-const vector<float> &higgs_jets_genmatched_dr() { return vbs.higgs_jets_genmatched_dr(); }
-const vector<ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > > &vbs_jets_p4() { return vbs.vbs_jets_p4(); }
-const vector<int> &vbs_jets_good_jets_idx() { return vbs.vbs_jets_good_jets_idx(); }
 const int &nbloose() { return vbs.nbloose(); }
 const int &nbmedium() { return vbs.nbmedium(); }
 const int &nbtight() { return vbs.nbtight(); }
@@ -3673,6 +2790,7 @@ const int &bmatchcateg() { return vbs.bmatchcateg(); }
 const int &mee_noZ() { return vbs.mee_noZ(); }
 const int &mbbIn() { return vbs.mbbIn(); }
 const int &pass_blind() { return vbs.pass_blind(); }
+const int &pass_blind_bdt() { return vbs.pass_blind_bdt(); }
 const int &categ() { return vbs.categ(); }
 const float &categ_F() { return vbs.categ_F(); }
 const float &mbb() { return vbs.mbb(); }
