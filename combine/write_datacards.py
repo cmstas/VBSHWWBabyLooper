@@ -70,6 +70,7 @@ def run(doBDT, c2v):
         # If signal scale it up to 137/fb because we are missing 2016 signal (FIXME)
         if process in sigs:
             hists[process].Scale(137/(59.97+41.3))
+            # hists[process].Scale(20)
 
     ######################################################################################
     #

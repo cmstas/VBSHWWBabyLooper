@@ -22,14 +22,15 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 ANALYSIS=bdt
 BIN=Combined
 
-# ACCURACYOPTION="--rAbsAcc=0.01 --rRelAcc=0.03 "
-ACCURACYOPTION=""
+ACCURACYOPTION="--rAbsAcc=0.01 --rRelAcc=0.03 "
+# ACCURACYOPTION=""
 
-# MINIMIZEROPTION="--cminDefaultMinimizerStrategy 0" # 0=Hessian, 1=Minos (nothing = Migrad)
-MINIMIZEROPTION=""
+MINIMIZEROPTION="--cminDefaultMinimizerStrategy 0" # 0=Hessian, 1=Minos (nothing = Migrad)
+# MINIMIZEROPTION=""
 
 # C2Vs to fit
-C2VS="0 1 3 4 4p5 m1 m2 m2p5"
+# C2VS="0 1 3 4 4p5 m1 m2 m2p5"
+C2VS="4p5"
 
 for C2V in ${C2VS}; do
 
