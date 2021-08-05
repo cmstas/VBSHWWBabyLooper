@@ -443,6 +443,64 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch<int>("is_signal");
     tx.createBranch<int>("is_background");
 
+    tx.createBranch<int>("is_ps_el");
+    tx.createBranch<int>("is_ps_mu");
+    tx.createBranch<int>("is_ps_tau");
+    tx.createBranch<int>("is_ps_neg");
+    tx.createBranch<int>("is_ps_lgt");
+
+    tx.createBranch<int>("is_cut_sr_el");
+    tx.createBranch<int>("is_cut_sr_mu");
+    tx.createBranch<int>("is_cut_sr_tau");
+    tx.createBranch<int>("is_cut_sr_neg");
+    tx.createBranch<int>("is_cut_sr_lgt");
+
+    tx.createBranch<int>("is_cut_cr_el");
+    tx.createBranch<int>("is_cut_cr_mu");
+    tx.createBranch<int>("is_cut_cr_tau");
+    tx.createBranch<int>("is_cut_cr_neg");
+    tx.createBranch<int>("is_cut_cr_lgt");
+
+    tx.createBranch<int>("is_cut_sr2_el");
+    tx.createBranch<int>("is_cut_sr2_mu");
+    tx.createBranch<int>("is_cut_sr2_tau");
+    tx.createBranch<int>("is_cut_sr2_neg");
+
+    tx.createBranch<int>("is_cut_cr2_el");
+    tx.createBranch<int>("is_cut_cr2_mu");
+    tx.createBranch<int>("is_cut_cr2_tau");
+    tx.createBranch<int>("is_cut_cr2_neg");
+
+    tx.createBranch<int>("is_bdt_sr_el");
+    tx.createBranch<int>("is_bdt_sr_mu");
+    tx.createBranch<int>("is_bdt_sr_tau");
+    tx.createBranch<int>("is_bdt_sr_neg");
+
+    tx.createBranch<int>("is_bdt_cr_el");
+    tx.createBranch<int>("is_bdt_cr_mu");
+    tx.createBranch<int>("is_bdt_cr_tau");
+    tx.createBranch<int>("is_bdt_cr_neg");
+
+    tx.createBranch<int>("is_bdt_sr2_el");
+    tx.createBranch<int>("is_bdt_sr2_mu");
+    tx.createBranch<int>("is_bdt_sr2_tau");
+    tx.createBranch<int>("is_bdt_sr2_neg");
+
+    tx.createBranch<int>("is_bdt_cr2_el");
+    tx.createBranch<int>("is_bdt_cr2_mu");
+    tx.createBranch<int>("is_bdt_cr2_tau");
+    tx.createBranch<int>("is_bdt_cr2_neg");
+
+    tx.createBranch<int>("is_ps");
+    tx.createBranch<int>("is_cut_sr");
+    tx.createBranch<int>("is_cut_cr");
+    tx.createBranch<int>("is_cut_sr2");
+    tx.createBranch<int>("is_cut_cr2");
+    tx.createBranch<int>("is_bdt_sr");
+    tx.createBranch<int>("is_bdt_cr");
+    tx.createBranch<int>("is_bdt_sr2");
+    tx.createBranch<int>("is_bdt_cr2");
+
     tx.createBranch<float>("xsec_sf");
     tx.createBranch<float>("bdt");
     tx.createBranch<float>("bdt_mbboff");
@@ -956,22 +1014,22 @@ void VBSHWW::initSRCutflow()
                     tx.pushbackToBranch<int>("good_taus_jetIdx", nt.Tau_jetIdx()[itau]);
                     float tau_pt = nt.Tau_pt()[itau];
                     float tau_eta = nt.Tau_eta()[itau];
-                    float tau_gflav = nt.Tau_genPartFlav()[itau];
+                    float tau_gflav = nt.isData() ? -999 : nt.Tau_genPartFlav()[itau];
                     // DeepTau vs. jets sf
-                    float vs_jet_sf = tauSF_vsJet->getSFvsPT(tau_pt, tau_gflav);
+                    float vs_jet_sf = nt.isData() ? 1 : tauSF_vsJet->getSFvsPT(tau_pt, tau_gflav);
                     lepsf *= vs_jet_sf;
-                    err_up += std::pow((tauSF_vsJet->getSFvsPT(tau_pt, tau_gflav, "Up") - vs_jet_sf)/vs_jet_sf, 2);
-                    err_dn += std::pow((vs_jet_sf - tauSF_vsJet->getSFvsPT(tau_pt, tau_gflav, "Down"))/vs_jet_sf, 2);
+                    err_up += nt.isData() ? 0 : std::pow((tauSF_vsJet->getSFvsPT(tau_pt, tau_gflav, "Up") - vs_jet_sf)/vs_jet_sf, 2);
+                    err_dn += nt.isData() ? 0 : std::pow((vs_jet_sf - tauSF_vsJet->getSFvsPT(tau_pt, tau_gflav, "Down"))/vs_jet_sf, 2);
                     // DeepTau vs. muons sf
-                    float vs_mu_sf = tauSF_vsMu->getSFvsEta(fabs(tau_eta), tau_gflav);
+                    float vs_mu_sf = nt.isData() ? 1 : tauSF_vsMu->getSFvsEta(fabs(tau_eta), tau_gflav);
                     lepsf *= vs_mu_sf;
-                    err_up += std::pow((tauSF_vsMu->getSFvsEta(fabs(tau_eta), tau_gflav, "Up") - vs_mu_sf)/vs_mu_sf, 2);
-                    err_dn += std::pow((vs_mu_sf - tauSF_vsMu->getSFvsEta(fabs(tau_eta), tau_gflav, "Down"))/vs_mu_sf, 2);
+                    err_up += nt.isData() ? 0 : std::pow((tauSF_vsMu->getSFvsEta(fabs(tau_eta), tau_gflav, "Up") - vs_mu_sf)/vs_mu_sf, 2);
+                    err_dn += nt.isData() ? 0 : std::pow((vs_mu_sf - tauSF_vsMu->getSFvsEta(fabs(tau_eta), tau_gflav, "Down"))/vs_mu_sf, 2);
                     // DeepTau vs. electrons sf
-                    float vs_el_sf = tauSF_vsEl->getSFvsEta(fabs(tau_eta), tau_gflav);
+                    float vs_el_sf = nt.isData() ? 1 : tauSF_vsEl->getSFvsEta(fabs(tau_eta), tau_gflav);
                     lepsf *= vs_el_sf;
-                    err_up += std::pow((tauSF_vsEl->getSFvsEta(fabs(tau_eta), tau_gflav, "Up") - vs_el_sf)/vs_el_sf, 2);
-                    err_dn += std::pow((vs_el_sf - tauSF_vsEl->getSFvsEta(fabs(tau_eta), tau_gflav, "Down"))/vs_el_sf, 2);
+                    err_up += nt.isData() ? 0 : std::pow((tauSF_vsEl->getSFvsEta(fabs(tau_eta), tau_gflav, "Up") - vs_el_sf)/vs_el_sf, 2);
+                    err_dn += nt.isData() ? 0 : std::pow((vs_el_sf - tauSF_vsEl->getSFvsEta(fabs(tau_eta), tau_gflav, "Down"))/vs_el_sf, 2);
                 }
             }
 
@@ -990,7 +1048,7 @@ void VBSHWW::initSRCutflow()
                 /* names of any associated vector<bool>  branches to sort along */
                 {}
                 );
-            
+
             // Finish the error computation
             err_up = std::sqrt(err_up);
             err_dn = std::sqrt(err_dn);
@@ -1582,7 +1640,7 @@ void VBSHWW::initSRCutflow()
             // Sort the pairs
             std::sort(btag_jets.begin(), btag_jets.end(),
                     [](const std::pair<float, int> & a, const std::pair<float, int> & b) -> bool
-                    { 
+                    {
                         return a.first > b.first;
                     });
 
@@ -2007,6 +2065,75 @@ void VBSHWW::initSRCutflow()
             tx.setBranch<float>("mbb", 125);
             tx.setBranch<float>("bdt_mbboff", readerX->eval(tx));
             tx.setBranch<float>("mbb", mbb);
+
+
+            const float& mjj = tx.getBranch<float>("mjj");
+            const float& detajj = tx.getBranch<float>("detajj");
+            const float& lt = tx.getBranch<float>("lt");
+            const float& st = tx.getBranch<float>("st");
+            const float& bdt = tx.getBranch<float>("bdt");
+
+            int is_preselection = channel >= 0 and mjj > 500 and detajj > 3;
+
+            int islgt = categ == 0 or categ == 1;
+
+            tx.setBranch<int>("is_ps_el"  , is_preselection and (categ == 0) );
+            tx.setBranch<int>("is_ps_mu"  , is_preselection and (categ == 1) );
+            tx.setBranch<int>("is_ps_tau" , is_preselection and (categ == 2) );
+            tx.setBranch<int>("is_ps_neg" , is_preselection and (categ == 3) );
+            tx.setBranch<int>("is_ps_lgt" , is_preselection and (islgt == 1) );
+
+            tx.setBranch<int>("is_cut_sr_el"   , is_preselection and (categ == 0) and (mbb < 150) and detajj > 5 and lt > 500 and st > 900 );
+            tx.setBranch<int>("is_cut_sr_mu"   , is_preselection and (categ == 1) and (mbb < 150) and detajj > 5 and lt > 500 and st > 900 );
+            tx.setBranch<int>("is_cut_sr_tau"  , is_preselection and (categ == 2) and (mbb < 150) and detajj > 5 and lt > 500 and st > 900 );
+            tx.setBranch<int>("is_cut_sr_neg"  , is_preselection and (categ == 3) and (mbb < 150) and detajj > 5 and lt > 500 and st > 900 );
+            tx.setBranch<int>("is_cut_sr_lgt"  , is_preselection and (islgt == 1) and (mbb < 150) and detajj > 5 and lt > 300 and st > 700 and not (lt > 500 and st > 900) );
+
+            tx.setBranch<int>("is_cut_cr_el"   , is_preselection and (categ == 0) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_cr_mu"   , is_preselection and (categ == 1) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_cr_tau"  , is_preselection and (categ == 2) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_cr_neg"  , is_preselection and (categ == 3) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_cr_lgt"  , is_preselection and (islgt == 1) and (mbb > 150) );
+
+            tx.setBranch<int>("is_cut_sr2_el"  , is_preselection and (categ == 0) and (mbb < 150) and detajj > 4 and lt > 300 and st > 700 );
+            tx.setBranch<int>("is_cut_sr2_mu"  , is_preselection and (categ == 1) and (mbb < 150) and detajj > 4 and lt > 300 and st > 700 );
+            tx.setBranch<int>("is_cut_sr2_tau" , is_preselection and (categ == 2) and (mbb < 150) and detajj > 4 and lt > 300 and st > 700 );
+            tx.setBranch<int>("is_cut_sr2_neg" , is_preselection and (categ == 3) and (mbb < 150) and detajj > 4 and lt > 300 and st > 700 );
+
+            tx.setBranch<int>("is_cut_cr2_el"  , is_preselection and (categ == 0) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_cr2_mu"  , is_preselection and (categ == 1) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_cr2_tau" , is_preselection and (categ == 2) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_cr2_neg" , is_preselection and (categ == 3) and (mbb > 150) );
+
+            tx.setBranch<int>("is_bdt_sr_el"   , is_preselection and (categ == 0) and                 (bdt > 0.545) );
+            tx.setBranch<int>("is_bdt_sr_mu"   , is_preselection and (categ == 1) and                 (bdt > 0.545) );
+            tx.setBranch<int>("is_bdt_sr_tau"  , is_preselection and (categ == 2) and                 (bdt > 0.545) );
+            tx.setBranch<int>("is_bdt_sr_neg"  , is_preselection and (categ == 3) and                 (bdt > 0.545) );
+
+            tx.setBranch<int>("is_bdt_cr_el"   , is_preselection and (categ == 0) and (mbb > 150) and (bdt < 0.545) );
+            tx.setBranch<int>("is_bdt_cr_mu"   , is_preselection and (categ == 1) and (mbb > 150) and (bdt < 0.545) );
+            tx.setBranch<int>("is_bdt_cr_tau"  , is_preselection and (categ == 2) and (mbb > 150) and (bdt < 0.545) );
+            tx.setBranch<int>("is_bdt_cr_neg"  , is_preselection and (categ == 3) and (mbb > 150) and (bdt < 0.545) );
+
+            tx.setBranch<int>("is_bdt_sr2_el"  , is_preselection and (categ == 0) and                 (bdt > 0.52) );
+            tx.setBranch<int>("is_bdt_sr2_mu"  , is_preselection and (categ == 1) and                 (bdt > 0.52) );
+            tx.setBranch<int>("is_bdt_sr2_tau" , is_preselection and (categ == 2) and                 (bdt > 0.52) );
+            tx.setBranch<int>("is_bdt_sr2_neg" , is_preselection and (categ == 3) and                 (bdt > 0.52) );
+
+            tx.setBranch<int>("is_bdt_cr2_el"  , is_preselection and (categ == 0) and (mbb > 150) and (bdt < 0.52) );
+            tx.setBranch<int>("is_bdt_cr2_mu"  , is_preselection and (categ == 1) and (mbb > 150) and (bdt < 0.52) );
+            tx.setBranch<int>("is_bdt_cr2_tau" , is_preselection and (categ == 2) and (mbb > 150) and (bdt < 0.52) );
+            tx.setBranch<int>("is_bdt_cr2_neg" , is_preselection and (categ == 3) and (mbb > 150) and (bdt < 0.52) );
+
+            tx.setBranch<int>("is_ps"      , tx.getBranch<int>("is_ps_el")      or tx.getBranch<int>("is_ps_mu")      or tx.getBranch<int>("is_ps_tau")      or tx.getBranch<int>("is_ps_neg")      );
+            tx.setBranch<int>("is_cut_sr"  , tx.getBranch<int>("is_cut_sr_el")  or tx.getBranch<int>("is_cut_sr_mu")  or tx.getBranch<int>("is_cut_sr_tau")  or tx.getBranch<int>("is_cut_sr_neg")  );
+            tx.setBranch<int>("is_cut_cr"  , tx.getBranch<int>("is_cut_cr_el")  or tx.getBranch<int>("is_cut_cr_mu")  or tx.getBranch<int>("is_cut_cr_tau")  or tx.getBranch<int>("is_cut_cr_neg")  );
+            tx.setBranch<int>("is_cut_sr2" , tx.getBranch<int>("is_cut_sr2_el") or tx.getBranch<int>("is_cut_sr2_mu") or tx.getBranch<int>("is_cut_sr2_tau") or tx.getBranch<int>("is_cut_sr2_neg") );
+            tx.setBranch<int>("is_cut_cr2" , tx.getBranch<int>("is_cut_cr2_el") or tx.getBranch<int>("is_cut_cr2_mu") or tx.getBranch<int>("is_cut_cr2_tau") or tx.getBranch<int>("is_cut_cr2_neg") );
+            tx.setBranch<int>("is_bdt_sr"  , tx.getBranch<int>("is_bdt_sr_el")  or tx.getBranch<int>("is_bdt_sr_mu")  or tx.getBranch<int>("is_bdt_sr_tau")  or tx.getBranch<int>("is_bdt_sr_neg")  );
+            tx.setBranch<int>("is_bdt_cr"  , tx.getBranch<int>("is_bdt_cr_el")  or tx.getBranch<int>("is_bdt_cr_mu")  or tx.getBranch<int>("is_bdt_cr_tau")  or tx.getBranch<int>("is_bdt_cr_neg")  );
+            tx.setBranch<int>("is_bdt_sr2" , tx.getBranch<int>("is_bdt_sr2_el") or tx.getBranch<int>("is_bdt_sr2_mu") or tx.getBranch<int>("is_bdt_sr2_tau") or tx.getBranch<int>("is_bdt_sr2_neg") );
+            tx.setBranch<int>("is_bdt_cr2" , tx.getBranch<int>("is_bdt_cr2_el") or tx.getBranch<int>("is_bdt_cr2_mu") or tx.getBranch<int>("is_bdt_cr2_tau") or tx.getBranch<int>("is_bdt_cr2_neg") );
 
             return true;
         },
@@ -2515,11 +2642,11 @@ void VBSHWW::setBTagSF(std::vector<float> jet_pt, std::vector<float> jet_eta, st
                 eff_loose = flavor == 5 ? btagEffLoose_b->eval(pt, eta) : (flavor == 0 ? btagEffLoose_l->eval(pt, eta) : btagEffLoose_c->eval(pt, eta));
             }
 
-            float sf_tight = 
+            float sf_tight =
                 flavor == 5 ? btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_B, eta, pt) : (
                 flavor == 0 ? btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_UDSG, eta, pt) :
                               btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_C, eta, pt));
-            float sf_loose = 
+            float sf_loose =
                 flavor == 5 ? btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_B, eta, pt) : (
                 flavor == 0 ? btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_UDSG, eta, pt) :
                               btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_C, eta, pt));

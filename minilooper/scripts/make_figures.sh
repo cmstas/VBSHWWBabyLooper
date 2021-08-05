@@ -5,10 +5,8 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 TAG=v1
 YEAR=Run2
-RUNTAG=Nominal
-# RUNTAG=BkgCompStudyv2
+RUNTAG=NominalNew
 SKIMTAG=v2.4_SS
-# SYST=LgtTopBkgUp
 SYST=
 
 rm -f .plotjobs.txt
@@ -34,12 +32,6 @@ book_plot_alpha()
     PLOTDIRS="BkgComp BkgCompIndivid"
     CHANNELS="El Mu Tau Neg Lgt"
     REGIONS="BDTSR BDTSR2 CutSR CutSR2"
-# echo ' python scripts/plot_topbkg_compare.py v2.4_SS Run2 Nominal v1 BkgComp LooseVR__BDTSREl       ' >> .plot.jobs.txt
-# echo ' python scripts/plot_topbkg_compare.py v2.4_SS Run2 Nominal v1 BkgComp LooseVR__BDTSRMu       ' >> .plot.jobs.txt
-# echo ' python scripts/plot_topbkg_compare.py v2.4_SS Run2 Nominal v1 BkgComp LooseVR__BDTSRTau      ' >> .plot.jobs.txt
-# echo ' python scripts/plot_topbkg_compare.py v2.4_SS Run2 Nominal v1 BkgComp LooseVR__BDTSRNeg      ' >> .plot.jobs.txt
-# echo ' python scripts/plot_topbkg_compare.py v2.4_SS Run2 Nominal v1 BkgComp LooseVR__BDTSRLgt      ' >> .plot.jobs.txt
-
     for PLOTDIR in ${PLOTDIRS}; do
         for CHANNEL in ${CHANNELS}; do
             for REGION in ${REGIONS}; do
