@@ -2,26 +2,29 @@
 
 python write_datacards.py
 
-combineCards.py -S \
-    b1=datacards/cut/datacard_bin1.txt \
-    b2=datacards/cut/datacard_bin2.txt \
-    b3=datacards/cut/datacard_bin3.txt \
-    b4=datacards/cut/datacard_bin4.txt \
-    b5=datacards/cut/datacard_bin5.txt \
-    > datacards/cut_combined.txt
+C2VS="0 1 3 4 4p5 m1 m2 m2p5"
 
-combineCards.py -S \
-    b1=datacards/bdt/datacard_bin1.txt \
-    b2=datacards/bdt/datacard_bin2.txt \
-    b3=datacards/bdt/datacard_bin3.txt \
-    b4=datacards/bdt/datacard_bin4.txt \
-    > datacards/bdt_combined.txt
+for C2V in ${C2VS}; do
+    combineCards.py -S \
+        b1=datacards/cut_c2v${C2V}/datacard_bin1.txt \
+        b2=datacards/cut_c2v${C2V}/datacard_bin2.txt \
+        b3=datacards/cut_c2v${C2V}/datacard_bin3.txt \
+        b4=datacards/cut_c2v${C2V}/datacard_bin4.txt \
+        b5=datacards/cut_c2v${C2V}/datacard_bin5.txt \
+        > datacards/cut_c2v${C2V}_combined.txt
+    combineCards.py -S \
+        b1=datacards/bdt_c2v${C2V}/datacard_bin1.txt \
+        b2=datacards/bdt_c2v${C2V}/datacard_bin2.txt \
+        b3=datacards/bdt_c2v${C2V}/datacard_bin3.txt \
+        b4=datacards/bdt_c2v${C2V}/datacard_bin4.txt \
+        > datacards/bdt_c2v${C2V}_combined.txt
+done
 
 echo "Cut-based analysis data card written here:"
-echo "   datacards/cut_combined.txt"
+echo "   datacards/cut_c2v*_combined.txt"
 echo ""
 echo "BDT-based analysis data card written here:"
-echo "   datacards/bdt_combined.txt"
+echo "   datacards/bdt_c2v*_combined.txt"
 echo ""
 echo "To run limit do something like:"
-echo "   combine -M AsymptoticLimits datacards/bdt_combined.txt"
+echo "   sh run_limits.sh"
