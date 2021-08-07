@@ -102,7 +102,12 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     // TString vbsHwwNanoLooperDirPath = gSystem->Getenv("VBSHWWNANOLOOPERDIR");
     // const char* json_file = TString::Format("%s/NanoTools/NanoCORE/Tools/data/Cert_271036-325175_13TeV_Combined161718_JSON_snt.txt", vbsHwwNanoLooperDirPath.Data()).Data();
     // cout << "Setting grl: " << json_file << endl;
-    set_goodrun_file("/nfs-7/userdata/phchang/analysis_data/grl/Cert_271036-325175_13TeV_Combined161718_JSON_snt.txt");
+    if (nt.year() == 2016)
+        set_goodrun_file("/nfs-7/userdata/phchang/analysis_data/grl/Cert_271036-325175_13TeV_Combined161718_JSON_snt.txt");
+    if (nt.year() == 2017)
+        set_goodrun_file("/nfs-7/userdata/phchang/analysis_data/grl/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON_snt.txt");
+    if (nt.year() == 2018)
+        set_goodrun_file("/nfs-7/userdata/phchang/analysis_data/grl/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON_snt.txt");
 
     // Setting up tau ID scale factors (used tight ttH tau ID DeepTau working points)
     // TODO: check that 'embedding' should indeed be false (last bool in the TauIDSFTool constructor)
