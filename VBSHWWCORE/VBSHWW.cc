@@ -1119,7 +1119,7 @@ void VBSHWW::initSRCutflow()
                     jec_unc->setJetEta(jet_p4.eta());
                     jec_unc->setJetPt(jet_p4.pt());
                     float jec_err = abs(jec_unc->getUncertainty(jecvar == 1))*jecvar;
-                    jet_p4 = jet_p4*(1. + jec_err);
+                    jet_p4 *= (1. + jec_err);
                 }
 
                 if (nt.year() == 2016)
