@@ -234,7 +234,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
 
     // Set up JEC uncertainty tool
     jec_unc = new JetCorrectionUncertainty(
-        "NanoCORE/Tools/jetcorr/data/"
+        "NanoTools/NanoCORE/Tools/jetcorr/data/"
         + gconf.jecEraMC 
         + "/"
         + gconf.jecEraMC
@@ -2770,6 +2770,11 @@ void VBSHWW::parseCLI(int argc, char** argv)
     if (result.count("jecvar"))
     {
         jecvar = result["jecvar"].as<int>(); // -1, 0, or 1
+        if (jecvar != -1 && jecvar != 0 && jecvar != 1)
+        {
+            std::cout << "ERROR: jecvar must be -1, 0, or 1. Received: " << jecvar << std::endl;
+            exit(1);
+        }
     }
 
     //_______________________________________________________________________________
