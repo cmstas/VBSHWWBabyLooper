@@ -232,6 +232,15 @@ VBSHWW::VBSHWW(int argc, char** argv) :
 
     readerX = new RooUtil::TMVAUtil::ReaderX("BDT", "/nfs-7/userdata/yxiang/BDTResult/dataset/weights/TMVAClassification_BDT.weights.xml");
 
+    // Set up JEC uncertainty tool
+    jec_unc = new JetCorrectionUncertainty(
+        "NanoCORE/Tools/jetcorr/data/"
+        + gconf.jecEraMC 
+        + "/"
+        + gconf.jecEraMC
+        + "_Uncertainty_AK4PFchs.txt"
+    ); 
+
 //=============================
 //
 // Analysis Data Structure
@@ -1103,7 +1112,15 @@ void VBSHWW::initSRCutflow()
             {
 
                 // Read jet p4
-                const LV& jet_p4 = nt.Jet_p4()[ijet];
+                LV jet_p4 = nt.Jet_p4()[ijet];
+                // Apply up/down corrections
+                if (jecvar == 1 || jecvar == -1)
+                {
+                    jec_unc->setJetEta(jet_p4.eta());
+                    jec_unc->setJetPt(jet_p4.pt());
+                    float jec_err = abs(jec_unc->getUncertainty(jecvar == 1))*jecvar;
+                    jet_p4 = jet_p4*(1. + jec_err);
+                }
 
                 if (nt.year() == 2016)
                 {
@@ -2696,6 +2713,7 @@ void VBSHWW::parseCLI(int argc, char** argv)
         ("j,nsplit_jobs" , "Enable splitting jobs by N blocks (--job_index must be set)"                                         , cxxopts::value<int>())
         ("I,job_index"   , "job_index of split jobs (--nsplit_jobs must be set. index starts from 0. i.e. 0, 1, 2, 3, etc...)"   , cxxopts::value<int>())
         ("s,scale1fb"    , "pass scale1fb of the sample"                                                                         , cxxopts::value<float>())
+        ("e,jecvar"      , "JEC variations to apply (1 = up, 0 = nominal, -1 = down)"                                            , cxxopts::value<int>()->default_value("0"))
         ("d,debug"       , "Run debug job. i.e. overrides output option to 'debug.root' and 'recreate's the file.")
         ("h,help"        , "Print help")
         ;
@@ -2745,6 +2763,13 @@ void VBSHWW::parseCLI(int argc, char** argv)
     if (result.count("scale1fb"))
     {
         scale1fb = result["scale1fb"].as<float>();
+    }
+
+    //_______________________________________________________________________________
+    // --jecvar
+    if (result.count("jecvar"))
+    {
+        jecvar = result["jecvar"].as<int>(); // -1, 0, or 1
     }
 
     //_______________________________________________________________________________
