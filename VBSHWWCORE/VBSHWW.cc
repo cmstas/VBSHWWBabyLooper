@@ -27,6 +27,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     // Determine whether the sample being run over has LHEScaleWeight and PSWeight
     hasLHEScaleWeight = false; // default is false
     hasPSWeight = false; // default is false
+    hasLHEReweightingWeight = false; // default is false
     TObjArray* brobjArray = events_tchain->GetListOfBranches();
     for (unsigned int ibr = 0; ibr < (unsigned int) brobjArray->GetEntries(); ++ibr)
     {
@@ -35,6 +36,8 @@ VBSHWW::VBSHWW(int argc, char** argv) :
             hasLHEScaleWeight = true; // if it has the branch it is set to true
         if (brname.EqualTo("PSWeight"))
             hasPSWeight = true; // if it has the branch it is set to true
+        if (brname.EqualTo("LHEReweightingWeight"))
+            hasLHEReweightingWeight = true; // if it has the branch it is set to true
     }
 
     // Set up a looper
@@ -235,7 +238,8 @@ VBSHWW::VBSHWW(int argc, char** argv) :
 
     sig_rewgt = new RooUtil::HistMap("data/gen_reweight.root:signal_rewgt");
 
-    readerX = new RooUtil::TMVAUtil::ReaderX("BDT", "/nfs-7/userdata/yxiang/BDTResult/dataset/weights/TMVAClassification_BDT.weights.xml");
+    // readerX = new RooUtil::TMVAUtil::ReaderX("BDT", "/nfs-7/userdata/yxiang/BDTResult/dataset/weights/TMVAClassification_BDT.weights.xml"); // 24 variables
+    readerX = new RooUtil::TMVAUtil::ReaderX("BDT", "/nfs-7/userdata/yxiang/BDTResult/dataset_19variables/weights/TMVAClassification_BDT.weights.xml");
 
     // Set up JEC uncertainty tool
     jec_unc = new JetCorrectionUncertainty(
@@ -262,6 +266,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch  < float               >   ( "wgt"                           , true  );
     tx.createBranch  < vector<float>       >   ( "scalewgts"                     , true  );
     tx.createBranch  < vector<float>       >   ( "pswgts"                        , true  );
+    tx.createBranch  < vector<float>       >   ( "lherewgts"                     , true  );
 
     // Create trigger branches
     tx.createBranch  < int                 >   ( "trig_ee"                       , false );
@@ -542,6 +547,10 @@ VBSHWW::VBSHWW(int argc, char** argv) :
             {
                 processGenParticles_VBSWWH_UL();
             }
+            if (looper.getCurrentFileName().Contains("VBSWWHTo"))
+            {
+                processGenParticles_VBSWWH();
+            }
             return true;
         }, UNITY);
 
@@ -728,6 +737,13 @@ VBSHWW::VBSHWW(int argc, char** argv) :
                     for (unsigned int i = 0; i < nt.PSWeight().size(); ++i)
                     {
                         tx.pushbackToBranch<float>("pswgts", nt.PSWeight()[i]);
+                    }
+                }
+                if (hasLHEReweightingWeight)
+                {
+                    for (unsigned int i = 0; i < nt.LHEReweightingWeight().size(); ++i)
+                    {
+                        tx.pushbackToBranch<float>("lherewgts", nt.LHEReweightingWeight()[i]);
                     }
                 }
             }

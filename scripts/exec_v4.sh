@@ -3,7 +3,7 @@ usage()
 {
   echo "ERROR - Usage:"
   echo
-  echo "      sh $(basename $0) STUDYNAME TAG BABYVERSION [DEBUG]"
+  echo "      sh $(basename $0) STUDYNAME SKIMVERSION BABYVERSION [DEBUG]"
   echo
   exit
 }
@@ -11,11 +11,15 @@ usage()
 if [ -z ${1} ]; then usage; fi
 STUDY=${1}
 if [ -z ${2} ]; then usage; fi
-TAG=${2}
+SKIMVERSION=${2}
 if [ -z ${3} ]; then usage; fi
 BABYVERSION=${3}
 
 DEBUG=${4}
+
+LOGFILE=.${STUDY}_${SKIMVERSION}_${BABYVERSION}_debug${DEBUG}.log
+
+rm -f ${LOGFILE}
 
 YEARS="2016"
 
@@ -70,7 +74,7 @@ SingleMuon_Run2016"
 
 # VBSWmpWmpHToLNuLNu_TuneCP5 \
 
-NANOSKIMDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_${TAG}/
+NANOSKIMDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_${SKIMVERSION}/
 
 rm -f .jobs.txt
 
@@ -80,7 +84,7 @@ for SAMPLE in ${SAMPLES}; do
 
     for YEAR in ${YEARS}; do
 
-        HISTDIR=hists/${TAG}/${BABYVERSION}/${STUDY}_${YEAR}
+        HISTDIR=hists/${SKIMVERSION}/${BABYVERSION}/${STUDY}_${YEAR}
         mkdir -p ${HISTDIR}
 
         if [[ ${YEAR} == *"2016"* ]]; then NANOTAG=RunIISummer16NanoAOD*; fi
@@ -209,18 +213,18 @@ for SAMPLE in ${SAMPLES}; do
             fi
         fi
 
-        echo ""
-        echo "=========================================================================================="
-        echo "Preparing command lines to process ..."
-        echo "Sample                            :" ${SAMPLE}
-        echo "Year                              :" ${YEAR}
-        echo "Nano tag                          :" ${NANOTAG}
-        echo "N events information file         :" ${NEVENTSINFOFILE}
-        echo "N total events                    :" ${NTOTALEVENTS}
-        echo "N eff total events (i.e. pos-neg) :" ${NEFFEVENTS}
-        echo "Cross section (pb)                :" ${XSEC}
-        echo "Scale1fb                          :" ${SCALE1FB}
-        echo ""
+        echo "" >> ${LOGFILE}
+        echo "==========================================================================================" >> ${LOGFILE}
+        echo "Preparing command lines to process ..." >> ${LOGFILE}
+        echo "Sample                            :" ${SAMPLE} >> ${LOGFILE}
+        echo "Year                              :" ${YEAR} >> ${LOGFILE}
+        echo "Nano tag                          :" ${NANOTAG} >> ${LOGFILE}
+        echo "N events information file         :" ${NEVENTSINFOFILE} >> ${LOGFILE}
+        echo "N total events                    :" ${NTOTALEVENTS} >> ${LOGFILE}
+        echo "N eff total events (i.e. pos-neg) :" ${NEFFEVENTS} >> ${LOGFILE}
+        echo "Cross section (pb)                :" ${XSEC} >> ${LOGFILE}
+        echo "Scale1fb                          :" ${SCALE1FB} >> ${LOGFILE}
+        echo "" >> ${LOGFILE}
 
         #
         # More than 1 jobs
@@ -316,7 +320,17 @@ for SAMPLE in ${SAMPLES}; do
         FILENAME=output
         for IJOB in $(seq 0 ${NJOBSMAXIDX}); do
             if [ -z "${DEBUG}" ]; then
-                echo "rm -f ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root; ${EXECUTABLE} -t Events -o ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root --scale1fb ${SCALE1FB} -j ${NJOBS} -I ${IJOB} -i ${FILELIST} > ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.log 2>&1" >> .jobs.txt
+                if [[ ${SAMPLE} == *"Run201"* ]]; then
+                    echo "rm -f ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root; ${EXECUTABLE} -e  0 -t Events -o ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root --scale1fb ${SCALE1FB} -j ${NJOBS} -I ${IJOB} -i ${FILELIST} > ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.log 2>&1" >> .jobs.txt
+                else
+                    if [[ ${BABYVERSION} == *"_jecUp"* ]]; then
+                        echo "rm -f ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root; ${EXECUTABLE} -e  1 -t Events -o ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root --scale1fb ${SCALE1FB} -j ${NJOBS} -I ${IJOB} -i ${FILELIST} > ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.log 2>&1" >> .jobs.txt
+                    elif [[ ${BABYVERSION} == *"_jecDn"* ]]; then                                      
+                        echo "rm -f ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root; ${EXECUTABLE} -e -1 -t Events -o ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root --scale1fb ${SCALE1FB} -j ${NJOBS} -I ${IJOB} -i ${FILELIST} > ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.log 2>&1" >> .jobs.txt
+                    else                                                                               
+                        echo "rm -f ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root; ${EXECUTABLE} -e  0 -t Events -o ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root --scale1fb ${SCALE1FB} -j ${NJOBS} -I ${IJOB} -i ${FILELIST} > ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.log 2>&1" >> .jobs.txt
+                    fi
+                fi
             else
                 echo "rm -f ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root; ${EXECUTABLE} -n 50000 -t Events -o ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root --scale1fb ${SCALE1FB} -j ${NJOBS} -I ${IJOB} -i ${FILELIST} > ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.log 2>&1" >> .jobs.txt
             fi

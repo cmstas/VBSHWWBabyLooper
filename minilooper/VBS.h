@@ -1,6 +1,6 @@
 // -*- C++ -*-
 // This is a header file generated with the command:
-// makeCMS3ClassFiles("/nfs-7/userdata/phchang/VBSHWWBaby/v2.4_SS/v3/createMini_Run2/vbshww_c2v_4p5.root", "variable", "VBS", "tas", "vbs")
+// makeCMS3ClassFiles("/nfs-7/userdata/phchang/VBSHWWBaby/v2.4_SS/v6/createMini_Run2/vbshwwlvlvbb_c2v.root", "variable", "VBS", "tas", "vbs")
 
 #ifndef VBS_H
 #define VBS_H
@@ -41,6 +41,9 @@ class VBS {
   vector<float> *pswgts_;
   TBranch *pswgts_branch;
   bool     pswgts_isLoaded;
+  vector<float> *lherewgts_;
+  TBranch *lherewgts_branch;
+  bool     lherewgts_isLoaded;
   ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > *met_p4_;
   TBranch *met_p4_branch;
   bool     met_p4_isLoaded;
@@ -507,6 +510,7 @@ void LoadAllBranches();
   const float &wgt();
   const vector<float> &scalewgts();
   const vector<float> &pswgts();
+  const vector<float> &lherewgts();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &met_p4();
   const int &isvbswwh();
   const int &iswwhlvlvbb();
@@ -674,6 +678,7 @@ namespace tas {
   const float &wgt();
   const vector<float> &scalewgts();
   const vector<float> &pswgts();
+  const vector<float> &lherewgts();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &met_p4();
   const int &isvbswwh();
   const int &iswwhlvlvbb();

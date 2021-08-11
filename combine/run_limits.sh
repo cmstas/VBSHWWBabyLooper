@@ -20,58 +20,45 @@ TAG=$1
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 ANALYSIS=bdt
-BIN=Combined
-BIN=2
+# BIN=2
 
-ACCURACYOPTION="--rAbsAcc=0.01 --rRelAcc=0.03 "
+ACCURACYOPTION="--rRelAcc=0.01 "
+# ACCURACYOPTION="--rAbsAcc=0.01 --rRelAcc=0.03 " # Mario's options
 # ACCURACYOPTION=""
 
 MINIMIZEROPTION="--cminDefaultMinimizerStrategy 0" # 0=Hessian, 1=Minos (nothing = Migrad)
 # MINIMIZEROPTION=""
 
-# C2Vs to fit
-# C2VS="0 1 3 4 4p5 m1 m2 m2p5"
-C2VS="4p5"
+rm -rf .statjobs.txt
 
-for C2V in ${C2VS}; do
+# for C2V in ${C2VS}; do
+for DATACARD in $(ls datacards/${ANALYSIS}_*.txt); do
+
+    C2V=$(echo ${DATACARD} | sed 's|datacards/'${ANALYSIS}'_c2v||g' | sed 's|_combined.txt||g')
 
     mkdir -p limits/${TAG}/c2v_${C2V}
 
-    cd limits/${TAG}/c2v_${C2V}
+    LIMITDIR=limits/${TAG}/c2v_${C2V}
 
     echo "-----------------------------"
-    echo "Running limits for C2V=${C2V}"
+    echo "Booking limit jobs for C2V=${C2V}"
 
-    if [[ "${BIN}" == *"Combined"* ]]; then
-        DATACARDS=${DIR}/datacards/${ANALYSIS}_c2v${C2V}_combined.txt
-    else
-        DATACARDS=${DIR}/datacards/${ANALYSIS}_c2v${C2V}/datacard_bin${BIN}.txt
-    fi
+    DATACARD=${DIR}/${DATACARD}
 
-    # Example from Mario
-    # https://github.com/hardikroutray/displacedscouting_fitscountlimits/blob/master/cleanscripts/cal_limits_vfinal_hzd_toys.py#L321-L335
+    NTOYS=500
+    CMD="combine -M HybridNew --LHCmode LHC-limits --seed -1 -T ${NTOYS} -v 0 ${ACCURACYOPTION} ${MINIMIZEROPTION} --expectedFromGrid=0.5 ${DATACARD}"
+    echo "cd $LIMITDIR; $CMD > ${ANALYSIS}_exp.out 2>&1" >> .statjobs.txt
 
-    # combine -M HybridNew --frequentist --testStat LHC --LHCmode LHC-limits --seed -1 -T 200 -v 0 --fork 15 ${MINIMIZEROPTION}  ${DATACARDS} > com_mass{}_ctau{}_obs.out
-    CMD="combine -M HybridNew --frequentist --testStat LHC --LHCmode LHC-limits --seed -1 -T 200 -v 0 ${ACCURACYOPTION} --fork 15 ${MINIMIZEROPTION} --expectedFromGrid=0.5 ${DATACARDS}"
-    echo $CMD
-    $CMD > ${ANALYSIS}_exp.out
+    CMD="combine -M HybridNew --LHCmode LHC-limits --seed -1 -T ${NTOYS} -v 0 ${ACCURACYOPTION} ${MINIMIZEROPTION} --expectedFromGrid=0.84 ${DATACARD}"
+    echo "cd $LIMITDIR; $CMD > ${ANALYSIS}_1su.out 2>&1" >> .statjobs.txt
 
-    CMD="combine -M HybridNew --frequentist --testStat LHC --LHCmode LHC-limits --seed -1 -T 200 -v 0 ${ACCURACYOPTION} --fork 15 ${MINIMIZEROPTION} --expectedFromGrid=0.84 ${DATACARDS}"
-    echo $CMD
-    $CMD > ${ANALYSIS}_1su.out
+    CMD="combine -M HybridNew --LHCmode LHC-limits --seed -1 -T ${NTOYS} -v 0 ${ACCURACYOPTION} ${MINIMIZEROPTION} --expectedFromGrid=0.16 ${DATACARD}"
+    echo "cd $LIMITDIR; $CMD > ${ANALYSIS}_1sd.out 2>&1" >> .statjobs.txt
 
-    CMD="combine -M HybridNew --frequentist --testStat LHC --LHCmode LHC-limits --seed -1 -T 200 -v 0 ${ACCURACYOPTION} --fork 15 ${MINIMIZEROPTION} --expectedFromGrid=0.16 ${DATACARDS}"
-    echo $CMD
-    $CMD > ${ANALYSIS}_1sd.out
+    CMD="combine -M HybridNew --LHCmode LHC-limits --seed -1 -T ${NTOYS} -v 0 ${ACCURACYOPTION} ${MINIMIZEROPTION} --expectedFromGrid=0.975 ${DATACARD}"
+    echo "cd $LIMITDIR; $CMD > ${ANALYSIS}_2su.out 2>&1" >> .statjobs.txt
 
-    CMD="combine -M HybridNew --frequentist --testStat LHC --LHCmode LHC-limits --seed -1 -T 200 -v 0 ${ACCURACYOPTION} --fork 15 ${MINIMIZEROPTION} --expectedFromGrid=0.975 ${DATACARDS}"
-    echo $CMD
-    $CMD > ${ANALYSIS}_2su.out
-
-    CMD="combine -M HybridNew --frequentist --testStat LHC --LHCmode LHC-limits --seed -1 -T 200 -v 0 ${ACCURACYOPTION} --fork 15 ${MINIMIZEROPTION} --expectedFromGrid=0.025 ${DATACARDS}"
-    echo $CMD
-    $CMD > ${ANALYSIS}_2sd.out
-
-    cd ../../../
+    CMD="combine -M HybridNew --LHCmode LHC-limits --seed -1 -T ${NTOYS} -v 0 ${ACCURACYOPTION} ${MINIMIZEROPTION} --expectedFromGrid=0.025 ${DATACARD}"
+    echo "cd $LIMITDIR; $CMD > ${ANALYSIS}_2sd.out 2>&1" >> .statjobs.txt
 
 done

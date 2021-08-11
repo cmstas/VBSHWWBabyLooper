@@ -34,6 +34,9 @@ public:
     // Number of events to loop over
     int n_events;
 
+    // Index to the reweighting
+    int rwgtidx;
+
     // Jobs to split (if this number is positive, then we will skip certain number of events)
     // If there are N events, and was asked to split 2 ways, then depending on job_index, it will run over first half or latter half
     int nsplit_jobs;
