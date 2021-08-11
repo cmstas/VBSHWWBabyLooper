@@ -1,125 +1,145 @@
 #!/bin/env python
 
 import math
+import ROOT as r
+import sys
 
-# RunTag = "Nominal"
-RunTag = "BkgCompStudy"
-Syst="LgtTopBkgUp"
-Syst=""
+def bc(proc, channel, region, analysis):
+    f = r.TFile("hists/Nominal/v2.4_SS/v1/Run2/{}.root".format(proc))
+    h = f.Get("LooseVR__{}SR{}".format(analysis, channel))
+    if region == "SR":
+        return h.GetBinContent(2)
+    if region == "CR":
+        return h.GetBinContent(1)
+    sys.exit("region must be either SR or CR")
 
-def get_yield(fname):
-    f = open(fname)
-    lines = f.readlines()
-    for line in lines:
-        if "Bin1" in line:
-            ls = line.strip()
-            ls = ls.split()
-            # print(ls)
-            y = float(ls[19])+ float(ls[15])+ float(ls[11])+ float(ls[7])+ float(ls[3])
-            e = math.sqrt(float(ls[21])**2+ float(ls[17])**2+ float(ls[13])**2+ float(ls[9])**2+ float(ls[5])**2)
-            ny = float(ls[23])
-            ne = float(ls[25])
-            d = float(ls[31])
-            break
-    return float(y), float(e), float(ny), float(ne), float(d)
 
-El_SR_y , El_SR_e  , El_SR_ny , El_SR_ne , El_SR_d  = get_yield("plots/{}/v2.4_SS/v1/Run2/SRYield/ElMbbOnSRA1{}__Yield.txt".format(RunTag, Syst))
-Mu_SR_y , Mu_SR_e  , Mu_SR_ny , Mu_SR_ne , Mu_SR_d  = get_yield("plots/{}/v2.4_SS/v1/Run2/SRYield/MuMbbOnSRA1{}__Yield.txt".format(RunTag, Syst))
-Tau_SR_y, Tau_SR_e , Tau_SR_ny, Tau_SR_ne, Tau_SR_d = get_yield("plots/{}/v2.4_SS/v1/Run2/SRYield/TauMbbOnSRA1{}__Yield.txt".format(RunTag, Syst))
-Neg_SR_y, Neg_SR_e , Neg_SR_ny, Neg_SR_ne, Neg_SR_d = get_yield("plots/{}/v2.4_SS/v1/Run2/SRYield/NegMbbOnSRA1{}__Yield.txt".format(RunTag, Syst))
-Lgt_SR_y, Lgt_SR_e , Lgt_SR_ny, Lgt_SR_ne, Lgt_SR_d = get_yield("plots/{}/v2.4_SS/v1/Run2/SRYield/LgtMbbOnSRA2{}__Yield.txt".format(RunTag, Syst))
+def be(proc, channel, region, analysis):
+    f = r.TFile("hists/Nominal/v2.4_SS/v1/Run2/{}.root".format(proc))
+    h = f.Get("LooseVR__{}SR{}".format(analysis, channel))
+    if region == "SR":
+        return h.GetBinError(2)
+    if region == "CR":
+        return h.GetBinError(1)
+    sys.exit("region must be either SR or CR")
 
-El_CR_y , El_CR_e  , El_CR_ny , El_CR_ne , El_CR_d  = get_yield("plots/{}/v2.4_SS/v1/Run2/AnchorYield/ElMbbOffCRA{}__Yield.txt".format(RunTag, Syst))
-Mu_CR_y , Mu_CR_e  , Mu_CR_ny , Mu_CR_ne , Mu_CR_d  = get_yield("plots/{}/v2.4_SS/v1/Run2/AnchorYield/MuMbbOffCRA{}__Yield.txt".format(RunTag, Syst))
-Tau_CR_y, Tau_CR_e , Tau_CR_ny, Tau_CR_ne, Tau_CR_d = get_yield("plots/{}/v2.4_SS/v1/Run2/AnchorYield/TauMbbOffCRA{}__Yield.txt".format(RunTag, Syst))
-Neg_CR_y, Neg_CR_e , Neg_CR_ny, Neg_CR_ne, Neg_CR_d = get_yield("plots/{}/v2.4_SS/v1/Run2/AnchorYield/NegMbbOffCRA{}__Yield.txt".format(RunTag, Syst))
-Lgt_CR_y, Lgt_CR_e , Lgt_CR_ny, Lgt_CR_ne, Lgt_CR_d = get_yield("plots/{}/v2.4_SS/v1/Run2/AnchorYield/LgtMbbOffCRA{}__Yield.txt".format(RunTag, Syst))
+def bsrmc(channel, analysis): return bc("topbkg", channel, "SR", analysis)
+def esrmc(channel, analysis): return be("topbkg", channel, "SR", analysis)
+def bcrmc(channel, analysis): return bc("topbkg", channel, "CR", analysis)
+def ecrmc(channel, analysis): return be("topbkg", channel, "CR", analysis)
 
-def bd(ny, ne, d):
-    if d == 0:
-        return 0
+def alpha(channel, analysis):
+    bSRMC = bsrmc(channel, analysis)
+    eSRMC = esrmc(channel, analysis)
+    bCRMC = bcrmc(channel, analysis)
+    eCRMC = ecrmc(channel, analysis)
+    alpha = bSRMC / bCRMC
+    return alpha
+
+def error(channel, analysis):
+    bSRMC = bsrmc(channel, analysis)
+    eSRMC = esrmc(channel, analysis)
+    bCRMC = bcrmc(channel, analysis)
+    eCRMC = ecrmc(channel, analysis)
+    error = math.sqrt((eSRMC / bSRMC)**2 + (eCRMC / bCRMC)**2) * alpha(channel, analysis)
+    return error
+
+def bcrdt(channel, analysis): return bc("data", channel, "CR", analysis) - bc("bosons", channel, "CR", analysis)
+def ecrdt(channel, analysis): return math.sqrt(be("data", channel, "CR", analysis)**2 + be("bosons", channel, "CR", analysis)**2)
+
+def bsrdt(channel, analysis): return bcrdt(channel, analysis) * alpha(channel, analysis)
+def esrdt(channel, analysis):
+    percent_error = math.sqrt((ecrdt(channel, analysis) / bcrdt(channel, analysis))**2 + (error(channel, analysis) / alpha(channel, analysis))**2)
+    Syst1 = syst1(channel, analysis)
+    Syst2 = syst2(channel, analysis)
+    return math.sqrt(percent_error**2 + Syst1**2 + Syst2**2) * bsrdt(channel, analysis)
+
+def syst1(channel, analysis):
+    syst1 = 0.01
+    syst2 = 0.01
+    if analysis == "Cut":
+        if channel == "El":
+            syst1 = 0.25
+            syst2 = 0.11
+        elif channel == "Mu":
+            syst1 = 0.25
+            syst2 = 0.11
+        elif channel == "Tau":
+            syst1 = 0.45
+            syst2 = 0.12
+        elif channel == "Neg":
+            syst1 = 0.70
+            syst2 = 0.16
+        elif channel == "Lgt":
+            syst1 = 0.25
+            syst2 = 0.11
     else:
-        return (d - ny)
+        if channel == "El":
+            syst1 = 0.32
+            syst2 = 0.11
+        elif channel == "Mu":
+            syst1 = 0.32
+            syst2 = 0.11
+        elif channel == "Tau":
+            syst1 = 0.45
+            syst2 = 0.12
+        elif channel == "Neg":
+            syst1 = 0.70
+            syst2 = 0.16
+    return syst1
 
-def bderr(ny, ne, d):
-    if d == 0:
-        return 0
+def syst2(channel, analysis):
+    syst1 = 0.01
+    syst2 = 0.01
+    if analysis == "Cut":
+        if channel == "El":
+            syst1 = 0.25
+            syst2 = 0.11
+        elif channel == "Mu":
+            syst1 = 0.25
+            syst2 = 0.11
+        elif channel == "Tau":
+            syst1 = 0.45
+            syst2 = 0.12
+        elif channel == "Neg":
+            syst1 = 0.70
+            syst2 = 0.16
+        elif channel == "Lgt":
+            syst1 = 0.25
+            syst2 = 0.11
     else:
-        return math.sqrt(d + ne**2)
+        if channel == "El":
+            syst1 = 0.32
+            syst2 = 0.11
+        elif channel == "Mu":
+            syst1 = 0.32
+            syst2 = 0.11
+        elif channel == "Tau":
+            syst1 = 0.45
+            syst2 = 0.12
+        elif channel == "Neg":
+            syst1 = 0.70
+            syst2 = 0.16
+    return syst2
 
-def alpha(y1, e1, y2, e2):
-    if y1 == 0 or y2 == 0:
-        return 0
-    else:
-        return y1 / y2
+def get(channel, analysis):
+    bSRMC = bsrmc(channel, analysis)
+    eSRMC = esrmc(channel, analysis)
+    bCRMC = bcrmc(channel, analysis)
+    eCRMC = ecrmc(channel, analysis)
+    Alpha = alpha(channel, analysis)
+    Error = error(channel, analysis)
+    bCRDT = bcrdt(channel, analysis)
+    eCRDT = ecrdt(channel, analysis)
+    bSRDT = bsrdt(channel, analysis)
+    eSRDT = esrdt(channel, analysis)
+    fSRDT = eSRDT / bSRDT
+    return [bSRMC, eSRMC, bCRMC, eCRMC, Alpha, (Error/Alpha)* 100, syst1(channel, analysis)*100, syst2(channel, analysis)*100, bCRDT, eCRDT, bSRDT, eSRDT, fSRDT*100,]
 
-def alphaerr(y1, e1, y2, e2):
-    if y1 == 0 or y2 == 0:
-        return 0
-    else:
-        return math.sqrt((e1/y1)**2 + (e2/y2)**2) * (y1/y2)
 
-def bdsr(alpha, alphaerr, asyst1, asyst2, bd, bderr):
-    if alpha == 0 or bd == 0:
-        return 0
-    else:
-        return alpha * bd
-
-def bdsrerr(alpha, alphaerr, asyst1, asyst2, bd, bderr):
-    if alpha == 0 or bd == 0:
-        return 0
-    else:
-        return math.sqrt((alphaerr/alpha)**2 + (asyst1/alpha)**2+(asyst2/alpha)**2+ (bderr/bd)**2) * (alpha*bd)
-
-El_alpha  = alpha(El_SR_y  , El_SR_e  , El_CR_y  , El_CR_e) 
-Mu_alpha  = alpha(Mu_SR_y  , Mu_SR_e  , Mu_CR_y  , Mu_CR_e) 
-Tau_alpha = alpha(Tau_SR_y , Tau_SR_e , Tau_CR_y , Tau_CR_e)
-Neg_alpha = alpha(Neg_SR_y , Neg_SR_e , Neg_CR_y , Neg_CR_e)
-Lgt_alpha = alpha(Lgt_SR_y , Lgt_SR_e , Lgt_CR_y , Lgt_CR_e)
-
-El_alphaerr  = alphaerr(El_SR_y  , El_SR_e  , El_CR_y  , El_CR_e) 
-Mu_alphaerr  = alphaerr(Mu_SR_y  , Mu_SR_e  , Mu_CR_y  , Mu_CR_e) 
-Tau_alphaerr = alphaerr(Tau_SR_y , Tau_SR_e , Tau_CR_y , Tau_CR_e)
-Neg_alphaerr = alphaerr(Neg_SR_y , Neg_SR_e , Neg_CR_y , Neg_CR_e)
-Lgt_alphaerr = alphaerr(Lgt_SR_y , Lgt_SR_e , Lgt_CR_y , Lgt_CR_e)
-
-El_bd  = bd(El_CR_ny  , El_CR_ne  , El_CR_d)
-Mu_bd  = bd(Mu_CR_ny  , Mu_CR_ne  , Mu_CR_d)
-Tau_bd = bd(Tau_CR_ny , Tau_CR_ne , Tau_CR_d)
-Neg_bd = bd(Neg_CR_ny , Neg_CR_ne , Neg_CR_d)
-Lgt_bd = bd(Lgt_CR_ny , Lgt_CR_ne , Lgt_CR_d)
-
-El_bderr  = bderr(El_CR_ny  , El_CR_ne  , El_CR_d)
-Mu_bderr  = bderr(Mu_CR_ny  , Mu_CR_ne  , Mu_CR_d)
-Tau_bderr = bderr(Tau_CR_ny , Tau_CR_ne , Tau_CR_d)
-Neg_bderr = bderr(Neg_CR_ny , Neg_CR_ne , Neg_CR_d)
-Lgt_bderr = bderr(Lgt_CR_ny , Lgt_CR_ne , Lgt_CR_d)
-
-El_bdsr  = bdsr(El_alpha  , El_alphaerr  , 0.25*El_alpha  , 0.11*El_alpha , El_bd  , El_bderr )
-Mu_bdsr  = bdsr(Mu_alpha  , Mu_alphaerr  , 0.25*Mu_alpha  , 0.11*Mu_alpha , Mu_bd  , Mu_bderr )
-Tau_bdsr = bdsr(Tau_alpha , Tau_alphaerr , 0.45*Tau_alpha , 0.12*Tau_alpha, Tau_bd , Tau_bderr)
-Neg_bdsr = bdsr(Neg_alpha , Neg_alphaerr , 0.70*Neg_alpha , 0.16*Neg_alpha, Neg_bd , Neg_bderr)
-Lgt_bdsr = bdsr(Lgt_alpha , Lgt_alphaerr , 0.25*Lgt_alpha , 0.11*Lgt_alpha, Lgt_bd , Lgt_bderr)
-
-El_bdsrerr  = bdsrerr(El_alpha  , El_alphaerr  , 0.25*El_alpha  , 0.11*El_alpha , El_bd  , El_bderr )
-Mu_bdsrerr  = bdsrerr(Mu_alpha  , Mu_alphaerr  , 0.25*Mu_alpha  , 0.11*Mu_alpha , Mu_bd  , Mu_bderr )
-Tau_bdsrerr = bdsrerr(Tau_alpha , Tau_alphaerr , 0.45*Tau_alpha , 0.12*Tau_alpha, Tau_bd , Tau_bderr)
-Neg_bdsrerr = bdsrerr(Neg_alpha , Neg_alphaerr , 0.70*Neg_alpha , 0.16*Neg_alpha, Neg_bd , Neg_bderr)
-Lgt_bdsrerr = bdsrerr(Lgt_alpha , Lgt_alphaerr , 0.25*Lgt_alpha , 0.11*Lgt_alpha, Lgt_bd , Lgt_bderr)
-
-El_bdsrfracerr  = El_bdsrerr  / El_bdsr   * 100.
-Mu_bdsrfracerr  = Mu_bdsrerr  / Mu_bdsr   * 100.
-Tau_bdsrfracerr = Tau_bdsrerr / Tau_bdsr  * 100.
-Neg_bdsrfracerr = Neg_bdsrerr / Neg_bdsr  * 100.
-Lgt_bdsrfracerr = Lgt_bdsrerr / Lgt_bdsr  * 100.
-
-print("{:.3g}".format(El_alpha))
-print("{:.3g}".format(Mu_alpha))
-print("{:.3g}".format(Tau_alpha))
-print("{:.3g}".format(Neg_alpha))
-print("{:.3g}".format(Lgt_alpha))
-
-result = """
+def get_str_cut():
+    numbers = get("El", "Cut") + get("Mu", "Cut") + get("Tau", "Cut") + get("Neg", "Cut") + get("Lgt", "Cut")
+    result = """
 \\begin{{table}}[H]
 \\centering
 \\resizebox{{\\columnwidth}}{{!}}{{%
@@ -127,23 +147,42 @@ result = """
 \\hline\\hline
   Channels                 & ($B^\\textrm{{SR}}_\\textrm{{MC}}$\\quad\\quad / & $B^\\textrm{{CR}}_\\textrm{{MC}}$ = & $\\alpha_\\textrm{{exp}}$(MC Stat. $\\oplus$ Modeling Syst. $\\oplus$ Composition Syst.))\\quad\\quad $\\times$      & $B^\\textrm{{CR}}_\\textrm{{data}}$  \\quad\\quad= & $B^\\textrm{{SR}}_\\textrm{{data}}$       \\\\
   \\hline
-  $e^{{+}}l^{{+}}$         & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.3g} $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
-  $\\mu^{{+}}l^{{+}}$      & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.3g} $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
-  $\\tau^{{+}}l^{{+}}$     & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.3g} $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
-  $(--)$                   & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.3g} $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
-  $\\ell^{{+}}\\ell^{{+}}$ & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.3g} $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
+  $e^{{+}}l^{{+}}$         & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.3g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
+  $\\mu^{{+}}l^{{+}}$      & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
+  $\\tau^{{+}}l^{{+}}$     & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
+  $(--)$                   & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
+  $\\ell^{{+}}\\ell^{{+}}$ & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
 \\hline\\hline
 \\end{{tabular}}
 }}
-\\caption{{\\label{{tab:extrapolation}} Extrapolation factors}}
+\\caption{{\\label{{tab:extrapolationCut}} Extrapolation factors summary for cut-based analysis}}
 \\end{{table}}
-""".format(
-        El_SR_y  , El_SR_e  , El_CR_y  , El_CR_e  , El_alpha  , El_alphaerr  , 0.25*100 , 0.11*100 , El_bd  , El_bderr  , El_bdsr  , El_bdsrerr  ,El_bdsrfracerr, 
-        Mu_SR_y  , Mu_SR_e  , Mu_CR_y  , Mu_CR_e  , Mu_alpha  , Mu_alphaerr  , 0.25*100 , 0.11*100 , Mu_bd  , Mu_bderr  , Mu_bdsr  , Mu_bdsrerr  ,Mu_bdsrfracerr, 
-        Tau_SR_y , Tau_SR_e , Tau_CR_y , Tau_CR_e , Tau_alpha , Tau_alphaerr , 0.45*100 , 0.12*100 , Tau_bd , Tau_bderr , Tau_bdsr , Tau_bdsrerr ,Tau_bdsrfracerr, 
-        Neg_SR_y , Neg_SR_e , Neg_CR_y , Neg_CR_e , Neg_alpha , Neg_alphaerr , 0.70*100 , 0.16*100 , Neg_bd , Neg_bderr , Neg_bdsr , Neg_bdsrerr ,Neg_bdsrfracerr, 
-        Lgt_SR_y , Lgt_SR_e , Lgt_CR_y , Lgt_CR_e , Lgt_alpha , Lgt_alphaerr , 0.25*100 , 0.11*100 , Lgt_bd , Lgt_bderr , Lgt_bdsr , Lgt_bdsrerr ,Lgt_bdsrfracerr, 
-        )
+    """.format(*numbers)
+    return result
 
+def get_str_bdt():
+    numbers = get("El", "BDT") + get("Mu", "BDT") + get("Tau", "BDT") + get("Neg", "BDT")
+    result = """
+\\begin{{table}}[H]
+\\centering
+\\resizebox{{\\columnwidth}}{{!}}{{%
+\\begin{{tabular}}{{@{{\\extracolsep{{4pt}}}}lccccc@{{}}}}
+\\hline\\hline
+  Channels                 & ($B^\\textrm{{SR}}_\\textrm{{MC}}$\\quad\\quad / & $B^\\textrm{{CR}}_\\textrm{{MC}}$ = & $\\alpha_\\textrm{{exp}}$(MC Stat. $\\oplus$ Modeling Syst. $\\oplus$ Composition Syst.))\\quad\\quad $\\times$      & $B^\\textrm{{CR}}_\\textrm{{data}}$  \\quad\\quad= & $B^\\textrm{{SR}}_\\textrm{{data}}$       \\\\
+  \\hline
+  $e^{{+}}l^{{+}}$         & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
+  $\\mu^{{+}}l^{{+}}$      & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
+  $\\tau^{{+}}l^{{+}}$     & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
+  $(--)$                   & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
+\\hline\\hline
+\\end{{tabular}}
+}}
+\\caption{{\\label{{tab:extrapolationBDT}} Extrapolation factors summary for BDT-based analysis}}
+\\end{{table}}
+    """.format(*numbers)
+    return result
 
-print(result)
+if __name__ == "__main__":
+
+    print(get_str_cut())
+    print(get_str_bdt())

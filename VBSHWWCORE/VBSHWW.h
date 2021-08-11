@@ -62,6 +62,9 @@ public:
     // Boolean to say whether the sample contains PSWeight
     bool hasPSWeight;
 
+    // Boolean to say whether the sample contains LHEReweightingWeight
+    bool hasLHEReweightingWeight;
+
     // TChain that holds the input TTree's
     TChain* events_tchain;
 
