@@ -238,7 +238,8 @@ VBSHWW::VBSHWW(int argc, char** argv) :
 
     sig_rewgt = new RooUtil::HistMap("data/gen_reweight.root:signal_rewgt");
 
-    readerX = new RooUtil::TMVAUtil::ReaderX("BDT", "/nfs-7/userdata/yxiang/BDTResult/dataset/weights/TMVAClassification_BDT.weights.xml");
+    // readerX = new RooUtil::TMVAUtil::ReaderX("BDT", "/nfs-7/userdata/yxiang/BDTResult/dataset/weights/TMVAClassification_BDT.weights.xml"); // 24 variables
+    readerX = new RooUtil::TMVAUtil::ReaderX("BDT", "/nfs-7/userdata/yxiang/BDTResult/dataset_19variables/weights/TMVAClassification_BDT.weights.xml");
 
     // Set up JEC uncertainty tool
     jec_unc = new JetCorrectionUncertainty(

@@ -316,7 +316,17 @@ for SAMPLE in ${SAMPLES}; do
         FILENAME=output
         for IJOB in $(seq 0 ${NJOBSMAXIDX}); do
             if [ -z "${DEBUG}" ]; then
-                echo "rm -f ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root; ${EXECUTABLE} -t Events -o ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root --scale1fb ${SCALE1FB} -j ${NJOBS} -I ${IJOB} -i ${FILELIST} > ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.log 2>&1" >> .jobs.txt
+                if [[ ${SAMPLE} == *"Run201"* ]]; then
+                    echo "rm -f ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root; ${EXECUTABLE} -e  0 -t Events -o ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root --scale1fb ${SCALE1FB} -j ${NJOBS} -I ${IJOB} -i ${FILELIST} > ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.log 2>&1" >> .jobs.txt
+                else
+                    if [[ ${BABYVERSION} == *"_jecUp"* ]]; then
+                        echo "rm -f ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root; ${EXECUTABLE} -e  1 -t Events -o ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root --scale1fb ${SCALE1FB} -j ${NJOBS} -I ${IJOB} -i ${FILELIST} > ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.log 2>&1" >> .jobs.txt
+                    elif [[ ${BABYVERSION} == *"_jecDn"* ]]; then                                      
+                        echo "rm -f ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root; ${EXECUTABLE} -e -1 -t Events -o ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root --scale1fb ${SCALE1FB} -j ${NJOBS} -I ${IJOB} -i ${FILELIST} > ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.log 2>&1" >> .jobs.txt
+                    else                                                                               
+                        echo "rm -f ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root; ${EXECUTABLE} -e  0 -t Events -o ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root --scale1fb ${SCALE1FB} -j ${NJOBS} -I ${IJOB} -i ${FILELIST} > ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.log 2>&1" >> .jobs.txt
+                    fi
+                fi
             else
                 echo "rm -f ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root; ${EXECUTABLE} -n 50000 -t Events -o ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.root --scale1fb ${SCALE1FB} -j ${NJOBS} -I ${IJOB} -i ${FILELIST} > ${HISTDIR}/${SAMPLE}_${FILENAME}_${IJOB}.log 2>&1" >> .jobs.txt
             fi

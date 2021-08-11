@@ -4,7 +4,48 @@ import math
 import ROOT as r
 import sys
 
-basedir = "hists/v2.4_SS/v6/Run2/Nominal"
+def usage():
+
+    print("Usage:")
+    print("")
+    print("")
+    print("   > python {} YOURTAG [SKIMVERSION=v2.4_SS] [BABYVERSION=v3] [YEAR=Run2] [USERNAME=phchang]".format(sys.argv[0]))
+    print("")
+    print("")
+    print("     YOURTAG       Minilooper run tag       (e.g. Date, name, or some specifier. Provide something you want to keep it unique)")
+    print("     SKIMVERSION   Skim version             (e.g. v2.4_SS                      [Default=v2.4_SS])")
+    print("     BABYVERSION   Baby version             (e.g. v3                           [Default=v3])")
+    print("     YEAR          Year                     (e.g. 2016, 2017, 2018, or Run2    [Default=Run2])")
+    print("     USERNAME      Username of baby creator (e.g. phchang                      [Default=phchang] )")
+    print("")
+    sys.exit(-1)
+
+try:
+    YOURTAG=sys.argv[1]
+except:
+    usage()
+
+try:
+    SKIMVERSION=sys.argv[2]
+except:
+    SKIMVERSION="v2.4_SS"
+
+try:
+    BABYVERSION=sys.argv[3]
+except:
+    BABYVERSION="v6"
+
+try:
+    YEAR=sys.argv[4]
+except:
+    YEAR="Run2"
+
+try:
+    USERNAME=sys.argv[5]
+except:
+    USERNAME="phchang"
+
+basedir = "/nfs-7/userdata/{}/VBSHWWResult/{}/{}/{}/{}".format(USERNAME, SKIMVERSION, BABYVERSION, YEAR, YOURTAG)
 
 def bc(proc, channel, region, analysis):
     f = r.TFile("{}/{}.root".format(basedir, proc))
