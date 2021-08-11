@@ -9,14 +9,14 @@ def usage():
     print("Usage:")
     print("")
     print("")
-    print("   > python {} YOURTAG [SKIMVERSION=v2.4_SS] [BABYVERSION=v3] [YEAR=Run2] [USERNAME=phchang]".format(sys.argv[0]))
+    print("   > python {} YOURTAG [SKIMVERSION=v2.4_SS] [BABYVERSION=v2] [YEAR=Run2] [USERNAME=phchang]".format(sys.argv[0]))
     print("")
     print("")
-    print("     YOURTAG       Minilooper run tag       (e.g. Date, name, or some specifier. Provide something you want to keep it unique)")
-    print("     SKIMVERSION   Skim version             (e.g. v2.4_SS                      [Default=v2.4_SS])")
-    print("     BABYVERSION   Baby version             (e.g. v3                           [Default=v3])")
-    print("     YEAR          Year                     (e.g. 2016, 2017, 2018, or Run2    [Default=Run2])")
-    print("     USERNAME      Username of baby creator (e.g. phchang                      [Default=phchang] )")
+    print("     YOURTAG       Minilooper run tag            (e.g. Date, name, or some specifier. Provide something you want to keep it unique)")
+    print("     SKIMVERSION   Skim version                  (e.g. v2.4_SS                      [Default=v2.4_SS])")
+    print("     BABYVERSION   Baby version                  (e.g. v2                           [Default=v2])")
+    print("     YEAR          Year                          (e.g. 2016, 2017, 2018, or Run2    [Default=Run2])")
+    print("     USERNAME      Username of histogram creator (e.g. phchang                      [Default=phchang] )")
     print("")
     sys.exit(-1)
 
@@ -33,7 +33,7 @@ except:
 try:
     BABYVERSION=sys.argv[3]
 except:
-    BABYVERSION="v6"
+    BABYVERSION="v2"
 
 try:
     YEAR=sys.argv[4]

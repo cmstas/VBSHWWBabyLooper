@@ -12,6 +12,7 @@ if [ -z $1 ]; then
     echo "     SKIMVERSION   Skim version             (e.g. v2.4_SS                      [Default=v2.4_SS])"
     echo "     BABYVERSION   Baby version             (e.g. v3                           [Default=v3])"
     echo "     YEAR          Year                     (e.g. 2016, 2017, 2018, or Run2    [Default=Run2])"
+    echo "     USERNAME      User name                (e.g. phchang                      [Default=phchang])"
     echo ""
     exit
 fi
@@ -20,6 +21,7 @@ YOURTAG=${1}
 SKIMVERSION=${2}
 BABYVERSION=${3}
 YEAR=${4}
+USERNAME=${5}
 if [ -z ${SKIMVERSION} ]; then
     SKIMVERSION=v2.4_SS
 fi
@@ -29,6 +31,12 @@ fi
 if [ -z ${YEAR} ]; then
     YEAR=Run2
 fi
+if [ -z ${USERNAME} ]; then
+    USERNAME=phchang
+fi
+
+NFSDIR=/nfs-7/userdata/${USERNAME}/VBSHWWResult/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/plots
+mkdir -p ${NFSDIR}
 
 rm -f .plotjobs.txt
 
@@ -44,7 +52,7 @@ book_plot()
             HISTNAMES="${HISTNAMES} ${REGION}${MBBREG}__${VAR}"
         done
         HISTNAMES=$(echo ${HISTNAMES} | tr ' ' ',')
-        echo 'python '${DIR}'/plot.py '${SKIMVERSION}' '${YEAR}' '${YOURTAG}' '${BABYVERSION}' '${PLOTDIR}' '"${HISTNAMES}"' ' >> .plotjobs.txt;
+        echo 'python '${DIR}'/plot.py '${YOURTAG}' '${SKIMVERSION}' '${BABYVERSION}' '${YEAR}' '${USERNAME}' '${PLOTDIR}' '"${HISTNAMES}"' > '${NFSDIR}/${PLOTDIR}.log'' >> .plotjobs.txt;
     done
 }
 
@@ -56,7 +64,7 @@ book_plot_alpha()
     for PLOTDIR in ${PLOTDIRS}; do
         for CHANNEL in ${CHANNELS}; do
             for REGION in ${REGIONS}; do
-                echo ' python '${DIR}'/plot_topbkg_compare.py '${SKIMVERSION}' '${YEAR}' '${YOURTAG}' '${BABYVERSION}' '${PLOTDIR}' LooseVR__'${REGION}${CHANNEL}'       ' >> .plot.jobs.txt
+                echo ' python '${DIR}'/plot_topbkg_compare.py '${SKIMVERSION}' '${YEAR}' '${YOURTAG}' '${BABYVERSION}' '${USERNAME}' '${PLOTDIR}' LooseVR__'${REGION}${CHANNEL}'       '' > '${NFSDIR}/${PLOTDIR}.log'' >> .plotjobs.txt
             done
         done
     done
@@ -89,4 +97,10 @@ book_plot_alpha
 
 xargs.sh .plotjobs.txt
 
-tar czf plots.tar.gz plots/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}
+cd /nfs-7/userdata/phchang/VBSHWWResult/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/
+tar czf plots.tar.gz plots/
+cd - > /dev/null
+cp /nfs-7/userdata/phchang/VBSHWWResult/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/plots.tar.gz .
+
+echo "Plots are here: /nfs-7/userdata/phchang/VBSHWWResult/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/"
+echo "Tarball of the plots are here: plots.tar.gz"

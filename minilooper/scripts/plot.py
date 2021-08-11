@@ -5,50 +5,56 @@ import sys
 def usage():
     print("Usage:")
     print("")
-    print("   python {} VERSION YEAR RUNTAG BABYVERSION PLOTSUBDIR [PLOTNAMES]".format(sys.argv[0]))
+    print("   python {} VERSION YEAR RUNTAG BABYVERSION USERNAME PLOTSUBDIR [PLOTNAMES]".format(sys.argv[0]))
     print("")
-    print("    VERSION       Skim versions (e.g. v40)")
-    print("    YEAR          Year          (e.g. 2016, 2017, 2018, or Run2)")
-    print("    RUNTAG        Run tag       (e.g. Nominal, date, or whatever)")
-    print("    BABYVERSION   Baby version  (e.g. Baby version)")
-    print("    PLOTSUBDIR    Sub dir name  (e.g. VRPlots)")
+    print("    YOURTAG       Run tag                       (e.g. Nominal, date, or whatever)")
+    print("    SKIMVERSION   Skim versions                 (e.g. v2.4_SS)")
+    print("    BABYVERSION   Baby version                  (e.g. Baby version)")
+    print("    YEAR          Year                          (e.g. 2016, 2017, 2018, or Run2)")
+    print("    USERNAME      Username of histogram creator (e.g. phchang                      [Default=phchang] )")
+    print("    PLOTSUBDIR    Sub dir name                  (e.g. VRPlots)")
     print("")
     sys.exit()
 
 try:
-    tag = sys.argv[1]
+    YOURTAG=sys.argv[1]
 except:
     usage()
 
 try:
-    year = sys.argv[2]
+    SKIMVERSION=sys.argv[2]
 except:
     usage()
 
 try:
-    runtag = sys.argv[3]
+    BABYVERSION=sys.argv[3]
 except:
     usage()
 
 try:
-    babyversion = sys.argv[4]
+    YEAR=sys.argv[4]
 except:
     usage()
 
 try:
-    subdir = sys.argv[5]
+    USERNAME = sys.argv[5]
 except:
     usage()
 
 try:
-    cutname_to_plot = sys.argv[6]
+    subdir = sys.argv[6]
+except:
+    usage()
+
+try:
+    cutname_to_plot = sys.argv[7]
 except:
     cutname_to_plot = ""
 
 import ROOT as r
 r.gROOT.SetBatch(True)
 
-hadd_dir = "hists/{}/{}/{}/{}/".format(tag, babyversion, year, runtag)
+hadd_dir = "/nfs-7/userdata/{}/VBSHWWResult/{}/{}/{}/{}".format(USERNAME, SKIMVERSION, BABYVERSION, YEAR, YOURTAG)
 
 bkgs_fit = [
         "{}/topbkgest.root".format(hadd_dir),
@@ -180,10 +186,10 @@ sig_run2 = 137. / (59.97+41.3)
 
 blind = False
 signal_scale = 1
-if year == "Run2" and tag == "v2.4_SS":
+if YEAR == "Run2" and SKIMVERSION == "v2.4_SS":
     signal_scale = 137. / (59.97+41.3)
 
-if "_SS" in tag:
+if "_SS" in SKIMVERSION:
     if ("MbbOn" in cutname_to_plot and "SR" not in cutname_to_plot) or ("Presel" in cutname_to_plot and "MbbOff" not in cutname_to_plot):
         signal_scale = "auto"
         blind = True
@@ -291,7 +297,6 @@ else:
 if "*" in filter_pattern:
     dogrep = True
 
-do_cut_scan = True
 do_cut_scan = False
 
 
@@ -324,7 +329,7 @@ p.dump_plot(
     legend_labels_tex=bkg_labels_tex,
     signal_labels=signal_labels,
     signal_labels_tex=signal_labels_tex,
-    dirname="cutscans/{}/{}/{}/{}/{}".format(tag, babyversion, year, runtag, subdir) if do_cut_scan else "plots/{}/{}/{}/{}/{}".format(tag, babyversion, year, runtag, subdir),
+    dirname="{}/plots/{}".format(hadd_dir, subdir),
     filter_pattern=filter_pattern,
     dogrep=dogrep,
     usercolors=colors,
@@ -351,5 +356,5 @@ p.dump_plot(
         },
     histxaxislabeloptions=histxaxislabeloptions,
     skip2d=True,
-    _plotter=p.plot_cut_scan if do_cut_scan else p.plot_hist,
+    # _plotter=p.plot_cut_scan if do_cut_scan else p.plot_hist,
     )

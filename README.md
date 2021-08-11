@@ -35,14 +35,44 @@ In case you change something, here is how one can run a test job where each job 
 
 # Running MiniLooper
 
+First download the code
+
     git clone --recursive git@github.com:cmstas/VBSHWWBabyLooper.git
     cd VBSHWWBabyLooper
+
+Set up the environment
+
     source setup.sh
+
+Then compile the code
+
     cd minilooper
     make clean
     make -j
-    sh scripts/run.sh Nominal           # Nominal is the tag you provide
-    sh scripts/make_figures.sh Nominal  # Nominal is the tag you provided
+
+Run the minilooper
+
+    sh scripts/run.sh Nominal    v2.4_SS    v2    Run2    jguiang # Nominal is the tag you provide
+
+                      ^^^^^^^    ^^^^^^^    ^^    ^^^^    ^^^^^^^
+                      |||||||    |||||||    ||    ||||    |||||||
+                      Yourtag    NanoSkim  Baby   Year    Username of the nfs-area where the baby is saved
+
+Copy the histogram outputs from the minilooper to your nfs area
+
+    sh scripts/publish_result.sh Nominal v2.4_SS v2 Run2 # Nominal is the tag you provide
+
+Run the extrapolation factor study on the output
+
+    python scripts/alpha_exp.py Nominal    v2.4_SS    v2    Run2    yxiang  # Nominal is the tag you provide
+
+                                ^^^^^^^    ^^^^^^^    ^^    ^^^^    ^^^^^^
+                                |||||||    |||||||    ||    ||||    ||||||
+                                Yourtag    NanoSkim  Baby   Year    Username of the nfs-area where the histograms are saved
+
+Run the plotter to create a bunch of plots
+
+    sh scripts/make_figures.sh
 
 If you wish to create a new baby ntuple and loop over a new baby ntuple
 

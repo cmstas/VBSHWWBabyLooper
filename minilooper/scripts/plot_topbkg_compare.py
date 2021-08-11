@@ -8,13 +8,14 @@ import sys
 def usage():
     print("Usage:")
     print("")
-    print("   python {} VERSION YEAR RUNTAG BABYVERSION PLOTSUBDIR [PLOTNAMES]".format(sys.argv[0]))
+    print("   python {} VERSION YEAR RUNTAG BABYVERSION USERNAME PLOTSUBDIR [PLOTNAMES]".format(sys.argv[0]))
     print("")
-    print("    VERSION       Skim versions (e.g. v40)")
-    print("    YEAR          Year          (e.g. 2016, 2017, 2018, or Run2)")
-    print("    RUNTAG        Run tag       (e.g. Nominal, date, or whatever)")
-    print("    BABYVERSION   Baby version  (e.g. Baby version)")
-    print("    PLOTSUBDIR    Sub dir name  (e.g. VRPlots)")
+    print("    VERSION       Skim versions               (e.g. v40)")
+    print("    YEAR          Year                        (e.g. 2016, 2017, 2018, or Run2)")
+    print("    RUNTAG        Run tag                     (e.g. Nominal, date, or whatever)")
+    print("    BABYVERSION   Baby version                (e.g. Baby version)")
+    print("    USERNAME      User of histogram creator   (e.g. Baby version)")
+    print("    PLOTSUBDIR    Sub dir name                (e.g. VRPlots)")
     print("")
     sys.exit()
 
@@ -39,12 +40,17 @@ except:
     usage()
 
 try:
-    subdir = sys.argv[5]
+    username = sys.argv[5]
 except:
     usage()
 
 try:
-    cutname_to_plot = sys.argv[6]
+    subdir = sys.argv[6]
+except:
+    usage()
+
+try:
+    cutname_to_plot = sys.argv[7]
 except:
     cutname_to_plot = ""
 
@@ -101,7 +107,8 @@ histxaxislabeloptions = {
 "PreselMbbAll__LeptonPt1" : {"xaxis_label"      : "p_{T,sublead-lep} [GeV]",  "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": sig_run2,     "blind": blind, "yaxis_log":True},
 }
 
-hadd_dir = "hists/{}/{}/{}/{}/".format(runtag, tag, babyversion, year)
+# hadd_dir = "hists/{}/{}/{}/{}/".format(runtag, tag, babyversion, year)
+hadd_dir = "/nfs-7/userdata/{}/VBSHWWResult/{}/{}/{}/{}/".format(username, tag, babyversion, year, runtag)
 
 bkgs_fit = [
         "{}/topbkg.root".format(hadd_dir),
@@ -150,7 +157,7 @@ colors = [
         4021,
         ]
 
-plot_dir = "plots/{}/{}/{}/{}/{}".format(runtag, tag, babyversion, year, subdir)
+plot_dir = "{}/plots/{}".format(hadd_dir, subdir)
 
 dogrep = False
 if len(cutname_to_plot) == 0:
