@@ -13,20 +13,29 @@ usage()
   echo "Options with arguments:"
   echo "  -h    Help                   (Display this message)"
   echo "  -s    study name             (Name of the studiy in studies/ e.g. mainAnalysis, extraJets, philipSR, etc.)"
+  echo "  -a    baby ntup version tag  (Baby ntuple version tag)"
+  echo "  -t    skim ntup tag UL       (Skimmed ntuple tag e.g. v2.0_SS)"
+  echo "  -T    skim ntup tag non-UL   (Skimmed ntuple tag e.g. v70_SS)"
   echo
   exit
 }
 
 # Command-line opts
-while getopts ":s:h" OPTION; do
+while getopts ":a:t:T:s:h" OPTION; do
   case $OPTION in
     s) STUDY=${OPTARG};;
+    t) ULTAG=${OPTARG};;
+    a) BABYVERSION=${OPTARG};;
+    T) v7TAG=${OPTARG};;
     h) usage;;
     :) usage;;
   esac
 done
 
 if [ -z ${STUDY} ]; then usage; fi
+if [ -z ${ULTAG} ]; then usage; fi
+if [ -z ${v7TAG} ]; then usage; fi
+if [ -z ${BABYVERSION} ]; then usage; fi
 
 # to shift away the parsed options
 shift $(($OPTIND - 1))
@@ -38,9 +47,9 @@ echo "$(basename $0) $*"
 echo "$(basename $0) $*" >> $DIR/.$(basename $0).history
 echo "------------------------------------------------"
 echo "STUDY          : ${STUDY}"
+echo "ULTAG          : ${ULTAG}"
+echo "v7TAG          : ${v7TAG}"
+echo "BABYVERSION    : ${BABYVERSION}"
 echo "================================================"
 
-sh $DIR/exec.sh ${STUDY}
-sh $DIR/hadd.sh ${STUDY}
-# python $DIR/cutflow.py ${STUDY}
-# python $DIR/plot.py
+sh $DIR/special_hadd_UL.sh ${STUDY} ${ULTAG} ${v7TAG} ${BABYVERSION}
