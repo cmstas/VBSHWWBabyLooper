@@ -3,7 +3,7 @@ usage()
 {
   echo "ERROR - Usage:"
   echo
-  echo "      sh $(basename $0) STUDYNAME SKIMVERSION BABYVERSION [DEBUG]"
+  echo "      sh $(basename $0) STUDYNAME SKIMVERSION BABYVERSION SPECIFICSAMPLE [DEBUG]"
   echo
   exit
 }
@@ -14,8 +14,10 @@ if [ -z ${2} ]; then usage; fi
 SKIMVERSION=${2}
 if [ -z ${3} ]; then usage; fi
 BABYVERSION=${3}
+
+SPECIFICSAMPLE=${4}
 # Third argument is debug
-DEBUG=${4}
+DEBUG=${5}
 
 LOGFILE=.${STUDY}_${SKIMVERSION}_${BABYVERSION}_debug${DEBUG}.log
 
@@ -26,49 +28,53 @@ YEARS="2017 2018"
 
 EXECUTABLE=./studies/${STUDY}/doAnalysis
 
-SAMPLES="TTTo2L2Nu \
-TTToSemiLeptonic \
-ST_tW_antitop_5f \
-ST_tW_top_5f \
-ST_s-channel_4f \
-ST_t-channel_antitop_4f \
-ST_t-channel_top_4f \
-TTWJetsToLNu \
-TTZToLLNuNu_M-10 \
-DYJetsToLL_M-50 \
-DYJetsToLL_M-10to50 \
-WJetsToLNu \
-SSWW \
-WW \
-WZTo3LNu \
-ZZTo4L \
-ZZ \
-ttHJetToNonbb \
-ttHJetTobb \
-TWZToLL_thad_Wlept_5f_DR \
-TWZToLL_tlept_Whad_5f_DR \
-TTWW \
-TTWZ \
-VBSWmpWmpH_C2V_4p5_TuneCP5 \
-VBSWmpWmpH_C2V_4_TuneCP5 \
-VBSWmpWmpH_C2V_3_TuneCP5 \
-VBSWmpWmpH_C2V_1_TuneCP5 \
-VBSWmpWmpH_C2V_0_TuneCP5 \
-VBSWmpWmpH_C2V_m1_TuneCP5 \
-VBSWmpWmpH_C2V_m2_TuneCP5 \
-VBSWmpWmpH_C2V_m2p5_TuneCP5 \
-VBSWWHToLNuLNubb_C2V \
-VBSWWHToLNuLNubb_CV \
-VBSWWHToLNuLNubb_C3 \
-DoubleEG_Run2017 \
-DoubleMuon_Run2017 \
-MuonEG_Run2017 \
-SingleElectron_Run2017 \
-SingleMuon_Run2017 \
-EGamma_Run2018 \
-DoubleMuon_Run2018 \
-MuonEG_Run2018 \
-SingleMuon_Run2018"
+if [[ ${SPECIFICSAMPLE} == *"all"* ]]; then
+    SAMPLES="TTTo2L2Nu \
+    TTToSemiLeptonic \
+    ST_tW_antitop_5f \
+    ST_tW_top_5f \
+    ST_s-channel_4f \
+    ST_t-channel_antitop_4f \
+    ST_t-channel_top_4f \
+    TTWJetsToLNu \
+    TTZToLLNuNu_M-10 \
+    DYJetsToLL_M-50 \
+    DYJetsToLL_M-10to50 \
+    WJetsToLNu \
+    SSWW \
+    WW \
+    WZTo3LNu \
+    ZZTo4L \
+    ZZ \
+    ttHJetToNonbb \
+    ttHJetTobb \
+    TWZToLL_thad_Wlept_5f_DR \
+    TWZToLL_tlept_Whad_5f_DR \
+    TTWW \
+    TTWZ \
+    VBSWmpWmpH_C2V_4p5_TuneCP5 \
+    VBSWmpWmpH_C2V_4_TuneCP5 \
+    VBSWmpWmpH_C2V_3_TuneCP5 \
+    VBSWmpWmpH_C2V_1_TuneCP5 \
+    VBSWmpWmpH_C2V_0_TuneCP5 \
+    VBSWmpWmpH_C2V_m1_TuneCP5 \
+    VBSWmpWmpH_C2V_m2_TuneCP5 \
+    VBSWmpWmpH_C2V_m2p5_TuneCP5 \
+    VBSWWHToLNuLNubb_C2V \
+    VBSWWHToLNuLNubb_CV \
+    VBSWWHToLNuLNubb_C3 \
+    DoubleEG_Run2017 \
+    DoubleMuon_Run2017 \
+    MuonEG_Run2017 \
+    SingleElectron_Run2017 \
+    SingleMuon_Run2017 \
+    EGamma_Run2018 \
+    DoubleMuon_Run2018 \
+    MuonEG_Run2018 \
+    SingleMuon_Run2018"
+else
+    SAMPLES=${SPECIFICSAMPLE}
+fi
 
 NANOSKIMDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_${SKIMVERSION}/
 

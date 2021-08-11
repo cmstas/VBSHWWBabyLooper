@@ -15,15 +15,17 @@ usage()
   echo "  -s    study name             (Name of the studiy in studies/ e.g. mainAnalysis, extraJets, philipSR, etc.)"
   echo "  -t    skim ntup tag          (Skimmed ntuple tag e.g. v20, v30, v40)"
   echo "  -a    baby ntup version tag  (This round of baby ntup version tag)"
+  echo "  -S    Run specific sample    (Specific sample)"
   echo "  -d    Debug run              (Runs only a subset of the events)"
   echo
   exit
 }
 
 # Command-line opts
-while getopts ":a:t:s:dh" OPTION; do
+while getopts ":a:t:s:S:dh" OPTION; do
   case $OPTION in
     s) STUDY=${OPTARG};;
+    S) SPECIFICSAMPLE=${OPTARG};;
     t) TAG=${OPTARG};;
     a) BABYVERSION=${OPTARG};;
     d) DEBUG=true;;
@@ -35,9 +37,11 @@ done
 if [ -z ${STUDY} ]; then usage; fi
 if [ -z ${TAG} ]; then usage; fi
 if [ -z ${BABYVERSION} ]; then usage; fi
+if [ -z ${SPECIFICSAMPLE} ]; then SPECIFICSAMPLE=all; fi
 
 # to shift away the parsed options
 shift $(($OPTIND - 1))
+
 
 # Verbose
 date
@@ -49,7 +53,8 @@ echo "STUDY          : ${STUDY}"
 echo "TAG            : ${TAG}"
 echo "BABYVERSION    : ${BABYVERSION}"
 echo "DEBUG          : ${DEBUG}"
+echo "SPECIFICSAMPLE : ${SPECIFICSAMPLE}"
 echo "================================================"
 
-sh $DIR/exec_v4.sh ${STUDY} ${TAG} ${BABYVERSION} ${DEBUG}
+sh $DIR/exec_v4.sh ${STUDY} ${TAG} ${BABYVERSION} ${SPECIFICSAMPLE} ${DEBUG}
 sh $DIR/hadd_v4.sh ${STUDY} ${TAG} ${BABYVERSION}

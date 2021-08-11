@@ -3,7 +3,7 @@ usage()
 {
   echo "ERROR - Usage:"
   echo
-  echo "      sh $(basename $0) STUDYNAME SKIMVERSION BABYVERSION [DEBUG]"
+  echo "      sh $(basename $0) STUDYNAME SKIMVERSION BABYVERSION SPECIFICSAMPLE [DEBUG]"
   echo
   exit
 }
@@ -15,7 +15,9 @@ SKIMVERSION=${2}
 if [ -z ${3} ]; then usage; fi
 BABYVERSION=${3}
 
-DEBUG=${4}
+SPECIFICSAMPLE=${4}
+
+DEBUG=${5}
 
 LOGFILE=.${STUDY}_${SKIMVERSION}_${BABYVERSION}_debug${DEBUG}.log
 
@@ -25,54 +27,56 @@ YEARS="2016"
 
 EXECUTABLE=./studies/${STUDY}/doAnalysis
 
-SAMPLES="TTJets_DiLept \
-TTJets_SingleLeptFromT \
-TTJets_SingleLeptFromTbar \
-TTTo2L2Nu \
-TTToSemiLeptonic \
-TTWJetsToLNu \
-TTZToLLNuNu_M-10 \
-TTZToLL_M-1to10 \
-WZTo3LNu \
-ZZTo4L \
-GluGluHToZZTo4L \
-DYJetsToLL_M-50 \
-DYJetsToLL_M-10to50 \
-WpWpJJ_EWK-QCD \
-ttHToNonbb \
-ttHTobb \
-WJetsToLNu \
-tZq_ll_4f_ckm_NLO \
-ST_tWll_5f_LO \
-TTTT \
-TTWH \
-TTWW \
-TTWZ \
-TTZH \
-TTZZ \
-WWW_4F \
-WWZ \
-WZG \
-WZZ \
-ZZZ \
-WWToLNuQQ \
-WWTo2L2Nu \
-ST_s-channel_4f \
-ST_t-channel_antitop_4f \
-ST_t-channel_top_4f \
-ST_tW_antitop_5f \
-ST_tW_top_5f \
-VBSWmpWmpHToLNuLNu_C2V_6_TuneCP5 \
-VBSWmpWmpHToLNuLNu_C2V_3_TuneCP5 \
-VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5 \
-VBSWmpWmpHToLNuLNu_C2V_m2_TuneCP5 \
-DoubleEG_Run2016 \
-DoubleMuon_Run2016 \
-MuonEG_Run2016 \
-SingleElectron_Run2016 \
-SingleMuon_Run2016"
-
-# VBSWmpWmpHToLNuLNu_TuneCP5 \
+if [[ ${SPECIFICSAMPLE} == *"all"* ]]; then
+    SAMPLES="TTJets_DiLept \
+    TTJets_SingleLeptFromT \
+    TTJets_SingleLeptFromTbar \
+    TTTo2L2Nu \
+    TTToSemiLeptonic \
+    TTWJetsToLNu \
+    TTZToLLNuNu_M-10 \
+    TTZToLL_M-1to10 \
+    WZTo3LNu \
+    ZZTo4L \
+    GluGluHToZZTo4L \
+    DYJetsToLL_M-50 \
+    DYJetsToLL_M-10to50 \
+    WpWpJJ_EWK-QCD \
+    ttHToNonbb \
+    ttHTobb \
+    WJetsToLNu \
+    tZq_ll_4f_ckm_NLO \
+    ST_tWll_5f_LO \
+    TTTT \
+    TTWH \
+    TTWW \
+    TTWZ \
+    TTZH \
+    TTZZ \
+    WWW_4F \
+    WWZ \
+    WZG \
+    WZZ \
+    ZZZ \
+    WWToLNuQQ \
+    WWTo2L2Nu \
+    ST_s-channel_4f \
+    ST_t-channel_antitop_4f \
+    ST_t-channel_top_4f \
+    ST_tW_antitop_5f \
+    ST_tW_top_5f \
+    VBSWmpWmpHToLNuLNu_C2V_6_TuneCP5 \
+    VBSWmpWmpHToLNuLNu_C2V_3_TuneCP5 \
+    VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5 \
+    VBSWmpWmpHToLNuLNu_C2V_m2_TuneCP5 \
+    DoubleEG_Run2016 \
+    DoubleMuon_Run2016 \
+    MuonEG_Run2016 \
+    SingleElectron_Run2016 \
+    SingleMuon_Run2016"
+else
+    SAMPLES=${SPECIFICSAMPLE}
+fi
 
 NANOSKIMDIR=/nfs-7/userdata/phchang/VBSHWWNanoSkim_${SKIMVERSION}/
 
