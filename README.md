@@ -72,12 +72,11 @@ Run the extrapolation factor study on the output
 
 Run the plotter to create a bunch of plots
 
-    sh scripts/make_figures.sh
+    sh scripts/make_figures.sh Nominal    v2.4_SS    v2    Run2    yxiang   
 
-If you wish to create a new baby ntuple and loop over a new baby ntuple
-
-    sh scripts/run.sh Nominal SKIMVERSION BABYVERSION YEAR USERNAME
-    sh scripts/make_figure.sh Nominal SKIMVERSION BABYVERSION YEAR
+                               ^^^^^^^    ^^^^^^^    ^^    ^^^^    ^^^^^^
+                               |||||||    |||||||    ||    ||||    ||||||
+                               Yourtag    NanoSkim  Baby   Year    Username of the nfs-area where the histograms are saved
 
 # Running HiggsCombine
 
