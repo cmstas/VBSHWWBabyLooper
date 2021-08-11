@@ -1,14 +1,31 @@
 # Producing baby ntuple
 
+Download the code
+
     git clone --recursive git@github.com:cmstas/VBSHWWBabyLooper.git
     cd VBSHWWBabyLooper
+
+Download JECs
+
+    cd NanoTools/NanoCORE/Tools/jetcorr/data/
+    sh download_jecs.sh
+    cd -
+
+Compile the code
+
     source setup.sh
     make clean
     make -j
+
+Run the code
+
     sh run.sh v2                     # v2 is the tag provided by the user
+
+Save the ntuples to nfs area
+
     sh scripts/publish_baby.sh v2    # v2 is the tag you just used to run
 
-Running test job
+In case you chage something, here is how one can run a test job where each job is limited to 50000 events only
 
     sh testrun.sh
 
