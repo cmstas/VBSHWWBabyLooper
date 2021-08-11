@@ -23,3 +23,21 @@ If you wish to create a new baby ntuple and loop over a new baby ntuple
     make -j
     sh run.sh v3                     # v3 is the tag provided by the user
     sh scripts/publish_baby.sh v3    # v3 is the tag you just used to run
+
+# Running HiggsCombine
+
+Start with a different terminal
+
+    cd combine
+    source /cvmfs/cms.cern.ch/cmsset_default.sh
+
+Following line has to be done once. Once setup next time one can skip. 
+
+    source install_higgs_combine.sh # Only have to do this once
+
+And then proceed to setup rooutil and do the limite calculation
+
+    source setup.sh
+    sh make_cards.sh
+    sh run_limits.sh
+

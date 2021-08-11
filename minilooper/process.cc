@@ -18,14 +18,14 @@ int main(int argc, char** argv)
 
     // Preselection
     //____________________________________________________________________________________________________________________________________________________________
-    ana.cutflow.addCut("Presel", [&]() { return vbs.channel() >= 0; }, [&]() { return vbs.wgt() * vbs.btagsf() * vbs.lepsf() * vbs.xsec_sf() * vbs.genrewgt(); } );
+    ana.cutflow.addCut("Presel", [&]() { return vbs.channel() >= 0; }, [&]() { return vbs.wgt() * vbs.btagsf() * vbs.lepsf() * vbs.xsec_sf() * vbs.genrewgt(); });
     ana.cutflow.addCutToLastActiveCut("LooseVR", [&]() { return vbs.is_ps(); }, UNITY);
 
     ana.cutflow.getCut("LooseVR");
-    ana.cutflow.addCutToLastActiveCut("El" , [&]() { return vbs.is_ps_el(); }, UNITY);
+    ana.cutflow.addCutToLastActiveCut("El", [&]() { return vbs.is_ps_el(); }, UNITY);
 
     ana.cutflow.getCut("LooseVR");
-    ana.cutflow.addCutToLastActiveCut("Mu" , [&]() { return vbs.is_ps_mu(); }, UNITY);
+    ana.cutflow.addCutToLastActiveCut("Mu", [&]() { return vbs.is_ps_mu(); }, UNITY);
 
     ana.cutflow.getCut("LooseVR");
     ana.cutflow.addCutToLastActiveCut("Lgt", [&]() { return vbs.is_ps_lgt(); }, UNITY);
@@ -40,147 +40,323 @@ int main(int argc, char** argv)
     ana.cutflow.addCutToLastActiveCut("NegMbbOff", [&]() { return vbs.mbb() > 150; }, UNITY);
 
     // Function to categorize events into bins
-    auto cut_bin = [&]()
-    {
-        if (vbs.is_cut_sr_el()  and vbs.pass_blind()) return 0;
-        if (vbs.is_cut_sr_mu()  and vbs.pass_blind()) return 1;
+    auto cut_bin = [&]() {
+        if (vbs.is_cut_sr_el() and vbs.pass_blind()) return 0;
+        if (vbs.is_cut_sr_mu() and vbs.pass_blind()) return 1;
         if (vbs.is_cut_sr_tau() and vbs.pass_blind()) return 2;
         if (vbs.is_cut_sr_neg() and vbs.pass_blind()) return 3;
         if (vbs.is_cut_sr_lgt() and vbs.pass_blind()) return 4;
-        if (vbs.is_cut_cr_el() ) return -1;
-        if (vbs.is_cut_cr_mu() ) return -2;
+        if (vbs.is_cut_cr_el()) return -1;
+        if (vbs.is_cut_cr_mu()) return -2;
         if (vbs.is_cut_cr_tau()) return -3;
         if (vbs.is_cut_cr_neg()) return -4;
         return -999;
     };
 
     // Weaker classification
-    auto cut_bin_2 = [&]()
-    {
-        if (vbs.is_cut_sr2_el()  and vbs.pass_blind()) return 0;
-        if (vbs.is_cut_sr2_mu()  and vbs.pass_blind()) return 1;
+    auto cut_bin_2 = [&]() {
+        if (vbs.is_cut_sr2_el() and vbs.pass_blind()) return 0;
+        if (vbs.is_cut_sr2_mu() and vbs.pass_blind()) return 1;
         if (vbs.is_cut_sr2_tau() and vbs.pass_blind()) return 2;
         if (vbs.is_cut_sr2_neg() and vbs.pass_blind()) return 3;
-        if (vbs.is_cut_cr2_el() ) return -1;
-        if (vbs.is_cut_cr2_mu() ) return -2;
+        if (vbs.is_cut_cr2_el()) return -1;
+        if (vbs.is_cut_cr2_mu()) return -2;
         if (vbs.is_cut_cr2_tau()) return -3;
         if (vbs.is_cut_cr2_neg()) return -4;
         return -999;
     };
 
     // BDT cut
-    auto bdt_bin = [&]()
-    {
-        if (vbs.is_bdt_sr_el()  and vbs.pass_blind_bdt()) return 0;
-        if (vbs.is_bdt_sr_mu()  and vbs.pass_blind_bdt()) return 1;
+    auto bdt_bin = [&]() {
+        if (vbs.is_bdt_sr_el() and vbs.pass_blind_bdt()) return 0;
+        if (vbs.is_bdt_sr_mu() and vbs.pass_blind_bdt()) return 1;
         if (vbs.is_bdt_sr_tau() and vbs.pass_blind_bdt()) return 2;
         if (vbs.is_bdt_sr_neg() and vbs.pass_blind_bdt()) return 3;
-        if (vbs.is_bdt_cr_el() ) return -1;
-        if (vbs.is_bdt_cr_mu() ) return -2;
+        if (vbs.is_bdt_cr_el()) return -1;
+        if (vbs.is_bdt_cr_mu()) return -2;
         if (vbs.is_bdt_cr_tau()) return -3;
         if (vbs.is_bdt_cr_neg()) return -4;
         return -999;
     };
 
     // BDT cut weaker classification
-    auto bdt_bin_2 = [&]()
-    {
-        if (vbs.is_bdt_sr2_el()  and vbs.pass_blind_bdt()) return 0;
-        if (vbs.is_bdt_sr2_mu()  and vbs.pass_blind_bdt()) return 1;
+    auto bdt_bin_2 = [&]() {
+        if (vbs.is_bdt_sr2_el() and vbs.pass_blind_bdt()) return 0;
+        if (vbs.is_bdt_sr2_mu() and vbs.pass_blind_bdt()) return 1;
         if (vbs.is_bdt_sr2_tau() and vbs.pass_blind_bdt()) return 2;
         if (vbs.is_bdt_sr2_neg() and vbs.pass_blind_bdt()) return 3;
-        if (vbs.is_bdt_cr2_el() ) return -1;
-        if (vbs.is_bdt_cr2_mu() ) return -2;
+        if (vbs.is_bdt_cr2_el()) return -1;
+        if (vbs.is_bdt_cr2_mu()) return -2;
         if (vbs.is_bdt_cr2_tau()) return -3;
         if (vbs.is_bdt_cr2_neg()) return -4;
         return -999;
     };
 
-    ana.histograms.addHistogram("NCenJet30"       , 9   , 0       , 9                                 , [&]() { return vbs.ncenjet30(); } );
-    ana.histograms.addHistogram("NJet30"          , 9   , 0       , 9                                 , [&]() { return vbs.njet30(); } );
-    ana.histograms.addHistogram("LT"              , 180 , 0       , 2500                              , [&]() { return vbs.lt(); } );
-    ana.histograms.addHistogram("ST"              , 180 , 0       , 3500                              , [&]() { return vbs.st(); } );
-    ana.histograms.addHistogram("LTVarBin"        , {0., CLTLO, CLTHI, 750}                           , [&]() { return vbs.lt(); } );
-    ana.histograms.addHistogram("STVarBin"        , {0., CSTLO, CSTHI, 1500}                          , [&]() { return vbs.st(); } );
-    ana.histograms.addHistogram("LTVarBin2"       , {0., CLTLO, CLTMD, CLTHI, 750}                    , [&]() { return vbs.lt(); } );
-    ana.histograms.addHistogram("STVarBin2"       , {0., CSTLO, CSTMD, CSTHI, 1500}                   , [&]() { return vbs.st(); } );
-    ana.histograms.addHistogram("STVarBin3"       , {0., CSTLO, 1500}                                 , [&]() { return vbs.st(); } );
-    ana.histograms.addHistogram("LTZoom"          , 180 , 0       ,  750                              , [&]() { return vbs.lt(); } );
-    ana.histograms.addHistogram("STZoom"          , 180 , 0       , 1500                              , [&]() { return vbs.st(); } );
-    ana.histograms.addHistogram("LeptonPt0"       , 180 , 0       , 1000                              , [&]() { return vbs.l0pt(); } );
-    ana.histograms.addHistogram("LeptonPt1"       , 180 , 0       , 600                               , [&]() { return vbs.l1pt(); } );
-    ana.histograms.addHistogram("LeptonPt0Zoom"   , 180 , 0       , 250                               , [&]() { return vbs.l0pt(); } );
-    ana.histograms.addHistogram("LeptonPt1Zoom"   , 180 , 0       , 250                               , [&]() { return vbs.l1pt(); } );
-    ana.histograms.addHistogram("LeptonPtAZoom"   , 180 , 0       , 250                               , [&]() { return vbs.lep0().pt(); } );
-    ana.histograms.addHistogram("LeptonPtBZoom"   , 180 , 0       , 250                               , [&]() { return vbs.lep1().pt(); } );
-    ana.histograms.addHistogram("LeptonEta0"      , 180 , -3      , 3                                 , [&]() { return vbs.leadlep().eta(); } );
-    ana.histograms.addHistogram("LeptonEta1"      , 180 , -3      , 3                                 , [&]() { return vbs.subllep().eta(); } );
-    ana.histograms.addHistogram("MJJ"             , 180 , 0       , 4500                              , [&]() { return vbs.mjj(); } );
-    ana.histograms.addHistogram("MJJZoom"         , 180 , 0       , 2500                              , [&]() { return vbs.mjj(); } );
-    ana.histograms.addHistogram("MJJVarBin"       , {0., CMJJ, 1200., 2500}                           , [&]() { return vbs.mjj(); } );
-    ana.histograms.addHistogram("DEtaJJ"          , 180 , 0       , 10                                , [&]() { return vbs.detajj(); } );
-    ana.histograms.addHistogram("DEtaJJVarBin"    , {0., 3., CDETAJJ, 10.}                            , [&]() { return vbs.detajj(); } );
-    ana.histograms.addHistogram("JetPt0"          , 180 , 0       , 250                               , [&]() { return vbs.j0().pt(); } );
-    ana.histograms.addHistogram("JetPt1"          , 180 , 0       , 150                               , [&]() { return vbs.j1().pt(); } );
-    ana.histograms.addHistogram("JetEta0"         , 180 , -5      , 5                                 , [&]() { return vbs.j0().eta(); } );
-    ana.histograms.addHistogram("JetEta1"         , 180 , -5      , 5                                 , [&]() { return vbs.j1().eta(); } );
-    ana.histograms.addHistogram("BJetPt0"         , 180 , 0       , 450                               , [&]() { return vbs.b0().pt(); } );
-    ana.histograms.addHistogram("BJetPt1"         , 180 , 0       , 250                               , [&]() { return vbs.b1().pt(); } );
-    ana.histograms.addHistogram("Ptbb"            , 180 , 0       , 2000                              , [&]() { return vbs.ptbb(); } );
-    ana.histograms.addHistogram("MET"             , 180 , 0       , 500                               , [&]() { return vbs.met(); } );
-    ana.histograms.addHistogram("MbbZoom"         , 180 , 0       , 300                               , [&]() { return vbs.mbb(); } );
-    ana.histograms.addHistogram("Mbb"             , 180 , 0       , 600                               , [&]() { return vbs.mbb(); } );
-    ana.histograms.addHistogram("BDT"             , 180 , CBDT-0.3, CBDT+0.3                          , [&]() { return vbs.bdt(); } );
-    ana.histograms.addHistogram("BDTPassFail"     , 2   , CBDT-0.3, CBDT+0.3                          , [&]() { return vbs.bdt(); } );
-    ana.histograms.addHistogram("BDTBkg"          , 180 , CBDT-0.3, CBDT                              , [&]() { return vbs.bdt(); } );
-    ana.histograms.addHistogram("BDTVarBin"       , {CBDT-0.3,            CBDT-0.18, CBDT-0.12, CBDT} , [&]() { return vbs.bdt(); } );
-    ana.histograms.addHistogram("BDTVarBin2"      , {CBDT-0.3, CBDT-0.24, CBDT-0.18, CBDT-0.12, CBDT} , [&]() { return vbs.bdt(); } );
-    ana.histograms.addHistogram("BDTVarBin3"      , {CBDT-0.3,                       CBDT-0.12, CBDT} , [&]() { return vbs.bdt(); } );
-    ana.histograms.addHistogram("BDTVarBin4"      , {CBDT-0.3,            CBDT-0.12, CBDT-0.075, CBDT}, [&]() { return vbs.bdt(); } );
-    ana.histograms.addHistogram("BDTMD"           , 180 , CBDT-0.3, CBDT+0.3                          , [&]() { return vbs.bdt_mbboff(); } );
-    ana.histograms.addHistogram("Yield"           , 1   , 0       , 1                                 , [&]() { return 0; } );
+    ana.histograms.addHistogram("NCenJet30", 9, 0, 9, [&]() { return vbs.ncenjet30(); });
+    ana.histograms.addHistogram("NJet30", 9, 0, 9, [&]() { return vbs.njet30(); });
+    ana.histograms.addHistogram("LT", 180, 0, 2500, [&]() { return vbs.lt(); });
+    ana.histograms.addHistogram("ST", 180, 0, 3500, [&]() { return vbs.st(); });
+    ana.histograms.addHistogram("LTVarBin", {0., CLTLO, CLTHI, 750}, [&]() { return vbs.lt(); });
+    ana.histograms.addHistogram("STVarBin", {0., CSTLO, CSTHI, 1500}, [&]() { return vbs.st(); });
+    ana.histograms.addHistogram("LTVarBin2", {0., CLTLO, CLTMD, CLTHI, 750}, [&]() { return vbs.lt(); });
+    ana.histograms.addHistogram("STVarBin2", {0., CSTLO, CSTMD, CSTHI, 1500}, [&]() { return vbs.st(); });
+    ana.histograms.addHistogram("STVarBin3", {0., CSTLO, 1500}, [&]() { return vbs.st(); });
+    ana.histograms.addHistogram("LTZoom", 180, 0, 750, [&]() { return vbs.lt(); });
+    ana.histograms.addHistogram("STZoom", 180, 0, 1500, [&]() { return vbs.st(); });
+    ana.histograms.addHistogram("LeptonPt0", 180, 0, 1000, [&]() { return vbs.l0pt(); });
+    ana.histograms.addHistogram("LeptonPt1", 180, 0, 600, [&]() { return vbs.l1pt(); });
+    ana.histograms.addHistogram("LeptonPt0Zoom", 180, 0, 250, [&]() { return vbs.l0pt(); });
+    ana.histograms.addHistogram("LeptonPt1Zoom", 180, 0, 250, [&]() { return vbs.l1pt(); });
+    ana.histograms.addHistogram("LeptonPtAZoom", 180, 0, 250, [&]() { return vbs.lep0().pt(); });
+    ana.histograms.addHistogram("LeptonPtBZoom", 180, 0, 250, [&]() { return vbs.lep1().pt(); });
+    ana.histograms.addHistogram("LeptonEta0", 180, -3, 3, [&]() { return vbs.leadlep().eta(); });
+    ana.histograms.addHistogram("LeptonEta1", 180, -3, 3, [&]() { return vbs.subllep().eta(); });
+    ana.histograms.addHistogram("MJJ", 180, 0, 4500, [&]() { return vbs.mjj(); });
+    ana.histograms.addHistogram("MJJZoom", 180, 0, 2500, [&]() { return vbs.mjj(); });
+    ana.histograms.addHistogram("MJJVarBin", {0., CMJJ, 1200., 2500}, [&]() { return vbs.mjj(); });
+    ana.histograms.addHistogram("DEtaJJ", 180, 0, 10, [&]() { return vbs.detajj(); });
+    ana.histograms.addHistogram("DEtaJJVarBin", {0., 3., CDETAJJ, 10.}, [&]() { return vbs.detajj(); });
+    ana.histograms.addHistogram("JetPt0", 180, 0, 250, [&]() { return vbs.j0().pt(); });
+    ana.histograms.addHistogram("JetPt1", 180, 0, 150, [&]() { return vbs.j1().pt(); });
+    ana.histograms.addHistogram("JetEta0", 180, -5, 5, [&]() { return vbs.j0().eta(); });
+    ana.histograms.addHistogram("JetEta1", 180, -5, 5, [&]() { return vbs.j1().eta(); });
+    ana.histograms.addHistogram("BJetPt0", 180, 0, 450, [&]() { return vbs.b0().pt(); });
+    ana.histograms.addHistogram("BJetPt1", 180, 0, 250, [&]() { return vbs.b1().pt(); });
+    ana.histograms.addHistogram("Ptbb", 180, 0, 2000, [&]() { return vbs.ptbb(); });
+    ana.histograms.addHistogram("MET", 180, 0, 500, [&]() { return vbs.met(); });
+    ana.histograms.addHistogram("MbbZoom", 180, 0, 300, [&]() { return vbs.mbb(); });
+    ana.histograms.addHistogram("Mbb", 180, 0, 600, [&]() { return vbs.mbb(); });
+    ana.histograms.addHistogram("BDT", 180, CBDT - 0.3, CBDT + 0.3, [&]() { return vbs.bdt(); });
+    ana.histograms.addHistogram("BDTPassFail", 2, CBDT - 0.3, CBDT + 0.3, [&]() { return vbs.bdt(); });
+    ana.histograms.addHistogram("BDTBkg", 180, CBDT - 0.3, CBDT, [&]() { return vbs.bdt(); });
+    ana.histograms.addHistogram("BDTVarBin", {CBDT - 0.3, CBDT - 0.18, CBDT - 0.12, CBDT}, [&]() { return vbs.bdt(); });
+    ana.histograms.addHistogram("BDTVarBin2", {CBDT - 0.3, CBDT - 0.24, CBDT - 0.18, CBDT - 0.12, CBDT}, [&]() { return vbs.bdt(); });
+    ana.histograms.addHistogram("BDTVarBin3", {CBDT - 0.3, CBDT - 0.12, CBDT}, [&]() { return vbs.bdt(); });
+    ana.histograms.addHistogram("BDTVarBin4", {CBDT - 0.3, CBDT - 0.12, CBDT - 0.075, CBDT}, [&]() { return vbs.bdt(); });
+    ana.histograms.addHistogram("BDTMD", 180, CBDT - 0.3, CBDT + 0.3, [&]() { return vbs.bdt_mbboff(); });
+    ana.histograms.addHistogram("Yield", 1, 0, 1, [&]() { return 0; });
 
     // Important variables
-    ana.histograms.addVecHistogram("CutSR"  , 5 , 0 , 5 , [&]() { std::vector<float> bins; int bin = cut_bin  (); if (bin >= 0) bins.push_back(bin); return bins; } );
-    ana.histograms.addVecHistogram("CutSR2" , 4 , 0 , 4 , [&]() { std::vector<float> bins; int bin = cut_bin_2(); if (bin >= 0) bins.push_back(bin); return bins; } );
-    ana.histograms.addVecHistogram("BDTSR"  , 4 , 0 , 4 , [&]() { std::vector<float> bins; int bin = bdt_bin  (); if (bin >= 0) bins.push_back(bin); return bins; } );
-    ana.histograms.addVecHistogram("BDTSR2" , 4 , 0 , 4 , [&]() { std::vector<float> bins; int bin = bdt_bin_2(); if (bin >= 0) bins.push_back(bin); return bins; } );
+    ana.histograms.addVecHistogram("CutSR", 5, 0, 5, [&]() {
+        std::vector<float> bins;
+        int bin = cut_bin();
+        if (bin >= 0) bins.push_back(bin);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutSR2", 4, 0, 4, [&]() {
+        std::vector<float> bins;
+        int bin = cut_bin_2();
+        if (bin >= 0) bins.push_back(bin);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("BDTSR", 4, 0, 4, [&]() {
+        std::vector<float> bins;
+        int bin = bdt_bin();
+        if (bin >= 0) bins.push_back(bin);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("BDTSR2", 4, 0, 4, [&]() {
+        std::vector<float> bins;
+        int bin = bdt_bin_2();
+        if (bin >= 0) bins.push_back(bin);
+        return bins;
+    });
 
-    ana.histograms.addVecHistogram("CutSREl" , 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = cut_bin  (); if (bin == 0) bins.push_back(1); else if (bin==-1           ) bins.push_back(0); return bins; } );
-    ana.histograms.addVecHistogram("CutSRMu" , 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = cut_bin  (); if (bin == 1) bins.push_back(1); else if (bin==-2           ) bins.push_back(0); return bins; } );
-    ana.histograms.addVecHistogram("CutSRTau", 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = cut_bin  (); if (bin == 2) bins.push_back(1); else if (bin==-3           ) bins.push_back(0); return bins; } );
-    ana.histograms.addVecHistogram("CutSRNeg", 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = cut_bin  (); if (bin == 3) bins.push_back(1); else if (bin==-4           ) bins.push_back(0); return bins; } );
-    ana.histograms.addVecHistogram("CutSRLgt", 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = cut_bin  (); if (bin == 4) bins.push_back(1); else if (bin==-1 or bin==-2) bins.push_back(0); return bins; } );
+    ana.histograms.addVecHistogram("CutSREl", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = cut_bin();
+        if (bin == 0)
+            bins.push_back(1);
+        else if (bin == -1)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutSRMu", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = cut_bin();
+        if (bin == 1)
+            bins.push_back(1);
+        else if (bin == -2)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutSRTau", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = cut_bin();
+        if (bin == 2)
+            bins.push_back(1);
+        else if (bin == -3)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutSRNeg", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = cut_bin();
+        if (bin == 3)
+            bins.push_back(1);
+        else if (bin == -4)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutSRLgt", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = cut_bin();
+        if (bin == 4)
+            bins.push_back(1);
+        else if (bin == -1 or bin == -2)
+            bins.push_back(0);
+        return bins;
+    });
 
-    ana.histograms.addVecHistogram("BDTSREl" , 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = bdt_bin  (); if (bin == 0)             bins.push_back(1); else if (bin==-1           ) bins.push_back(0); return bins; } );
-    ana.histograms.addVecHistogram("BDTSRMu" , 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = bdt_bin  (); if (bin == 1)             bins.push_back(1); else if (bin==-2           ) bins.push_back(0); return bins; } );
-    ana.histograms.addVecHistogram("BDTSRTau", 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = bdt_bin  (); if (bin == 2)             bins.push_back(1); else if (bin==-3           ) bins.push_back(0); return bins; } );
-    ana.histograms.addVecHistogram("BDTSRNeg", 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = bdt_bin  (); if (bin == 3)             bins.push_back(1); else if (bin==-4           ) bins.push_back(0); return bins; } );
-    ana.histograms.addVecHistogram("BDTSRLgt", 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = bdt_bin  (); if (bin == 0 or bin == 1) bins.push_back(1); else if (bin==-1 or bin==-2) bins.push_back(0); return bins; } );
+    ana.histograms.addVecHistogram("BDTSREl", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = bdt_bin();
+        if (bin == 0)
+            bins.push_back(1);
+        else if (bin == -1)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("BDTSRMu", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = bdt_bin();
+        if (bin == 1)
+            bins.push_back(1);
+        else if (bin == -2)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("BDTSRTau", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = bdt_bin();
+        if (bin == 2)
+            bins.push_back(1);
+        else if (bin == -3)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("BDTSRNeg", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = bdt_bin();
+        if (bin == 3)
+            bins.push_back(1);
+        else if (bin == -4)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("BDTSRLgt", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = bdt_bin();
+        if (bin == 0 or bin == 1)
+            bins.push_back(1);
+        else if (bin == -1 or bin == -2)
+            bins.push_back(0);
+        return bins;
+    });
 
-    ana.histograms.addVecHistogram("CutSR2El" , 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = cut_bin_2(); if (bin == 0)             bins.push_back(1); else if (bin==-1           ) bins.push_back(0); return bins; } );
-    ana.histograms.addVecHistogram("CutSR2Mu" , 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = cut_bin_2(); if (bin == 1)             bins.push_back(1); else if (bin==-2           ) bins.push_back(0); return bins; } );
-    ana.histograms.addVecHistogram("CutSR2Tau", 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = cut_bin_2(); if (bin == 2)             bins.push_back(1); else if (bin==-3           ) bins.push_back(0); return bins; } );
-    ana.histograms.addVecHistogram("CutSR2Neg", 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = cut_bin_2(); if (bin == 3)             bins.push_back(1); else if (bin==-4           ) bins.push_back(0); return bins; } );
-    ana.histograms.addVecHistogram("CutSR2Lgt", 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = cut_bin_2(); if (bin == 0 or bin == 1) bins.push_back(1); else if (bin==-1 or bin==-2) bins.push_back(0); return bins; } );
+    ana.histograms.addVecHistogram("CutSR2El", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = cut_bin_2();
+        if (bin == 0)
+            bins.push_back(1);
+        else if (bin == -1)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutSR2Mu", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = cut_bin_2();
+        if (bin == 1)
+            bins.push_back(1);
+        else if (bin == -2)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutSR2Tau", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = cut_bin_2();
+        if (bin == 2)
+            bins.push_back(1);
+        else if (bin == -3)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutSR2Neg", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = cut_bin_2();
+        if (bin == 3)
+            bins.push_back(1);
+        else if (bin == -4)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutSR2Lgt", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = cut_bin_2();
+        if (bin == 0 or bin == 1)
+            bins.push_back(1);
+        else if (bin == -1 or bin == -2)
+            bins.push_back(0);
+        return bins;
+    });
 
-    ana.histograms.addVecHistogram("BDTSR2El" , 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = bdt_bin_2(); if (bin == 0)             bins.push_back(1); else if (bin==-1           ) bins.push_back(0); return bins; } );
-    ana.histograms.addVecHistogram("BDTSR2Mu" , 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = bdt_bin_2(); if (bin == 1)             bins.push_back(1); else if (bin==-2           ) bins.push_back(0); return bins; } );
-    ana.histograms.addVecHistogram("BDTSR2Tau", 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = bdt_bin_2(); if (bin == 2)             bins.push_back(1); else if (bin==-3           ) bins.push_back(0); return bins; } );
-    ana.histograms.addVecHistogram("BDTSR2Neg", 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = bdt_bin_2(); if (bin == 3)             bins.push_back(1); else if (bin==-4           ) bins.push_back(0); return bins; } );
-    ana.histograms.addVecHistogram("BDTSR2Lgt", 2 , 0 , 2 , [&]() { std::vector<float> bins; int bin = bdt_bin_2(); if (bin == 0 or bin == 1) bins.push_back(1); else if (bin==-1 or bin==-2) bins.push_back(0); return bins; } );
+    ana.histograms.addVecHistogram("BDTSR2El", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = bdt_bin_2();
+        if (bin == 0)
+            bins.push_back(1);
+        else if (bin == -1)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("BDTSR2Mu", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = bdt_bin_2();
+        if (bin == 1)
+            bins.push_back(1);
+        else if (bin == -2)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("BDTSR2Tau", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = bdt_bin_2();
+        if (bin == 2)
+            bins.push_back(1);
+        else if (bin == -3)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("BDTSR2Neg", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = bdt_bin_2();
+        if (bin == 3)
+            bins.push_back(1);
+        else if (bin == -4)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("BDTSR2Lgt", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        int bin = bdt_bin_2();
+        if (bin == 0 or bin == 1)
+            bins.push_back(1);
+        else if (bin == -1 or bin == -2)
+            bins.push_back(0);
+        return bins;
+    });
 
     TString tstr = ana.input_file_list_tstring;
-    ana.cutflow.addWgtSyst("2xTT1LUp" , [&, tstr ]() { return tstr.Contains("tt1lpowheg") ?      2 : 1.; } );
-    ana.cutflow.addWgtSyst("2xTT1LDn" , [&, tstr ]() { return tstr.Contains("tt1lpowheg") ? 1. / 2 : 1.; } );
-    ana.cutflow.addWgtSyst("2xTT2LUp" , [&, tstr ]() { return tstr.Contains("tt2lpowheg") ?      2 : 1.; } );
-    ana.cutflow.addWgtSyst("2xTT2LDn" , [&, tstr ]() { return tstr.Contains("tt2lpowheg") ? 1. / 2 : 1.; } );
-    ana.cutflow.addWgtSyst("2xTTWUp" , [&, tstr ]() { return tstr.Contains("ttw") ?      2 : 1.; } );
-    ana.cutflow.addWgtSyst("2xTTWDn" , [&, tstr ]() { return tstr.Contains("ttw") ? 1. / 2 : 1.; } );
-    ana.cutflow.addWgtSyst("2xTTZUp" , [&, tstr ]() { return tstr.Contains("ttz") ?      2 : 1.; } );
-    ana.cutflow.addWgtSyst("2xTTZDn" , [&, tstr ]() { return tstr.Contains("ttz") ? 1. / 2 : 1.; } );
-    ana.cutflow.addWgtSyst("2xRareTopUp" , [&, tstr ]() { return tstr.Contains("raretop") ?      2 : 1.; } );
-    ana.cutflow.addWgtSyst("2xRareTopDn" , [&, tstr ]() { return tstr.Contains("raretop") ? 1. / 2 : 1.; } );
+    ana.cutflow.addWgtSyst("2xTT1LUp", [&, tstr]() { return tstr.Contains("tt1lpowheg") ? 2 : 1.; });
+    ana.cutflow.addWgtSyst("2xTT1LDn", [&, tstr]() { return tstr.Contains("tt1lpowheg") ? 1. / 2 : 1.; });
+    ana.cutflow.addWgtSyst("2xTT2LUp", [&, tstr]() { return tstr.Contains("tt2lpowheg") ? 2 : 1.; });
+    ana.cutflow.addWgtSyst("2xTT2LDn", [&, tstr]() { return tstr.Contains("tt2lpowheg") ? 1. / 2 : 1.; });
+    ana.cutflow.addWgtSyst("2xTTWUp", [&, tstr]() { return tstr.Contains("ttw") ? 2 : 1.; });
+    ana.cutflow.addWgtSyst("2xTTWDn", [&, tstr]() { return tstr.Contains("ttw") ? 1. / 2 : 1.; });
+    ana.cutflow.addWgtSyst("2xTTZUp", [&, tstr]() { return tstr.Contains("ttz") ? 2 : 1.; });
+    ana.cutflow.addWgtSyst("2xTTZDn", [&, tstr]() { return tstr.Contains("ttz") ? 1. / 2 : 1.; });
+    ana.cutflow.addWgtSyst("2xRareTopUp", [&, tstr]() { return tstr.Contains("raretop") ? 2 : 1.; });
+    ana.cutflow.addWgtSyst("2xRareTopDn", [&, tstr]() { return tstr.Contains("raretop") ? 1. / 2 : 1.; });
 
     // Print cut structure
     ana.cutflow.printCuts();

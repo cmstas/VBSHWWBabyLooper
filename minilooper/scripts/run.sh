@@ -32,7 +32,7 @@ if [ -z ${USERNAME} ]; then
     USERNAME=phchang
 fi
 
-HISTDIR=hists/${YOURTAG}/${SKIMVERSION}/${BABYVERSION}/${YEAR}
+HISTDIR=hists/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}
 
 mkdir -p ${HISTDIR}
 

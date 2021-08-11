@@ -11,14 +11,14 @@
 import datacard_writer as dw # if giving error run   $ source ../rooutil/thisrooutil.sh
 import ROOT as r
 
-def run(doBDT):
+def run(doBDT, c2v):
 
     #_____________________________________________________________________________________
     # Toggle options
     Tag = "v2.4_SS"
-    BabyVersion = "v1"
-    inputHistBaseDir = "/home/users/phchang/public_html/analysis/hwh/VBSHWWBabyLooper____/minilooper/"
-    inputHistDir = "{}/hists/Nominal/{}/{}/Run2/".format(inputHistBaseDir, Tag, BabyVersion)
+    BabyVersion = "v3"
+    inputHistBaseDir = "/nfs-7/userdata/phchang/VBSHWWResult/"
+    inputHistDir = "{}/{}/{}/Run2/Nominal".format(inputHistBaseDir, Tag, BabyVersion)
 
 
 
@@ -49,7 +49,7 @@ def run(doBDT):
     # topbkgs    = ["tt1lpowheg", "tt2lpowheg", "ttw", "ttz", "raretop", ]
     topbkgs    = ["topbkg"]
     nontopbkgs = ["bosons", ]
-    sigs       = ["vbshww_c2v_4p5", ]
+    sigs       = ["vbshww_c2v_{}".format(c2v), ]
     bkgs       = topbkgs + nontopbkgs
     processes  = bkgs + sigs
 
@@ -70,6 +70,7 @@ def run(doBDT):
         # If signal scale it up to 137/fb because we are missing 2016 signal (FIXME)
         if process in sigs:
             hists[process].Scale(137/(59.97+41.3))
+            # hists[process].Scale(20)
 
     ######################################################################################
     #
@@ -127,9 +128,23 @@ def run(doBDT):
     for i in xrange(1, nbins+1):
         d.set_bin(i)
         d.set_region_name("bin{}".format(i))
-        d.write("datacards/{}/datacard_bin{}.txt".format("bdt" if doBDT else "cut", i))
+        d.write("datacards/{}_c2v{}/datacard_bin{}.txt".format("bdt" if doBDT else "cut", c2v, i))
 
 if __name__ == "__main__":
 
-    run(doBDT=True)
-    run(doBDT=False)
+    run(doBDT=True,  c2v="4p5")
+    run(doBDT=False, c2v="4p5")
+    run(doBDT=True,  c2v="4")
+    run(doBDT=False, c2v="4")
+    run(doBDT=True,  c2v="3")
+    run(doBDT=False, c2v="3")
+    run(doBDT=True,  c2v="1")
+    run(doBDT=False, c2v="1")
+    run(doBDT=True,  c2v="0")
+    run(doBDT=False, c2v="0")
+    run(doBDT=True,  c2v="m1")
+    run(doBDT=False, c2v="m1")
+    run(doBDT=True,  c2v="m2")
+    run(doBDT=False, c2v="m2")
+    run(doBDT=True,  c2v="m2p5")
+    run(doBDT=False, c2v="m2p5")

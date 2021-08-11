@@ -48,7 +48,7 @@ except:
 import ROOT as r
 r.gROOT.SetBatch(True)
 
-hadd_dir = "hists/{}/{}/{}/{}/".format(runtag, tag, babyversion, year)
+hadd_dir = "hists/{}/{}/{}/{}/".format(tag, babyversion, year, runtag)
 
 bkgs_fit = [
         "{}/topbkg.root".format(hadd_dir),
@@ -213,8 +213,7 @@ histxaxislabeloptions = {
 "Mbb"                             : {"xaxis_label"      : "m_{bb} [GeV]",             "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
 "Channels4Bins"                   : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
 "Channels5Bins"                   : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)", "(e/#mu)^{+}l^{+}"]},
-# "BDTSR"                           : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
-"BDTSR"                           : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": False, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
+"BDTSR"                           : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
 "CutSR"                           : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)", "(e/#mu)^{+}l^{+}"]},
 "BDTSR2"                          : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
 "CutSR2"                          : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
@@ -286,7 +285,7 @@ p.dump_plot(
     legend_labels_tex=bkg_labels_tex,
     signal_labels=signal_labels,
     signal_labels_tex=signal_labels_tex,
-    dirname="cutscans/{}/{}/{}/{}/{}".format(runtag, tag, babyversion, year, subdir) if do_cut_scan else "plots/{}/{}/{}/{}/{}".format(runtag, tag, babyversion, year, subdir),
+    dirname="cutscans/{}/{}/{}/{}/{}".format(tag, babyversion, year, runtag, subdir) if do_cut_scan else "plots/{}/{}/{}/{}/{}".format(tag, babyversion, year, runtag, subdir),
     filter_pattern=filter_pattern,
     dogrep=dogrep,
     usercolors=colors,
