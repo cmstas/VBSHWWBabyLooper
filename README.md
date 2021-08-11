@@ -19,13 +19,17 @@ Compile the code
 
 Run the code
 
-    sh run.sh v2                     # v2 is the tag provided by the user
+    sh run.sh v2         # v2 is the tag provided by the user
+    sh run.sh v2_jecUp   # _jecUp recognizes that it is to run jecUp variation
+    sh run.sh v2_jecDn   # _jecDn recognizes that it is to run jecDn variation
 
 Save the ntuples to nfs area
 
-    sh scripts/publish_baby.sh v2    # v2 is the tag you just used to run
+    sh scripts/publish_baby.sh v2          # Saving v2 to nfs area
+    sh scripts/publish_baby.sh v2_jecUp    # Saving v2_jecUp to nfs area
+    sh scripts/publish_baby.sh v2_jecDn    # Saving v2_jecDn to nfs area
 
-In case you chage something, here is how one can run a test job where each job is limited to 50000 events only
+In case you change something, here is how one can run a test job where each job is limited to 50000 events only
 
     sh testrun.sh
 
