@@ -15,6 +15,7 @@
 #include "MCTools.h"
 #include "Tools/goodrun.h"
 #include "Tools/btagsf/BTagCalibrationStandalone.h"
+#include "Tools/jetcorr/JetCorrectionUncertainty.h"
 // VBSHWWCORE
 #include "tools/lepScaleFactors.h" // ttH analysis scale factors
 #include "tools/TauIDSFTool.h"     // tau POG scale factors
@@ -46,6 +47,9 @@ public:
 
     // scale1fb of the sample
     float scale1fb;
+
+    // JEC variations to apply (1 = up, 0 = nominal, -1 = down)
+    int jecvar;
 
     // Debug boolean
     bool debug;
@@ -121,6 +125,8 @@ public:
     RooUtil::HistMap* sig_rewgt; // signal reweighting
 
     RooUtil::TMVAUtil::ReaderX* readerX;
+
+    JetCorrectionUncertainty* jec_unc;
 
     VBSHWW(int, char**);
     ~VBSHWW();
