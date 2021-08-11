@@ -109,6 +109,9 @@ VBSWmpWmpH_C2V_0_TuneCP5 \
 VBSWmpWmpH_C2V_m1_TuneCP5 \
 VBSWmpWmpH_C2V_m2_TuneCP5 \
 VBSWmpWmpH_C2V_m2p5_TuneCP5 \
+VBSWWHToLNuLNubb_C2V \
+VBSWWHToLNuLNubb_CV \
+VBSWWHToLNuLNubb_C3 \
 DoubleEG_Run2017 \
 DoubleMuon_Run2017 \
 MuonEG_Run2017 \
@@ -184,6 +187,9 @@ for SAMPLE in ${SAMPLES}; do
         if [[ ${SAMPLE} == *"VBSWmpWmpH_C2V_m1_TuneCP5"* ]]; then XSEC=0.003359; fi
         if [[ ${SAMPLE} == *"VBSWmpWmpH_C2V_m2_TuneCP5"* ]]; then XSEC=0.007276; fi
         if [[ ${SAMPLE} == *"VBSWmpWmpH_C2V_m2p5_TuneCP5"* ]]; then XSEC=0.009797; fi
+        if [[ ${SAMPLE} == *"VBSWWHToLNuLNubb_C2V"* ]]; then XSEC=0.0009246749816; fi # 0.01483 * 0.3272 * 0.3272 * 0.5824
+        if [[ ${SAMPLE} == *"VBSWWHToLNuLNubb_CV"* ]]; then XSEC=0.0009246749816; fi # 0.01483 * 0.3272 * 0.3272 * 0.5824 # This is becuase the default was set to C2V = 4.5 and the rest was reweighted
+        if [[ ${SAMPLE} == *"VBSWWHToLNuLNubb_C3"* ]]; then XSEC=0.001364877636; fi # 0.02189 * 0.3272 * 0.3272 * 0.5824
 # VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_0.log     : Cross-section : 0.001037  + - 2.915e-06 pb
 # VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_0p5.log   : Cross-section : 0.0004695 + - 1.431e-06 pb
 # VBSHWWBabyLooper/mystudies/genULsamples/gridpacks/VBSWWH_incl_v2_C2V_1.log     : Cross-section : 0.0002943 + - 1.232e-06 pb
@@ -246,6 +252,9 @@ for SAMPLE in ${SAMPLES}; do
         if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_m1_TuneCP5_2016"* ]]; then continue; fi
         if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_m2_TuneCP5_2016"* ]]; then continue; fi
         if [[ ${SAMPLE}_${YEAR} == *"VBSWmpWmpHToLNuLNu_C2V_m2p5_TuneCP5_2016"* ]]; then continue; fi
+        if [[ ${SAMPLE}_${YEAR} == *"VBSWWHToLNuLNubb_C2V_2016"* ]]; then continue; fi
+        if [[ ${SAMPLE}_${YEAR} == *"VBSWWHToLNuLNubb_CV_2016"* ]]; then continue; fi
+        if [[ ${SAMPLE}_${YEAR} == *"VBSWWHToLNuLNubb_C3_2016"* ]]; then continue; fi
 
         if [[ ${SAMPLE}_${YEAR} == *"ZZ_2018"* ]]; then continue; fi
         if [[ ${SAMPLE}_${YEAR} == *"ZZTo4L_2017"* ]]; then continue; fi
@@ -394,4 +403,4 @@ for SAMPLE in ${SAMPLES}; do
 
 done
 
-xargs.sh .jobs.txt
+# xargs.sh .jobs.txt

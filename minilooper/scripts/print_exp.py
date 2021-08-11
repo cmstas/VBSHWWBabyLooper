@@ -4,8 +4,10 @@ import math
 import ROOT as r
 import sys
 
+basedir = "hists/v2.4_SS/v6/Run2/Nominal"
+
 def bc(proc, channel, region, analysis):
-    f = r.TFile("hists/Nominal/v2.4_SS/v1/Run2/{}.root".format(proc))
+    f = r.TFile("{}/{}.root".format(basedir, proc))
     h = f.Get("LooseVR__{}SR{}".format(analysis, channel))
     if region == "SR":
         return h.GetBinContent(2)
@@ -15,7 +17,7 @@ def bc(proc, channel, region, analysis):
 
 
 def be(proc, channel, region, analysis):
-    f = r.TFile("hists/Nominal/v2.4_SS/v1/Run2/{}.root".format(proc))
+    f = r.TFile("{}/{}.root".format(basedir, proc))
     h = f.Get("LooseVR__{}SR{}".format(analysis, channel))
     if region == "SR":
         return h.GetBinError(2)
@@ -134,7 +136,7 @@ def get(channel, analysis):
     bSRDT = bsrdt(channel, analysis)
     eSRDT = esrdt(channel, analysis)
     fSRDT = eSRDT / bSRDT
-    return [bSRMC, eSRMC, bCRMC, eCRMC, Alpha, (Error/Alpha)* 100, syst1(channel, analysis)*100, syst2(channel, analysis)*100, bCRDT, eCRDT, bSRDT, eSRDT, fSRDT*100,]
+    return [bSRMC, eSRMC, bCRMC, eCRMC, Alpha, (Error/Alpha)* 100, syst1(channel, analysis)*100, syst2(channel, analysis)*100, 999, bCRDT, eCRDT, bSRDT, eSRDT, fSRDT*100,]
 
 
 def get_str_cut():
@@ -145,13 +147,13 @@ def get_str_cut():
 \\resizebox{{\\columnwidth}}{{!}}{{%
 \\begin{{tabular}}{{@{{\\extracolsep{{4pt}}}}lccccc@{{}}}}
 \\hline\\hline
-  Channels                 & ($B^\\textrm{{SR}}_\\textrm{{MC}}$\\quad\\quad / & $B^\\textrm{{CR}}_\\textrm{{MC}}$ = & $\\alpha_\\textrm{{exp}}$(MC Stat. $\\oplus$ Modeling Syst. $\\oplus$ Composition Syst.))\\quad\\quad $\\times$      & $B^\\textrm{{CR}}_\\textrm{{data}}$  \\quad\\quad= & $B^\\textrm{{SR}}_\\textrm{{data}}$       \\\\
+  Channels                 & ($B^\\textrm{{SR}}_\\textrm{{MC}}$\\quad\\quad / & $B^\\textrm{{CR}}_\\textrm{{MC}}$ = & $\\alpha_\\textrm{{exp}}$(MC Stat. $\\oplus$ Modeling Syst. $\\oplus$ Composition Syst. $\\oplus$ Expt. Syst.))\\quad\\quad $\\times$      & $B^\\textrm{{CR}}_\\textrm{{data}}$  \\quad\\quad= & $B^\\textrm{{SR}}_\\textrm{{data}}$       \\\\
   \\hline
-  $e^{{+}}l^{{+}}$         & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.3g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
-  $\\mu^{{+}}l^{{+}}$      & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
-  $\\tau^{{+}}l^{{+}}$     & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
-  $(--)$                   & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
-  $\\ell^{{+}}\\ell^{{+}}$ & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
+  $e^{{+}}l^{{+}}$         & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.3g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
+  $\\mu^{{+}}l^{{+}}$      & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
+  $\\tau^{{+}}l^{{+}}$     & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
+  $(--)$                   & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
+  $\\ell^{{+}}\\ell^{{+}}$ & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
 \\hline\\hline
 \\end{{tabular}}
 }}
@@ -168,12 +170,12 @@ def get_str_bdt():
 \\resizebox{{\\columnwidth}}{{!}}{{%
 \\begin{{tabular}}{{@{{\\extracolsep{{4pt}}}}lccccc@{{}}}}
 \\hline\\hline
-  Channels                 & ($B^\\textrm{{SR}}_\\textrm{{MC}}$\\quad\\quad / & $B^\\textrm{{CR}}_\\textrm{{MC}}$ = & $\\alpha_\\textrm{{exp}}$(MC Stat. $\\oplus$ Modeling Syst. $\\oplus$ Composition Syst.))\\quad\\quad $\\times$      & $B^\\textrm{{CR}}_\\textrm{{data}}$  \\quad\\quad= & $B^\\textrm{{SR}}_\\textrm{{data}}$       \\\\
+  Channels                 & ($B^\\textrm{{SR}}_\\textrm{{MC}}$\\quad\\quad / & $B^\\textrm{{CR}}_\\textrm{{MC}}$ = & $\\alpha_\\textrm{{exp}}$(MC Stat. $\\oplus$ Modeling Syst. $\\oplus$ Composition Syst. $\\oplus$ Expt. Syst.))\\quad\\quad $\\times$      & $B^\\textrm{{CR}}_\\textrm{{data}}$  \\quad\\quad= & $B^\\textrm{{SR}}_\\textrm{{data}}$       \\\\
   \\hline
-  $e^{{+}}l^{{+}}$         & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
-  $\\mu^{{+}}l^{{+}}$      & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
-  $\\tau^{{+}}l^{{+}}$     & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
-  $(--)$                   & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
+  $e^{{+}}l^{{+}}$         & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
+  $\\mu^{{+}}l^{{+}}$      & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
+  $\\tau^{{+}}l^{{+}}$     & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
+  $(--)$                   & {:.3g} $\\pm$ {:.3g}                             & {:.3g} $\\pm$ {:.3g}                & {:.3g} $\\pm$ ({:.2g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\% $\\oplus$ {:.3g}\\%) & {:.3g} $\\pm$ {:.3g}                               & {:.3g} $\\pm$ {:.3g} (={:.3g}\\%)                 \\\\
 \\hline\\hline
 \\end{{tabular}}
 }}
@@ -182,7 +184,68 @@ def get_str_bdt():
     """.format(*numbers)
     return result
 
+def make_final_background_histograms():
+    f = r.TFile("{}/topbkgest.root".format(basedir), "recreate")
+    h_cut = r.TH1F("LooseVR__CutSR", "", 5, 0, 5)
+    h_cut.Sumw2()
+    h_cut.SetBinContent(1, get("El", "Cut")[-3])
+    h_cut.SetBinError  (1, get("El", "Cut")[-2])
+    h_cut.SetBinContent(2, get("Mu", "Cut")[-3])
+    h_cut.SetBinError  (2, get("Mu", "Cut")[-2])
+    h_cut.SetBinContent(3, get("Tau", "Cut")[-3])
+    h_cut.SetBinError  (3, get("Tau", "Cut")[-2])
+    h_cut.SetBinContent(4, get("Neg", "Cut")[-3])
+    h_cut.SetBinError  (4, get("Neg", "Cut")[-2])
+    h_cut.SetBinContent(5, get("Lgt", "Cut")[-3])
+    h_cut.SetBinError  (5, get("Lgt", "Cut")[-2])
+    h_bdt = r.TH1F("LooseVR__BDTSR", "", 4, 0, 4)
+    h_bdt.Sumw2()
+    h_bdt.SetBinContent(1, get("El", "BDT")[-3])
+    h_bdt.SetBinError  (1, get("El", "BDT")[-2])
+    h_bdt.SetBinContent(2, get("Mu", "BDT")[-3])
+    h_bdt.SetBinError  (2, get("Mu", "BDT")[-2])
+    h_bdt.SetBinContent(3, get("Tau", "BDT")[-3])
+    h_bdt.SetBinError  (3, get("Tau", "BDT")[-2])
+    h_bdt.SetBinContent(4, get("Neg", "BDT")[-3])
+    h_bdt.SetBinError  (4, get("Neg", "BDT")[-2])
+    f.cd()
+    h_cut.Write()
+    h_bdt.Write()
+    f.Close()
+
+def make_final_background_histograms_only_MCstatError():
+    f = r.TFile("{}/topbkgfit.root".format(basedir), "recreate")
+    h_cut = r.TH1F("LooseVR__CutSR", "", 5, 0, 5)
+    h_cut.Sumw2()
+    h_cut.SetBinContent(1, get("El", "Cut")[-3])
+    h_cut.SetBinError  (1, get("El", "Cut")[-3] * get("El", "Cut")[5] / 100)
+    h_cut.SetBinContent(2, get("Mu", "Cut")[-3])
+    h_cut.SetBinError  (2, get("Mu", "Cut")[-3] * get("Mu", "Cut")[5] / 100)
+    h_cut.SetBinContent(3, get("Tau", "Cut")[-3])
+    h_cut.SetBinError  (3, get("Tau", "Cut")[-3] * get("Tau", "Cut")[5] / 100)
+    h_cut.SetBinContent(4, get("Neg", "Cut")[-3])
+    h_cut.SetBinError  (4, get("Neg", "Cut")[-3] * get("Neg", "Cut")[5] / 100)
+    h_cut.SetBinContent(5, get("Lgt", "Cut")[-3])
+    h_cut.SetBinError  (5, get("Lgt", "Cut")[-3] * get("Lgt", "Cut")[5] / 100)
+    h_bdt = r.TH1F("LooseVR__BDTSR", "", 4, 0, 4)
+    h_bdt.Sumw2()
+    h_bdt.SetBinContent(1, get("El", "BDT")[-3])
+    h_bdt.SetBinError  (1, get("El", "BDT")[-3] * get("El", "BDT")[5] / 100)
+    h_bdt.SetBinContent(2, get("Mu", "BDT")[-3])
+    h_bdt.SetBinError  (2, get("Mu", "BDT")[-3] * get("Mu", "BDT")[5] / 100)
+    h_bdt.SetBinContent(3, get("Tau", "BDT")[-3])
+    h_bdt.SetBinError  (3, get("Tau", "BDT")[-3] * get("Tau", "BDT")[5] / 100)
+    h_bdt.SetBinContent(4, get("Neg", "BDT")[-3])
+    h_bdt.SetBinError  (4, get("Neg", "BDT")[-3] * get("Neg", "BDT")[5] / 100)
+    f.cd()
+    h_cut.Write()
+    h_bdt.Write()
+    f.Close()
+
 if __name__ == "__main__":
 
     print(get_str_cut())
     print(get_str_bdt())
+
+    make_final_background_histograms()
+    make_final_background_histograms_only_MCstatError()

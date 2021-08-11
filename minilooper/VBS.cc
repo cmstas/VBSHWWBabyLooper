@@ -67,6 +67,8 @@ void VBS::Init(TTree *tree) {
   if (scalewgts_branch) scalewgts_branch->SetAddress(&scalewgts_);
   pswgts_branch = tree->GetBranch("pswgts");
   if (pswgts_branch) pswgts_branch->SetAddress(&pswgts_);
+  lherewgts_branch = tree->GetBranch("lherewgts");
+  if (lherewgts_branch) lherewgts_branch->SetAddress(&lherewgts_);
   isvbswwh_branch = tree->GetBranch("isvbswwh");
   if (isvbswwh_branch) isvbswwh_branch->SetAddress(&isvbswwh_);
   iswwhlvlvbb_branch = tree->GetBranch("iswwhlvlvbb");
@@ -334,6 +336,7 @@ void VBS::GetEntry(unsigned int idx) {
   wgt_isLoaded = false;
   scalewgts_isLoaded = false;
   pswgts_isLoaded = false;
+  lherewgts_isLoaded = false;
   met_p4_isLoaded = false;
   isvbswwh_isLoaded = false;
   iswwhlvlvbb_isLoaded = false;
@@ -496,6 +499,7 @@ void VBS::LoadAllBranches() {
   if (wgt_branch != 0) wgt();
   if (scalewgts_branch != 0) scalewgts();
   if (pswgts_branch != 0) pswgts();
+  if (lherewgts_branch != 0) lherewgts();
   if (met_p4_branch != 0) met_p4();
   if (isvbswwh_branch != 0) isvbswwh();
   if (iswwhlvlvbb_branch != 0) iswwhlvlvbb();
@@ -726,6 +730,19 @@ const vector<float> &VBS::pswgts() {
     pswgts_isLoaded = true;
   }
   return *pswgts_;
+}
+
+const vector<float> &VBS::lherewgts() {
+  if (not lherewgts_isLoaded) {
+    if (lherewgts_branch != 0) {
+      lherewgts_branch->GetEntry(index);
+    } else {
+      printf("branch lherewgts_branch does not exist!\n");
+      exit(1);
+    }
+    lherewgts_isLoaded = true;
+  }
+  return *lherewgts_;
 }
 
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &VBS::met_p4() {
@@ -2733,6 +2750,7 @@ const unsigned long long &evt() { return vbs.evt(); }
 const float &wgt() { return vbs.wgt(); }
 const vector<float> &scalewgts() { return vbs.scalewgts(); }
 const vector<float> &pswgts() { return vbs.pswgts(); }
+const vector<float> &lherewgts() { return vbs.lherewgts(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &met_p4() { return vbs.met_p4(); }
 const int &isvbswwh() { return vbs.isvbswwh(); }
 const int &iswwhlvlvbb() { return vbs.iswwhlvlvbb(); }

@@ -47,6 +47,9 @@ for YEAR in ${YEARS}; do
     elif [[ ${YEAR} == *"Run2"* ]]; then
         echo "rm -f ${HADDDIR}/bosons.root;hadd -f ${HADDDIR}/bosons.root ${HISTDIR}/WJetsTo*.root ${HISTDIR}/DY*.root ${HISTDIR}/WW_*.root ${HISTDIR}/SSWW*.root ${HISTDIR}/WZTo3LNu*.root hists/${TAG}/${BABYVERSION}/${STUDY}_2017/ZZ*.root hists/${TAG}/${BABYVERSION}/${STUDY}_2018/ZZTo4L*.root > ${HADDDIR}/bosons.hadd.log 2>&1" >> .haddjobs.txt
     fi
+    echo "rm -f ${HADDDIR}/vbshwwlvlvbb_c2v.root;hadd -f ${HADDDIR}/vbshwwlvlvbb_c2v.root ${HISTDIR}/VBSWWHToLNuLNubb_C2V*.root > ${HADDDIR}/vbshwwlvlvbb_c2v.hadd.log 2>&1" >> .haddjobs.txt
+    echo "rm -f ${HADDDIR}/vbshwwlvlvbb_cv.root;hadd -f ${HADDDIR}/vbshwwlvlvbb_cv.root ${HISTDIR}/VBSWWHToLNuLNubb_CV*.root > ${HADDDIR}/vbshwwlvlvbb_cv.hadd.log 2>&1" >> .haddjobs.txt
+    echo "rm -f ${HADDDIR}/vbshwwlvlvbb_c3.root;hadd -f ${HADDDIR}/vbshwwlvlvbb_c3.root ${HISTDIR}/VBSWWHToLNuLNubb_C3*.root > ${HADDDIR}/vbshwwlvlvbb_c3.hadd.log 2>&1" >> .haddjobs.txt
     echo "rm -f ${HADDDIR}/vbshww_c2v_4p5.root;hadd -f ${HADDDIR}/vbshww_c2v_4p5.root ${HISTDIR}/VBSWmpWmpH_C2V_4p5_TuneCP5*.root > ${HADDDIR}/vbshww_c2v_4p5.hadd.log 2>&1" >> .haddjobs.txt
     echo "rm -f ${HADDDIR}/vbshww_c2v_4.root;hadd -f ${HADDDIR}/vbshww_c2v_4.root ${HISTDIR}/VBSWmpWmpH_C2V_4_TuneCP5*.root > ${HADDDIR}/vbshww_c2v_4.hadd.log 2>&1" >> .haddjobs.txt
     echo "rm -f ${HADDDIR}/vbshww_c2v_3.root;hadd -f ${HADDDIR}/vbshww_c2v_3.root ${HISTDIR}/VBSWmpWmpH_C2V_3_TuneCP5*.root > ${HADDDIR}/vbshww_c2v_3.hadd.log 2>&1" >> .haddjobs.txt

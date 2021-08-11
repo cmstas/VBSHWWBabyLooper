@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 
     // Preselection
     //____________________________________________________________________________________________________________________________________________________________
-    ana.cutflow.addCut("Presel", [&]() { return vbs.channel() >= 0; }, [&]() { return vbs.wgt() * vbs.btagsf() * vbs.lepsf() * vbs.xsec_sf() * vbs.genrewgt(); });
+    ana.cutflow.addCut("Presel", [&]() { return vbs.channel() >= 0; }, [&]() { return vbs.wgt() * vbs.btagsf() * vbs.lepsf() * vbs.xsec_sf() * vbs.genrewgt() * (ana.rwgtidx < 0 ? 1. : vbs.lherewgts()[ana.rwgtidx]); });
     ana.cutflow.addCutToLastActiveCut("LooseVR", [&]() { return vbs.is_ps(); }, UNITY);
 
     ana.cutflow.getCut("LooseVR");
@@ -38,6 +38,17 @@ int main(int argc, char** argv)
     ana.cutflow.getCut("LooseVR");
     ana.cutflow.addCutToLastActiveCut("Neg", [&]() { return vbs.is_ps_neg(); }, UNITY);
     ana.cutflow.addCutToLastActiveCut("NegMbbOff", [&]() { return vbs.mbb() > 150; }, UNITY);
+
+    ana.cutflow.getCut("LooseVR");
+    ana.cutflow.addCutToLastActiveCut("MbbOff", [&]() { return vbs.mbb() > 150; }, UNITY);
+
+    ana.cutflow.getCut("LooseVR");
+    ana.cutflow.addCutToLastActiveCut("LL", [&]() { return vbs.lepchannel() == 0 or vbs.lepchannel() == 1 or vbs.lepchannel() == 2; }, UNITY);
+    ana.cutflow.addCutToLastActiveCut("LLMbbOff", [&]() { return vbs.mbb() > 150; }, UNITY);
+
+    ana.cutflow.getCut("LooseVR");
+    ana.cutflow.addCutToLastActiveCut("LT", [&]() { return vbs.lepchannel() == 3 or vbs.lepchannel() == 4; }, UNITY);
+    ana.cutflow.addCutToLastActiveCut("LTMbbOff", [&]() { return vbs.mbb() > 150; }, UNITY);
 
     // Function to categorize events into bins
     auto cut_bin = [&]() {
@@ -135,6 +146,20 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("BDTVarBin4", {CBDT - 0.3, CBDT - 0.12, CBDT - 0.075, CBDT}, [&]() { return vbs.bdt(); });
     ana.histograms.addHistogram("BDTMD", 180, CBDT - 0.3, CBDT + 0.3, [&]() { return vbs.bdt_mbboff(); });
     ana.histograms.addHistogram("Yield", 1, 0, 1, [&]() { return 0; });
+    ana.histograms.addHistogram("Channel", 4, 0, 4, [&]() { return vbs.categ(); });
+    ana.histograms.addHistogram("DEtabb", 180, 0, 10, [&]() { return vbs.detabb(); });
+    ana.histograms.addHistogram("DPhibb", 180, 0, 3.1416, [&]() { return vbs.dphibb(); });
+    ana.histograms.addHistogram("DRbb", 180, 0, 10, [&]() { return vbs.drbb(); });
+    ana.histograms.addHistogram("DRJJ", 180, 0, 10, [&]() { return vbs.drjj(); });
+    ana.histograms.addHistogram("PtJJ", 180, 0, 600, [&]() { return vbs.ptjj(); });
+    ana.histograms.addHistogram("JetE0", 180, 0, 2000, [&]() { return vbs.j_lead_p(); });
+    ana.histograms.addHistogram("JetE1", 180, 0, 1500, [&]() { return vbs.j_sublead_p(); });
+    ana.histograms.addHistogram("Mll", 180, 0, 600, [&]() { return vbs.mll(); });
+    ana.histograms.addHistogram("DPhill", 180, 0, 3.1416, [&]() { return vbs.dphill(); });
+    ana.histograms.addHistogram("DRll", 180, 0, 10, [&]() { return vbs.drll(); });
+    ana.histograms.addHistogram("Ptll", 180, 0, 600, [&]() { return vbs.ptll(); });
+    ana.histograms.addHistogram("MTVVH", 180, 0, 2000, [&]() { return vbs.mtvvh(); });
+    ana.histograms.addHistogram("PtbbZoom", 180, 0, 500, [&]() { return vbs.ptbb(); });
 
     // Important variables
     ana.histograms.addVecHistogram("CutSR", 5, 0, 5, [&]() {
@@ -422,6 +447,7 @@ void parseCLI(int argc, char** argv)
         ("t,tree"        , "Name of the tree in the root file to open and loop over"                                             , cxxopts::value<std::string>())
         ("o,output"      , "Output file name"                                                                                    , cxxopts::value<std::string>())
         ("n,nevents"     , "N events to loop over"                                                                               , cxxopts::value<int>()->default_value("-1"))
+        ("r,rwgtidx"     , "Index to use to reweight"                                                                            , cxxopts::value<int>()->default_value("-1"))
         ("j,nsplit_jobs" , "Enable splitting jobs by N blocks (--job_index must be set)"                                         , cxxopts::value<int>())
         ("I,job_index"   , "job_index of split jobs (--nsplit_jobs must be set. index starts from 0. i.e. 0, 1, 2, 3, etc...)"   , cxxopts::value<int>())
         ("d,debug"       , "Run debug job. i.e. overrides output option to 'debug.root' and 'recreate's the file.")
@@ -499,6 +525,10 @@ void parseCLI(int argc, char** argv)
     //_______________________________________________________________________________
     // --nevents
     ana.n_events = result["nevents"].as<int>();
+
+    //_______________________________________________________________________________
+    // --rwgtidx 
+    ana.rwgtidx = result["rwgtidx"].as<int>();
 
     //_______________________________________________________________________________
     // --nsplit_jobs

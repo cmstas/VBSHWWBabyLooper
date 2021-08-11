@@ -2,22 +2,23 @@
 
 python write_datacards.py
 
-C2VS="0 1 3 4 4p5 m1 m2 m2p5"
+for DIRSTR in $(ls -d datacards/cut_* | grep -v .txt); do
+    combineCards.py -S \
+        b1=${DIRSTR}/datacard_bin1.txt \
+        b2=${DIRSTR}/datacard_bin2.txt \
+        b3=${DIRSTR}/datacard_bin3.txt \
+        b4=${DIRSTR}/datacard_bin4.txt \
+        b5=${DIRSTR}/datacard_bin5.txt \
+        > ${DIRSTR}_combined.txt
+done
 
-for C2V in ${C2VS}; do
+for DIRSTR in $(ls -d datacards/bdt_* | grep -v .txt); do
     combineCards.py -S \
-        b1=datacards/cut_c2v${C2V}/datacard_bin1.txt \
-        b2=datacards/cut_c2v${C2V}/datacard_bin2.txt \
-        b3=datacards/cut_c2v${C2V}/datacard_bin3.txt \
-        b4=datacards/cut_c2v${C2V}/datacard_bin4.txt \
-        b5=datacards/cut_c2v${C2V}/datacard_bin5.txt \
-        > datacards/cut_c2v${C2V}_combined.txt
-    combineCards.py -S \
-        b1=datacards/bdt_c2v${C2V}/datacard_bin1.txt \
-        b2=datacards/bdt_c2v${C2V}/datacard_bin2.txt \
-        b3=datacards/bdt_c2v${C2V}/datacard_bin3.txt \
-        b4=datacards/bdt_c2v${C2V}/datacard_bin4.txt \
-        > datacards/bdt_c2v${C2V}_combined.txt
+        b1=${DIRSTR}/datacard_bin1.txt \
+        b2=${DIRSTR}/datacard_bin2.txt \
+        b3=${DIRSTR}/datacard_bin3.txt \
+        b4=${DIRSTR}/datacard_bin4.txt \
+        > ${DIRSTR}_combined.txt
 done
 
 echo "Cut-based analysis data card written here:"

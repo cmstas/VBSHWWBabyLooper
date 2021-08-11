@@ -68,9 +68,11 @@ book_plot VRVBFKine   "Lgt Tau Neg"               MbbOff${SYST}     "MJJZoom DEt
 book_plot VRBDT       "    Tau Neg"               MbbOff${SYST}     "BDTVarBin"
 book_plot VRBDT       "Lgt"                       MbbOff${SYST}     "BDTVarBin4"
 book_plot SRBDT       "El Mu Tau Neg"             ""${SYST}         "BDT"
+book_plot AnchorYield "MbbOff"                    ""${SYST}         "Channel"
 book_plot SRYield     "LooseVR"                   ""${SYST}         "BDTSR BDTSR2"
 book_plot SRYield     "LooseVR"                   ""${SYST}         "CutSR CutSR2"
-book_plot SRBDTKine   "LooseVR"                   ""${SYST}         "ST LT MJJ DEtaJJ Mbb"
+book_plot SRBDTKine   "LL"                        MbbOff${SYST}     "STZoom LTZoom MJJ DEtaJJ Mbb PtbbZoom DEtabb DRbb DPhibb BJetPt0 BJetPt1 DRJJ PtJJ JetE0 JetE1 Mll DPhill DRll Ptll LeptonPt0Zoom LeptonPt1Zoom MET MTVVH"
+book_plot SRBDTKine   "LT"                        MbbOff${SYST}     "STZoom LTZoom MJJ DEtaJJ Mbb PtbbZoom DEtabb DRbb DPhibb BJetPt0 BJetPt1 DRJJ PtJJ JetE0 JetE1 Mll DPhill DRll Ptll LeptonPt0Zoom LeptonPt1Zoom MET MTVVH"
 book_plot Alpha       "LooseVR"                   ""${SYST}         "CutSREl CutSR2El"
 book_plot Alpha       "LooseVR"                   ""${SYST}         "CutSRMu CutSR2Mu"
 book_plot Alpha       "LooseVR"                   ""${SYST}         "CutSRTau CutSR2Tau"
@@ -80,11 +82,11 @@ book_plot Alpha       "LooseVR"                   ""${SYST}         "BDTSREl BDT
 book_plot Alpha       "LooseVR"                   ""${SYST}         "BDTSRMu BDTSR2Mu"
 book_plot Alpha       "LooseVR"                   ""${SYST}         "BDTSRTau BDTSR2Tau"
 book_plot Alpha       "LooseVR"                   ""${SYST}         "BDTSRNeg BDTSR2Neg"
-book_plot SRKine      "Presel"                    ""                "ST LT Ptbb MJJ DEtaJJ LeptonPt0 LeptonPt1 Mbb"
+book_plot SRKine      "Presel"                    ""                "ST LT Ptbb MJJ DEtaJJ LeptonPt0 LeptonPt1 Mbb MbbZoom"
 book_plot Fit         "LooseVR"                   ""${SYST}         "BDTSR"
 book_plot Fit         "LooseVR"                   ""${SYST}         "CutSR"
 book_plot_alpha
 
 xargs.sh .plotjobs.txt
 
-tar czf plots.tar.gz plots/${YOURTAG}/${SKIMVERSION}/${BABYVERSION}/${YEAR}/
+tar czf plots.tar.gz plots/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}
