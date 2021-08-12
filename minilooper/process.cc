@@ -371,6 +371,10 @@ int main(int argc, char** argv)
         return bins;
     });
 
+    // Filtering histograms
+    if (gSystem->AccessPathName("histograms.txt") == 0)
+        ana.cutflow.setHistogramFilterFromFile("histograms.txt");
+
     TString tstr = ana.input_file_list_tstring;
     ana.cutflow.addWgtSyst("2xTT1LUp", [&, tstr]() { return tstr.Contains("tt1lpowheg") ? 2 : 1.; });
     ana.cutflow.addWgtSyst("2xTT1LDn", [&, tstr]() { return tstr.Contains("tt1lpowheg") ? 1. / 2 : 1.; });

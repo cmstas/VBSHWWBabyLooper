@@ -53,6 +53,6 @@ else
     exit
 fi
 
-cp -r ${RESULTDIR} ${NFSAREA}
+cp -r ${RESULTDIR}/ ${NFSAREA}/${YOURTAG}
 
 echo "Done copying to ${NFSAREA}/${YOURTAG}"
