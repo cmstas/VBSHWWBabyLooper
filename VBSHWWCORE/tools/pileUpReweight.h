@@ -1,5 +1,7 @@
 #ifndef PILEUPREWEIGHT_H
 #define PILEUPREWEIGHT_H
+#include <iostream>
+#include <stdlib.h>
 
 float pileUpReweight(int n_vtx, int year);
 float pileUpReweightUp(int n_vtx, int year);
