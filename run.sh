@@ -10,7 +10,7 @@ fi
 
 EXTRA=${2}
 
-if [ -n ${EXTRA} ]; then
+if [ -n "${EXTRA}" ]; then
     EXTRA="-S ${EXTRA}"
 fi
 

@@ -65,10 +65,6 @@ if [[ ${SPECIFICSAMPLE} == *"all"* ]]; then
     ST_t-channel_top_4f \
     ST_tW_antitop_5f \
     ST_tW_top_5f \
-    VBSWmpWmpHToLNuLNu_C2V_6_TuneCP5 \
-    VBSWmpWmpHToLNuLNu_C2V_3_TuneCP5 \
-    VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5 \
-    VBSWmpWmpHToLNuLNu_C2V_m2_TuneCP5 \
     DoubleEG_Run2016 \
     DoubleMuon_Run2016 \
     MuonEG_Run2016 \

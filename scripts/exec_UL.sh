@@ -52,14 +52,6 @@ if [[ ${SPECIFICSAMPLE} == *"all"* ]]; then
     TWZToLL_tlept_Whad_5f_DR \
     TTWW \
     TTWZ \
-    VBSWmpWmpH_C2V_4p5_TuneCP5 \
-    VBSWmpWmpH_C2V_4_TuneCP5 \
-    VBSWmpWmpH_C2V_3_TuneCP5 \
-    VBSWmpWmpH_C2V_1_TuneCP5 \
-    VBSWmpWmpH_C2V_0_TuneCP5 \
-    VBSWmpWmpH_C2V_m1_TuneCP5 \
-    VBSWmpWmpH_C2V_m2_TuneCP5 \
-    VBSWmpWmpH_C2V_m2p5_TuneCP5 \
     VBSWWHToLNuLNubb_C2V \
     VBSWWHToLNuLNubb_CV \
     VBSWWHToLNuLNubb_C3 \
