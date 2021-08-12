@@ -853,6 +853,10 @@ float pileUpReweightDown(int n_vtx, int year) {
 }
 
 float pileUpReweightUL(int n_vtx, int year) {
+    if (year == 2016) {
+        std::cout << "ERROR:: pileUpReweightUL has not been implemented for year = " << year << std::endl;
+        std::abort();
+    }
     if (year == 2017) {
         if (n_vtx >= 0 && n_vtx < 1) return 0.560627;
         if (n_vtx >= 1 && n_vtx < 2) return 0.735677;
@@ -1014,6 +1018,10 @@ float pileUpReweightUL(int n_vtx, int year) {
 }
 
 float pileUpReweightUpUL(int n_vtx, int year) {
+    if (year == 2016) {
+        std::cout << "ERROR:: pileUpReweightUpUL has not been implemented for year = " << year << std::endl;
+        std::abort();
+    }
     if (year == 2017) {
         if (n_vtx >= 0 && n_vtx < 1) return 0.528256;
         if (n_vtx >= 1 && n_vtx < 2) return 0.644359;
@@ -1175,6 +1183,10 @@ float pileUpReweightUpUL(int n_vtx, int year) {
 }
 
 float pileUpReweightDownUL(int n_vtx, int year) {
+    if (year == 2016) {
+        std::cout << "ERROR:: pileUpReweightDownUL has not been implemented for year = " << year << std::endl;
+        std::abort();
+    }
     if (year == 2017) {
         if (n_vtx >= 0 && n_vtx < 1) return 0.597828;
         if (n_vtx >= 1 && n_vtx < 2) return 0.807688;
