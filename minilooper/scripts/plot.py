@@ -272,6 +272,7 @@ histxaxislabeloptions = {
 "LooseVRMbbAllSRB__Channels4Bins" : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True,  "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
 "LooseVRMbbOnSRA__Channels5Bins"  : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True,  "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)", "(e/#mu)^{+}l^{+}"]},
 "LooseVR__LeptonPt0Zoom"          : {"xaxis_label"      : "p_{T,lead-lep} [GeV]",     "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"TauMbbOff__BDTVarBin"            : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": False, "ratio_range":[0., 2.5]},
 }
 
 dogrep = False
@@ -307,7 +308,7 @@ fitbkg = False if "AnchorYield" in subdir else fitbkg
 
 yaxis_log = False
 yaxis_range = []
-legend_scalex = 2.0
+legend_scalex = 1.8
 legend_scaley = 1.0
 
 if subdir == "Fit":
@@ -316,7 +317,7 @@ if subdir == "Fit":
     bkg_labels_tex = bkg_labels_fit_tex
     colors = colors_fit
     yaxis_log = True
-    legend_scalex = 2.2
+    legend_scalex = 1.8
     legend_scaley = 0.5
     yaxis_range = [0.0005, 1000]
 
@@ -338,8 +339,10 @@ p.dump_plot(
         "nbins": 20,
         # "signal_scale": 10,
         "legend_ncolumns": 3,
-        "legend_scalex": legend_scalex,
-        "legend_scaley": legend_scaley,
+        # "legend_scalex": legend_scalex,
+        # "legend_scaley": legend_scaley,
+        "legend_alignment": "",
+        "legend_coordinates": [0.13,0.88-(0.28)*(2./4. if subdir == "Fit" else 1.),0.90,0.88],
         "lumi_value": lumi,
         "ratio_range": [0., 2.],
         # "remove_overflow": True,
@@ -351,8 +354,9 @@ p.dump_plot(
         # "divide_by_first_bin": True,
         "fit_bkg": fitbkg,
         "extra_text_xpos":  0.3,
-        "extra_text_ypos":  0.65,
+        "extra_text_ypos":  0.60,
         "hide_signal_scale": True,
+        "legend_smart":False,
         },
     histxaxislabeloptions=histxaxislabeloptions,
     skip2d=True,

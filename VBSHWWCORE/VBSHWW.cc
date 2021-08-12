@@ -409,7 +409,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch  < int                 >   ( "mee_noZ"                       , true  ); // if dielectron is ee channel, is the ee within Z mass?
     tx.createBranch  < int                 >   ( "mbbIn"                         , true  ); // mbb < 150? or not?
     tx.createBranch  < int                 >   ( "pass_blind"                    , true  ); // for data, to blind the mbb < 150 region
-    tx.createBranch  < int                 >   ( "pass_blind_bdt"                , true  ); // for data, to blind the bdt > 0.545 region or mbb < 150
+    tx.createBranch  < int                 >   ( "pass_blind_bdt"                , true  ); // for data, to blind the bdt > 0.543 region or mbb < 150
 
     tx.createBranch  < int                 >   ( "categ"                         , true  ); // categ 0=e+l+ 1=m+l+ 2=t+l+
     tx.createBranch  < float               >   ( "categ_F"                       , true  ); // categ 0=e+l+ 1=m+l+ 2=t+l+                                                                   ( float version)
@@ -2155,15 +2155,15 @@ void VBSHWW::initSRCutflow()
             tx.setBranch<int>("is_cut_cr2_tau" , is_preselection and (categ == 2) and (mbb > 150) );
             tx.setBranch<int>("is_cut_cr2_neg" , is_preselection and (categ == 3) and (mbb > 150) );
 
-            tx.setBranch<int>("is_bdt_sr_el"   , is_preselection and (categ == 0) and                 (bdt > 0.545) );
-            tx.setBranch<int>("is_bdt_sr_mu"   , is_preselection and (categ == 1) and                 (bdt > 0.545) );
-            tx.setBranch<int>("is_bdt_sr_tau"  , is_preselection and (categ == 2) and                 (bdt > 0.545) );
-            tx.setBranch<int>("is_bdt_sr_neg"  , is_preselection and (categ == 3) and                 (bdt > 0.545) );
+            tx.setBranch<int>("is_bdt_sr_el"   , is_preselection and (categ == 0) and                 (bdt > 0.543) );
+            tx.setBranch<int>("is_bdt_sr_mu"   , is_preselection and (categ == 1) and                 (bdt > 0.543) );
+            tx.setBranch<int>("is_bdt_sr_tau"  , is_preselection and (categ == 2) and                 (bdt > 0.543) );
+            tx.setBranch<int>("is_bdt_sr_neg"  , is_preselection and (categ == 3) and                 (bdt > 0.543) );
 
-            tx.setBranch<int>("is_bdt_cr_el"   , is_preselection and (categ == 0) and (mbb > 150) and (bdt < 0.545) );
-            tx.setBranch<int>("is_bdt_cr_mu"   , is_preselection and (categ == 1) and (mbb > 150) and (bdt < 0.545) );
-            tx.setBranch<int>("is_bdt_cr_tau"  , is_preselection and (categ == 2) and (mbb > 150) and (bdt < 0.545) );
-            tx.setBranch<int>("is_bdt_cr_neg"  , is_preselection and (categ == 3) and (mbb > 150) and (bdt < 0.545) );
+            tx.setBranch<int>("is_bdt_cr_el"   , is_preselection and (categ == 0) and (mbb > 150) and (bdt < 0.543) );
+            tx.setBranch<int>("is_bdt_cr_mu"   , is_preselection and (categ == 1) and (mbb > 150) and (bdt < 0.543) );
+            tx.setBranch<int>("is_bdt_cr_tau"  , is_preselection and (categ == 2) and (mbb > 150) and (bdt < 0.543) );
+            tx.setBranch<int>("is_bdt_cr_neg"  , is_preselection and (categ == 3) and (mbb > 150) and (bdt < 0.543) );
 
             tx.setBranch<int>("is_bdt_sr2_el"  , is_preselection and (categ == 0) and                 (bdt > 0.52) );
             tx.setBranch<int>("is_bdt_sr2_mu"  , is_preselection and (categ == 1) and                 (bdt > 0.52) );
@@ -2187,7 +2187,7 @@ void VBSHWW::initSRCutflow()
 
             int isSS = (tx.getBranch<int>("lep0ID") * tx.getBranch<int>("lep1ID")) > 0;
             tx.setBranch<int>("pass_blind", nt.isData() and isSS ? not (mbbIn): 1);
-            tx.setBranch<int>("pass_blind_bdt", nt.isData() and isSS ? not (mbbIn or bdt > 0.545): 1);
+            tx.setBranch<int>("pass_blind_bdt", nt.isData() and isSS ? not (mbbIn or bdt > 0.543): 1);
 
             return tx.getBranch<int>("is_ps");
         },

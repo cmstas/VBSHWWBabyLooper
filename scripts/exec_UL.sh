@@ -52,14 +52,6 @@ if [[ ${SPECIFICSAMPLE} == *"all"* ]]; then
     TWZToLL_tlept_Whad_5f_DR \
     TTWW \
     TTWZ \
-    VBSWmpWmpH_C2V_4p5_TuneCP5 \
-    VBSWmpWmpH_C2V_4_TuneCP5 \
-    VBSWmpWmpH_C2V_3_TuneCP5 \
-    VBSWmpWmpH_C2V_1_TuneCP5 \
-    VBSWmpWmpH_C2V_0_TuneCP5 \
-    VBSWmpWmpH_C2V_m1_TuneCP5 \
-    VBSWmpWmpH_C2V_m2_TuneCP5 \
-    VBSWmpWmpH_C2V_m2p5_TuneCP5 \
     VBSWWHToLNuLNubb_C2V \
     VBSWWHToLNuLNubb_CV \
     VBSWWHToLNuLNubb_C3 \
@@ -266,11 +258,12 @@ for SAMPLE in ${SAMPLES}; do
         #
         NJOBS=1
         if [[ ${SAMPLE}_${YEAR} == *"ttHToNonbb_2016"* ]]; then NJOBS=2; fi
-        if [[ ${SAMPLE}_${YEAR} == *"ttHToNonbb_2017"* ]]; then NJOBS=2; fi
-        if [[ ${SAMPLE}_${YEAR} == *"ttHToNonbb_2018"* ]]; then NJOBS=2; fi
+        if [[ ${SAMPLE}_${YEAR} == *"ttHToNonbb_2017"* ]]; then NJOBS=4; fi
+        if [[ ${SAMPLE}_${YEAR} == *"ttHToNonbb_2018"* ]]; then NJOBS=4; fi
+        if [[ ${SAMPLE}_${YEAR} == *"ttHJetToNonbb_2018"* ]]; then NJOBS=4; fi
         if [[ ${SAMPLE}_${YEAR} == *"TTWJetsToLNu_2016"* ]]; then NJOBS=6; fi
-        if [[ ${SAMPLE}_${YEAR} == *"TTWJetsToLNu_2017"* ]]; then NJOBS=6; fi
-        if [[ ${SAMPLE}_${YEAR} == *"TTWJetsToLNu_2018"* ]]; then NJOBS=6; fi
+        if [[ ${SAMPLE}_${YEAR} == *"TTWJetsToLNu_2017"* ]]; then NJOBS=12; fi
+        if [[ ${SAMPLE}_${YEAR} == *"TTWJetsToLNu_2018"* ]]; then NJOBS=12; fi
         if [[ ${SAMPLE}_${YEAR} == *"WZTo3LNu_2016"* ]]; then NJOBS=1; fi
         if [[ ${SAMPLE}_${YEAR} == *"WZTo3LNu_2017"* ]]; then NJOBS=6; fi
         if [[ ${SAMPLE}_${YEAR} == *"WZTo3LNu_2018"* ]]; then NJOBS=6; fi
@@ -278,8 +271,10 @@ for SAMPLE in ${SAMPLES}; do
         if [[ ${SAMPLE}_${YEAR} == *"tZq_ll_4f_ckm_NLO_2017"* ]]; then NJOBS=7; fi
         if [[ ${SAMPLE}_${YEAR} == *"tZq_ll_4f_ckm_NLO_2018"* ]]; then NJOBS=7; fi
         if [[ ${SAMPLE}_${YEAR} == *"TTZToLLNuNu_M-10_2016"* ]]; then NJOBS=7; fi
-        if [[ ${SAMPLE}_${YEAR} == *"TTZToLLNuNu_M-10_2017"* ]]; then NJOBS=5; fi
-        if [[ ${SAMPLE}_${YEAR} == *"TTZToLLNuNu_M-10_2018"* ]]; then NJOBS=7; fi
+        if [[ ${SAMPLE}_${YEAR} == *"TTZToLLNuNu_M-10_2017"* ]]; then NJOBS=15; fi
+        if [[ ${SAMPLE}_${YEAR} == *"TTZToLLNuNu_M-10_2018"* ]]; then NJOBS=28; fi
+        if [[ ${SAMPLE}_${YEAR} == *"TWZToLL_thad_Wlept_5f_DR_2017"* ]]; then NJOBS=3; fi
+        if [[ ${SAMPLE}_${YEAR} == *"TWZToLL_tlept_Whad_5f_DR_2018"* ]]; then NJOBS=3; fi
         if [[ ${SAMPLE}_${YEAR} == *"TTTT_2017"* ]]; then NJOBS=2; fi
         if [[ ${SAMPLE}_${YEAR} == *"TTTT_2018"* ]]; then NJOBS=7; fi
         if [[ ${SAMPLE}_${YEAR} == *"ZZTo4L_2016"* ]]; then NJOBS=2; fi
