@@ -54,5 +54,15 @@ else
 fi
 
 cp -r ${RESULTDIR}/ ${NFSAREA}/${YOURTAG}
+cd ${NFSAREA}/${YOURTAG}
+
+rm ttz_*
+rm ttw_*
+rm tt2lpowheg_*
+rm tt1lpowheg_*
+rm raretop_*
+rm data_*
+rm bosons_*
+rm *.log
 
 echo "Done copying to ${NFSAREA}/${YOURTAG}"

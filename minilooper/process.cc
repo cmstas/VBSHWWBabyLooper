@@ -386,6 +386,8 @@ int main(int argc, char** argv)
     ana.cutflow.addWgtSyst("2xTTZDn", [&, tstr]() { return tstr.Contains("ttz") ? 1. / 2 : 1.; });
     ana.cutflow.addWgtSyst("2xRareTopUp", [&, tstr]() { return tstr.Contains("raretop") ? 2 : 1.; });
     ana.cutflow.addWgtSyst("2xRareTopDn", [&, tstr]() { return tstr.Contains("raretop") ? 1. / 2 : 1.; });
+    ana.cutflow.addWgtSyst("LepSFUp", [&, tstr]() { return vbs.lepsf_up() / vbs.lepsf(); });
+    ana.cutflow.addWgtSyst("LepSFDn", [&, tstr]() { return vbs.lepsf_dn() / vbs.lepsf(); });
 
     // Print cut structure
     ana.cutflow.printCuts();
