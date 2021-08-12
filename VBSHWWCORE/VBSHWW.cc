@@ -267,6 +267,9 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch  < vector<float>       >   ( "scalewgts"                     , true  );
     tx.createBranch  < vector<float>       >   ( "pswgts"                        , true  );
     tx.createBranch  < vector<float>       >   ( "lherewgts"                     , true  );
+    tx.createBranch  < float               >   ( "pu_rewgt"                      , true  );
+    tx.createBranch  < float               >   ( "pu_rewgt_up"                   , true  );
+    tx.createBranch  < float               >   ( "pu_rewgt_dn"                   , true  );
 
     // Create trigger branches
     tx.createBranch  < int                 >   ( "trig_ee"                       , false );
@@ -725,6 +728,18 @@ VBSHWW::VBSHWW(int argc, char** argv) :
             {
                 float wgt = ((nt.Generator_weight() > 0) - (nt.Generator_weight() < 0)) * scale1fb;
                 tx.setBranch<float>("wgt", wgt * gconf.lumi);
+                if (isUL)
+                {
+                    tx.setBranch<float>("pu_rewgt", pileUpReweightUL(nt.Pileup_nTrueInt(), nt.year()));
+                    tx.setBranch<float>("pu_rewgt_up", pileUpReweightUpUL(nt.Pileup_nTrueInt(), nt.year()));
+                    tx.setBranch<float>("pu_rewgt_dn", pileUpReweightDownUL(nt.Pileup_nTrueInt(), nt.year()));
+                }
+                else
+                {
+                    tx.setBranch<float>("pu_rewgt", pileUpReweight(nt.Pileup_nTrueInt(), nt.year()));
+                    tx.setBranch<float>("pu_rewgt_up", pileUpReweightUp(nt.Pileup_nTrueInt(), nt.year()));
+                    tx.setBranch<float>("pu_rewgt_dn", pileUpReweightDown(nt.Pileup_nTrueInt(), nt.year()));
+                }
                 if (hasLHEScaleWeight)
                 {
                     for (unsigned int i = 0; i < nt.LHEScaleWeight().size(); ++i)
