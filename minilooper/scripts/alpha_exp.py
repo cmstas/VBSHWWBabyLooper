@@ -183,7 +183,7 @@ def get(channel, analysis):
 def get_str_cut():
     numbers = get("El", "Cut") + get("Mu", "Cut") + get("Tau", "Cut") + get("Neg", "Cut") + get("Lgt", "Cut")
     result = """
-\\begin{{table}}[H]
+\\begin{{table}}[htb]
 \\centering
 \\resizebox{{\\columnwidth}}{{!}}{{%
 \\begin{{tabular}}{{@{{\\extracolsep{{4pt}}}}lccccc@{{}}}}
@@ -206,7 +206,7 @@ def get_str_cut():
 def get_str_bdt():
     numbers = get("El", "BDT") + get("Mu", "BDT") + get("Tau", "BDT") + get("Neg", "BDT")
     result = """
-\\begin{{table}}[H]
+\\begin{{table}}[htb]
 \\centering
 \\resizebox{{\\columnwidth}}{{!}}{{%
 \\begin{{tabular}}{{@{{\\extracolsep{{4pt}}}}lccccc@{{}}}}
@@ -285,8 +285,16 @@ def make_final_background_histograms_only_MCstatError():
 
 if __name__ == "__main__":
 
-    print(get_str_cut())
-    print(get_str_bdt())
+    aexp_tex = open("{}/plots/aexp.tex".format(basedir), "w")
+
+    cut_str = get_str_cut()
+    bdt_str = get_str_bdt()
+
+    aexp_tex.write(get_str_cut())
+    aexp_tex.write(get_str_bdt())
+
+    print(cut_str)
+    print(bdt_str)
 
     make_final_background_histograms()
     make_final_background_histograms_only_MCstatError()

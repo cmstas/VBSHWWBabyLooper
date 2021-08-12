@@ -98,7 +98,7 @@ book_plot_alpha
 xargs.sh .plotjobs.txt
 
 cd /nfs-7/userdata/phchang/VBSHWWResult/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/
-tar czf plots.tar.gz plots/
+tar -czf plots.tar.gz plots/ --exclude=*.txt --exclude=*.php --exclude=*.png
 cd - > /dev/null
 cp /nfs-7/userdata/phchang/VBSHWWResult/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/plots.tar.gz .
 
