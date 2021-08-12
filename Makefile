@@ -22,6 +22,7 @@ $(SUBDIRS): NanoCORE VBSHWWCORE rooutil minilooper
 
 clean:
 	cd studies/mainAnalysis && make clean;
+	cd studies/createMini && make clean;
 
 cleanall:
 	cd VBSHWWCORE/ && make clean;

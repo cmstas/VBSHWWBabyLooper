@@ -272,6 +272,7 @@ histxaxislabeloptions = {
 "LooseVRMbbAllSRB__Channels4Bins" : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True,  "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
 "LooseVRMbbOnSRA__Channels5Bins"  : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True,  "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)", "(e/#mu)^{+}l^{+}"]},
 "LooseVR__LeptonPt0Zoom"          : {"xaxis_label"      : "p_{T,lead-lep} [GeV]",     "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"TauMbbOff__BDTVarBin"            : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": False, "ratio_range":[0., 2.5]},
 }
 
 dogrep = False

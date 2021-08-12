@@ -19,9 +19,9 @@ Compile the code
 
 Run the code
 
-    sh run.sh v2         # v2 is the tag provided by the user
-    sh run.sh v2_jecUp   # _jecUp recognizes that it is to run jecUp variation
-    sh run.sh v2_jecDn   # _jecDn recognizes that it is to run jecDn variation
+    sh run.sh -a v2       -t v2.5_SS [-S VBSWWHToLNuLNubb_C2V]  # v2 is the tag provided by the user
+    sh run.sh -a v2_jecUp -t v2.5_SS [-S VBSWWHToLNuLNubb_C2V]  # _jecUp recognizes that it is to run jecUp variation
+    sh run.sh -a v2_jecDn -t v2.5_SS [-S VBSWWHToLNuLNubb_C2V]  # _jecDn recognizes that it is to run jecDn variation
 
 Save the ntuples to nfs area
 

@@ -233,16 +233,16 @@ for SAMPLE in ${SAMPLES}; do
         if [[ ${SAMPLE}_${YEAR} == *"ttHToNonbb_2016"* ]]; then NJOBS=2; fi
         if [[ ${SAMPLE}_${YEAR} == *"ttHToNonbb_2017"* ]]; then NJOBS=2; fi
         if [[ ${SAMPLE}_${YEAR} == *"ttHToNonbb_2018"* ]]; then NJOBS=2; fi
-        if [[ ${SAMPLE}_${YEAR} == *"TTWJetsToLNu_2016"* ]]; then NJOBS=6; fi
+        if [[ ${SAMPLE}_${YEAR} == *"TTWJetsToLNu_2016"* ]]; then NJOBS=12; fi
         if [[ ${SAMPLE}_${YEAR} == *"TTWJetsToLNu_2017"* ]]; then NJOBS=6; fi
         if [[ ${SAMPLE}_${YEAR} == *"TTWJetsToLNu_2018"* ]]; then NJOBS=6; fi
         if [[ ${SAMPLE}_${YEAR} == *"WZTo3LNu_2016"* ]]; then NJOBS=1; fi
         if [[ ${SAMPLE}_${YEAR} == *"WZTo3LNu_2017"* ]]; then NJOBS=6; fi
         if [[ ${SAMPLE}_${YEAR} == *"WZTo3LNu_2018"* ]]; then NJOBS=6; fi
-        if [[ ${SAMPLE}_${YEAR} == *"tZq_ll_4f_ckm_NLO_2016"* ]]; then NJOBS=7; fi
+        if [[ ${SAMPLE}_${YEAR} == *"tZq_ll_4f_ckm_NLO_2016"* ]]; then NJOBS=14; fi
         if [[ ${SAMPLE}_${YEAR} == *"tZq_ll_4f_ckm_NLO_2017"* ]]; then NJOBS=7; fi
         if [[ ${SAMPLE}_${YEAR} == *"tZq_ll_4f_ckm_NLO_2018"* ]]; then NJOBS=7; fi
-        if [[ ${SAMPLE}_${YEAR} == *"TTZToLLNuNu_M-10_2016"* ]]; then NJOBS=7; fi
+        if [[ ${SAMPLE}_${YEAR} == *"TTZToLLNuNu_M-10_2016"* ]]; then NJOBS=14; fi
         if [[ ${SAMPLE}_${YEAR} == *"TTZToLLNuNu_M-10_2017"* ]]; then NJOBS=5; fi
         if [[ ${SAMPLE}_${YEAR} == *"TTZToLLNuNu_M-10_2018"* ]]; then NJOBS=7; fi
         if [[ ${SAMPLE}_${YEAR} == *"TTTT_2017"* ]]; then NJOBS=2; fi
