@@ -981,13 +981,14 @@ void VBSHWW::initSRCutflow()
                     {
                         // event -> reco
                         lepsf *= ttH::getElecRecoEffSFUL(el_eta, el_pt, nt.year());
-                        err_up += std::pow(ttH::getElecRecoEffSFULErr(el_eta, el_pt, nt.year()), 2);
-                        err_dn += std::pow(ttH::getElecRecoEffSFULErr(el_eta, el_pt, nt.year()), 2);
+                        err_up += std::pow(ttH::getElecRecoEffSFULErr(el_eta, el_pt, nt.year())-1, 2);
+                        err_dn += std::pow(ttH::getElecRecoEffSFULErr(el_eta, el_pt, nt.year())-1, 2);
                     }
                     else
                     {
                         // event -> reco
                         lepsf *= ttH::getElecRecoEffSF(el_eta, el_pt, nt.year());
+                        float t = ttH::getElecRecoEffSFErr(el_eta, el_pt, nt.year());
                         err_up += std::pow(ttH::getElecRecoEffSFErr(el_eta, el_pt, nt.year()), 2);
                         err_dn += std::pow(ttH::getElecRecoEffSFErr(el_eta, el_pt, nt.year()), 2);
                     }
