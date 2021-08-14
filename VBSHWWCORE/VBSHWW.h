@@ -18,6 +18,7 @@
 #include "Tools/jetcorr/JetCorrectionUncertainty.h"
 // VBSHWWCORE
 #include "tools/lepScaleFactors.h" // ttH analysis scale factors
+#include "tools/pileUpReweight.h" // ttH analysis scale factors
 #include "tools/TauIDSFTool.h"     // tau POG scale factors
 
 #include "TMVA/Reader.h"
