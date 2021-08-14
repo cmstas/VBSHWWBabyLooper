@@ -267,6 +267,9 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch  < vector<float>       >   ( "scalewgts"                     , true  );
     tx.createBranch  < vector<float>       >   ( "pswgts"                        , true  );
     tx.createBranch  < vector<float>       >   ( "lherewgts"                     , true  );
+    tx.createBranch  < float               >   ( "pu_rewgt"                      , true  );
+    tx.createBranch  < float               >   ( "pu_rewgt_up"                   , true  );
+    tx.createBranch  < float               >   ( "pu_rewgt_dn"                   , true  );
 
     // Create trigger branches
     tx.createBranch  < int                 >   ( "trig_ee"                       , false );
@@ -315,6 +318,8 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch  < float               >   ( "lepsf_up"                      , true  );
     tx.createBranch  < float               >   ( "lepsf_dn"                      , true  );
     tx.createBranch  < float               >   ( "btagsf"                        , true  );
+    tx.createBranch  < float               >   ( "btagsf_up"                     , true  );
+    tx.createBranch  < float               >   ( "btagsf_dn"                     , true  );
 
     // Create lepton branches
     tx.createBranch  < vector<LV>          >   ( "good_leptons_p4"               , false );
@@ -725,6 +730,18 @@ VBSHWW::VBSHWW(int argc, char** argv) :
             {
                 float wgt = ((nt.Generator_weight() > 0) - (nt.Generator_weight() < 0)) * scale1fb;
                 tx.setBranch<float>("wgt", wgt * gconf.lumi);
+                if (isUL)
+                {
+                    tx.setBranch<float>("pu_rewgt", pileUpReweightUL(nt.Pileup_nTrueInt(), nt.year()));
+                    tx.setBranch<float>("pu_rewgt_up", pileUpReweightUpUL(nt.Pileup_nTrueInt(), nt.year()));
+                    tx.setBranch<float>("pu_rewgt_dn", pileUpReweightDownUL(nt.Pileup_nTrueInt(), nt.year()));
+                }
+                else
+                {
+                    tx.setBranch<float>("pu_rewgt", pileUpReweight(nt.Pileup_nTrueInt(), nt.year()));
+                    tx.setBranch<float>("pu_rewgt_up", pileUpReweightUp(nt.Pileup_nTrueInt(), nt.year()));
+                    tx.setBranch<float>("pu_rewgt_dn", pileUpReweightDown(nt.Pileup_nTrueInt(), nt.year()));
+                }
                 if (hasLHEScaleWeight)
                 {
                     for (unsigned int i = 0; i < nt.LHEScaleWeight().size(); ++i)
@@ -2613,6 +2630,8 @@ void VBSHWW::setBTagSF(std::vector<float> jet_pt, std::vector<float> jet_eta, st
 
         float btag_prob_MC = 1;
         float btag_prob_DATA = 1;
+        float btag_up_prob_DATA = 1;
+        float btag_dn_prob_DATA = 1;
         for (unsigned ijet = 0; ijet < jet_pt.size(); ++ijet)
         {
             float pt = min(jet_pt.at(ijet), 599.99f);
@@ -2654,25 +2673,51 @@ void VBSHWW::setBTagSF(std::vector<float> jet_pt, std::vector<float> jet_eta, st
                 flavor == 5 ? btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_B, eta, pt) : (
                 flavor == 0 ? btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_UDSG, eta, pt) :
                               btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_C, eta, pt));
+            float sf_up_tight =
+                flavor == 5 ? btagReaderTight->eval_auto_bounds("up", BTagEntry::FLAV_B, eta, pt) : (
+                flavor == 0 ? btagReaderTight->eval_auto_bounds("up", BTagEntry::FLAV_UDSG, eta, pt) :
+                              btagReaderTight->eval_auto_bounds("up", BTagEntry::FLAV_C, eta, pt));
+            float sf_up_loose =
+                flavor == 5 ? btagReaderLoose->eval_auto_bounds("up", BTagEntry::FLAV_B, eta, pt) : (
+                flavor == 0 ? btagReaderLoose->eval_auto_bounds("up", BTagEntry::FLAV_UDSG, eta, pt) :
+                              btagReaderLoose->eval_auto_bounds("up", BTagEntry::FLAV_C, eta, pt));
+            float sf_dn_tight =
+                flavor == 5 ? btagReaderTight->eval_auto_bounds("down", BTagEntry::FLAV_B, eta, pt) : (
+                flavor == 0 ? btagReaderTight->eval_auto_bounds("down", BTagEntry::FLAV_UDSG, eta, pt) :
+                              btagReaderTight->eval_auto_bounds("down", BTagEntry::FLAV_C, eta, pt));
+            float sf_dn_loose =
+                flavor == 5 ? btagReaderLoose->eval_auto_bounds("down", BTagEntry::FLAV_B, eta, pt) : (
+                flavor == 0 ? btagReaderLoose->eval_auto_bounds("down", BTagEntry::FLAV_UDSG, eta, pt) :
+                              btagReaderLoose->eval_auto_bounds("down", BTagEntry::FLAV_C, eta, pt));
             // std::cout <<  " eff_tight: " << eff_tight <<  " eff_loose: " << eff_loose <<  " sf_tight: " << sf_tight <<  " sf_loose: " << sf_loose <<  std::endl;
             if (is_tight_btagged)
             {
                 btag_prob_MC *= eff_tight;
                 btag_prob_DATA *= sf_tight * eff_tight;
+                btag_up_prob_DATA *= sf_up_tight * eff_tight;
+                btag_dn_prob_DATA *= sf_dn_tight * eff_tight;
             }
             else if (is_loose_btagged)
             {
                 btag_prob_MC *= (eff_loose - eff_tight);
                 btag_prob_DATA *= (sf_loose * eff_loose - sf_tight * eff_tight);
+                btag_up_prob_DATA *= (sf_up_loose * eff_loose - sf_up_tight * eff_tight);
+                btag_dn_prob_DATA *= (sf_dn_loose * eff_loose - sf_dn_tight * eff_tight);
             }
             else
             {
                 btag_prob_MC *= (1 - eff_loose);
                 btag_prob_DATA *= (1 - sf_loose * eff_loose);
+                btag_up_prob_DATA *= (1 - sf_up_loose * eff_loose);
+                btag_dn_prob_DATA *= (1 - sf_dn_loose * eff_loose);
             }
         }
         float btagsf = btag_prob_DATA / btag_prob_MC;
         tx.setBranch<float>("btagsf", btagsf);
+        float btagsf_up = btag_up_prob_DATA / btag_prob_MC;
+        tx.setBranch<float>("btagsf_up", btagsf_up);
+        float btagsf_dn = btag_dn_prob_DATA / btag_prob_MC;
+        tx.setBranch<float>("btagsf_dn", btagsf_dn);
     }
 }
 
