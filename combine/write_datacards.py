@@ -15,8 +15,8 @@ def run(doBDT, idx, coupling):
 
     #_____________________________________________________________________________________
     # Toggle options
-    Tag = "v2.4_SS"
-    BabyVersion = "v6"
+    Tag = "v2.6_SS"
+    BabyVersion = "v10"
     inputHistBaseDir = "/nfs-7/userdata/phchang/VBSHWWResult/"
     inputHistDir = "{}/{}/{}/Run2/Nominal".format(inputHistBaseDir, Tag, BabyVersion)
 
