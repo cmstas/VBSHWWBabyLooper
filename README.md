@@ -125,6 +125,10 @@ To plot the result
 The output will be in ```limit.pdf/png```
 
 
+## To run toys
+
+To run toys, instead of running ```sh run_asymptotic_limits.sh``` command one runs ```sh run_toy_limits.sh```.  
+The script is provided, but have not obtained a stable results yet.  
 
 
 
