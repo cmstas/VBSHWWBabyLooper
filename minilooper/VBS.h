@@ -1,6 +1,6 @@
 // -*- C++ -*-
 // This is a header file generated with the command:
-// makeCMS3ClassFiles("/nfs-7/userdata/phchang/VBSHWWBaby/v2.4_SS/v6/createMini_Run2/vbshwwlvlvbb_c2v.root", "variable", "VBS", "tas", "vbs")
+// makeCMS3ClassFiles("/home/users/phchang/public_html/analysis/hwh/VBSHWWBabyLooper--/hists/v2.6_SS/v10/createMini_2018/VBSWWHToLNuLNubb_C2V_output_0.root", "variable", "VBS", "tas", "vbs")
 
 #ifndef VBS_H
 #define VBS_H
@@ -44,6 +44,15 @@ class VBS {
   vector<float> *lherewgts_;
   TBranch *lherewgts_branch;
   bool     lherewgts_isLoaded;
+  float    pu_rewgt_;
+  TBranch *pu_rewgt_branch;
+  bool     pu_rewgt_isLoaded;
+  float    pu_rewgt_up_;
+  TBranch *pu_rewgt_up_branch;
+  bool     pu_rewgt_up_isLoaded;
+  float    pu_rewgt_dn_;
+  TBranch *pu_rewgt_dn_branch;
+  bool     pu_rewgt_dn_isLoaded;
   ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > *met_p4_;
   TBranch *met_p4_branch;
   bool     met_p4_isLoaded;
@@ -128,6 +137,12 @@ class VBS {
   float    btagsf_;
   TBranch *btagsf_branch;
   bool     btagsf_isLoaded;
+  float    btagsf_up_;
+  TBranch *btagsf_up_branch;
+  bool     btagsf_up_isLoaded;
+  float    btagsf_dn_;
+  TBranch *btagsf_dn_branch;
+  bool     btagsf_dn_isLoaded;
   int      nbloose_;
   TBranch *nbloose_branch;
   bool     nbloose_isLoaded;
@@ -511,6 +526,9 @@ void LoadAllBranches();
   const vector<float> &scalewgts();
   const vector<float> &pswgts();
   const vector<float> &lherewgts();
+  const float &pu_rewgt();
+  const float &pu_rewgt_up();
+  const float &pu_rewgt_dn();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &met_p4();
   const int &isvbswwh();
   const int &iswwhlvlvbb();
@@ -539,6 +557,8 @@ void LoadAllBranches();
   const float &lepsf_up();
   const float &lepsf_dn();
   const float &btagsf();
+  const float &btagsf_up();
+  const float &btagsf_dn();
   const int &nbloose();
   const int &nbmedium();
   const int &nbtight();
@@ -679,6 +699,9 @@ namespace tas {
   const vector<float> &scalewgts();
   const vector<float> &pswgts();
   const vector<float> &lherewgts();
+  const float &pu_rewgt();
+  const float &pu_rewgt_up();
+  const float &pu_rewgt_dn();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &met_p4();
   const int &isvbswwh();
   const int &iswwhlvlvbb();
@@ -707,6 +730,8 @@ namespace tas {
   const float &lepsf_up();
   const float &lepsf_dn();
   const float &btagsf();
+  const float &btagsf_up();
+  const float &btagsf_dn();
   const int &nbloose();
   const int &nbmedium();
   const int &nbtight();

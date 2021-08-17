@@ -3,6 +3,7 @@
 import math
 import ROOT as r
 import sys
+import os
 
 def usage():
 
@@ -284,6 +285,10 @@ def make_final_background_histograms_only_MCstatError():
     f.Close()
 
 if __name__ == "__main__":
+
+    plotdir = "{}/plots".format(basedir)
+    if not os.path.exists(plotdir):
+        os.makedirs(plotdir)
 
     aexp_tex = open("{}/plots/aexp.tex".format(basedir), "w")
 

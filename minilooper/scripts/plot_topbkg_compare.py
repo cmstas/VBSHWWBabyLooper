@@ -157,7 +157,7 @@ colors = [
         4021,
         ]
 
-plot_dir = "{}/plots/{}".format(hadd_dir, subdir)
+plot_dir = "{}/topbkgstudy/{}".format(hadd_dir, subdir)
 
 dogrep = False
 if len(cutname_to_plot) == 0:

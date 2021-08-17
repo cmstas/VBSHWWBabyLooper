@@ -270,6 +270,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch  < float               >   ( "pu_rewgt"                      , true  );
     tx.createBranch  < float               >   ( "pu_rewgt_up"                   , true  );
     tx.createBranch  < float               >   ( "pu_rewgt_dn"                   , true  );
+    tx.createBranch  < int                 >   ( "ntrueint"                      , true  );
 
     // Create trigger branches
     tx.createBranch  < int                 >   ( "trig_ee"                       , false );
@@ -742,6 +743,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
                     tx.setBranch<float>("pu_rewgt_up", pileUpReweightUp(nt.Pileup_nTrueInt(), nt.year()));
                     tx.setBranch<float>("pu_rewgt_dn", pileUpReweightDown(nt.Pileup_nTrueInt(), nt.year()));
                 }
+                tx.setBranch<int>("ntrueint", nt.Pileup_nTrueInt());
                 if (hasLHEScaleWeight)
                 {
                     for (unsigned int i = 0; i < nt.LHEScaleWeight().size(); ++i)
@@ -992,7 +994,7 @@ void VBSHWW::initSRCutflow()
                     tx.pushbackToBranch<float>("good_leptons_jetPtRelv2", nt.Electron_jetPtRelv2()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_jetRelIso", nt.Electron_jetRelIso()[iel]);
                     tx.pushbackToBranch<float>("good_leptons_miniPFRelIso_all", nt.Electron_miniPFRelIso_all()[iel]);
-                    float el_eta = nt.Electron_eta()[iel];
+                    float el_eta = std::max(std::min(nt.Electron_eta()[iel], 2.4999f), -2.4999f);
                     float el_pt = nt.Electron_pt()[iel];
                     if (isUL)
                     {

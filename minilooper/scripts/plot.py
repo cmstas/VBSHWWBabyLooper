@@ -122,16 +122,16 @@ colors = [
 
 sigs = [
         "{}/s_c2v_i_1.root".format(hadd_dir),
-        "{}/s_cv_i35.root".format(hadd_dir),
+        "{}/s_cv_i34.root".format(hadd_dir),
         "{}/s_c3_i_1.root".format(hadd_dir),
-        "{}/vbshww_c2v_1.root".format(hadd_dir),
+        # "{}/s_c2v_i20.root".format(hadd_dir),
         ]
 
 signal_labels = [
         "C_{2V}=4.5",
-        "C_{V}=1.5",
+        "C_{V}=1.4",
         "C_{3}=60",
-        "SM",
+        # "SM",
         # "C_{2V}=-2",
         ]
 
@@ -145,9 +145,9 @@ bkg_labels_tex = [
         ]
 signal_labels_tex = [
         "\\CTWOV=4.5",
-        "\\CV=1.5",
+        "\\CV=1.4",
         "\\CTHREE=60",
-        "\\CTWOV=1 (SM)",
+        # "\\CTWOV=1 (SM)",
         ]
 
 bkg_labels_fit_tex = [
@@ -186,18 +186,18 @@ sig_run2 = 137. / (59.97+41.3)
 
 blind = False
 signal_scale = 1
-if YEAR == "Run2" and SKIMVERSION == "v2.4_SS":
-    signal_scale = 137. / (59.97+41.3)
+# if YEAR == "Run2" and SKIMVERSION == "v2.5_SS":
+signal_scale = 137. / (59.97+41.3)
 
 if "_SS" in SKIMVERSION:
     if ("MbbOn" in cutname_to_plot and "SR" not in cutname_to_plot) or ("Presel" in cutname_to_plot and "MbbOff" not in cutname_to_plot):
         signal_scale = "auto"
         blind = True
     if ("MbbOn" in cutname_to_plot and "__SRs" in cutname_to_plot):
-        signal_scale = 137. / (59.97+41.3)
+        # signal_scale = 137. / (59.97+41.3)
         blind = True
     if ("MbbAll" in cutname_to_plot and "__BDT" in cutname_to_plot):
-        signal_scale = 137. / (59.97+41.3)
+        # signal_scale = 137. / (59.97+41.3)
         blind = True
 
 histxaxislabeloptions = {
@@ -208,9 +208,10 @@ histxaxislabeloptions = {
 "STVarBin3"                       : {"xaxis_label"      : "S_{T} [GeV]",              "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
 "LTZoom"                          : {"xaxis_label"      : "L_{T} [GeV]",              "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
 "STZoom"                          : {"xaxis_label"      : "S_{T} [GeV]",              "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
-"BDT"                             : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"BDT"                             : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
 "BDTVarBin"                       : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
-"BDTBkg"                          : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins":  5, "signal_scale": signal_scale, "blind": blind},
+"BDTBkg"                          : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins":  3, "signal_scale": signal_scale, "blind": blind},
+"BDTBkg2"                         : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins":  3, "signal_scale": signal_scale, "blind": blind},
 "BDTMD"                           : {"xaxis_label"      : "BDT (m_{bb}=125 GeV)",     "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
 "LeptonPt0"                       : {"xaxis_label"      : "p_{T,lead-lep} [GeV]",     "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
 "LeptonPt1"                       : {"xaxis_label"      : "p_{T,sublead-lep} [GeV]",  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
@@ -265,14 +266,18 @@ histxaxislabeloptions = {
 "Presel__DEtaJJ"                  : {"xaxis_label"      : "#Delta#eta_{jj}",          "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": sig_run2,     "blind": blind, "yaxis_log":True},
 "Presel__LeptonPt0"               : {"xaxis_label"      : "p_{T,lead-lep} [GeV]",     "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": sig_run2,     "blind": blind, "yaxis_log":True},
 "Presel__LeptonPt1"               : {"xaxis_label"      : "p_{T,sublead-lep} [GeV]",  "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": sig_run2,     "blind": blind, "yaxis_log":True},
-"El__BDT"                         : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": "auto",       "blind": True},
-"Mu__BDT"                         : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": "auto",       "blind": True},
-"Tau__BDT"                        : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": "auto",       "blind": True},
-"Neg__BDT"                        : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": "auto",       "blind": True},
+"El__BDT"                         : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": signal_scale *  3, "blind": True, "hide_signal_scale": False},
+"Mu__BDT"                         : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": signal_scale *  3, "blind": True, "hide_signal_scale": False},
+"Tau__BDT"                        : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": signal_scale * 40, "blind": True, "hide_signal_scale": False},
+"Neg__BDT"                        : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": signal_scale * 40, "blind": True, "hide_signal_scale": False},
+# "El__BDT"                         : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": "auto", "blind": True, "hide_signal_scale": True},
+# "Mu__BDT"                         : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": "auto", "blind": True, "hide_signal_scale": True},
+# "Tau__BDT"                        : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": "auto", "blind": True, "hide_signal_scale": True},
+# "Neg__BDT"                        : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": "auto", "blind": True, "hide_signal_scale": True},
 "LooseVRMbbAllSRB__Channels4Bins" : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True,  "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
 "LooseVRMbbOnSRA__Channels5Bins"  : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True,  "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)", "(e/#mu)^{+}l^{+}"]},
 "LooseVR__LeptonPt0Zoom"          : {"xaxis_label"      : "p_{T,lead-lep} [GeV]",     "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
-"TauMbbOff__BDTVarBin"            : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": False, "ratio_range":[0., 2.5]},
+"TauMbbOff__BDTVarBin"            : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": False, "ratio_range":[0., 2.5], "ymax_scale":2},
 }
 
 dogrep = False
@@ -321,6 +326,13 @@ if subdir == "Fit":
     legend_scaley = 0.5
     yaxis_range = [0.0005, 1000]
 
+if subdir == "Fit":
+    legendcoord = [0.13,0.88-(0.14),0.90,0.88]
+elif "SR" in subdir:
+    legendcoord = [0.13,0.88-(0.21),0.90,0.88]
+else:
+    legendcoord = [0.13,0.88-(0.28),0.90,0.88]
+
 # cutflow
 p.dump_plot(
     fnames=bkgs,
@@ -342,7 +354,7 @@ p.dump_plot(
         # "legend_scalex": legend_scalex,
         # "legend_scaley": legend_scaley,
         "legend_alignment": "",
-        "legend_coordinates": [0.13,0.88-(0.28)*(2./4. if subdir == "Fit" else 1.),0.90,0.88],
+        "legend_coordinates": legendcoord,
         "lumi_value": lumi,
         "ratio_range": [0., 2.],
         # "remove_overflow": True,

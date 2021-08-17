@@ -69,6 +69,12 @@ void VBS::Init(TTree *tree) {
   if (pswgts_branch) pswgts_branch->SetAddress(&pswgts_);
   lherewgts_branch = tree->GetBranch("lherewgts");
   if (lherewgts_branch) lherewgts_branch->SetAddress(&lherewgts_);
+  pu_rewgt_branch = tree->GetBranch("pu_rewgt");
+  if (pu_rewgt_branch) pu_rewgt_branch->SetAddress(&pu_rewgt_);
+  pu_rewgt_up_branch = tree->GetBranch("pu_rewgt_up");
+  if (pu_rewgt_up_branch) pu_rewgt_up_branch->SetAddress(&pu_rewgt_up_);
+  pu_rewgt_dn_branch = tree->GetBranch("pu_rewgt_dn");
+  if (pu_rewgt_dn_branch) pu_rewgt_dn_branch->SetAddress(&pu_rewgt_dn_);
   isvbswwh_branch = tree->GetBranch("isvbswwh");
   if (isvbswwh_branch) isvbswwh_branch->SetAddress(&isvbswwh_);
   iswwhlvlvbb_branch = tree->GetBranch("iswwhlvlvbb");
@@ -91,6 +97,10 @@ void VBS::Init(TTree *tree) {
   if (lepsf_dn_branch) lepsf_dn_branch->SetAddress(&lepsf_dn_);
   btagsf_branch = tree->GetBranch("btagsf");
   if (btagsf_branch) btagsf_branch->SetAddress(&btagsf_);
+  btagsf_up_branch = tree->GetBranch("btagsf_up");
+  if (btagsf_up_branch) btagsf_up_branch->SetAddress(&btagsf_up_);
+  btagsf_dn_branch = tree->GetBranch("btagsf_dn");
+  if (btagsf_dn_branch) btagsf_dn_branch->SetAddress(&btagsf_dn_);
   nbloose_branch = tree->GetBranch("nbloose");
   if (nbloose_branch) nbloose_branch->SetAddress(&nbloose_);
   nbmedium_branch = tree->GetBranch("nbmedium");
@@ -337,6 +347,9 @@ void VBS::GetEntry(unsigned int idx) {
   scalewgts_isLoaded = false;
   pswgts_isLoaded = false;
   lherewgts_isLoaded = false;
+  pu_rewgt_isLoaded = false;
+  pu_rewgt_up_isLoaded = false;
+  pu_rewgt_dn_isLoaded = false;
   met_p4_isLoaded = false;
   isvbswwh_isLoaded = false;
   iswwhlvlvbb_isLoaded = false;
@@ -365,6 +378,8 @@ void VBS::GetEntry(unsigned int idx) {
   lepsf_up_isLoaded = false;
   lepsf_dn_isLoaded = false;
   btagsf_isLoaded = false;
+  btagsf_up_isLoaded = false;
+  btagsf_dn_isLoaded = false;
   nbloose_isLoaded = false;
   nbmedium_isLoaded = false;
   nbtight_isLoaded = false;
@@ -500,6 +515,9 @@ void VBS::LoadAllBranches() {
   if (scalewgts_branch != 0) scalewgts();
   if (pswgts_branch != 0) pswgts();
   if (lherewgts_branch != 0) lherewgts();
+  if (pu_rewgt_branch != 0) pu_rewgt();
+  if (pu_rewgt_up_branch != 0) pu_rewgt_up();
+  if (pu_rewgt_dn_branch != 0) pu_rewgt_dn();
   if (met_p4_branch != 0) met_p4();
   if (isvbswwh_branch != 0) isvbswwh();
   if (iswwhlvlvbb_branch != 0) iswwhlvlvbb();
@@ -528,6 +546,8 @@ void VBS::LoadAllBranches() {
   if (lepsf_up_branch != 0) lepsf_up();
   if (lepsf_dn_branch != 0) lepsf_dn();
   if (btagsf_branch != 0) btagsf();
+  if (btagsf_up_branch != 0) btagsf_up();
+  if (btagsf_dn_branch != 0) btagsf_dn();
   if (nbloose_branch != 0) nbloose();
   if (nbmedium_branch != 0) nbmedium();
   if (nbtight_branch != 0) nbtight();
@@ -743,6 +763,45 @@ const vector<float> &VBS::lherewgts() {
     lherewgts_isLoaded = true;
   }
   return *lherewgts_;
+}
+
+const float &VBS::pu_rewgt() {
+  if (not pu_rewgt_isLoaded) {
+    if (pu_rewgt_branch != 0) {
+      pu_rewgt_branch->GetEntry(index);
+    } else {
+      printf("branch pu_rewgt_branch does not exist!\n");
+      exit(1);
+    }
+    pu_rewgt_isLoaded = true;
+  }
+  return pu_rewgt_;
+}
+
+const float &VBS::pu_rewgt_up() {
+  if (not pu_rewgt_up_isLoaded) {
+    if (pu_rewgt_up_branch != 0) {
+      pu_rewgt_up_branch->GetEntry(index);
+    } else {
+      printf("branch pu_rewgt_up_branch does not exist!\n");
+      exit(1);
+    }
+    pu_rewgt_up_isLoaded = true;
+  }
+  return pu_rewgt_up_;
+}
+
+const float &VBS::pu_rewgt_dn() {
+  if (not pu_rewgt_dn_isLoaded) {
+    if (pu_rewgt_dn_branch != 0) {
+      pu_rewgt_dn_branch->GetEntry(index);
+    } else {
+      printf("branch pu_rewgt_dn_branch does not exist!\n");
+      exit(1);
+    }
+    pu_rewgt_dn_isLoaded = true;
+  }
+  return pu_rewgt_dn_;
 }
 
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &VBS::met_p4() {
@@ -1107,6 +1166,32 @@ const float &VBS::btagsf() {
     btagsf_isLoaded = true;
   }
   return btagsf_;
+}
+
+const float &VBS::btagsf_up() {
+  if (not btagsf_up_isLoaded) {
+    if (btagsf_up_branch != 0) {
+      btagsf_up_branch->GetEntry(index);
+    } else {
+      printf("branch btagsf_up_branch does not exist!\n");
+      exit(1);
+    }
+    btagsf_up_isLoaded = true;
+  }
+  return btagsf_up_;
+}
+
+const float &VBS::btagsf_dn() {
+  if (not btagsf_dn_isLoaded) {
+    if (btagsf_dn_branch != 0) {
+      btagsf_dn_branch->GetEntry(index);
+    } else {
+      printf("branch btagsf_dn_branch does not exist!\n");
+      exit(1);
+    }
+    btagsf_dn_isLoaded = true;
+  }
+  return btagsf_dn_;
 }
 
 const int &VBS::nbloose() {
@@ -2751,6 +2836,9 @@ const float &wgt() { return vbs.wgt(); }
 const vector<float> &scalewgts() { return vbs.scalewgts(); }
 const vector<float> &pswgts() { return vbs.pswgts(); }
 const vector<float> &lherewgts() { return vbs.lherewgts(); }
+const float &pu_rewgt() { return vbs.pu_rewgt(); }
+const float &pu_rewgt_up() { return vbs.pu_rewgt_up(); }
+const float &pu_rewgt_dn() { return vbs.pu_rewgt_dn(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &met_p4() { return vbs.met_p4(); }
 const int &isvbswwh() { return vbs.isvbswwh(); }
 const int &iswwhlvlvbb() { return vbs.iswwhlvlvbb(); }
@@ -2779,6 +2867,8 @@ const float &lepsf() { return vbs.lepsf(); }
 const float &lepsf_up() { return vbs.lepsf_up(); }
 const float &lepsf_dn() { return vbs.lepsf_dn(); }
 const float &btagsf() { return vbs.btagsf(); }
+const float &btagsf_up() { return vbs.btagsf_up(); }
+const float &btagsf_dn() { return vbs.btagsf_dn(); }
 const int &nbloose() { return vbs.nbloose(); }
 const int &nbmedium() { return vbs.nbmedium(); }
 const int &nbtight() { return vbs.nbtight(); }
