@@ -321,6 +321,8 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch  < float               >   ( "btagsf"                        , true  );
     tx.createBranch  < float               >   ( "btagsf_up"                     , true  );
     tx.createBranch  < float               >   ( "btagsf_dn"                     , true  );
+    tx.createBranch  < float               >   ( "trigsf_up"                     , true  );
+    tx.createBranch  < float               >   ( "trigsf_dn"                     , true  );
 
     // Create lepton branches
     tx.createBranch  < vector<LV>          >   ( "good_leptons_p4"               , false );
@@ -1633,8 +1635,37 @@ void VBSHWW::initSRCutflow()
             if (not (pt0 > 40. and pt1 > 40.))
                 return false;
 
+            float trigsf = 0.;
+            float trigsf_err = 0.;
             if (lepchannel <= 2 and lepchannel >= 0)
             {
+                if (lepchannel == 0)
+                {
+                    // el-el
+                    trigsf = get2ElecTriggerEffSF(tx.getBranch<LV>("subllep").pt(), nt.year());
+                    trigsf_err = get2ElecTriggerEffSFErr(nt.year());
+                }
+                else if (lepchannel == 1)
+                {
+                    // mu-el
+                    trigsf = getMuonElecTriggerEffSF(tx.getBranch<LV>("subllep").pt(), nt.year());
+                    trigsf_err = getMuonElecTriggerEffSFErr(nt.year());
+                }
+                else if (lepchannel == 2)
+                {
+                    // mu-mu
+                    if (nt.year() == 2018)
+                    {
+                        trigsf = get2MuonTriggerEffSF(tx.getBranch<LV>("leadlep").pt(), nt.year()); // why? don't ask me...
+                    }
+                    else
+                    {
+                        trigsf = get2MuonTriggerEffSF(tx.getBranch<LV>("subllep").pt(), nt.year());
+                    }
+                    trigsf_err = get2MuonTriggerEffSFErr(nt.year());
+                }
+                tx.setBranch<float>("trigsf_up", trigsf + trigsf_err*trigsf);
+                tx.setBranch<float>("trigsf_dn", trigsf - trigsf_err*trigsf);
                 const int& trig_ee = tx.getBranch<int>("trig_ee");
                 const int& trig_em = tx.getBranch<int>("trig_em");
                 const int& trig_mm = tx.getBranch<int>("trig_mm");
@@ -1645,12 +1676,24 @@ void VBSHWW::initSRCutflow()
             }
             else if (tx.getBranch<int>("lepchannel") == 3)
             {
+                // el-tau
+                LV el_p4 = tx.getBranch<LV>("lep0"); // lep0 is e or mu if lep-tau
+                trigsf = getTauChannelElecTriggerSF(el_p4.eta(), el_p4.pt(), nt.year());
+                trigsf_err = getTauChannelElecTriggerSFErr();
+                tx.setBranch<float>("trigsf_up", trigsf + trigsf_err*trigsf);
+                tx.setBranch<float>("trigsf_dn", trigsf - trigsf_err*trigsf);
                 const int& is_pd_se = tx.getBranch<int>("is_pd_se");
                 const int& trig_se = tx.getBranch<int>("trig_se");
                 return nt.isData() ? (is_pd_se and trig_se) : trig_se == 1;
             }
             else if (tx.getBranch<int>("lepchannel") == 4)
             {
+                // mu-tau
+                LV mu_p4 = tx.getBranch<LV>("lep0"); // lep0 is e or mu if lep-tau
+                trigsf = getTauChannelMuonTriggerSF(mu_p4.pt(), mu_p4.pt(), nt.year());
+                trigsf_err = getTauChannelMuonTriggerSFErr();
+                tx.setBranch<float>("trigsf_up", trigsf + trigsf_err*trigsf);
+                tx.setBranch<float>("trigsf_dn", trigsf - trigsf_err*trigsf);
                 const int& is_pd_sm = tx.getBranch<int>("is_pd_sm");
                 const int& trig_sm = tx.getBranch<int>("trig_sm");
                 return nt.isData() ? (is_pd_sm and trig_sm) : trig_sm == 1;
@@ -1659,7 +1702,6 @@ void VBSHWW::initSRCutflow()
             {
                 return false;
             }
-
         },
         [&]() { return tx.getBranch<float>("lepsf"); } );
         // UNITY);
