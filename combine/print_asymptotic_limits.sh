@@ -23,6 +23,20 @@ print_limits()
     tail -n7 limits/${tag}/${COUPLING}_*/bdt_${var}.out | grep "r\|${var}" | paste -d" " - - - - - - - | awk '{print $2, $'${idx}'}' | sed 's|limits/'${tag}'/c2v_||' | sed 's|/bdt_exp.out||' | tr 'm' '-' | tr 'p' '.' | sort -g
 }
 
+function col {
+if [ $# -lt 1 ]; then
+    echo "usage: col <col #>"
+    return 1
+fi
+num=$1
+
+if [[ $num -lt 0 ]]; then 
+    awk "{print \$(NF+$((num+1)))}"
+else
+    awk -v x=$num '{print $x}'
+fi
+}
+
 OUTPUT=limits/${tag}_asymptotic_results.py
 
 rm -rf ${OUTPUT}
