@@ -320,11 +320,28 @@ def modeling_syst_conservative(channel):
 # Function to obtain the composition systematics
 # Input:
 #   - channel   = El, Mu, Tau, Neg, Lgt, LL, LT etc.
+# Output:
+#   - errors.E object type (this object holds 1 += largest composition systematic error in upward direction only after looking through several variations)
+def composition_syst_conservative(channel):
+    cut_syst = composition_syst(channel, "Cut")
+    bdt_syst = composition_syst(channel, "BDT")
+    final_syst = cut_syst if cut_syst.err > bdt_syst.err else bdt_syst
+    return final_syst
+
+#_______________________________________________________________________________________________________________________________
+# Function to obtain the composition systematics
+# Input:
+#   - channel   = El, Mu, Tau, Neg, Lgt, LL, LT etc.
 #   - analysis  = BDT or Cut
 # Output:
 #   - errors.E object type (this object holds 1 += largest composition systematic error in upward direction only after looking through several variations)
 def composition_syst(channel, analysis):
-    max_pos_diff, max_pos_type, max_pos_alpha, max_neg_diff, max_neg_type, max_neg_alpha = composition_syst_max(channel, analysis)
+    # The channel to read is same as the channel
+    # Except for El and Mu
+    channel_to_read = channel
+    if channel == "El" or channel == "Mu": 
+        channel_to_read = "Lgt"
+    max_pos_diff, max_pos_type, max_pos_alpha, max_neg_diff, max_neg_type, max_neg_alpha = composition_syst_max(channel_to_read, analysis)
     max_diff = max_pos_diff if max_pos_diff > max_neg_diff else max_neg_diff
     return E(1, max_diff)
 
@@ -405,7 +422,7 @@ def alpha_full_syst(channel, analysis):
     a = alpha(channel, analysis)
     aexp = alpha_expt_syst(channel, analysis)
     amodel = modeling_syst_conservative(channel) * E(a.val, 0)
-    acomp = composition_syst(channel, analysis) * E(a.val, 0)
+    acomp = composition_syst_conservative(channel) * E(a.val, 0)
     full_syst = math.sqrt(a.err**2 + aexp.err**2 + amodel.err**2 + acomp.err**2)
     return E(a.val, full_syst)
 
@@ -437,7 +454,7 @@ def getRowNumbers(channel, analysis):
     print(tex(alpha(channel, analysis)))
     print("MCstat", texerr(alpha(channel, analysis)))
     print("model", texerr(modeling_syst_conservative(channel)))
-    print("comp", texerr(composition_syst(channel, analysis)))
+    print("comp", texerr(composition_syst_conservative(channel)))
     print("expt", texerr(alpha_expt_syst(channel, analysis)))
     print("full", texerr(alpha_full_syst(channel, analysis)))
     print(tex(bcrdt(channel, analysis)))
@@ -480,7 +497,7 @@ def get_str_cut():
         vals.append(tex(E(alpha(channel, analysis).val, alpha_full_syst(channel, analysis).err)))
         vals.append(texerr(alpha(channel, analysis))) # MC stat
         vals.append(texerr(modeling_syst_conservative(channel))) # modeling
-        vals.append(texerr(composition_syst(channel, analysis))) # composition
+        vals.append(texerr(composition_syst_conservative(channel))) # composition
         vals.append(texerr(alpha_expt_syst(channel, analysis))) # expt syst
         vals.append(tex(bcrdt(channel, analysis)))
         vals.append(tex(bsrdt(channel, analysis)))
@@ -523,7 +540,7 @@ def get_str_bdt():
         vals.append(tex(E(alpha(channel, analysis).val, alpha_full_syst(channel, analysis).err)))
         vals.append(texerr(alpha(channel, analysis))) # MC stat
         vals.append(texerr(modeling_syst_conservative(channel))) # modeling
-        vals.append(texerr(composition_syst(channel, analysis))) # composition
+        vals.append(texerr(composition_syst_conservative(channel))) # composition
         vals.append(texerr(alpha_expt_syst(channel, analysis))) # expt syst
         vals.append(tex(bcrdt(channel, analysis)))
         vals.append(tex(bsrdt(channel, analysis)))
@@ -698,4 +715,8 @@ if __name__ == "__main__":
 
     make_final_background_histograms()
     make_final_background_histograms_only_MCstatError()
+
+    for channel in ["Lgt", "Tau", "Neg"]:
+        print(channel, "Cut", modeling_syst(channel, "Cut"))
+        print(channel, "BDT", modeling_syst(channel, "BDT"))
 
