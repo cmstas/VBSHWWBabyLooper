@@ -17,9 +17,10 @@
 #include "Tools/btagsf/BTagCalibrationStandalone.h"
 #include "Tools/jetcorr/JetCorrectionUncertainty.h"
 // VBSHWWCORE
-#include "tools/lepScaleFactors.h" // ttH analysis scale factors
-#include "tools/pileUpReweight.h" // ttH analysis scale factors
-#include "tools/TauIDSFTool.h"     // tau POG scale factors
+#include "tools/lepScaleFactors.h"     // ttH analysis scale factors
+#include "tools/triggerScaleFactors.h" // ttH analysis trigger eff scale factors
+#include "tools/TauIDSFTool.h"         // tau POG scale factors
+#include "tools/pileUpReweight.h"      // PU reweighting
 
 #include "TMVA/Reader.h"
 
