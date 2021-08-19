@@ -1,6 +1,6 @@
 // -*- C++ -*-
 // This is a header file generated with the command:
-// makeCMS3ClassFiles("/home/users/phchang/public_html/analysis/hwh/VBSHWWBabyLooper--/hists/v2.6_SS/v10/createMini_2018/VBSWWHToLNuLNubb_C2V_output_0.root", "variable", "VBS", "tas", "vbs")
+// makeCMS3ClassFiles("/home/users/phchang/public_html/analysis/hwh/VBSHWWBabyLooper--/hists/v2.6_SS/v11/createMini_2016/ZZTo4L_output_0.root", "variable", "VBS", "tas", "vbs")
 
 #ifndef VBS_H
 #define VBS_H
@@ -53,6 +53,9 @@ class VBS {
   float    pu_rewgt_dn_;
   TBranch *pu_rewgt_dn_branch;
   bool     pu_rewgt_dn_isLoaded;
+  int      ntrueint_;
+  TBranch *ntrueint_branch;
+  bool     ntrueint_isLoaded;
   ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > *met_p4_;
   TBranch *met_p4_branch;
   bool     met_p4_isLoaded;
@@ -143,6 +146,15 @@ class VBS {
   float    btagsf_dn_;
   TBranch *btagsf_dn_branch;
   bool     btagsf_dn_isLoaded;
+  float    trigsf_;
+  TBranch *trigsf_branch;
+  bool     trigsf_isLoaded;
+  float    trigsf_up_;
+  TBranch *trigsf_up_branch;
+  bool     trigsf_up_isLoaded;
+  float    trigsf_dn_;
+  TBranch *trigsf_dn_branch;
+  bool     trigsf_dn_isLoaded;
   int      nbloose_;
   TBranch *nbloose_branch;
   bool     nbloose_isLoaded;
@@ -529,6 +541,7 @@ void LoadAllBranches();
   const float &pu_rewgt();
   const float &pu_rewgt_up();
   const float &pu_rewgt_dn();
+  const int &ntrueint();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &met_p4();
   const int &isvbswwh();
   const int &iswwhlvlvbb();
@@ -559,6 +572,9 @@ void LoadAllBranches();
   const float &btagsf();
   const float &btagsf_up();
   const float &btagsf_dn();
+  const float &trigsf();
+  const float &trigsf_up();
+  const float &trigsf_dn();
   const int &nbloose();
   const int &nbmedium();
   const int &nbtight();
@@ -702,6 +718,7 @@ namespace tas {
   const float &pu_rewgt();
   const float &pu_rewgt_up();
   const float &pu_rewgt_dn();
+  const int &ntrueint();
   const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &met_p4();
   const int &isvbswwh();
   const int &iswwhlvlvbb();
@@ -732,6 +749,9 @@ namespace tas {
   const float &btagsf();
   const float &btagsf_up();
   const float &btagsf_dn();
+  const float &trigsf();
+  const float &trigsf_up();
+  const float &trigsf_dn();
   const int &nbloose();
   const int &nbmedium();
   const int &nbtight();

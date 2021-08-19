@@ -321,6 +321,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch  < float               >   ( "btagsf"                        , true  );
     tx.createBranch  < float               >   ( "btagsf_up"                     , true  );
     tx.createBranch  < float               >   ( "btagsf_dn"                     , true  );
+    tx.createBranch  < float               >   ( "trigsf"                        , true  );
     tx.createBranch  < float               >   ( "trigsf_up"                     , true  );
     tx.createBranch  < float               >   ( "trigsf_dn"                     , true  );
 
@@ -1664,6 +1665,7 @@ void VBSHWW::initSRCutflow()
                     }
                     trigsf_err = get2MuonTriggerEffSFErr(nt.year());
                 }
+                tx.setBranch<float>("trigsf", trigsf);
                 tx.setBranch<float>("trigsf_up", trigsf + trigsf_err*trigsf);
                 tx.setBranch<float>("trigsf_dn", trigsf - trigsf_err*trigsf);
                 const int& trig_ee = tx.getBranch<int>("trig_ee");
@@ -1680,6 +1682,7 @@ void VBSHWW::initSRCutflow()
                 LV el_p4 = tx.getBranch<LV>("lep0"); // lep0 is e or mu if lep-tau
                 trigsf = getTauChannelElecTriggerSF(el_p4.eta(), el_p4.pt(), nt.year());
                 trigsf_err = getTauChannelElecTriggerSFErr();
+                tx.setBranch<float>("trigsf", trigsf);
                 tx.setBranch<float>("trigsf_up", trigsf + trigsf_err*trigsf);
                 tx.setBranch<float>("trigsf_dn", trigsf - trigsf_err*trigsf);
                 const int& is_pd_se = tx.getBranch<int>("is_pd_se");
@@ -1692,6 +1695,7 @@ void VBSHWW::initSRCutflow()
                 LV mu_p4 = tx.getBranch<LV>("lep0"); // lep0 is e or mu if lep-tau
                 trigsf = getTauChannelMuonTriggerSF(mu_p4.pt(), mu_p4.pt(), nt.year());
                 trigsf_err = getTauChannelMuonTriggerSFErr();
+                tx.setBranch<float>("trigsf", trigsf);
                 tx.setBranch<float>("trigsf_up", trigsf + trigsf_err*trigsf);
                 tx.setBranch<float>("trigsf_dn", trigsf - trigsf_err*trigsf);
                 const int& is_pd_sm = tx.getBranch<int>("is_pd_sm");

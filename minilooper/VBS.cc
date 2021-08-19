@@ -75,6 +75,8 @@ void VBS::Init(TTree *tree) {
   if (pu_rewgt_up_branch) pu_rewgt_up_branch->SetAddress(&pu_rewgt_up_);
   pu_rewgt_dn_branch = tree->GetBranch("pu_rewgt_dn");
   if (pu_rewgt_dn_branch) pu_rewgt_dn_branch->SetAddress(&pu_rewgt_dn_);
+  ntrueint_branch = tree->GetBranch("ntrueint");
+  if (ntrueint_branch) ntrueint_branch->SetAddress(&ntrueint_);
   isvbswwh_branch = tree->GetBranch("isvbswwh");
   if (isvbswwh_branch) isvbswwh_branch->SetAddress(&isvbswwh_);
   iswwhlvlvbb_branch = tree->GetBranch("iswwhlvlvbb");
@@ -101,6 +103,12 @@ void VBS::Init(TTree *tree) {
   if (btagsf_up_branch) btagsf_up_branch->SetAddress(&btagsf_up_);
   btagsf_dn_branch = tree->GetBranch("btagsf_dn");
   if (btagsf_dn_branch) btagsf_dn_branch->SetAddress(&btagsf_dn_);
+  trigsf_branch = tree->GetBranch("trigsf");
+  if (trigsf_branch) trigsf_branch->SetAddress(&trigsf_);
+  trigsf_up_branch = tree->GetBranch("trigsf_up");
+  if (trigsf_up_branch) trigsf_up_branch->SetAddress(&trigsf_up_);
+  trigsf_dn_branch = tree->GetBranch("trigsf_dn");
+  if (trigsf_dn_branch) trigsf_dn_branch->SetAddress(&trigsf_dn_);
   nbloose_branch = tree->GetBranch("nbloose");
   if (nbloose_branch) nbloose_branch->SetAddress(&nbloose_);
   nbmedium_branch = tree->GetBranch("nbmedium");
@@ -350,6 +358,7 @@ void VBS::GetEntry(unsigned int idx) {
   pu_rewgt_isLoaded = false;
   pu_rewgt_up_isLoaded = false;
   pu_rewgt_dn_isLoaded = false;
+  ntrueint_isLoaded = false;
   met_p4_isLoaded = false;
   isvbswwh_isLoaded = false;
   iswwhlvlvbb_isLoaded = false;
@@ -380,6 +389,9 @@ void VBS::GetEntry(unsigned int idx) {
   btagsf_isLoaded = false;
   btagsf_up_isLoaded = false;
   btagsf_dn_isLoaded = false;
+  trigsf_isLoaded = false;
+  trigsf_up_isLoaded = false;
+  trigsf_dn_isLoaded = false;
   nbloose_isLoaded = false;
   nbmedium_isLoaded = false;
   nbtight_isLoaded = false;
@@ -518,6 +530,7 @@ void VBS::LoadAllBranches() {
   if (pu_rewgt_branch != 0) pu_rewgt();
   if (pu_rewgt_up_branch != 0) pu_rewgt_up();
   if (pu_rewgt_dn_branch != 0) pu_rewgt_dn();
+  if (ntrueint_branch != 0) ntrueint();
   if (met_p4_branch != 0) met_p4();
   if (isvbswwh_branch != 0) isvbswwh();
   if (iswwhlvlvbb_branch != 0) iswwhlvlvbb();
@@ -548,6 +561,9 @@ void VBS::LoadAllBranches() {
   if (btagsf_branch != 0) btagsf();
   if (btagsf_up_branch != 0) btagsf_up();
   if (btagsf_dn_branch != 0) btagsf_dn();
+  if (trigsf_branch != 0) trigsf();
+  if (trigsf_up_branch != 0) trigsf_up();
+  if (trigsf_dn_branch != 0) trigsf_dn();
   if (nbloose_branch != 0) nbloose();
   if (nbmedium_branch != 0) nbmedium();
   if (nbtight_branch != 0) nbtight();
@@ -802,6 +818,19 @@ const float &VBS::pu_rewgt_dn() {
     pu_rewgt_dn_isLoaded = true;
   }
   return pu_rewgt_dn_;
+}
+
+const int &VBS::ntrueint() {
+  if (not ntrueint_isLoaded) {
+    if (ntrueint_branch != 0) {
+      ntrueint_branch->GetEntry(index);
+    } else {
+      printf("branch ntrueint_branch does not exist!\n");
+      exit(1);
+    }
+    ntrueint_isLoaded = true;
+  }
+  return ntrueint_;
 }
 
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &VBS::met_p4() {
@@ -1192,6 +1221,45 @@ const float &VBS::btagsf_dn() {
     btagsf_dn_isLoaded = true;
   }
   return btagsf_dn_;
+}
+
+const float &VBS::trigsf() {
+  if (not trigsf_isLoaded) {
+    if (trigsf_branch != 0) {
+      trigsf_branch->GetEntry(index);
+    } else {
+      printf("branch trigsf_branch does not exist!\n");
+      exit(1);
+    }
+    trigsf_isLoaded = true;
+  }
+  return trigsf_;
+}
+
+const float &VBS::trigsf_up() {
+  if (not trigsf_up_isLoaded) {
+    if (trigsf_up_branch != 0) {
+      trigsf_up_branch->GetEntry(index);
+    } else {
+      printf("branch trigsf_up_branch does not exist!\n");
+      exit(1);
+    }
+    trigsf_up_isLoaded = true;
+  }
+  return trigsf_up_;
+}
+
+const float &VBS::trigsf_dn() {
+  if (not trigsf_dn_isLoaded) {
+    if (trigsf_dn_branch != 0) {
+      trigsf_dn_branch->GetEntry(index);
+    } else {
+      printf("branch trigsf_dn_branch does not exist!\n");
+      exit(1);
+    }
+    trigsf_dn_isLoaded = true;
+  }
+  return trigsf_dn_;
 }
 
 const int &VBS::nbloose() {
@@ -2839,6 +2907,7 @@ const vector<float> &lherewgts() { return vbs.lherewgts(); }
 const float &pu_rewgt() { return vbs.pu_rewgt(); }
 const float &pu_rewgt_up() { return vbs.pu_rewgt_up(); }
 const float &pu_rewgt_dn() { return vbs.pu_rewgt_dn(); }
+const int &ntrueint() { return vbs.ntrueint(); }
 const ROOT::Math::LorentzVector<ROOT::Math::PtEtaPhiM4D<float> > &met_p4() { return vbs.met_p4(); }
 const int &isvbswwh() { return vbs.isvbswwh(); }
 const int &iswwhlvlvbb() { return vbs.iswwhlvlvbb(); }
@@ -2869,6 +2938,9 @@ const float &lepsf_dn() { return vbs.lepsf_dn(); }
 const float &btagsf() { return vbs.btagsf(); }
 const float &btagsf_up() { return vbs.btagsf_up(); }
 const float &btagsf_dn() { return vbs.btagsf_dn(); }
+const float &trigsf() { return vbs.trigsf(); }
+const float &trigsf_up() { return vbs.trigsf_up(); }
+const float &trigsf_dn() { return vbs.trigsf_dn(); }
 const int &nbloose() { return vbs.nbloose(); }
 const int &nbmedium() { return vbs.nbmedium(); }
 const int &nbtight() { return vbs.nbtight(); }

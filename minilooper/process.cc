@@ -18,7 +18,19 @@ int main(int argc, char** argv)
 
     // Preselection
     //____________________________________________________________________________________________________________________________________________________________
-    ana.cutflow.addCut("Presel", [&]() { return vbs.channel() >= 0; }, [&]() { return vbs.wgt() * vbs.btagsf() * vbs.lepsf() * vbs.xsec_sf() * vbs.genrewgt() * (ana.rwgtidx < 0 ? 1. : vbs.lherewgts()[ana.rwgtidx]) * (ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.pu_rewgt()); });
+    ana.cutflow.addCut("Presel", [&]() { return vbs.channel() >= 0; },
+                       [&]()
+                       {
+                           return
+                               vbs.wgt() *
+                               vbs.btagsf() *
+                               vbs.lepsf() *
+                               vbs.xsec_sf() *
+                               vbs.genrewgt() *
+                               (ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.trigsf()) *
+                               (ana.rwgtidx < 0 ? 1. : vbs.lherewgts()[ana.rwgtidx]) *
+                               (ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.pu_rewgt());
+                       });
     ana.cutflow.addCutToLastActiveCut("LooseVR", [&]() { return vbs.is_ps(); }, UNITY);
 
     ana.cutflow.getCut("LooseVR");
@@ -396,6 +408,8 @@ int main(int argc, char** argv)
     ana.cutflow.addWgtSyst("BTagSFDn", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.btagsf_dn() / vbs.btagsf(); });
     ana.cutflow.addWgtSyst("PURewgtUp", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.pu_rewgt_up() / vbs.pu_rewgt(); });
     ana.cutflow.addWgtSyst("PURewgtDn", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.pu_rewgt_dn() / vbs.pu_rewgt(); });
+    ana.cutflow.addWgtSyst("TrigSFUp", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.trigsf_up() / vbs.trigsf(); });
+    ana.cutflow.addWgtSyst("TrigSFDn", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.trigsf_dn() / vbs.trigsf(); });
 
     // Print cut structure
     ana.cutflow.printCuts();
