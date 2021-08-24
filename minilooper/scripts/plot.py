@@ -182,12 +182,14 @@ ChannelsMbbMerged_bin_labels = [
 "T-#mu#tau",
 ]
 
-sig_run2 = 137. / (59.97+41.3)
+# sig_run2 = 137. / (59.97+41.3)
+sig_run2 = 1
 
 blind = False
 signal_scale = 1
 # if YEAR == "Run2" and SKIMVERSION == "v2.5_SS":
-signal_scale = 137. / (59.97+41.3)
+# signal_scale = 137. / (59.97+41.3)
+signal_scale = 1
 
 if "_SS" in SKIMVERSION:
     if ("MbbOn" in cutname_to_plot and "SR" not in cutname_to_plot) or ("Presel" in cutname_to_plot and "MbbOff" not in cutname_to_plot):
