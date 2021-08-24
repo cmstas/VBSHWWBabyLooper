@@ -87,21 +87,32 @@ NJOBS=10
 for i in $(seq 0 $((NJOBS-1))); do
     echo "rm -f ${HISTDIR}/data_${i}.root         ; ./doAnalysis -t variable -i ${MINIDIR}/data.root           -o ${HISTDIR}/data_${i}.root         -j ${NJOBS} -I ${i} > ${HISTDIR}/data_${i}.log            2>&1" >> .jobs.txt
 done
-if [[ ${YEAR} == *"2016"* ]]; then
-    :
-else
-    echo "rm -f ${HISTDIR}/s_c2v_i_1.root        ; ./doAnalysis -t variable -i ${MINIDIR}/vbshwwlvlvbb_c2v.root -o ${HISTDIR}/s_c2v_i_1.root                       > ${HISTDIR}/s_c2v_i_1.log              2>&1" >> .jobs.txt
-    for IDX in $(seq 0 39); do
-        echo "rm -f ${HISTDIR}/s_c2v_i${IDX}.root ; ./doAnalysis -t variable -i ${MINIDIR}/vbshwwlvlvbb_c2v.root -r ${IDX} -o ${HISTDIR}/s_c2v_i${IDX}.root        > ${HISTDIR}/s_c2v_i${IDX}.log 2>&1" >> .jobs.txt
-    done
-    for IDX in $(seq 0 40); do
-        echo "rm -f ${HISTDIR}/s_cv_i${IDX}.root ; ./doAnalysis -t variable -i ${MINIDIR}/vbshwwlvlvbb_cv.root -r ${IDX} -o ${HISTDIR}/s_cv_i${IDX}.root        > ${HISTDIR}/s_cv_i${IDX}.log 2>&1" >> .jobs.txt
-    done
-    echo "rm -f ${HISTDIR}/s_c3_i_1.root         ; ./doAnalysis -t variable -i ${MINIDIR}/vbshwwlvlvbb_c3.root -o ${HISTDIR}/s_c3_i_1.root                       > ${HISTDIR}/s_c3_i_1.log              2>&1" >> .jobs.txt
-    for IDX in $(seq 0 39); do
-        echo "rm -f ${HISTDIR}/s_c3_i${IDX}.root ; ./doAnalysis -t variable -i ${MINIDIR}/vbshwwlvlvbb_c3.root -r ${IDX} -o ${HISTDIR}/s_c3_i${IDX}.root        > ${HISTDIR}/s_c3_i${IDX}.log 2>&1" >> .jobs.txt
-    done
-fi
+# if [[ ${YEAR} == *"2016"* ]]; then
+#     :
+# else
+#     echo "rm -f ${HISTDIR}/s_c2v_i_1.root        ; ./doAnalysis -t variable -i ${MINIDIR}/vbshwwlvlvbb_c2v.root -o ${HISTDIR}/s_c2v_i_1.root                       > ${HISTDIR}/s_c2v_i_1.log              2>&1" >> .jobs.txt
+#     for IDX in $(seq 0 39); do
+#         echo "rm -f ${HISTDIR}/s_c2v_i${IDX}.root ; ./doAnalysis -t variable -i ${MINIDIR}/vbshwwlvlvbb_c2v.root -r ${IDX} -o ${HISTDIR}/s_c2v_i${IDX}.root        > ${HISTDIR}/s_c2v_i${IDX}.log 2>&1" >> .jobs.txt
+#     done
+#     for IDX in $(seq 0 40); do
+#         echo "rm -f ${HISTDIR}/s_cv_i${IDX}.root ; ./doAnalysis -t variable -i ${MINIDIR}/vbshwwlvlvbb_cv.root -r ${IDX} -o ${HISTDIR}/s_cv_i${IDX}.root        > ${HISTDIR}/s_cv_i${IDX}.log 2>&1" >> .jobs.txt
+#     done
+#     echo "rm -f ${HISTDIR}/s_c3_i_1.root         ; ./doAnalysis -t variable -i ${MINIDIR}/vbshwwlvlvbb_c3.root -o ${HISTDIR}/s_c3_i_1.root                       > ${HISTDIR}/s_c3_i_1.log              2>&1" >> .jobs.txt
+#     for IDX in $(seq 0 39); do
+#         echo "rm -f ${HISTDIR}/s_c3_i${IDX}.root ; ./doAnalysis -t variable -i ${MINIDIR}/vbshwwlvlvbb_c3.root -r ${IDX} -o ${HISTDIR}/s_c3_i${IDX}.root        > ${HISTDIR}/s_c3_i${IDX}.log 2>&1" >> .jobs.txt
+#     done
+# fi
+echo "rm -f ${HISTDIR}/s_c2v_i_1.root        ; ./doAnalysis -t variable -i ${MINIDIR}/vbshwwlvlvbb_c2v.root -o ${HISTDIR}/s_c2v_i_1.root                       > ${HISTDIR}/s_c2v_i_1.log              2>&1" >> .jobs.txt
+for IDX in $(seq 0 39); do
+    echo "rm -f ${HISTDIR}/s_c2v_i${IDX}.root ; ./doAnalysis -t variable -i ${MINIDIR}/vbshwwlvlvbb_c2v.root -r ${IDX} -o ${HISTDIR}/s_c2v_i${IDX}.root        > ${HISTDIR}/s_c2v_i${IDX}.log 2>&1" >> .jobs.txt
+done
+for IDX in $(seq 0 40); do
+    echo "rm -f ${HISTDIR}/s_cv_i${IDX}.root ; ./doAnalysis -t variable -i ${MINIDIR}/vbshwwlvlvbb_cv.root -r ${IDX} -o ${HISTDIR}/s_cv_i${IDX}.root        > ${HISTDIR}/s_cv_i${IDX}.log 2>&1" >> .jobs.txt
+done
+echo "rm -f ${HISTDIR}/s_c3_i_1.root         ; ./doAnalysis -t variable -i ${MINIDIR}/vbshwwlvlvbb_c3.root -o ${HISTDIR}/s_c3_i_1.root                       > ${HISTDIR}/s_c3_i_1.log              2>&1" >> .jobs.txt
+for IDX in $(seq 0 39); do
+    echo "rm -f ${HISTDIR}/s_c3_i${IDX}.root ; ./doAnalysis -t variable -i ${MINIDIR}/vbshwwlvlvbb_c3.root -r ${IDX} -o ${HISTDIR}/s_c3_i${IDX}.root        > ${HISTDIR}/s_c3_i${IDX}.log 2>&1" >> .jobs.txt
+done
 
 xargs.sh .jobs.txt
 
