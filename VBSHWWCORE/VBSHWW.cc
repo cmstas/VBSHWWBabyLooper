@@ -2126,7 +2126,7 @@ void VBSHWW::initSRCutflow()
 
             // XSEC SF for when splitting training and testing
             float xsec_sf = 1;
-            if (nt.year() == 2016 and not nt.isData())
+            if (nt.year() == 2016 and not nt.isData() and not tx.getBranch<int>("is_signal"))
             {
                 if (tx.getBranch<int>("is_test"))
                 {
