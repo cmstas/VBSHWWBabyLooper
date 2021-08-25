@@ -58,6 +58,9 @@ for YEAR in ${YEARS}; do
     # echo "rm -f ${HADDDIR}/vbshww_c2v_3.root;hadd -f ${HADDDIR}/vbshww_c2v_3.root ${HISTDIR}/VBSWmpWmpHToLNuLNu_C2V_3_TuneCP5*.root > ${HADDDIR}/vbshww_c2v_3.hadd.log 2>&1" >> .haddjobs.txt
     # echo "rm -f ${HADDDIR}/vbshww_c2v_4p5.root;hadd -f ${HADDDIR}/vbshww_c2v_4p5.root ${HISTDIR}/VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5*.root > ${HADDDIR}/vbshww_c2v_4p5.hadd.log 2>&1" >> .haddjobs.txt
     # echo "rm -f ${HADDDIR}/vbshww_c2v_m2.root;hadd -f ${HADDDIR}/vbshww_c2v_m2.root ${HISTDIR}/VBSWmpWmpHToLNuLNu_C2V_m2_TuneCP5*.root > ${HADDDIR}/vbshww_c2v_m2.hadd.log 2>&1" >> .haddjobs.txt
+    echo "rm -f ${HADDDIR}/vbshwwlvlvbb_c2v.root;hadd -f ${HADDDIR}/vbshwwlvlvbb_c2v.root ${HISTDIR}/VBSWWHToLNuLNubb_C2V*.root > ${HADDDIR}/vbshwwlvlvbb_c2v.hadd.log 2>&1" >> .haddjobs.txt
+    echo "rm -f ${HADDDIR}/vbshwwlvlvbb_cv.root;hadd -f ${HADDDIR}/vbshwwlvlvbb_cv.root ${HISTDIR}/VBSWWHToLNuLNubb_CV*.root > ${HADDDIR}/vbshwwlvlvbb_cv.hadd.log 2>&1" >> .haddjobs.txt
+    echo "rm -f ${HADDDIR}/vbshwwlvlvbb_c3.root;hadd -f ${HADDDIR}/vbshwwlvlvbb_c3.root ${HISTDIR}/VBSWWHToLNuLNubb_C3*.root > ${HADDDIR}/vbshwwlvlvbb_c3.hadd.log 2>&1" >> .haddjobs.txt
 
 done
 

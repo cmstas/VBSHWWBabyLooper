@@ -65,6 +65,9 @@ if [[ ${SPECIFICSAMPLE} == *"all"* ]]; then
     ST_t-channel_top_4f \
     ST_tW_antitop_5f \
     ST_tW_top_5f \
+    VBSWWHToLNuLNubb_C2V \
+    VBSWWHToLNuLNubb_CV \
+    VBSWWHToLNuLNubb_C3 \
     DoubleEG_Run2016 \
     DoubleMuon_Run2016 \
     MuonEG_Run2016 \
@@ -121,6 +124,9 @@ for SAMPLE in ${SAMPLES}; do
         if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_3_TuneCP5"* ]]; then XSEC=0.000203237376*137/59.97; fi
         if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_4p5_TuneCP5"* ]]; then XSEC=0.0005865984*137/59.97; fi
         if [[ ${SAMPLE} == *"VBSWmpWmpHToLNuLNu_C2V_m2_TuneCP5"* ]]; then XSEC=0.000418440192*137/59.97; fi
+        if [[ ${SAMPLE} == *"VBSWWHToLNuLNubb_C2V"* ]]; then XSEC=0.0009246749816; fi # 0.01483 * 0.3272 * 0.3272 * 0.5824
+        if [[ ${SAMPLE} == *"VBSWWHToLNuLNubb_CV"* ]]; then XSEC=0.0009246749816; fi # 0.01483 * 0.3272 * 0.3272 * 0.5824 # This is becuase the default was set to C2V = 4.5 and the rest was reweighted
+        if [[ ${SAMPLE} == *"VBSWWHToLNuLNubb_C3"* ]]; then XSEC=0.001364877636; fi # 0.02189 * 0.3272 * 0.3272 * 0.5824
         if [[ ${SAMPLE} == *"ttHToNonbb"* ]]; then XSEC=0.215; fi
         if [[ ${SAMPLE} == *"TTTT"* ]]; then XSEC=0.009103; fi
         if [[ ${SAMPLE} == *"TTWW"* ]]; then XSEC=0.0115; fi
