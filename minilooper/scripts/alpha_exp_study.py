@@ -59,24 +59,30 @@ except:
 #_______________________________________________________________________________________________________________________________
 # Defining base directory path where the histograms are saved after running mini looper
 basedir = "/nfs-7/userdata/{}/VBSHWWResult/{}/{}/{}/{}".format(USERNAME, SKIMVERSION, BABYVERSION, YEAR, YOURTAG)
+basedir_jecup = "/nfs-7/userdata/{}/VBSHWWResult/{}/{}/{}/{}".format(USERNAME, SKIMVERSION, BABYVERSION+"_jecUp", YEAR, YOURTAG)
+basedir_jecdn = "/nfs-7/userdata/{}/VBSHWWResult/{}/{}/{}/{}".format(USERNAME, SKIMVERSION, BABYVERSION+"_jecDn", YEAR, YOURTAG)
 
 # List of top backgrounds
 bkgs = ["tt1lpowheg", "tt2lpowheg", "raretop", "ttw", "ttz"]
 
 # Opening up the ROOT TFile's of the top backgrounds that contain the histograms
 topbkg_files = [ r.TFile("{}/{}.root".format(basedir, bkg)) for bkg in bkgs ]
+topbkg_files_jecup = [ r.TFile("{}/{}.root".format(basedir_jecup, bkg)) for bkg in bkgs ] # the JEC up and down have different set of babies
+topbkg_files_jecdn = [ r.TFile("{}/{}.root".format(basedir_jecdn, bkg)) for bkg in bkgs ] # the JEC up and down have different set of babies
 
 # Opening up the data ROOT TFile
 data_file = r.TFile("{}/data.root".format(basedir))
 
 # Opening up the bosons (V/VV/VVV) background ROOT TFile
 bosons_file = r.TFile("{}/bosons.root".format(basedir))
+bosons_file_jecup = r.TFile("{}/bosons.root".format(basedir_jecup))
+bosons_file_jecdn = r.TFile("{}/bosons.root".format(basedir_jecdn))
 
 # Opening up the total background ROOT TFile
 totalbkg_file = r.TFile("{}/totalbkg.root".format(basedir))
 
 # List of systematics
-systematics = ["LepSF", "BTagSF", "PURewgt"]
+systematics = ["LepSF", "BTagSF", "PURewgt", "JEC"]
 
 # List of composition systematics
 comp_syst_variations = ["2xTT1L", "2xTT2L", "2xTTW", "2xTTZ", "2xRareTop"]
@@ -136,11 +142,26 @@ def y_topbkg(channel, region, analysis, systematics=""):
     # each histogram where we will retrieve the yields and error will have signal region yields in the second bin and the first bin will have the yields in the anchor region
     idx = 1 if region == "CR" else 2 # second bin is the "signal region" and the first bin is the "control region"
 
+    # The files to loop over
+    topbkg_files_to_loop_over = topbkg_files
+
+    # Systematics to access
+    systematic_suffix = systematics
+
+    # For JEC variations there are special care needed the files are swapped and no longer need to access with some suffix in the cut names
+    # So we overwrite some of the variables
+    if "JECUp" in systematics:
+        topbkg_files_to_loop_over = topbkg_files_jecup
+        systematic_suffix = ""
+    elif "JECDn" in systematics:
+        topbkg_files_to_loop_over = topbkg_files_jecdn
+        systematic_suffix = ""
+
     # loop over top backgrounds and get histograms and get yields and errors
-    for f in topbkg_files: # loop over top backgrounds and get histograms and get yields and errors
+    for f in topbkg_files_to_loop_over: # loop over top backgrounds and get histograms and get yields and errors
 
         # Get the histograms that contain the yield
-        h = f.Get("LooseVR{}__{}SR{}".format(systematics, analysis, channel))
+        h = f.Get("LooseVR{}__{}SR{}".format(systematic_suffix, analysis, channel))
 
         # Get the yield and the error for this top bkg to sum it up later
         tmp_bc = h.GetBinContent(idx) # second bin is the "signal region"
@@ -172,15 +193,29 @@ def y_dt(channel, region, analysis, systematics=""):
     # each histogram where we will retrieve the yields and error will have signal region yields in the second bin and the first bin will have the yields in the anchor region
     idx = 1 if region == "CR" else 2 # second bin is the "signal region" and the first bin is the "control region"
 
+    # Systematics to access
+    systematic_suffix = systematics
+    bosons_file_to_access = bosons_file
+
+    # For JEC variations there are special care needed the files are swapped and no longer need to access with some suffix in the cut names
+    # So we overwrite some of the variables
+    if "JECUp" in systematics:
+        systematic_suffix = ""
+        bosons_file_to_access = bosons_file_jecup
+    elif "JECDn" in systematics:
+        systematic_suffix = ""
+        bosons_file_to_access = bosons_file_jecdn
+
     # Get the data histogram
-    data_h = data_file.Get("LooseVR{}__{}SR{}".format(systematics, analysis, channel))
+    # Data does not have jec up or down variations
+    data_h = data_file.Get("LooseVR{}__{}SR{}".format(systematic_suffix, analysis, channel))
 
     # Obtain the yield and error
     data_bc = data_h.GetBinContent(idx)
     data_be = data_h.GetBinError(idx)
 
     # Get the bosons bkg histogram
-    bosons_h = bosons_file.Get("LooseVR{}__{}SR{}".format(systematics, analysis, channel))
+    bosons_h = bosons_file_to_access.Get("LooseVR{}__{}SR{}".format(systematic_suffix, analysis, channel))
 
     # Obtain the yield and error
     bosons_bc = bosons_h.GetBinContent(idx)
