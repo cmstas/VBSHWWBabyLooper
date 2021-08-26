@@ -95,9 +95,9 @@ def run(doBDT, idx, coupling):
         hists[process].SetTitle(process)
 
         # If signal scale it up to 137/fb because we are missing 2016 signal (FIXME)
-        if process in sigs:
-            hists[process].Scale(137/(59.97+41.3))
-            # hists[process].Scale(20)
+        # if process in sigs:
+        #     hists[process].Scale(137/(59.97+41.3))
+        #     hists[process].Scale(20)
 
     ######################################################################################
     #
@@ -119,28 +119,42 @@ def run(doBDT, idx, coupling):
 
     # Grand object that will hold list of systematic definitions
     systs = []
+    # Hand-made systematics
+    systs.append(("lumiSyst", "lnN", [], {sigs[0]:2.5, "topbkgfit": 2.5, "bosons": 2.5}))
+    if doBDT:
+        # BDT-based systematics
+        systs.append(("bkgExtrapolationSyst", "lnN", [], {sigs[0]: 0.0, "topbkgfit": [73.8, 63.7, 90.7, 84.8], "bosons": 0.0}))
+        systs.append(("btagsfSyst", "lnN", [], {sigs[0]: [4.9, 5.2, 4.5, 4.9], "topbkgfit": 0, "bosons": [9.6, 9.3, 0.0, 4.4]}))
+        systs.append(("jecSyst", "lnN", [], {sigs[0]: [10.4, 8.4, 7.9, 9.9], "topbkgfit": 0, "bosons": [16.9, 19.2, 0.0, 47.4]}))
+        systs.append(("pileUpSyst", "lnN", [], {sigs[0]: [0.0, 0.2, 1.2, 1.8], "topbkgfit": 0, "bosons": [13.3, 6.5, 0.0, 8.3]}))
+        systs.append(("lheScaleWeightSyst", "lnN", [], {sigs[0]: [21.4, 21.6, 21.2, 23.1], "topbkgfit": 0, "bosons": [10.1, 16.9, 0.0, 6.3]}))
+        systs.append(("lhePdfWeightSyst", "lnN", [], {sigs[0]: [1.7, 2.4, 2.6, 7.1], "topbkgfit": 0, "bosons": [0.3, 0.5, 0.0, 2.7]}))
+        systs.append(("trigsfSyst", "lnN", [], {sigs[0]: [1.0, 1.3, 5.0, 1.6], "topbkgfit": 0, "bosons": [1.0, 1.5, 0.0, 2.0]}))
+        systs.append(("lepsfSyst", "lnN", [], {sigs[0]: [12.5, 3.7, 5.4, 5.6], "topbkgfit": 0, "bosons": [10.4, 2.6, 0.0, 0.2]}))
+    else:
+        # Cut-based systematics
+        systs.append(("bkgExtrapolationSyst", "lnN", [], {sigs[0]: 0.0, "topbkgfit": [293, 84, 73.1, 99.9, 52.7], "bosons": 0.0}))
+        systs.append(("btagsfSyst", "lnN", [], {sigs[0]: [4.6, 4.6, 4.9, 4.6, 3.5], "topbkgfit": 0, "bosons": [3.5, 18.6, 0.0, 4.4, 13.9]}))
+        systs.append(("jecSyst", "lnN", [], {sigs[0]: [8.9, 8.0, 8.3, 10.2, 7.2], "topbkgfit": 0, "bosons": [100.0, 0.1, 0.0, 0.0, 55.3]}))
+        systs.append(("pileUpSyst", "lnN", [], {sigs[0]: [0.8, 0.5, 1.2, 2.3, 1.2], "topbkgfit": 0, "bosons": [17.3, 8.3, 0.0, 8.3, 1.1]}))
+        systs.append(("lheScaleWeightSyst", "lnN", [], {sigs[0]: [22.5, 22.3, 22.4, 24.3, 17.9], "topbkgfit": 0, "bosons": [11.4, 9.2, 0.0, 6.3, 9.4]}))
+        systs.append(("lhePdfWeightSyst", "lnN", [], {sigs[0]: [1.8, 2.3, 2.7, 8.2, 1.4], "topbkgfit": 0, "bosons": [0.3, 1.1, 0.0, 2.7, 0.4]}))
+        systs.append(("trigsfSyst", "lnN", [], {sigs[0]: [1.0, 1.3, 5.0, 1.7, 1.0], "topbkgfit": 0, "bosons": [1.0, 1.0, 0.0, 2.0, 1.0]}))
+        systs.append(("lepsfSyst", "lnN", [], {sigs[0]: [12.4, 3.7, 5.4, 5.5, 6.8], "topbkgfit": 0, "bosons": [17.0, 8.8, 0.0, 0.2, 9.3]}))
 
-    # 60% symmetric error on all top backgrounds
-    flat60pSyst = 0.6 # 60%
-    flat60pSystMap = {}
-    for process in processes:
-        if process in topbkgs:
-            flat60pSystMap[process] = "{}".format(1. + flat60pSyst)
-        else:
-            flat60pSystMap[process] = 0
-    # Add the 60% systematics to the grand systs list
-    systs.append( ("flat60pSyst", "lnN", [], flat60pSystMap) )
-
-    # 20% symmetric error on signal
-    flat20pSyst = 0.2 # 20%
-    flat20pSystMap = {}
-    for process in processes:
-        if process in sigs:
-            flat20pSystMap[process] = "{}".format(1. + flat20pSyst)
-        else:
-            flat20pSystMap[process] = 0
-    # Add the 20% systematics to the grand systs list
-    systs.append( ("flat20pSyst", "lnN", [], flat20pSystMap) )
+    # Turn X% errors into 1+X/100
+    fix_percent = lambda p: 1+p/100. if p != 0 else p
+    fix_percents = lambda percents: [fix_percent(p) for p in percents]
+    _systs = []
+    for name, syst_type, empty_list, syst_map in systs:
+        _syst_map = {}
+        for key, val in syst_map.iteritems():
+            if type(val) == list:
+                _syst_map[key] = [str(v) if v != 0 else "-" for v in fix_percents(val)]
+            else:
+                _syst_map[key] = str(fix_percent(val)) if val != 0 else "-"
+        _systs.append((name, syst_type, empty_list, _syst_map))
+    systs = _systs
 
     # create the data card writer tool
     d = dw.DataCardWriter(
