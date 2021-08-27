@@ -10,6 +10,7 @@
 
 import datacard_writer as dw # if giving error run   $ source ../rooutil/thisrooutil.sh
 import ROOT as r
+from get_systs import get_systs
 
 def run(doBDT, idx, coupling):
 
@@ -121,27 +122,8 @@ def run(doBDT, idx, coupling):
     systs = []
     # Hand-made systematics
     systs.append(("lumiSyst", "lnN", [], {sigs[0]:2.5, "topbkgfit": 2.5, "bosons": 2.5}))
-    if doBDT:
-        # BDT-based systematics
-        systs.append(("bkgExtrapolationSyst", "lnN", [], {sigs[0]: 0.0, "topbkgfit": [73.8, 63.7, 90.7, 84.8], "bosons": 0.0}))
-        systs.append(("btagsfSyst", "lnN", [], {sigs[0]: [4.9, 5.2, 4.5, 4.9], "topbkgfit": 0, "bosons": [9.6, 9.3, 0.0, 4.4]}))
-        systs.append(("jecSyst", "lnN", [], {sigs[0]: [10.4, 8.4, 7.9, 9.9], "topbkgfit": 0, "bosons": [16.9, 19.2, 0.0, 47.4]}))
-        systs.append(("pileUpSyst", "lnN", [], {sigs[0]: [0.0, 0.2, 1.2, 1.8], "topbkgfit": 0, "bosons": [13.3, 6.5, 0.0, 8.3]}))
-        systs.append(("lheScaleWeightSyst", "lnN", [], {sigs[0]: [21.4, 21.6, 21.2, 23.1], "topbkgfit": 0, "bosons": [10.1, 16.9, 0.0, 6.3]}))
-        systs.append(("lhePdfWeightSyst", "lnN", [], {sigs[0]: [1.7, 2.4, 2.6, 7.1], "topbkgfit": 0, "bosons": [0.3, 0.5, 0.0, 2.7]}))
-        systs.append(("trigsfSyst", "lnN", [], {sigs[0]: [1.0, 1.3, 5.0, 1.6], "topbkgfit": 0, "bosons": [1.0, 1.5, 0.0, 2.0]}))
-        systs.append(("lepsfSyst", "lnN", [], {sigs[0]: [12.5, 3.7, 5.4, 5.6], "topbkgfit": 0, "bosons": [10.4, 2.6, 0.0, 0.2]}))
-    else:
-        # Cut-based systematics
-        systs.append(("bkgExtrapolationSyst", "lnN", [], {sigs[0]: 0.0, "topbkgfit": [293, 84, 73.1, 99.9, 52.7], "bosons": 0.0}))
-        systs.append(("btagsfSyst", "lnN", [], {sigs[0]: [4.6, 4.6, 4.9, 4.6, 3.5], "topbkgfit": 0, "bosons": [3.5, 18.6, 0.0, 4.4, 13.9]}))
-        systs.append(("jecSyst", "lnN", [], {sigs[0]: [8.9, 8.0, 8.3, 10.2, 7.2], "topbkgfit": 0, "bosons": [100.0, 0.1, 0.0, 0.0, 55.3]}))
-        systs.append(("pileUpSyst", "lnN", [], {sigs[0]: [0.8, 0.5, 1.2, 2.3, 1.2], "topbkgfit": 0, "bosons": [17.3, 8.3, 0.0, 8.3, 1.1]}))
-        systs.append(("lheScaleWeightSyst", "lnN", [], {sigs[0]: [22.5, 22.3, 22.4, 24.3, 17.9], "topbkgfit": 0, "bosons": [11.4, 9.2, 0.0, 6.3, 9.4]}))
-        systs.append(("lhePdfWeightSyst", "lnN", [], {sigs[0]: [1.8, 2.3, 2.7, 8.2, 1.4], "topbkgfit": 0, "bosons": [0.3, 1.1, 0.0, 2.7, 0.4]}))
-        systs.append(("trigsfSyst", "lnN", [], {sigs[0]: [1.0, 1.3, 5.0, 1.7, 1.0], "topbkgfit": 0, "bosons": [1.0, 1.0, 0.0, 2.0, 1.0]}))
-        systs.append(("lepsfSyst", "lnN", [], {sigs[0]: [12.4, 3.7, 5.4, 5.5, 6.8], "topbkgfit": 0, "bosons": [17.0, 8.8, 0.0, 0.2, 9.3]}))
-
+    # Factory-made systematics from LaTeX tables
+    systs += get_systs(sigs[0], doBDT=doBDT)
     # Turn X% errors into 1+X/100
     fix_percent = lambda p: 1+p/100. if p != 0 else p
     fix_percents = lambda percents: [fix_percent(p) for p in percents]
