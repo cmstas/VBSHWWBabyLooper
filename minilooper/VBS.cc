@@ -341,6 +341,26 @@ void VBS::Init(TTree *tree) {
   if (bdt_branch) bdt_branch->SetAddress(&bdt_);
   bdt_mbboff_branch = tree->GetBranch("bdt_mbboff");
   if (bdt_mbboff_branch) bdt_mbboff_branch->SetAddress(&bdt_mbboff_);
+  LHE_muF0p5_muR0p5_branch = tree->GetBranch("LHE_muF0p5_muR0p5");
+  if (LHE_muF0p5_muR0p5_branch) LHE_muF0p5_muR0p5_branch->SetAddress(&LHE_muF0p5_muR0p5_);
+  LHE_muF1p0_muR0p5_branch = tree->GetBranch("LHE_muF1p0_muR0p5");
+  if (LHE_muF1p0_muR0p5_branch) LHE_muF1p0_muR0p5_branch->SetAddress(&LHE_muF1p0_muR0p5_);
+  LHE_muF2p0_muR0p5_branch = tree->GetBranch("LHE_muF2p0_muR0p5");
+  if (LHE_muF2p0_muR0p5_branch) LHE_muF2p0_muR0p5_branch->SetAddress(&LHE_muF2p0_muR0p5_);
+  LHE_muF0p5_muR1p0_branch = tree->GetBranch("LHE_muF0p5_muR1p0");
+  if (LHE_muF0p5_muR1p0_branch) LHE_muF0p5_muR1p0_branch->SetAddress(&LHE_muF0p5_muR1p0_);
+  LHE_muF2p0_muR1p0_branch = tree->GetBranch("LHE_muF2p0_muR1p0");
+  if (LHE_muF2p0_muR1p0_branch) LHE_muF2p0_muR1p0_branch->SetAddress(&LHE_muF2p0_muR1p0_);
+  LHE_muF0p5_muR2p0_branch = tree->GetBranch("LHE_muF0p5_muR2p0");
+  if (LHE_muF0p5_muR2p0_branch) LHE_muF0p5_muR2p0_branch->SetAddress(&LHE_muF0p5_muR2p0_);
+  LHE_muF1p0_muR2p0_branch = tree->GetBranch("LHE_muF1p0_muR2p0");
+  if (LHE_muF1p0_muR2p0_branch) LHE_muF1p0_muR2p0_branch->SetAddress(&LHE_muF1p0_muR2p0_);
+  LHE_muF2p0_muR2p0_branch = tree->GetBranch("LHE_muF2p0_muR2p0");
+  if (LHE_muF2p0_muR2p0_branch) LHE_muF2p0_muR2p0_branch->SetAddress(&LHE_muF2p0_muR2p0_);
+  LHE_pdf_wgt_up_branch = tree->GetBranch("LHE_pdf_wgt_up");
+  if (LHE_pdf_wgt_up_branch) LHE_pdf_wgt_up_branch->SetAddress(&LHE_pdf_wgt_up_);
+  LHE_pdf_wgt_dn_branch = tree->GetBranch("LHE_pdf_wgt_dn");
+  if (LHE_pdf_wgt_dn_branch) LHE_pdf_wgt_dn_branch->SetAddress(&LHE_pdf_wgt_dn_);
 
   tree->SetMakeClass(0);
 }
@@ -516,6 +536,16 @@ void VBS::GetEntry(unsigned int idx) {
   xsec_sf_isLoaded = false;
   bdt_isLoaded = false;
   bdt_mbboff_isLoaded = false;
+  LHE_muF0p5_muR0p5_isLoaded = false;
+  LHE_muF1p0_muR0p5_isLoaded = false;
+  LHE_muF2p0_muR0p5_isLoaded = false;
+  LHE_muF0p5_muR1p0_isLoaded = false;
+  LHE_muF2p0_muR1p0_isLoaded = false;
+  LHE_muF0p5_muR2p0_isLoaded = false;
+  LHE_muF1p0_muR2p0_isLoaded = false;
+  LHE_muF2p0_muR2p0_isLoaded = false;
+  LHE_pdf_wgt_up_isLoaded = false;
+  LHE_pdf_wgt_dn_isLoaded = false;
 }
 
 void VBS::LoadAllBranches() {
@@ -688,6 +718,16 @@ void VBS::LoadAllBranches() {
   if (xsec_sf_branch != 0) xsec_sf();
   if (bdt_branch != 0) bdt();
   if (bdt_mbboff_branch != 0) bdt_mbboff();
+  if (LHE_muF0p5_muR0p5_branch != 0) LHE_muF0p5_muR0p5();
+  if (LHE_muF1p0_muR0p5_branch != 0) LHE_muF1p0_muR0p5();
+  if (LHE_muF2p0_muR0p5_branch != 0) LHE_muF2p0_muR0p5();
+  if (LHE_muF0p5_muR1p0_branch != 0) LHE_muF0p5_muR1p0();
+  if (LHE_muF2p0_muR1p0_branch != 0) LHE_muF2p0_muR1p0();
+  if (LHE_muF0p5_muR2p0_branch != 0) LHE_muF0p5_muR2p0();
+  if (LHE_muF1p0_muR2p0_branch != 0) LHE_muF1p0_muR2p0();
+  if (LHE_muF2p0_muR2p0_branch != 0) LHE_muF2p0_muR2p0();
+  if (LHE_pdf_wgt_up_branch != 0) LHE_pdf_wgt_up();
+  if (LHE_pdf_wgt_dn_branch != 0) LHE_pdf_wgt_dn();
 }
 
 const int &VBS::run() {
@@ -2874,6 +2914,136 @@ const float &VBS::bdt_mbboff() {
   return bdt_mbboff_;
 }
 
+const float &VBS::LHE_muF0p5_muR0p5() {
+  if (not LHE_muF0p5_muR0p5_isLoaded) {
+    if (LHE_muF0p5_muR0p5_branch != 0) {
+      LHE_muF0p5_muR0p5_branch->GetEntry(index);
+    } else {
+      printf("branch LHE_muF0p5_muR0p5_branch does not exist!\n");
+      exit(1);
+    }
+    LHE_muF0p5_muR0p5_isLoaded = true;
+  }
+  return LHE_muF0p5_muR0p5_;
+}
+
+const float &VBS::LHE_muF1p0_muR0p5() {
+  if (not LHE_muF1p0_muR0p5_isLoaded) {
+    if (LHE_muF1p0_muR0p5_branch != 0) {
+      LHE_muF1p0_muR0p5_branch->GetEntry(index);
+    } else {
+      printf("branch LHE_muF1p0_muR0p5_branch does not exist!\n");
+      exit(1);
+    }
+    LHE_muF1p0_muR0p5_isLoaded = true;
+  }
+  return LHE_muF1p0_muR0p5_;
+}
+
+const float &VBS::LHE_muF2p0_muR0p5() {
+  if (not LHE_muF2p0_muR0p5_isLoaded) {
+    if (LHE_muF2p0_muR0p5_branch != 0) {
+      LHE_muF2p0_muR0p5_branch->GetEntry(index);
+    } else {
+      printf("branch LHE_muF2p0_muR0p5_branch does not exist!\n");
+      exit(1);
+    }
+    LHE_muF2p0_muR0p5_isLoaded = true;
+  }
+  return LHE_muF2p0_muR0p5_;
+}
+
+const float &VBS::LHE_muF0p5_muR1p0() {
+  if (not LHE_muF0p5_muR1p0_isLoaded) {
+    if (LHE_muF0p5_muR1p0_branch != 0) {
+      LHE_muF0p5_muR1p0_branch->GetEntry(index);
+    } else {
+      printf("branch LHE_muF0p5_muR1p0_branch does not exist!\n");
+      exit(1);
+    }
+    LHE_muF0p5_muR1p0_isLoaded = true;
+  }
+  return LHE_muF0p5_muR1p0_;
+}
+
+const float &VBS::LHE_muF2p0_muR1p0() {
+  if (not LHE_muF2p0_muR1p0_isLoaded) {
+    if (LHE_muF2p0_muR1p0_branch != 0) {
+      LHE_muF2p0_muR1p0_branch->GetEntry(index);
+    } else {
+      printf("branch LHE_muF2p0_muR1p0_branch does not exist!\n");
+      exit(1);
+    }
+    LHE_muF2p0_muR1p0_isLoaded = true;
+  }
+  return LHE_muF2p0_muR1p0_;
+}
+
+const float &VBS::LHE_muF0p5_muR2p0() {
+  if (not LHE_muF0p5_muR2p0_isLoaded) {
+    if (LHE_muF0p5_muR2p0_branch != 0) {
+      LHE_muF0p5_muR2p0_branch->GetEntry(index);
+    } else {
+      printf("branch LHE_muF0p5_muR2p0_branch does not exist!\n");
+      exit(1);
+    }
+    LHE_muF0p5_muR2p0_isLoaded = true;
+  }
+  return LHE_muF0p5_muR2p0_;
+}
+
+const float &VBS::LHE_muF1p0_muR2p0() {
+  if (not LHE_muF1p0_muR2p0_isLoaded) {
+    if (LHE_muF1p0_muR2p0_branch != 0) {
+      LHE_muF1p0_muR2p0_branch->GetEntry(index);
+    } else {
+      printf("branch LHE_muF1p0_muR2p0_branch does not exist!\n");
+      exit(1);
+    }
+    LHE_muF1p0_muR2p0_isLoaded = true;
+  }
+  return LHE_muF1p0_muR2p0_;
+}
+
+const float &VBS::LHE_muF2p0_muR2p0() {
+  if (not LHE_muF2p0_muR2p0_isLoaded) {
+    if (LHE_muF2p0_muR2p0_branch != 0) {
+      LHE_muF2p0_muR2p0_branch->GetEntry(index);
+    } else {
+      printf("branch LHE_muF2p0_muR2p0_branch does not exist!\n");
+      exit(1);
+    }
+    LHE_muF2p0_muR2p0_isLoaded = true;
+  }
+  return LHE_muF2p0_muR2p0_;
+}
+
+const float &VBS::LHE_pdf_wgt_up() {
+  if (not LHE_pdf_wgt_up_isLoaded) {
+    if (LHE_pdf_wgt_up_branch != 0) {
+      LHE_pdf_wgt_up_branch->GetEntry(index);
+    } else {
+      printf("branch LHE_pdf_wgt_up_branch does not exist!\n");
+      exit(1);
+    }
+    LHE_pdf_wgt_up_isLoaded = true;
+  }
+  return LHE_pdf_wgt_up_;
+}
+
+const float &VBS::LHE_pdf_wgt_dn() {
+  if (not LHE_pdf_wgt_dn_isLoaded) {
+    if (LHE_pdf_wgt_dn_branch != 0) {
+      LHE_pdf_wgt_dn_branch->GetEntry(index);
+    } else {
+      printf("branch LHE_pdf_wgt_dn_branch does not exist!\n");
+      exit(1);
+    }
+    LHE_pdf_wgt_dn_isLoaded = true;
+  }
+  return LHE_pdf_wgt_dn_;
+}
+
 
 void VBS::progress( int nEventsTotal, int nEventsChain ){
   int period = 1000;
@@ -3065,6 +3235,16 @@ const int &is_bdt_cr2() { return vbs.is_bdt_cr2(); }
 const float &xsec_sf() { return vbs.xsec_sf(); }
 const float &bdt() { return vbs.bdt(); }
 const float &bdt_mbboff() { return vbs.bdt_mbboff(); }
+const float &LHE_muF0p5_muR0p5() { return vbs.LHE_muF0p5_muR0p5(); }
+const float &LHE_muF1p0_muR0p5() { return vbs.LHE_muF1p0_muR0p5(); }
+const float &LHE_muF2p0_muR0p5() { return vbs.LHE_muF2p0_muR0p5(); }
+const float &LHE_muF0p5_muR1p0() { return vbs.LHE_muF0p5_muR1p0(); }
+const float &LHE_muF2p0_muR1p0() { return vbs.LHE_muF2p0_muR1p0(); }
+const float &LHE_muF0p5_muR2p0() { return vbs.LHE_muF0p5_muR2p0(); }
+const float &LHE_muF1p0_muR2p0() { return vbs.LHE_muF1p0_muR2p0(); }
+const float &LHE_muF2p0_muR2p0() { return vbs.LHE_muF2p0_muR2p0(); }
+const float &LHE_pdf_wgt_up() { return vbs.LHE_pdf_wgt_up(); }
+const float &LHE_pdf_wgt_dn() { return vbs.LHE_pdf_wgt_dn(); }
 
 }
 

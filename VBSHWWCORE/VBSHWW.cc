@@ -26,6 +26,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
 
     // Determine whether the sample being run over has LHEScaleWeight and PSWeight
     hasLHEScaleWeight = false; // default is false
+    hasLHEPdfWeight = false; // default is false
     hasPSWeight = false; // default is false
     hasLHEReweightingWeight = false; // default is false
     TObjArray* brobjArray = events_tchain->GetListOfBranches();
@@ -34,6 +35,8 @@ VBSHWW::VBSHWW(int argc, char** argv) :
         TString brname = brobjArray->At(ibr)->GetName();
         if (brname.EqualTo("LHEScaleWeight"))
             hasLHEScaleWeight = true; // if it has the branch it is set to true
+        if (brname.EqualTo("LHEPdfWeight"))
+            hasLHEPdfWeight = true; // if it has the branch it is set to true
         if (brname.EqualTo("PSWeight"))
             hasPSWeight = true; // if it has the branch it is set to true
         if (brname.EqualTo("LHEReweightingWeight"))

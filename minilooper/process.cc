@@ -25,7 +25,7 @@ int main(int argc, char** argv)
                                vbs.wgt() *
                                vbs.btagsf() *
                                vbs.lepsf() *
-                               vbs.xsec_sf() *
+                               (ana.looper.getCurrentFileName().Contains("vbshww") ? 1. : vbs.xsec_sf()) *
                                vbs.genrewgt() *
                                (ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.trigsf()) *
                                (ana.rwgtidx < 0 ? 1. : vbs.lherewgts()[ana.rwgtidx]) *
@@ -410,6 +410,16 @@ int main(int argc, char** argv)
     ana.cutflow.addWgtSyst("PURewgtDn", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.pu_rewgt_dn() / vbs.pu_rewgt(); });
     ana.cutflow.addWgtSyst("TrigSFUp", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.trigsf_up() / vbs.trigsf(); });
     ana.cutflow.addWgtSyst("TrigSFDn", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.trigsf_dn() / vbs.trigsf(); });
+    ana.cutflow.addWgtSyst("PDFRewgtUp", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_pdf_wgt_up(); });
+    ana.cutflow.addWgtSyst("PDFRewgtDn", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_pdf_wgt_dn(); });
+    ana.cutflow.addWgtSyst("LHEmuF0p5muR0p5", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_muF0p5_muR0p5(); });
+    ana.cutflow.addWgtSyst("LHEmuF1p0muR0p5", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_muF1p0_muR0p5(); });
+    ana.cutflow.addWgtSyst("LHEmuF2p0muR0p5", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_muF2p0_muR0p5(); });
+    ana.cutflow.addWgtSyst("LHEmuF0p5muR1p0", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_muF0p5_muR1p0(); });
+    ana.cutflow.addWgtSyst("LHEmuF2p0muR1p0", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_muF2p0_muR1p0(); });
+    ana.cutflow.addWgtSyst("LHEmuF0p5muR2p0", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_muF0p5_muR2p0(); });
+    ana.cutflow.addWgtSyst("LHEmuF1p0muR2p0", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_muF1p0_muR2p0(); });
+    ana.cutflow.addWgtSyst("LHEmuF2p0muR2p0", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_muF2p0_muR2p0(); });
 
     // Print cut structure
     ana.cutflow.printCuts();

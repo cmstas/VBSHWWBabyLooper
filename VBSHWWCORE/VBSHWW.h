@@ -65,6 +65,9 @@ public:
     // Boolean to say whether the sample contains LHEScaleWeight
     bool hasLHEScaleWeight;
 
+    // Boolean to say whether the sample contains LHEPdfWeight
+    bool hasLHEPdfWeight;
+
     // Boolean to say whether the sample contains PSWeight
     bool hasPSWeight;
 

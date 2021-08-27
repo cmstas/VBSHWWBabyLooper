@@ -1,6 +1,6 @@
 // -*- C++ -*-
 // This is a header file generated with the command:
-// makeCMS3ClassFiles("/home/users/phchang/public_html/analysis/hwh/VBSHWWBabyLooper--/hists/v2.6_SS/v11/createMini_2016/ZZTo4L_output_0.root", "variable", "VBS", "tas", "vbs")
+// makeCMS3ClassFiles("/home/users/jguiang/projects/philipVBSWWH/hadds/v2.6_SS/v2/createMini_Run2/vbshwwlvlvbb_c2v.root", "variable", "VBS", "tas", "vbs")
 
 #ifndef VBS_H
 #define VBS_H
@@ -527,6 +527,36 @@ class VBS {
   float    bdt_mbboff_;
   TBranch *bdt_mbboff_branch;
   bool     bdt_mbboff_isLoaded;
+  float    LHE_muF0p5_muR0p5_;
+  TBranch *LHE_muF0p5_muR0p5_branch;
+  bool     LHE_muF0p5_muR0p5_isLoaded;
+  float    LHE_muF1p0_muR0p5_;
+  TBranch *LHE_muF1p0_muR0p5_branch;
+  bool     LHE_muF1p0_muR0p5_isLoaded;
+  float    LHE_muF2p0_muR0p5_;
+  TBranch *LHE_muF2p0_muR0p5_branch;
+  bool     LHE_muF2p0_muR0p5_isLoaded;
+  float    LHE_muF0p5_muR1p0_;
+  TBranch *LHE_muF0p5_muR1p0_branch;
+  bool     LHE_muF0p5_muR1p0_isLoaded;
+  float    LHE_muF2p0_muR1p0_;
+  TBranch *LHE_muF2p0_muR1p0_branch;
+  bool     LHE_muF2p0_muR1p0_isLoaded;
+  float    LHE_muF0p5_muR2p0_;
+  TBranch *LHE_muF0p5_muR2p0_branch;
+  bool     LHE_muF0p5_muR2p0_isLoaded;
+  float    LHE_muF1p0_muR2p0_;
+  TBranch *LHE_muF1p0_muR2p0_branch;
+  bool     LHE_muF1p0_muR2p0_isLoaded;
+  float    LHE_muF2p0_muR2p0_;
+  TBranch *LHE_muF2p0_muR2p0_branch;
+  bool     LHE_muF2p0_muR2p0_isLoaded;
+  float    LHE_pdf_wgt_up_;
+  TBranch *LHE_pdf_wgt_up_branch;
+  bool     LHE_pdf_wgt_up_isLoaded;
+  float    LHE_pdf_wgt_dn_;
+  TBranch *LHE_pdf_wgt_dn_branch;
+  bool     LHE_pdf_wgt_dn_isLoaded;
 public: 
 void Init(TTree *tree);
 void GetEntry(unsigned int idx); 
@@ -699,6 +729,16 @@ void LoadAllBranches();
   const float &xsec_sf();
   const float &bdt();
   const float &bdt_mbboff();
+  const float &LHE_muF0p5_muR0p5();
+  const float &LHE_muF1p0_muR0p5();
+  const float &LHE_muF2p0_muR0p5();
+  const float &LHE_muF0p5_muR1p0();
+  const float &LHE_muF2p0_muR1p0();
+  const float &LHE_muF0p5_muR2p0();
+  const float &LHE_muF1p0_muR2p0();
+  const float &LHE_muF2p0_muR2p0();
+  const float &LHE_pdf_wgt_up();
+  const float &LHE_pdf_wgt_dn();
 
   static void progress(int nEventsTotal, int nEventsChain);
 };
@@ -876,6 +916,16 @@ namespace tas {
   const float &xsec_sf();
   const float &bdt();
   const float &bdt_mbboff();
+  const float &LHE_muF0p5_muR0p5();
+  const float &LHE_muF1p0_muR0p5();
+  const float &LHE_muF2p0_muR0p5();
+  const float &LHE_muF0p5_muR1p0();
+  const float &LHE_muF2p0_muR1p0();
+  const float &LHE_muF0p5_muR2p0();
+  const float &LHE_muF1p0_muR2p0();
+  const float &LHE_muF2p0_muR2p0();
+  const float &LHE_pdf_wgt_up();
+  const float &LHE_pdf_wgt_dn();
 }
 #include "rooutil.h"
 #endif
