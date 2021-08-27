@@ -1,6 +1,6 @@
 def get_systs(signal,
               philip_plot_dir="/nfs-7/userdata/jguiang/VBSHWWResult/v2.6_SS/v2/Run2/Nominal/plots", 
-              jonathan_table_dir="/home/users/jguiang/projects/philipVBSWWH/notebooks",
+              jonathan_table_dir="/home/users/jguiang/public_html/dump/vbs_syst_tables/",
               doBDT=False):
     bdt_philip_systs = []
     cut_philip_systs = []
