@@ -82,7 +82,10 @@ bosons_file_jecdn = r.TFile("{}/bosons.root".format(basedir_jecdn))
 totalbkg_file = r.TFile("{}/totalbkg.root".format(basedir))
 
 # List of systematics
-systematics = ["LepSF", "BTagSF", "PURewgt", "JEC"]
+systematics = ["LepSF", "BTagSF", "PURewgt", "JEC", "PDFRewgt", "Scale"]
+
+# List of 9 scale variations
+scalevariations = ["LHEmuF0p5muR0p5", "LHEmuF1p0muR0p5", "LHEmuF2p0muR0p5", "LHEmuF0p5muR1p0", "LHEmuF2p0muR1p0", "LHEmuF0p5muR2p0", "LHEmuF1p0muR2p0", "LHEmuF2p0muR2p0",]
 
 # List of composition systematics
 comp_syst_variations = ["2xTT1L", "2xTT2L", "2xTTW", "2xTTZ", "2xRareTop"]
@@ -157,21 +160,69 @@ def y_topbkg(channel, region, analysis, systematics=""):
         topbkg_files_to_loop_over = topbkg_files_jecdn
         systematic_suffix = ""
 
-    # loop over top backgrounds and get histograms and get yields and errors
-    for f in topbkg_files_to_loop_over: # loop over top backgrounds and get histograms and get yields and errors
+    # If the systematic is "ScaleUp" or "ScaleDn" then we need to treat it
+    # specially where the 9 different histograms are individually accessed and
+    # the biggest difference is taken as the up or dn
+    if "Scale" in systematics:
 
-        # Get the histograms that contain the yield
-        h = f.Get("LooseVR{}__{}SR{}".format(systematic_suffix, analysis, channel))
+        # There are 9 variations (e.g. "LHEmuF0p5muR0p5", ... )
+        for scalevar in scalevariations:
 
-        # Get the yield and the error for this top bkg to sum it up later
-        tmp_bc = h.GetBinContent(idx) # second bin is the "signal region"
-        tmp_be = h.GetBinError(idx)
-        if tmp_bc <= 0: # If a yield goes below zero we zero it out prior to summing all top backgrounds for stability
-            tmp_bc = 1e-6
+            # This variation's bc and be
+            bc_var = 0
+            be_var = 0
 
-        # Now sum it up
-        bc += tmp_bc
-        be = math.sqrt(be**2 + tmp_be**2)
+            # loop over top backgrounds and get histograms and get yields and errors
+            for f in topbkg_files_to_loop_over: # loop over top backgrounds and get histograms and get yields and errors
+
+                # Get the histograms that contain the yield
+                h = f.Get("LooseVR{}__{}SR{}".format(scalevar, analysis, channel))
+
+                # Get the yield and the error for this top bkg to sum it up later
+                tmp_bc = h.GetBinContent(idx) # second bin is the "signal region"
+                tmp_be = h.GetBinError(idx)
+                if tmp_bc <= 0: # If a yield goes below zero we zero it out prior to summing all top backgrounds for stability
+                    tmp_bc = 1e-6
+
+                # Now sum it up
+                bc_var += tmp_bc
+                be_var = math.sqrt(be_var**2 + tmp_be**2)
+
+            # If it is the first variation being tried then first take that value
+            if bc == 0 and be == 0:
+                bc = bc_var
+                be = be_var
+            else:
+                # If ScaleUp then choose the max
+                if "Up" in systematics:
+                    if bc < bc_var:
+                        bc = bc_var
+                        be = be_var
+                elif "Dn" in systematics:
+                    if bc > bc_var:
+                        bc = bc_var
+                        be = be_var
+                else:
+                    print("Scale variation name does not contain either Up or Dn! systematics={}".format(systematics))
+                    sys.exit()
+
+    else:
+
+        # loop over top backgrounds and get histograms and get yields and errors
+        for f in topbkg_files_to_loop_over: # loop over top backgrounds and get histograms and get yields and errors
+
+            # Get the histograms that contain the yield
+            h = f.Get("LooseVR{}__{}SR{}".format(systematic_suffix, analysis, channel))
+
+            # Get the yield and the error for this top bkg to sum it up later
+            tmp_bc = h.GetBinContent(idx) # second bin is the "signal region"
+            tmp_be = h.GetBinError(idx)
+            if tmp_bc <= 0: # If a yield goes below zero we zero it out prior to summing all top backgrounds for stability
+                tmp_bc = 1e-6
+
+            # Now sum it up
+            bc += tmp_bc
+            be = math.sqrt(be**2 + tmp_be**2)
 
     # Return the total bkg yield and error
     return E(bc, be)
@@ -181,7 +232,7 @@ def bsrmc(channel, analysis, systematics=""): return y_topbkg(channel, "SR", ana
 def bcrmc(channel, analysis, systematics=""): return y_topbkg(channel, "CR", analysis, systematics)
 
 #_______________________________________________________________________________________________________________________________
-# (Data - Bosons) yield and error in signal or control region. (Data-bosons = amount of top background in data)
+# (Data - Bosons) yield and error in signal or control region. (Data-bosons = amount of top background in data)# Input:
 # Input:
 #   - channel   = El, Mu, Tau, Neg, or Lgt (Lgt = the table scrap in cut based. There is no Lgt for BDT)
 #   - region    = SR or CR
@@ -214,12 +265,63 @@ def y_dt(channel, region, analysis, systematics=""):
     data_bc = data_h.GetBinContent(idx)
     data_be = data_h.GetBinError(idx)
 
-    # Get the bosons bkg histogram
-    bosons_h = bosons_file_to_access.Get("LooseVR{}__{}SR{}".format(systematic_suffix, analysis, channel))
+    # First declare a dummy value
+    bosons_bc = 0
+    bosons_be = 0
 
-    # Obtain the yield and error
-    bosons_bc = bosons_h.GetBinContent(idx)
-    bosons_be = bosons_h.GetBinError(idx)
+    # If the systematic is "ScaleUp" or "ScaleDn" then we need to treat it
+    # specially where the 9 different histograms are individually accessed and
+    # the biggest difference is taken as the up or dn
+    if "Scale" in systematics:
+
+        # There are 9 variations (e.g. "LHEmuF0p5muR0p5", ... )
+        for scalevar in scalevariations:
+
+            # This variation's bc and be
+            bosons_bc_var = 0
+            bosons_be_var = 0
+
+            # loop over top backgrounds and get histograms and get yields and errors
+            for f in topbkg_files_to_loop_over: # loop over top backgrounds and get histograms and get yields and errors
+
+                # Get the histograms that contain the yield
+                h = f.Get("LooseVR{}__{}SR{}".format(scalevar, analysis, channel))
+
+                # Get the yield and the error for this top bkg to sum it up later
+                tmp_bc = h.GetBinContent(idx) # second bin is the "signal region"
+                tmp_be = h.GetBinError(idx)
+                if tmp_bc <= 0: # If a yield goes below zero we zero it out prior to summing all top backgrounds for stability
+                    tmp_bc = 1e-6
+
+                # Now sum it up
+                bosons_bc_var += tmp_bc
+                bosons_be_var = math.sqrt(bosons_be_var**2 + tmp_be**2)
+
+            # If it is the first variation being tried then first take that value
+            if bosons_bc == 0 and bosons_be == 0:
+                bosons_bc = bosons_bc_var
+                bosons_be = bosons_be_var
+            else:
+                # If ScaleUp then choose the max
+                if "Up" in systematics:
+                    if bosons_bc < bosons_bc_var:
+                        bosons_bc = bosons_bc_var
+                        bosons_be = bosons_be_var
+                elif "Dn" in systematics:
+                    if bosons_bc > bosons_bc_var:
+                        bosons_bc = bosons_bc_var
+                        bosons_be = bosons_be_var
+                else:
+                    print("Scale variation name does not contain either Up or Dn! systematics={}".format(systematics))
+                    sys.exit()
+    else:
+
+        # Get the bosons bkg histogram
+        bosons_h = bosons_file_to_access.Get("LooseVR{}__{}SR{}".format(systematic_suffix, analysis, channel))
+
+        # Obtain the yield and error
+        bosons_bc = bosons_h.GetBinContent(idx)
+        bosons_be = bosons_h.GetBinError(idx)
 
     if bosons_bc <= 0: # If a yield goes below zero we zero it out
         bosons_bc = 1e-6
