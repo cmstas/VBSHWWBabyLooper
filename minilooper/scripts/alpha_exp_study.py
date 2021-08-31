@@ -639,11 +639,7 @@ def get_str_cut():
         vals.append(tex(bcrdt(channel, analysis)))
         vals.append(tex(bsrdt(channel, analysis)))
 
-    result = """
-\\begin{{sidewaystable}}
-\\centering
-\\resizebox{{\\columnwidth}}{{!}}{{%
-\\begin{{tabular}}{{@{{\\extracolsep{{4pt}}}}lccccc@{{}}}}
+    result = """\\begin{{tabular}}{{@{{\\extracolsep{{4pt}}}}lccccc@{{}}}}
 \\hline\\hline
   Channels                 & {} & {} & {} & {} & {} \\\\
   \\hline
@@ -654,9 +650,6 @@ def get_str_cut():
   $\\ell^{{+}}\\ell^{{+}}$ & {} & {} & {} (={} $\\oplus$ {} $\\oplus$ {} $\\oplus$ {}) & {} & {} \\\\
 \\hline\\hline
 \\end{{tabular}}
-}}
-\\caption{{\\label{{tab:extrapolationCut}} Extrapolation factors summary for cut-based analysis}}
-\\end{{sidewaystable}}
     """.format(*vals)
     return result
 
@@ -682,11 +675,7 @@ def get_str_bdt():
         vals.append(tex(bcrdt(channel, analysis)))
         vals.append(tex(bsrdt(channel, analysis)))
 
-    result = """
-\\begin{{sidewaystable}}
-\\centering
-\\resizebox{{\\columnwidth}}{{!}}{{%
-\\begin{{tabular}}{{@{{\\extracolsep{{4pt}}}}lccccc@{{}}}}
+    result = """\\begin{{tabular}}{{@{{\\extracolsep{{4pt}}}}lccccc@{{}}}}
 \\hline\\hline
   Channels                 & {} & {} & {} & {} & {} \\\\
   \\hline
@@ -696,9 +685,6 @@ def get_str_bdt():
   $(--)$                   & {} & {} & {} (={} $\\oplus$ {} $\\oplus$ {} $\\oplus$ {}) & {} & {} \\\\
 \\hline\\hline
 \\end{{tabular}}
-}}
-\\caption{{\\label{{tab:extrapolationBDT}} Extrapolation factors summary for BDT-based analysis}}
-\\end{{sidewaystable}}
     """.format(*vals)
     return result
 
@@ -796,10 +782,7 @@ def get_str_comp():
         vals.append("{:.3g}".format(max_pos_alpha.val))
         vals.append("{:.3g}\\%".format((max_pos_alpha.val / aph.val - 1)*100.))
         vals.append("{}".format(proc_pprint(max_pos_type)))
-    result = """\\begin{{sidewaystable}}
-\\centering
-\\resizebox{{\\columnwidth}}{{!}}{{%
-\\begin{{tabular}}{{@{{\\extracolsep{{4pt}}}}lcccccccc@{{}}}}
+    result = """\\begin{{tabular}}{{@{{\\extracolsep{{4pt}}}}lcccccccc@{{}}}}
 \\hline\\hline
                 & {} & {} & {} & {} & {} & {} & {} \\\\
 \\hline
@@ -813,9 +796,6 @@ BDT & & & \\\\
 ~~~~~~\\negchan & {} & {} & {} & {} & {} & {} & {} \\\\
 \\hline\\hline
 \\end{{tabular}}   
-}}
-\\caption{{\\label{{tab:aexpComposition}} Comparing \\aexp values with maximally different \\aexp obtained when varying $\\ttbar+X$ process being varied.  The specific process that led to the largest variations are noted.}}
-\\end{{sidewaystable}}
 """.format(*vals)
     return result
 
@@ -825,29 +805,25 @@ if __name__ == "__main__":
     if not os.path.exists(plotdir):
         os.makedirs(plotdir)
 
-    texpath = "{}/plots/aexp.tex".format(basedir)
-    aexp_tex = open(texpath, "w")
-
+    texpath = "{}/plots/aexp_cut.tex".format(basedir)
     cut_str = get_str_cut()
-    bdt_str = get_str_bdt()
-
-    aexp_tex.write(cut_str)
-    aexp_tex.write(bdt_str)
-
+    with open(texpath, "w") as aexp_tex:
+        aexp_tex.write(cut_str)
     print(cut_str)
-    print(bdt_str)
-
     print("Saved to {}".format(texpath))
 
-    comp_str = get_str_comp()
+    texpath = "{}/plots/aexp_bdt.tex".format(basedir)
+    bdt_str = get_str_bdt()
+    with open(texpath, "w") as aexp_tex:
+        aexp_tex.write(bdt_str)
+    print(bdt_str)
+    print("Saved to {}".format(texpath))
 
     texpath = "{}/plots/acomp.tex".format(basedir)
-    acomp_tex = open(texpath, "w")
-
-    acomp_tex.write(comp_str)
-
+    comp_str = get_str_comp()
+    with open(texpath, "w") as acomp_tex:
+        acomp_tex.write(comp_str)
     print(comp_str)
-
     print("Saved to {}".format(texpath))
 
     make_final_background_histograms()
