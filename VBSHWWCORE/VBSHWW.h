@@ -24,6 +24,8 @@
 
 #include "TMVA/Reader.h"
 
+#include "lester_mt2_bisect.h"
+
 class VBSHWW
 {
 public:
@@ -153,6 +155,9 @@ public:
 
     // b-tagging SF
     void setBTagSF(std::vector<float> jet_pt, std::vector<float> jet_eta, std::vector<float> jet_score, std::vector<int> jet_flavor);
+
+    // MT2
+    std::pair<float, float> MT2();
 
 };
 

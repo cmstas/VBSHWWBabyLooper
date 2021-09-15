@@ -3000,3 +3000,36 @@ void VBSHWW::parseCLI(int argc, char** argv)
     std::cout <<  "=========================================================" << std::endl;
 
 }
+
+std::pair<float, float> VBSHWW::MT2()
+{
+    TLorentzVector leadlep = RooUtil::Calc::getTLV(tx.getBranch<LV>("leadlep"));
+    TLorentzVector subllep = RooUtil::Calc::getTLV(tx.getBranch<LV>("subllep"));
+    TLorentzVector b0 = RooUtil::Calc::getTLV(tx.getBranch<LV>("b0"));
+    TLorentzVector b1 = RooUtil::Calc::getTLV(tx.getBranch<LV>("b1"));
+    TLorentzVector met_p4 = RooUtil::Calc::getTLV(tx.getBranch<LV>("met_p4"));
+
+    rest_syst = leadlep + subllep + b0 + b1 + met_p4;
+    TVector3 beta_from_miss_reverse(rest_syst.BoostVector());
+    TVector3 beta_from_miss(-beta_from_miss_reverse.X(),-beta_from_miss_reverse.Y(),-beta_from_miss_reverse.Z());
+
+    leadlep.Boost(beta_from_miss);
+    subllep.Boost(beta_from_miss);
+    b0.Boost(beta_from_miss);
+    b1.Boost(beta_from_miss);
+    met_p4.Boost(beta_from_miss);
+
+    TLorentzVector vis1, vis2;
+
+    vis1 = leadlep + b0;
+    vis2 = subllep + b1;
+
+    double MT2_0mass = asymm_mt2_lester_bisect::get_mT2(vis1.M(),vis1.Px(),vis1.Py(),vis2.M(),vis2.Px(),vis2.Py(),met_p4.Px(),met_p4.Py(),0,0,0);
+
+    vis1 = leadlep + b1;
+    vis2 = subllep + b0;
+
+    double MT2_1mass = asymm_mt2_lester_bisect::get_mT2(vis1.M(),vis1.Px(),vis1.Py(),vis2.M(),vis2.Px(),vis2.Py(),met_p4.Px(),met_p4.Py(),0,0,0);
+
+    return std::make_pair(MT2_0mass, MT2_1mass);
+}
