@@ -3009,7 +3009,7 @@ std::pair<float, float> VBSHWW::MT2()
     TLorentzVector b1 = RooUtil::Calc::getTLV(tx.getBranch<LV>("b1"));
     TLorentzVector met_p4 = RooUtil::Calc::getTLV(tx.getBranch<LV>("met_p4"));
 
-    rest_syst = leadlep + subllep + b0 + b1 + met_p4;
+    TLorentzVector rest_syst = leadlep + subllep + b0 + b1 + met_p4;
     TVector3 beta_from_miss_reverse(rest_syst.BoostVector());
     TVector3 beta_from_miss(-beta_from_miss_reverse.X(),-beta_from_miss_reverse.Y(),-beta_from_miss_reverse.Z());
 
