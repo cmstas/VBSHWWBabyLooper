@@ -459,8 +459,8 @@ def modeling_syst_conservative(channel):
 #   - channel   = El, Mu, Tau, Neg, Lgt, LL, LT etc.
 # Output:
 #   - errors.E object type (this object holds 1 += largest composition systematic error in upward direction only after looking through several variations)
-def composition_syst_conservative(channel):
-    cut_syst = composition_syst(channel, "Cut")
+def composition_syst_conservative(channel, cut_analysis="Cut"):
+    cut_syst = composition_syst(channel, cut_analysis)
     bdt_syst = composition_syst(channel, "BDT")
     final_syst = cut_syst if cut_syst.err > bdt_syst.err else bdt_syst
     return final_syst
@@ -619,7 +619,7 @@ def printNumbers(channel, analysis, systematics=""):
 
 #_______________________________________________________________________________________________________________________________
 # Get tex table with the alpha extrapolations
-def get_str_cut():
+def get_str_cut(extraSRs=False):
     vals = [
             "($B^\\textrm{{SR}}_\\textrm{{MC}}$\\quad\\quad /",
             "$B^\\textrm{{CR}}_\\textrm{{MC}}$ =",
@@ -627,19 +627,49 @@ def get_str_cut():
             "$B^\\textrm{{CR}}_\\textrm{{data}}$  \\quad\\quad=",
             "$B^\\textrm{{SR}}_\\textrm{{data}}$",
             ]
-    analysis = "Cut"
-    for channel in ["El", "Mu", "Tau", "Neg", "Lgt"]:
-        vals.append(tex(bsrmc(channel, analysis)))
-        vals.append(tex(bcrmc(channel, analysis)))
-        vals.append(tex(E(alpha(channel, analysis).val, alpha_full_syst(channel, analysis).err)))
-        vals.append(texerr(alpha(channel, analysis))) # MC stat
-        vals.append(texerr(modeling_syst_conservative(channel))) # modeling
-        vals.append(texerr(composition_syst_conservative(channel))) # composition
-        vals.append(texerr(alpha_expt_syst(channel, analysis))) # expt syst
-        vals.append(tex(bcrdt(channel, analysis)))
-        vals.append(tex(bsrdt(channel, analysis)))
+    analyses = ["Cut", "CutC3", "CutSM"] if extraSRs else ["Cut"]
+    for analysis in analyses:
+        if analysis == "Cut":
+            channels = ["El", "Mu", "Tau", "Neg", "Lgt"]
+        else:
+            channels = ["El", "Mu", "Tau", "Neg"]
+        for channel in channels:
+            vals.append(tex(bsrmc(channel, analysis)))
+            vals.append(tex(bcrmc(channel, analysis)))
+            vals.append(tex(E(alpha(channel, analysis).val, alpha_full_syst(channel, analysis).err)))
+            vals.append(texerr(alpha(channel, analysis))) # MC stat
+            vals.append(texerr(modeling_syst_conservative(channel))) # modeling
+            vals.append(texerr(composition_syst_conservative(channel, cut_analysis=analysis))) # composition
+            vals.append(texerr(alpha_expt_syst(channel, analysis))) # expt syst
+            vals.append(tex(bcrdt(channel, analysis)))
+            vals.append(tex(bsrdt(channel, analysis)))
 
-    result = """\\begin{{tabular}}{{@{{\\extracolsep{{4pt}}}}lccccc@{{}}}}
+    if extraSRs:
+        result = """\\begin{{tabular}}{{@{{\\extracolsep{{4pt}}}}lccccc@{{}}}}
+\\hline\\hline
+  Channels                 & {} & {} & {} & {} & {} \\\\
+  \\hline
+  BSM \CTWOV/\CV \\\\
+  ~~~~~~$e^{{+}}l^{{+}}$         & {} & {} & {} (={} $\\oplus$ {} $\\oplus$ {} $\\oplus$ {}) & {} & {} \\\\
+  ~~~~~~$\\mu^{{+}}l^{{+}}$      & {} & {} & {} (={} $\\oplus$ {} $\\oplus$ {} $\\oplus$ {}) & {} & {} \\\\
+  ~~~~~~$\\tau^{{+}}l^{{+}}$     & {} & {} & {} (={} $\\oplus$ {} $\\oplus$ {} $\\oplus$ {}) & {} & {} \\\\
+  ~~~~~~$(--)$                   & {} & {} & {} (={} $\\oplus$ {} $\\oplus$ {} $\\oplus$ {}) & {} & {} \\\\
+  ~~~~~~$\\ell^{{+}}\\ell^{{+}}$ & {} & {} & {} (={} $\\oplus$ {} $\\oplus$ {} $\\oplus$ {}) & {} & {} \\\\
+  BSM \CTHREE \\\\
+  ~~~~~~$e^{{+}}l^{{+}}$         & {} & {} & {} (={} $\\oplus$ {} $\\oplus$ {} $\\oplus$ {}) & {} & {} \\\\
+  ~~~~~~$\\mu^{{+}}l^{{+}}$      & {} & {} & {} (={} $\\oplus$ {} $\\oplus$ {} $\\oplus$ {}) & {} & {} \\\\
+  ~~~~~~$\\tau^{{+}}l^{{+}}$     & {} & {} & {} (={} $\\oplus$ {} $\\oplus$ {} $\\oplus$ {}) & {} & {} \\\\
+  ~~~~~~$(--)$                   & {} & {} & {} (={} $\\oplus$ {} $\\oplus$ {} $\\oplus$ {}) & {} & {} \\\\
+  Standard Model \\\\
+  ~~~~~~$e^{{+}}l^{{+}}$         & {} & {} & {} (={} $\\oplus$ {} $\\oplus$ {} $\\oplus$ {}) & {} & {} \\\\
+  ~~~~~~$\\mu^{{+}}l^{{+}}$      & {} & {} & {} (={} $\\oplus$ {} $\\oplus$ {} $\\oplus$ {}) & {} & {} \\\\
+  ~~~~~~$\\tau^{{+}}l^{{+}}$     & {} & {} & {} (={} $\\oplus$ {} $\\oplus$ {} $\\oplus$ {}) & {} & {} \\\\
+  ~~~~~~$(--)$                   & {} & {} & {} (={} $\\oplus$ {} $\\oplus$ {} $\\oplus$ {}) & {} & {} \\\\
+\\hline\\hline
+\\end{{tabular}}
+        """.format(*vals)
+    else:
+        result = """\\begin{{tabular}}{{@{{\\extracolsep{{4pt}}}}lccccc@{{}}}}
 \\hline\\hline
   Channels                 & {} & {} & {} & {} & {} \\\\
   \\hline
@@ -650,7 +680,7 @@ def get_str_cut():
   $\\ell^{{+}}\\ell^{{+}}$ & {} & {} & {} (={} $\\oplus$ {} $\\oplus$ {} $\\oplus$ {}) & {} & {} \\\\
 \\hline\\hline
 \\end{{tabular}}
-    """.format(*vals)
+        """.format(*vals)
     return result
 
 #_______________________________________________________________________________________________________________________________
@@ -693,16 +723,36 @@ def make_final_background_histograms():
     f = r.TFile(rootpath, "recreate")
     h_cut = r.TH1F("LooseVR__CutSR", "", 5, 0, 5)
     h_cut.Sumw2()
-    h_cut.SetBinContent(1, bsrdt("El", "Cut").val)
-    h_cut.SetBinError  (1, bsrdt("El", "Cut").err)
-    h_cut.SetBinContent(2, bsrdt("Mu", "Cut").val)
-    h_cut.SetBinError  (2, bsrdt("Mu", "Cut").err)
-    h_cut.SetBinContent(3, bsrdt("Tau", "Cut").val)
-    h_cut.SetBinError  (3, bsrdt("Tau", "Cut").err)
-    h_cut.SetBinContent(4, bsrdt("Neg", "Cut").val)
-    h_cut.SetBinError  (4, bsrdt("Neg", "Cut").err)
-    h_cut.SetBinContent(5, bsrdt("Lgt", "Cut").val)
-    h_cut.SetBinError  (5, bsrdt("Lgt", "Cut").err)
+    # C2V SRs
+    h_cut.SetBinContent(1,  bsrdt("El", "Cut").val)
+    h_cut.SetBinError  (1,  bsrdt("El", "Cut").err)
+    h_cut.SetBinContent(2,  bsrdt("Mu", "Cut").val)
+    h_cut.SetBinError  (2,  bsrdt("Mu", "Cut").err)
+    h_cut.SetBinContent(3,  bsrdt("Tau", "Cut").val)
+    h_cut.SetBinError  (3,  bsrdt("Tau", "Cut").err)
+    h_cut.SetBinContent(4,  bsrdt("Neg", "Cut").val)
+    h_cut.SetBinError  (4,  bsrdt("Neg", "Cut").err)
+    h_cut.SetBinContent(5,  bsrdt("Lgt", "Cut").val)
+    h_cut.SetBinError  (5,  bsrdt("Lgt", "Cut").err)
+    # C3 SRs
+    h_cut.SetBinContent(6,  bsrdt("El", "CutC3").val)
+    h_cut.SetBinError  (6,  bsrdt("El", "CutC3").err)
+    h_cut.SetBinContent(7,  bsrdt("Mu", "CutC3").val)
+    h_cut.SetBinError  (7,  bsrdt("Mu", "CutC3").err)
+    h_cut.SetBinContent(8,  bsrdt("Tau", "CutC3").val)
+    h_cut.SetBinError  (8,  bsrdt("Tau", "CutC3").err)
+    h_cut.SetBinContent(9,  bsrdt("Neg", "CutC3").val)
+    h_cut.SetBinError  (9,  bsrdt("Neg", "CutC3").err)
+    # SM SRs
+    h_cut.SetBinContent(10, bsrdt("El", "CutSM").val)
+    h_cut.SetBinError  (10, bsrdt("El", "CutSM").err)
+    h_cut.SetBinContent(11, bsrdt("Mu", "CutSM").val)
+    h_cut.SetBinError  (11, bsrdt("Mu", "CutSM").err)
+    h_cut.SetBinContent(12, bsrdt("Tau", "CutSM").val)
+    h_cut.SetBinError  (12, bsrdt("Tau", "CutSM").err)
+    h_cut.SetBinContent(13, bsrdt("Neg", "CutSM").val)
+    h_cut.SetBinError  (13, bsrdt("Neg", "CutSM").err)
+
     h_bdt = r.TH1F("LooseVR__BDTSR", "", 4, 0, 4)
     h_bdt.Sumw2()
     h_bdt.SetBinContent(1, bsrdt("El", "BDT").val)
@@ -724,6 +774,7 @@ def make_final_background_histograms_only_MCstatError():
     f = r.TFile(rootpath, "recreate")
     h_cut = r.TH1F("LooseVR__CutSR", "", 5, 0, 5)
     h_cut.Sumw2()
+    # C2V SRs
     h_cut.SetBinContent(1, bsrdt("El", "Cut").val)
     h_cut.SetBinError  (1, bsrdt("El", "Cut").val * alpha("El", "Cut").err / alpha("El", "Cut").val)
     h_cut.SetBinContent(2, bsrdt("Mu", "Cut").val)
@@ -734,6 +785,25 @@ def make_final_background_histograms_only_MCstatError():
     h_cut.SetBinError  (4, bsrdt("Neg", "Cut").val * alpha("Neg", "Cut").err / alpha("Neg", "Cut").val)
     h_cut.SetBinContent(5, bsrdt("Lgt", "Cut").val)
     h_cut.SetBinError  (5, bsrdt("Lgt", "Cut").val * alpha("Lgt", "Cut").err / alpha("Lgt", "Cut").val)
+    # C3 SRs
+    h_cut.SetBinContent(6, bsrdt("El", "CutC3").val)
+    h_cut.SetBinError  (6, bsrdt("El", "CutC3").val * alpha("El", "CutC3").err / alpha("El", "CutC3").val)
+    h_cut.SetBinContent(7, bsrdt("Mu", "CutC3").val)
+    h_cut.SetBinError  (7, bsrdt("Mu", "CutC3").val * alpha("Mu", "CutC3").err / alpha("Mu", "CutC3").val)
+    h_cut.SetBinContent(8, bsrdt("Tau", "CutC3").val)
+    h_cut.SetBinError  (8, bsrdt("Tau", "CutC3").val * alpha("Tau", "CutC3").err / alpha("Tau", "CutC3").val)
+    h_cut.SetBinContent(9, bsrdt("Neg", "CutC3").val)
+    h_cut.SetBinError  (9, bsrdt("Neg", "CutC3").val * alpha("Neg", "CutC3").err / alpha("Neg", "CutC3").val)
+    # SM SRs
+    h_cut.SetBinContent(6, bsrdt("El", "CutSM").val)
+    h_cut.SetBinError  (6, bsrdt("El", "CutSM").val * alpha("El", "CutSM").err / alpha("El", "CutSM").val)
+    h_cut.SetBinContent(7, bsrdt("Mu", "CutSM").val)
+    h_cut.SetBinError  (7, bsrdt("Mu", "CutSM").val * alpha("Mu", "CutSM").err / alpha("Mu", "CutSM").val)
+    h_cut.SetBinContent(8, bsrdt("Tau", "CutSM").val)
+    h_cut.SetBinError  (8, bsrdt("Tau", "CutSM").val * alpha("Tau", "CutSM").err / alpha("Tau", "CutSM").val)
+    h_cut.SetBinContent(9, bsrdt("Neg", "CutSM").val)
+    h_cut.SetBinError  (9, bsrdt("Neg", "CutSM").val * alpha("Neg", "CutSM").err / alpha("Neg", "CutSM").val)
+
     h_bdt = r.TH1F("LooseVR__BDTSR", "", 4, 0, 4)
     h_bdt.Sumw2()
     h_bdt.SetBinContent(1, bsrdt("El", "BDT").val)
@@ -750,7 +820,7 @@ def make_final_background_histograms_only_MCstatError():
     f.Close()
     print("Saved to {}".format(rootpath))
 
-def get_str_comp():
+def get_str_comp(extraSRs=False):
     vals = [
             "\\aexp (Nominal)",
             "\\aexp (Lowest variation)",
@@ -760,17 +830,18 @@ def get_str_comp():
             "$\\Delta\\aexp$",
             "Process varied",
             ]
-    analysis = "Cut"
-    for channel in ["Lgt", "Tau", "Neg"]:
-        aph = alpha("2"+channel, analysis)
-        max_neg_diff, max_neg_type, max_neg_alpha, max_pos_diff, max_pos_type, max_pos_alpha = composition_syst_max(channel, analysis)
-        vals.append(tex(aph))
-        vals.append("{:.3g}".format(max_neg_alpha.val))
-        vals.append("{:.3g}\\%".format((max_neg_alpha.val / aph.val - 1)*100.))
-        vals.append("{}".format(proc_pprint(max_neg_type)))
-        vals.append("{:.3g}".format(max_pos_alpha.val))
-        vals.append("{:.3g}\\%".format((max_pos_alpha.val / aph.val - 1)*100.))
-        vals.append("{}".format(proc_pprint(max_pos_type)))
+    analyses = ["Cut", "CutC3", "CutSM"] if extraSRs else ["Cut"]
+    for analysis in analyses:
+        for channel in ["Lgt", "Tau", "Neg"]:
+            aph = alpha("2"+channel, analysis)
+            max_neg_diff, max_neg_type, max_neg_alpha, max_pos_diff, max_pos_type, max_pos_alpha = composition_syst_max(channel, analysis)
+            vals.append(tex(aph))
+            vals.append("{:.3g}".format(max_neg_alpha.val))
+            vals.append("{:.3g}\\%".format((max_neg_alpha.val / aph.val - 1)*100.))
+            vals.append("{}".format(proc_pprint(max_neg_type)))
+            vals.append("{:.3g}".format(max_pos_alpha.val))
+            vals.append("{:.3g}\\%".format((max_pos_alpha.val / aph.val - 1)*100.))
+            vals.append("{}".format(proc_pprint(max_pos_type)))
     analysis = "BDT"
     for channel in ["Lgt", "Tau", "Neg"]:
         aph = alpha("2"+channel, analysis)
@@ -782,11 +853,21 @@ def get_str_comp():
         vals.append("{:.3g}".format(max_pos_alpha.val))
         vals.append("{:.3g}\\%".format((max_pos_alpha.val / aph.val - 1)*100.))
         vals.append("{}".format(proc_pprint(max_pos_type)))
-    result = """\\begin{{tabular}}{{@{{\\extracolsep{{4pt}}}}lcccccccc@{{}}}}
+
+    if extraSRs:
+        result = """\\begin{{tabular}}{{@{{\\extracolsep{{4pt}}}}lcccccccc@{{}}}}
 \\hline\\hline
                 & {} & {} & {} & {} & {} & {} & {} \\\\
 \\hline
-Cut & & & \\\\
+Cut (BSM \CTWOV/\CV) & & & \\\\
+~~~~~~\\lgtchan & {} & {} & {} & {} & {} & {} & {} \\\\
+~~~~~~\\tauchan & {} & {} & {} & {} & {} & {} & {} \\\\
+~~~~~~\\negchan & {} & {} & {} & {} & {} & {} & {} \\\\
+Cut (BSM \CTHREE) & & & \\\\
+~~~~~~\\lgtchan & {} & {} & {} & {} & {} & {} & {} \\\\
+~~~~~~\\tauchan & {} & {} & {} & {} & {} & {} & {} \\\\
+~~~~~~\\negchan & {} & {} & {} & {} & {} & {} & {} \\\\
+Cut (Standard Model) & & & \\\\
 ~~~~~~\\lgtchan & {} & {} & {} & {} & {} & {} & {} \\\\
 ~~~~~~\\tauchan & {} & {} & {} & {} & {} & {} & {} \\\\
 ~~~~~~\\negchan & {} & {} & {} & {} & {} & {} & {} \\\\
@@ -796,7 +877,20 @@ BDT & & & \\\\
 ~~~~~~\\negchan & {} & {} & {} & {} & {} & {} & {} \\\\
 \\hline\\hline
 \\end{{tabular}}   
-""".format(*vals)
+    """.format(*vals)
+    else:
+        result = """\\begin{{tabular}}{{@{{\\extracolsep{{4pt}}}}lcccccccc@{{}}}}
+\\hline\\hline
+                & {} & {} & {} & {} & {} & {} & {} \\\\
+\\hline
+Cut & & & \\\\
+~~~~~~\\lgtchan & {} & {} & {} & {} & {} & {} & {} \\\\
+~~~~~~\\tauchan & {} & {} & {} & {} & {} & {} & {} \\\\
+~~~~~~\\negchan & {} & {} & {} & {} & {} & {} & {} \\\\
+\\hline\\hline
+\\end{{tabular}}   
+    """.format(*vals)
+
     return result
 
 if __name__ == "__main__":
@@ -805,6 +899,7 @@ if __name__ == "__main__":
     if not os.path.exists(plotdir):
         os.makedirs(plotdir)
 
+    # C2V SRs only
     texpath = "{}/plots/aexp_cut.tex".format(basedir)
     cut_str = get_str_cut()
     with open(texpath, "w") as aexp_tex:
@@ -821,6 +916,21 @@ if __name__ == "__main__":
 
     texpath = "{}/plots/acomp.tex".format(basedir)
     comp_str = get_str_comp()
+    with open(texpath, "w") as acomp_tex:
+        acomp_tex.write(comp_str)
+    print(comp_str)
+    print("Saved to {}".format(texpath))
+
+    # C2V+C3+SM SRs
+    texpath = "{}/plots/aexp_cut_extraSRs.tex".format(basedir)
+    cut_str = get_str_cut(extraSRs=True)
+    with open(texpath, "w") as aexp_tex:
+        aexp_tex.write(cut_str)
+    print(cut_str)
+    print("Saved to {}".format(texpath))
+
+    texpath = "{}/plots/acomp_extraSRs.tex".format(basedir)
+    comp_str = get_str_comp(extraSRs=True)
     with open(texpath, "w") as acomp_tex:
         acomp_tex.write(comp_str)
     print(comp_str)

@@ -494,15 +494,25 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch  < int                 >   ( "is_cut_cr_neg"                 , true  );
     tx.createBranch  < int                 >   ( "is_cut_cr_lgt"                 , true  );
 
+    tx.createBranch  < int                 >   ( "is_cut_c3_sr_el"               , true  );
+    tx.createBranch  < int                 >   ( "is_cut_c3_sr_mu"               , true  );
+    tx.createBranch  < int                 >   ( "is_cut_c3_sr_tau"              , true  );
+    tx.createBranch  < int                 >   ( "is_cut_c3_sr_neg"              , true  );
+
+    tx.createBranch  < int                 >   ( "is_cut_sm_sr_el"               , true  );
+    tx.createBranch  < int                 >   ( "is_cut_sm_sr_mu"               , true  );
+    tx.createBranch  < int                 >   ( "is_cut_sm_sr_tau"              , true  );
+    tx.createBranch  < int                 >   ( "is_cut_sm_sr_neg"              , true  );
+
     tx.createBranch  < int                 >   ( "is_cut_sr2_el"                 , true  );
     tx.createBranch  < int                 >   ( "is_cut_sr2_mu"                 , true  );
     tx.createBranch  < int                 >   ( "is_cut_sr2_tau"                , true  );
     tx.createBranch  < int                 >   ( "is_cut_sr2_neg"                , true  );
 
-    tx.createBranch  < int                 >   ( "is_cut_cr2_el"                 , true  );
-    tx.createBranch  < int                 >   ( "is_cut_cr2_mu"                 , true  );
-    tx.createBranch  < int                 >   ( "is_cut_cr2_tau"                , true  );
-    tx.createBranch  < int                 >   ( "is_cut_cr2_neg"                , true  );
+    // tx.createBranch  < int                 >   ( "is_cut_cr2_el"                 , true  );
+    // tx.createBranch  < int                 >   ( "is_cut_cr2_mu"                 , true  );
+    // tx.createBranch  < int                 >   ( "is_cut_cr2_tau"                , true  );
+    // tx.createBranch  < int                 >   ( "is_cut_cr2_neg"                , true  );
 
     tx.createBranch  < int                 >   ( "is_bdt_sr_el"                  , true  );
     tx.createBranch  < int                 >   ( "is_bdt_sr_mu"                  , true  );
@@ -527,8 +537,12 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch  < int                 >   ( "is_ps"                         , true  );
     tx.createBranch  < int                 >   ( "is_cut_sr"                     , true  );
     tx.createBranch  < int                 >   ( "is_cut_cr"                     , true  );
+    tx.createBranch  < int                 >   ( "is_cut_sm_sr"                  , true  );
+    tx.createBranch  < int                 >   ( "is_cut_c3_sr"                  , true  );
     tx.createBranch  < int                 >   ( "is_cut_sr2"                    , true  );
     tx.createBranch  < int                 >   ( "is_cut_cr2"                    , true  );
+    tx.createBranch  < int                 >   ( "is_cut_sm_sr2"                 , true  );
+    tx.createBranch  < int                 >   ( "is_cut_c3_sr2"                 , true  );
     tx.createBranch  < int                 >   ( "is_bdt_sr"                     , true  );
     tx.createBranch  < int                 >   ( "is_bdt_cr"                     , true  );
     tx.createBranch  < int                 >   ( "is_bdt_sr2"                    , true  );
@@ -2181,63 +2195,78 @@ void VBSHWW::initSRCutflow()
 
             int islgt = categ == 0 or categ == 1;
 
-            tx.setBranch<int>("is_ps_el"  , is_preselection and (categ == 0) );
-            tx.setBranch<int>("is_ps_mu"  , is_preselection and (categ == 1) );
-            tx.setBranch<int>("is_ps_tau" , is_preselection and (categ == 2) );
-            tx.setBranch<int>("is_ps_neg" , is_preselection and (categ == 3) );
-            tx.setBranch<int>("is_ps_lgt" , is_preselection and (islgt == 1) );
+            tx.setBranch<int>("is_ps_el"        , is_preselection and (categ == 0) );
+            tx.setBranch<int>("is_ps_mu"        , is_preselection and (categ == 1) );
+            tx.setBranch<int>("is_ps_tau"       , is_preselection and (categ == 2) );
+            tx.setBranch<int>("is_ps_neg"       , is_preselection and (categ == 3) );
+            tx.setBranch<int>("is_ps_lgt"       , is_preselection and (islgt == 1) );
 
-            tx.setBranch<int>("is_cut_sr_el"   , is_preselection and (categ == 0) and (mbb < 150) and detajj > 5 and lt > 500 and st > 900 );
-            tx.setBranch<int>("is_cut_sr_mu"   , is_preselection and (categ == 1) and (mbb < 150) and detajj > 5 and lt > 500 and st > 900 );
-            tx.setBranch<int>("is_cut_sr_tau"  , is_preselection and (categ == 2) and (mbb < 150) and detajj > 5 and lt > 500 and st > 900 );
-            tx.setBranch<int>("is_cut_sr_neg"  , is_preselection and (categ == 3) and (mbb < 150) and detajj > 5 and lt > 500 and st > 900 );
-            tx.setBranch<int>("is_cut_sr_lgt"  , is_preselection and (islgt == 1) and (mbb < 150) and detajj > 5 and lt > 300 and st > 700 and not (lt > 500 and st > 900) );
+            tx.setBranch<int>("is_cut_sr_el"    , is_preselection and (categ == 0) and (mbb < 150) and detajj > 5 and lt > 500 and st > 900 );
+            tx.setBranch<int>("is_cut_sr_mu"    , is_preselection and (categ == 1) and (mbb < 150) and detajj > 5 and lt > 500 and st > 900 );
+            tx.setBranch<int>("is_cut_sr_tau"   , is_preselection and (categ == 2) and (mbb < 150) and detajj > 5 and lt > 500 and st > 900 );
+            tx.setBranch<int>("is_cut_sr_neg"   , is_preselection and (categ == 3) and (mbb < 150) and detajj > 5 and lt > 500 and st > 900 );
+            tx.setBranch<int>("is_cut_sr_lgt"   , is_preselection and (islgt == 1) and (mbb < 150) and detajj > 5 and lt > 300 and st > 700 and not (lt > 500 and st > 900) );
+            bool is_cut_c2v_sr = (tx.getBranch<int>("is_cut_sr_el") or tx.getBranch<int>("is_cut_sr_mu") or tx.getBranch<int>("is_cut_sr_tau") or tx.getBranch<int>("is_cut_sr_neg") or tx.getBranch<int>("is_cut_sr_lgt") );
 
-            tx.setBranch<int>("is_cut_cr_el"   , is_preselection and (categ == 0) and (mbb > 150) );
-            tx.setBranch<int>("is_cut_cr_mu"   , is_preselection and (categ == 1) and (mbb > 150) );
-            tx.setBranch<int>("is_cut_cr_tau"  , is_preselection and (categ == 2) and (mbb > 150) );
-            tx.setBranch<int>("is_cut_cr_neg"  , is_preselection and (categ == 3) and (mbb > 150) );
-            tx.setBranch<int>("is_cut_cr_lgt"  , is_preselection and (islgt == 1) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_cr_el"    , is_preselection and (categ == 0) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_cr_mu"    , is_preselection and (categ == 1) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_cr_tau"   , is_preselection and (categ == 2) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_cr_neg"   , is_preselection and (categ == 3) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_cr_lgt"   , is_preselection and (islgt == 1) and (mbb > 150) );
 
-            tx.setBranch<int>("is_cut_sr2_el"  , is_preselection and (categ == 0) and (mbb < 150) and detajj > 4 and lt > 300 and st > 700 );
-            tx.setBranch<int>("is_cut_sr2_mu"  , is_preselection and (categ == 1) and (mbb < 150) and detajj > 4 and lt > 300 and st > 700 );
-            tx.setBranch<int>("is_cut_sr2_tau" , is_preselection and (categ == 2) and (mbb < 150) and detajj > 4 and lt > 300 and st > 700 );
-            tx.setBranch<int>("is_cut_sr2_neg" , is_preselection and (categ == 3) and (mbb < 150) and detajj > 4 and lt > 300 and st > 700 );
+            tx.setBranch<int>("is_cut_c3_sr_el" , is_preselection and (categ == 0) and (mbb < 150) and detajj > 5 and lt > 200 and st > 400 and not (is_cut_c2v_sr) );
+            tx.setBranch<int>("is_cut_c3_sr_mu" , is_preselection and (categ == 1) and (mbb < 150) and detajj > 5 and lt > 200 and st > 400 and not (is_cut_c2v_sr) );
+            tx.setBranch<int>("is_cut_c3_sr_tau", is_preselection and (categ == 2) and (mbb < 150) and detajj > 5 and lt > 200 and st > 400 and not (is_cut_c2v_sr) );
+            tx.setBranch<int>("is_cut_c3_sr_neg", is_preselection and (categ == 3) and (mbb < 150) and detajj > 5 and lt > 200 and st > 400 and not (is_cut_c2v_sr) );
+            bool is_cut_c3_sr = (tx.getBranch<int>("is_cut_c3_sr_el") or tx.getBranch<int>("is_cut_c3_sr_mu") or tx.getBranch<int>("is_cut_c3_sr_tau") or tx.getBranch<int>("is_cut_c3_sr_neg") );
 
-            tx.setBranch<int>("is_cut_cr2_el"  , is_preselection and (categ == 0) and (mbb > 150) );
-            tx.setBranch<int>("is_cut_cr2_mu"  , is_preselection and (categ == 1) and (mbb > 150) );
-            tx.setBranch<int>("is_cut_cr2_tau" , is_preselection and (categ == 2) and (mbb > 150) );
-            tx.setBranch<int>("is_cut_cr2_neg" , is_preselection and (categ == 3) and (mbb > 150) );
+            tx.setBranch<int>("is_cut_sm_sr_el" , is_preselection and (categ == 0) and (mbb < 150) and detajj > 5 and mjj > 1700 and not (is_cut_c3_sr) and not (is_cut_c2v_sr) );
+            tx.setBranch<int>("is_cut_sm_sr_mu" , is_preselection and (categ == 1) and (mbb < 150) and detajj > 5 and mjj > 1700 and not (is_cut_c3_sr) and not (is_cut_c2v_sr) );
+            tx.setBranch<int>("is_cut_sm_sr_tau", is_preselection and (categ == 2) and (mbb < 150) and detajj > 5 and mjj > 1700 and not (is_cut_c3_sr) and not (is_cut_c2v_sr) );
+            tx.setBranch<int>("is_cut_sm_sr_neg", is_preselection and (categ == 3) and (mbb < 150) and detajj > 5 and mjj > 1700 and not (is_cut_c3_sr) and not (is_cut_c2v_sr) );
+            bool is_cut_sm_sr = (tx.getBranch<int>("is_cut_sm_sr_el") or tx.getBranch<int>("is_cut_sm_sr_mu") or tx.getBranch<int>("is_cut_sm_sr_tau") or tx.getBranch<int>("is_cut_sm_sr_neg") );
 
-            tx.setBranch<int>("is_bdt_sr_el"   , is_preselection and (categ == 0) and                 (bdt > 0.543) );
-            tx.setBranch<int>("is_bdt_sr_mu"   , is_preselection and (categ == 1) and                 (bdt > 0.543) );
-            tx.setBranch<int>("is_bdt_sr_tau"  , is_preselection and (categ == 2) and                 (bdt > 0.543) );
-            tx.setBranch<int>("is_bdt_sr_neg"  , is_preselection and (categ == 3) and                 (bdt > 0.543) );
+            tx.setBranch<int>("is_cut_sr2_el"   , is_preselection and (categ == 0) and (mbb < 150) and detajj > 4 and lt > 300 and st > 700 );
+            tx.setBranch<int>("is_cut_sr2_mu"   , is_preselection and (categ == 1) and (mbb < 150) and detajj > 4 and lt > 300 and st > 700 );
+            tx.setBranch<int>("is_cut_sr2_tau"  , is_preselection and (categ == 2) and (mbb < 150) and detajj > 4 and lt > 300 and st > 700 );
+            tx.setBranch<int>("is_cut_sr2_neg"  , is_preselection and (categ == 3) and (mbb < 150) and detajj > 4 and lt > 300 and st > 700 );
 
-            tx.setBranch<int>("is_bdt_cr_el"   , is_preselection and (categ == 0) and (mbb > 150) and (bdt < 0.543) );
-            tx.setBranch<int>("is_bdt_cr_mu"   , is_preselection and (categ == 1) and (mbb > 150) and (bdt < 0.543) );
-            tx.setBranch<int>("is_bdt_cr_tau"  , is_preselection and (categ == 2) and (mbb > 150) and (bdt < 0.543) );
-            tx.setBranch<int>("is_bdt_cr_neg"  , is_preselection and (categ == 3) and (mbb > 150) and (bdt < 0.543) );
+            // tx.setBranch<int>("is_cut_cr2_el"   , is_preselection and (categ == 0) and (mbb > 150) );
+            // tx.setBranch<int>("is_cut_cr2_mu"   , is_preselection and (categ == 1) and (mbb > 150) );
+            // tx.setBranch<int>("is_cut_cr2_tau"  , is_preselection and (categ == 2) and (mbb > 150) );
+            // tx.setBranch<int>("is_cut_cr2_neg"  , is_preselection and (categ == 3) and (mbb > 150) );
 
-            tx.setBranch<int>("is_bdt_sr2_el"  , is_preselection and (categ == 0) and                 (bdt > 0.52) );
-            tx.setBranch<int>("is_bdt_sr2_mu"  , is_preselection and (categ == 1) and                 (bdt > 0.52) );
-            tx.setBranch<int>("is_bdt_sr2_tau" , is_preselection and (categ == 2) and                 (bdt > 0.52) );
-            tx.setBranch<int>("is_bdt_sr2_neg" , is_preselection and (categ == 3) and                 (bdt > 0.52) );
+            tx.setBranch<int>("is_bdt_sr_el"    , is_preselection and (categ == 0) and                 (bdt > 0.543) );
+            tx.setBranch<int>("is_bdt_sr_mu"    , is_preselection and (categ == 1) and                 (bdt > 0.543) );
+            tx.setBranch<int>("is_bdt_sr_tau"   , is_preselection and (categ == 2) and                 (bdt > 0.543) );
+            tx.setBranch<int>("is_bdt_sr_neg"   , is_preselection and (categ == 3) and                 (bdt > 0.543) );
 
-            tx.setBranch<int>("is_bdt_cr2_el"  , is_preselection and (categ == 0) and (mbb > 150) and (bdt < 0.52) );
-            tx.setBranch<int>("is_bdt_cr2_mu"  , is_preselection and (categ == 1) and (mbb > 150) and (bdt < 0.52) );
-            tx.setBranch<int>("is_bdt_cr2_tau" , is_preselection and (categ == 2) and (mbb > 150) and (bdt < 0.52) );
-            tx.setBranch<int>("is_bdt_cr2_neg" , is_preselection and (categ == 3) and (mbb > 150) and (bdt < 0.52) );
+            tx.setBranch<int>("is_bdt_cr_el"    , is_preselection and (categ == 0) and (mbb > 150) and (bdt < 0.543) );
+            tx.setBranch<int>("is_bdt_cr_mu"    , is_preselection and (categ == 1) and (mbb > 150) and (bdt < 0.543) );
+            tx.setBranch<int>("is_bdt_cr_tau"   , is_preselection and (categ == 2) and (mbb > 150) and (bdt < 0.543) );
+            tx.setBranch<int>("is_bdt_cr_neg"   , is_preselection and (categ == 3) and (mbb > 150) and (bdt < 0.543) );
 
-            tx.setBranch<int>("is_ps"      , tx.getBranch<int>("is_ps_el")      or tx.getBranch<int>("is_ps_mu")      or tx.getBranch<int>("is_ps_tau")      or tx.getBranch<int>("is_ps_neg")      );
-            tx.setBranch<int>("is_cut_sr"  , tx.getBranch<int>("is_cut_sr_el")  or tx.getBranch<int>("is_cut_sr_mu")  or tx.getBranch<int>("is_cut_sr_tau")  or tx.getBranch<int>("is_cut_sr_neg")  );
-            tx.setBranch<int>("is_cut_cr"  , tx.getBranch<int>("is_cut_cr_el")  or tx.getBranch<int>("is_cut_cr_mu")  or tx.getBranch<int>("is_cut_cr_tau")  or tx.getBranch<int>("is_cut_cr_neg")  );
-            tx.setBranch<int>("is_cut_sr2" , tx.getBranch<int>("is_cut_sr2_el") or tx.getBranch<int>("is_cut_sr2_mu") or tx.getBranch<int>("is_cut_sr2_tau") or tx.getBranch<int>("is_cut_sr2_neg") );
-            tx.setBranch<int>("is_cut_cr2" , tx.getBranch<int>("is_cut_cr2_el") or tx.getBranch<int>("is_cut_cr2_mu") or tx.getBranch<int>("is_cut_cr2_tau") or tx.getBranch<int>("is_cut_cr2_neg") );
-            tx.setBranch<int>("is_bdt_sr"  , tx.getBranch<int>("is_bdt_sr_el")  or tx.getBranch<int>("is_bdt_sr_mu")  or tx.getBranch<int>("is_bdt_sr_tau")  or tx.getBranch<int>("is_bdt_sr_neg")  );
-            tx.setBranch<int>("is_bdt_cr"  , tx.getBranch<int>("is_bdt_cr_el")  or tx.getBranch<int>("is_bdt_cr_mu")  or tx.getBranch<int>("is_bdt_cr_tau")  or tx.getBranch<int>("is_bdt_cr_neg")  );
-            tx.setBranch<int>("is_bdt_sr2" , tx.getBranch<int>("is_bdt_sr2_el") or tx.getBranch<int>("is_bdt_sr2_mu") or tx.getBranch<int>("is_bdt_sr2_tau") or tx.getBranch<int>("is_bdt_sr2_neg") );
-            tx.setBranch<int>("is_bdt_cr2" , tx.getBranch<int>("is_bdt_cr2_el") or tx.getBranch<int>("is_bdt_cr2_mu") or tx.getBranch<int>("is_bdt_cr2_tau") or tx.getBranch<int>("is_bdt_cr2_neg") );
+            tx.setBranch<int>("is_bdt_sr2_el"   , is_preselection and (categ == 0) and                 (bdt > 0.52) );
+            tx.setBranch<int>("is_bdt_sr2_mu"   , is_preselection and (categ == 1) and                 (bdt > 0.52) );
+            tx.setBranch<int>("is_bdt_sr2_tau"  , is_preselection and (categ == 2) and                 (bdt > 0.52) );
+            tx.setBranch<int>("is_bdt_sr2_neg"  , is_preselection and (categ == 3) and                 (bdt > 0.52) );
+
+            tx.setBranch<int>("is_bdt_cr2_el"   , is_preselection and (categ == 0) and (mbb > 150) and (bdt < 0.52) );
+            tx.setBranch<int>("is_bdt_cr2_mu"   , is_preselection and (categ == 1) and (mbb > 150) and (bdt < 0.52) );
+            tx.setBranch<int>("is_bdt_cr2_tau"  , is_preselection and (categ == 2) and (mbb > 150) and (bdt < 0.52) );
+            tx.setBranch<int>("is_bdt_cr2_neg"  , is_preselection and (categ == 3) and (mbb > 150) and (bdt < 0.52) );
+
+            tx.setBranch<int>("is_ps"       , tx.getBranch<int>("is_ps_el")      or tx.getBranch<int>("is_ps_mu")      or tx.getBranch<int>("is_ps_tau")      or tx.getBranch<int>("is_ps_neg")      );
+            tx.setBranch<int>("is_cut_sr"   , is_cut_c2v_sr                                                                                                                                          );
+            tx.setBranch<int>("is_cut_cr"   , tx.getBranch<int>("is_cut_cr_el")  or tx.getBranch<int>("is_cut_cr_mu")  or tx.getBranch<int>("is_cut_cr_tau")  or tx.getBranch<int>("is_cut_cr_neg")  );
+            tx.setBranch<int>("is_cut_c3_sr", is_cut_c3_sr                                                                                                                                           );
+            tx.setBranch<int>("is_cut_sm_sr", is_cut_sm_sr                                                                                                                                           );
+            tx.setBranch<int>("is_cut_sr2"  , tx.getBranch<int>("is_cut_sr2_el") or tx.getBranch<int>("is_cut_sr2_mu") or tx.getBranch<int>("is_cut_sr2_tau") or tx.getBranch<int>("is_cut_sr2_neg") );
+            // tx.setBranch<int>("is_cut_cr2"  , tx.getBranch<int>("is_cut_cr2_el") or tx.getBranch<int>("is_cut_cr2_mu") or tx.getBranch<int>("is_cut_cr2_tau") or tx.getBranch<int>("is_cut_cr2_neg") );
+            tx.setBranch<int>("is_bdt_sr"   , tx.getBranch<int>("is_bdt_sr_el")  or tx.getBranch<int>("is_bdt_sr_mu")  or tx.getBranch<int>("is_bdt_sr_tau")  or tx.getBranch<int>("is_bdt_sr_neg")  );
+            tx.setBranch<int>("is_bdt_cr"   , tx.getBranch<int>("is_bdt_cr_el")  or tx.getBranch<int>("is_bdt_cr_mu")  or tx.getBranch<int>("is_bdt_cr_tau")  or tx.getBranch<int>("is_bdt_cr_neg")  );
+            tx.setBranch<int>("is_bdt_sr2"  , tx.getBranch<int>("is_bdt_sr2_el") or tx.getBranch<int>("is_bdt_sr2_mu") or tx.getBranch<int>("is_bdt_sr2_tau") or tx.getBranch<int>("is_bdt_sr2_neg") );
+            tx.setBranch<int>("is_bdt_cr2"  , tx.getBranch<int>("is_bdt_cr2_el") or tx.getBranch<int>("is_bdt_cr2_mu") or tx.getBranch<int>("is_bdt_cr2_tau") or tx.getBranch<int>("is_bdt_cr2_neg") );
 
             int isSS = (tx.getBranch<int>("lep0ID") * tx.getBranch<int>("lep1ID")) > 0;
             tx.setBranch<int>("pass_blind", nt.isData() and isSS ? not (mbbIn): 1);

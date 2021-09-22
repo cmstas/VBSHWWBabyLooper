@@ -65,18 +65,39 @@ int main(int argc, char** argv)
     ana.cutflow.addCutToLastActiveCut("LT", [&]() { return vbs.lepchannel() == 3 or vbs.lepchannel() == 4; }, UNITY);
     ana.cutflow.addCutToLastActiveCut("LTMbbOff", [&]() { return vbs.mbb() > 150; }, UNITY);
 
+    enum CutBasedRegion { 
+        Excluded = -999,
+        // Control regions
+        CR_Neg = -4, CR_Tau = -3, CR_Mu = -2, CR_El = -1,
+        // Main signal regions
+        C2V_El, C2V_Mu, C2V_Tau, C2V_Neg, C2V_Lgt,
+        C3_El, C3_Mu, C3_Tau, C3_Neg,
+        SM_El, SM_Mu, SM_Tau, SM_Neg
+    };
     // Function to categorize events into bins
     auto cut_bin = [&]() {
-        if (vbs.is_cut_sr_el() and vbs.pass_blind()) return 0;
-        if (vbs.is_cut_sr_mu() and vbs.pass_blind()) return 1;
-        if (vbs.is_cut_sr_tau() and vbs.pass_blind()) return 2;
-        if (vbs.is_cut_sr_neg() and vbs.pass_blind()) return 3;
-        if (vbs.is_cut_sr_lgt() and vbs.pass_blind()) return 4;
-        if (vbs.is_cut_cr_el()) return -1;
-        if (vbs.is_cut_cr_mu()) return -2;
-        if (vbs.is_cut_cr_tau()) return -3;
-        if (vbs.is_cut_cr_neg()) return -4;
-        return -999;
+        // C2V/CV signal regions
+        if (vbs.is_cut_sr_el() and vbs.pass_blind()) return C2V_El;
+        if (vbs.is_cut_sr_mu() and vbs.pass_blind()) return C2V_Mu;
+        if (vbs.is_cut_sr_tau() and vbs.pass_blind()) return C2V_Tau;
+        if (vbs.is_cut_sr_neg() and vbs.pass_blind()) return C2V_Neg;
+        if (vbs.is_cut_sr_lgt() and vbs.pass_blind()) return C2V_Lgt;
+        // C3 signal regions
+        if (vbs.is_cut_c3_sr_el() and vbs.pass_blind()) return C3_El;
+        if (vbs.is_cut_c3_sr_mu() and vbs.pass_blind()) return C3_Mu;
+        if (vbs.is_cut_c3_sr_tau() and vbs.pass_blind()) return C3_Tau;
+        if (vbs.is_cut_c3_sr_neg() and vbs.pass_blind()) return C3_Neg;
+        // SM signal regions
+        if (vbs.is_cut_sm_sr_el() and vbs.pass_blind()) return SM_El;
+        if (vbs.is_cut_sm_sr_mu() and vbs.pass_blind()) return SM_Mu;
+        if (vbs.is_cut_sm_sr_tau() and vbs.pass_blind()) return SM_Tau;
+        if (vbs.is_cut_sm_sr_neg() and vbs.pass_blind()) return SM_Neg;
+        // Control regions (inclusive)
+        if (vbs.is_cut_cr_el()) return CR_El;
+        if (vbs.is_cut_cr_mu()) return CR_Mu;
+        if (vbs.is_cut_cr_tau()) return CR_Tau;
+        if (vbs.is_cut_cr_neg()) return CR_Neg;
+        return Excluded;
     };
 
     // Weaker classification
@@ -85,11 +106,11 @@ int main(int argc, char** argv)
         if (vbs.is_cut_sr2_mu() and vbs.pass_blind()) return 1;
         if (vbs.is_cut_sr2_tau() and vbs.pass_blind()) return 2;
         if (vbs.is_cut_sr2_neg() and vbs.pass_blind()) return 3;
-        if (vbs.is_cut_cr2_el()) return -1;
-        if (vbs.is_cut_cr2_mu()) return -2;
-        if (vbs.is_cut_cr2_tau()) return -3;
-        if (vbs.is_cut_cr2_neg()) return -4;
-        return -999;
+        if (vbs.is_cut_cr_el()) return int(CR_El);
+        if (vbs.is_cut_cr_mu()) return int(CR_Mu);
+        if (vbs.is_cut_cr_tau()) return int(CR_Tau);
+        if (vbs.is_cut_cr_neg()) return int(CR_Neg);
+        return int(Excluded);
     };
 
     // BDT cut
@@ -180,7 +201,7 @@ int main(int argc, char** argv)
     // Important variables
     ana.histograms.addVecHistogram("CutSR", 5, 0, 5, [&]() {
         std::vector<float> bins;
-        int bin = cut_bin();
+        CutBasedRegion bin = cut_bin();
         if (bin >= 0) bins.push_back(bin);
         return bins;
     });
@@ -205,46 +226,120 @@ int main(int argc, char** argv)
 
     ana.histograms.addVecHistogram("CutSREl", 2, 0, 2, [&]() {
         std::vector<float> bins;
-        int bin = cut_bin();
-        if (bin == 0)
+        CutBasedRegion bin = cut_bin();
+        if (bin == C2V_El)
             bins.push_back(1);
-        else if (bin == -1)
+        else if (bin == CR_El)
             bins.push_back(0);
         return bins;
     });
     ana.histograms.addVecHistogram("CutSRMu", 2, 0, 2, [&]() {
         std::vector<float> bins;
-        int bin = cut_bin();
-        if (bin == 1)
+        CutBasedRegion bin = cut_bin();
+        if (bin == C2V_Mu)
             bins.push_back(1);
-        else if (bin == -2)
+        else if (bin == CR_Mu)
             bins.push_back(0);
         return bins;
     });
     ana.histograms.addVecHistogram("CutSRTau", 2, 0, 2, [&]() {
         std::vector<float> bins;
-        int bin = cut_bin();
-        if (bin == 2)
+        CutBasedRegion bin = cut_bin();
+        if (bin == C2V_Tau)
             bins.push_back(1);
-        else if (bin == -3)
+        else if (bin == CR_Tau)
             bins.push_back(0);
         return bins;
     });
     ana.histograms.addVecHistogram("CutSRNeg", 2, 0, 2, [&]() {
         std::vector<float> bins;
-        int bin = cut_bin();
-        if (bin == 3)
+        CutBasedRegion bin = cut_bin();
+        if (bin == C2V_Neg)
             bins.push_back(1);
-        else if (bin == -4)
+        else if (bin == CR_Neg)
             bins.push_back(0);
         return bins;
     });
     ana.histograms.addVecHistogram("CutSRLgt", 2, 0, 2, [&]() {
         std::vector<float> bins;
-        int bin = cut_bin();
-        if (bin == 4)
+        CutBasedRegion bin = cut_bin();
+        if (bin == C2V_Lgt)
             bins.push_back(1);
-        else if (bin == -1 or bin == -2)
+        else if (bin == CR_El or bin == CR_Mu)
+            bins.push_back(0);
+        return bins;
+    });
+
+    ana.histograms.addVecHistogram("CutC3SREl", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        CutBasedRegion bin = cut_bin();
+        if (bin == C3_El)
+            bins.push_back(1);
+        else if (bin == CR_El)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutC3SRMu", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        CutBasedRegion bin = cut_bin();
+        if (bin == C3_Mu)
+            bins.push_back(1);
+        else if (bin == CR_Mu)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutC3SRTau", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        CutBasedRegion bin = cut_bin();
+        if (bin == C3_Tau)
+            bins.push_back(1);
+        else if (bin == CR_Tau)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutC3SRNeg", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        CutBasedRegion bin = cut_bin();
+        if (bin == C3_Neg)
+            bins.push_back(1);
+        else if (bin == CR_Neg)
+            bins.push_back(0);
+        return bins;
+    });
+
+    ana.histograms.addVecHistogram("CutSMSREl", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        CutBasedRegion bin = cut_bin();
+        if (bin == SM_El)
+            bins.push_back(1);
+        else if (bin == CR_El)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutSMSRMu", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        CutBasedRegion bin = cut_bin();
+        if (bin == SM_Mu)
+            bins.push_back(1);
+        else if (bin == CR_Mu)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutSMSRTau", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        CutBasedRegion bin = cut_bin();
+        if (bin == SM_Tau)
+            bins.push_back(1);
+        else if (bin == CR_Tau)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutSMSRNeg", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        CutBasedRegion bin = cut_bin();
+        if (bin == SM_Neg)
+            bins.push_back(1);
+        else if (bin == CR_Neg)
             bins.push_back(0);
         return bins;
     });
@@ -383,6 +478,99 @@ int main(int argc, char** argv)
         if (bin == 0 or bin == 1)
             bins.push_back(1);
         else if (bin == -1 or bin == -2)
+            bins.push_back(0);
+        return bins;
+    });
+
+    ana.histograms.addVecHistogram("CutC3SR2El", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        CutBasedRegion bin = cut_bin();
+        if (bin == C3_El)
+            bins.push_back(1);
+        else if (bin == CR_El)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutC3SR2Mu", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        CutBasedRegion bin = cut_bin();
+        if (bin == C3_Mu)
+            bins.push_back(1);
+        else if (bin == CR_Mu)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutC3SR2Tau", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        CutBasedRegion bin = cut_bin();
+        if (bin == C3_Tau)
+            bins.push_back(1);
+        else if (bin == CR_Tau)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutC3SR2Neg", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        CutBasedRegion bin = cut_bin();
+        if (bin == C3_Neg)
+            bins.push_back(1);
+        else if (bin == CR_Neg)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutC3SR2Lgt", 2, 0, 2, [&]() {
+        // Used to top composition systs
+        std::vector<float> bins;
+        CutBasedRegion bin = cut_bin();
+        if (bin == C3_El || bin == C3_Mu)
+            bins.push_back(1);
+        else if (bin == CR_El || bin == CR_Mu)
+            bins.push_back(0);
+        return bins;
+    });
+
+    ana.histograms.addVecHistogram("CutSMSR2El", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        CutBasedRegion bin = cut_bin();
+        if (bin == SM_El)
+            bins.push_back(1);
+        else if (bin == CR_El)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutSMSR2Mu", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        CutBasedRegion bin = cut_bin();
+        if (bin == SM_Mu)
+            bins.push_back(1);
+        else if (bin == CR_Mu)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutSMSR2Tau", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        CutBasedRegion bin = cut_bin();
+        if (bin == SM_Tau)
+            bins.push_back(1);
+        else if (bin == CR_Tau)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutSMSR2Neg", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        CutBasedRegion bin = cut_bin();
+        if (bin == SM_Neg)
+            bins.push_back(1);
+        else if (bin == CR_Neg)
+            bins.push_back(0);
+        return bins;
+    });
+    ana.histograms.addVecHistogram("CutSMSR2Lgt", 2, 0, 2, [&]() {
+        std::vector<float> bins;
+        CutBasedRegion bin = cut_bin();
+        if (bin == SM_El || bin == SM_Mu)
+            bins.push_back(1);
+        else if (bin == CR_El || bin == CR_Mu)
             bins.push_back(0);
         return bins;
     });

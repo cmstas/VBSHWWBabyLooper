@@ -163,6 +163,11 @@ if "LooseVR" in cutname_to_plot and "MbbOff" in cutname_to_plot and "Channels4Bi
     sigs = []
     signal_labels = None
 
+if "Presel__" in cutname_to_plot:
+    sigs.append("{}/s_c2v_i20.root".format(hadd_dir))
+    signal_labels.append("SM")
+    signal_labels_tex.append("\\CTWOV=1 (SM)")
+
 data_fname = "{}/data.root".format(hadd_dir)
 
 lumi = -1
@@ -253,8 +258,12 @@ histxaxislabeloptions = {
 "Channels5Bins"                   : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)", "(e/#mu)^{+}l^{+}"]},
 "BDTSR"                           : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
 "CutSR"                           : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)", "(e/#mu)^{+}l^{+}"]},
+"CutC3SR"                         : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
+"CutSMSR"                         : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
 "BDTSR2"                          : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
 "CutSR2"                          : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
+"CutC3SR2"                        : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
+"CutSMSR2"                        : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
 "Yield"                           : {"xaxis_label"      : "Yield",                    "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
 "VRs"                             : {"xaxis_label"      : "Yield",                    "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
 "SRs"                             : {"xaxis_label"      : "Yield",                    "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},

@@ -60,7 +60,7 @@ book_plot_alpha()
 {
     PLOTDIRS="BkgComp BkgCompIndivid"
     CHANNELS="El Mu Tau Neg Lgt"
-    REGIONS="BDTSR BDTSR2 CutSR CutSR2"
+    REGIONS="BDTSR BDTSR2 CutSR CutSR2 CutC3SR CutC3SR2 CutSMSR CutSMSR2"
     for PLOTDIR in ${PLOTDIRS}; do
         for CHANNEL in ${CHANNELS}; do
             for REGION in ${REGIONS}; do
@@ -79,6 +79,8 @@ book_plot SRBDT       "El Mu Tau Neg"             ""${SYST}           "BDT"
 book_plot AnchorYield "MbbOff"                    ""${SYST}           "Channel"
 book_plot SRYield     "LooseVR"                   ""${SYST}           "BDTSR BDTSR2"
 book_plot SRYield     "LooseVR"                   ""${SYST}           "CutSR CutSR2"
+book_plot SRYield     "LooseVR"                   ""${SYST}           "CutC3SR CutC3SR2"
+book_plot SRYield     "LooseVR"                   ""${SYST}           "CutSMSR CutSMSR2"
 book_plot VRBDTKine   "LL"                        MbbOff${SYST}       "STZoom LTZoom MJJ DEtaJJ Mbb PtbbZoom DEtabb DRbb DPhibb BJetPt0 BJetPt1 DRJJ PtJJ JetE0 JetE1 Mll DPhill DRll Ptll LeptonPt0Zoom LeptonPt1Zoom MET MTVVH"
 book_plot VRBDTKine   "LT"                        MbbOff${SYST}       "STZoom LTZoom MJJ DEtaJJ Mbb PtbbZoom DEtabb DRbb DPhibb BJetPt0 BJetPt1 DRJJ PtJJ JetE0 JetE1 Mll DPhill DRll Ptll LeptonPt0Zoom LeptonPt1Zoom MET MTVVH"
 book_plot Alpha       "LooseVR"                   ""${SYST}           "CutSREl CutSR2El"
@@ -86,6 +88,14 @@ book_plot Alpha       "LooseVR"                   ""${SYST}           "CutSRMu C
 book_plot Alpha       "LooseVR"                   ""${SYST}           "CutSRTau CutSR2Tau"
 book_plot Alpha       "LooseVR"                   ""${SYST}           "CutSRNeg CutSR2Neg"
 book_plot Alpha       "LooseVR"                   ""${SYST}           "CutSRLgt"
+book_plot Alpha       "LooseVR"                   ""${SYST}           "CutC3SREl CutC3SR2El"
+book_plot Alpha       "LooseVR"                   ""${SYST}           "CutC3SRMu CutC3SR2Mu"
+book_plot Alpha       "LooseVR"                   ""${SYST}           "CutC3SRTau CutC3SR2Tau"
+book_plot Alpha       "LooseVR"                   ""${SYST}           "CutC3SRNeg CutC3SR2Neg"
+book_plot Alpha       "LooseVR"                   ""${SYST}           "CutSMSREl CutSMSR2El"
+book_plot Alpha       "LooseVR"                   ""${SYST}           "CutSMSRMu CutSMSR2Mu"
+book_plot Alpha       "LooseVR"                   ""${SYST}           "CutSMSRTau CutSMSR2Tau"
+book_plot Alpha       "LooseVR"                   ""${SYST}           "CutSMSRNeg CutSMSR2Neg"
 book_plot Alpha       "LooseVR"                   ""${SYST}           "BDTSREl BDTSR2El"
 book_plot Alpha       "LooseVR"                   ""${SYST}           "BDTSRMu BDTSR2Mu"
 book_plot Alpha       "LooseVR"                   ""${SYST}           "BDTSRTau BDTSR2Tau"
@@ -93,6 +103,8 @@ book_plot Alpha       "LooseVR"                   ""${SYST}           "BDTSRNeg 
 book_plot SRKine      "Presel"                    ""                  "ST LT Ptbb MJJ DEtaJJ LeptonPt0 LeptonPt1 Mbb"
 book_plot Fit         "LooseVR"                   ""${SYST}           "BDTSR"
 book_plot Fit         "LooseVR"                   ""${SYST}           "CutSR"
+book_plot Fit         "LooseVR"                   ""${SYST}           "CutC3SR"
+book_plot Fit         "LooseVR"                   ""${SYST}           "CutSMSR"
 book_plot_alpha
 
 xargs.sh .plotjobs.txt
