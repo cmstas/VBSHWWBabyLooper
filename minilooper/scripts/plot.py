@@ -128,9 +128,9 @@ sigs = [
         ]
 
 signal_labels = [
-        "C_{2V}=4.5",
-        "C_{V}=1.4",
-        "C_{3}=60",
+        "\kappa_{VV}=4.5",
+        "\kappa_{V}=1.4",
+        "\kappa_{\lambda}=60",
         # "SM",
         # "C_{2V}=-2",
         ]
