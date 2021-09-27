@@ -1,11 +1,15 @@
 def get_systs(signal,
-              philip_plot_dir="/nfs-7/userdata/jguiang/VBSHWWResult/v2.6_SS/v2/Run2/Nominal/plots", 
+              philip_plot_dir="/nfs-7/userdata/jguiang/VBSHWWResult/v2.6_SS/v2/Run2/Final/plots", 
               jonathan_table_dir="/home/users/jguiang/public_html/dump/vbs_syst_tables",
               doBDT=False):
     bdt_philip_systs = []
     cut_philip_systs = []
     # Parse Philip's table
-    with open("{}/aexp.tex".format(philip_plot_dir), "r") as f_in:
+    if doBDT:
+        philip_table = "{}/aexp_bdt.tex".format(philip_plot_dir)
+    else:
+        philip_table = "{}/aexp_cut.tex".format(philip_plot_dir)
+    with open(philip_table, "r") as f_in:
         headers = []
         channel_systs = []
         channel_names = []
