@@ -1,4 +1,4 @@
-#include "TauIDSFTool.h"
+#include "TauPOG/TauIDSFs/interface/TauIDSFTool.h"
 #include <iostream> // std::cerr, std::endl
 #include <iomanip>
 #include <assert.h> // assert
@@ -46,8 +46,9 @@ void TauIDSFTool::disabled() const {
 TauIDSFTool::TauIDSFTool(const std::string& year, const std::string& id, const std::string& wp, const bool dm, const bool embedding): ID(id), WP(wp){
 
   bool verbose = false;
-  std::string datapath                = "/nfs-7/userdata/jguiang/tauPOG_SFs"; // This is the only change to the standalone Tau POG tool
-  std::vector<std::string> years      = {"2016Legacy","2017ReReco","2018ReReco"};
+  // std::string datapath                = Form("%s/src/TauPOG/TauIDSFs/data",getenv("CMSSW_BASE"));
+  std::string datapath                = "/nfs-7/userdata/jguiang/tauPOG_SFs";
+  std::vector<std::string> years      = {"2016Legacy","2017ReReco","2018ReReco","UL2016_preVFP","UL2016_postVFP","UL2017","UL2018"};
   std::vector<std::string> antiJetIDs = {"MVAoldDM2017v2","DeepTau2017v2p1VSjet"};
   std::vector<std::string> antiEleIDs = {"antiEleMVA6",   "DeepTau2017v2p1VSe"};
   std::vector<std::string> antiMuIDs  = {"antiMu3",       "DeepTau2017v2p1VSmu"};
