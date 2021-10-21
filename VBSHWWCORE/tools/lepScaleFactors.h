@@ -1,29 +1,28 @@
 #ifndef LEPSCALEFACTORS_H
 #define LEPSCALEFACTORS_H
-#include "Nano.h"
-#include "Base.h"
 
-namespace ttH {
-    float getElecTightSF(float eta, float pt, int year);
-    float getElecLooseSF(float eta, float pt, int year);
-    float getElecTTHSFErrPt(float eta, float pt, int year);
-    float getElecTTHSFErrEta(float eta, float pt, int year);
-    float getElecTTHSFErr(float eta, float pt, int year, bool up);
+float ttH::getElecTightSF(float eta, float pt, int year);
+float ttH::getElecLooseSF(float eta, float pt, int year);
+float ttH::getElecTTHSFErrPt(float pt, int year);
+float ttH::getElecTTHSFErrEta(float eta, int year);
+float ttH::getElecTTHSFErr(float eta, float pt, int year, bool up);
 
-    float getMuonTightSF(float eta, float pt, int year);
-    float getMuonLooseSF(float eta, float pt, int year);
-    float getMuonTTHSFErrPt(float eta, float pt, int year);
-    float getMuonTTHSFErrEta(float eta, float pt, int year);
-    float getMuonTTHSFErr(float eta, float pt, int year, bool up);
+float ttH::getMuonTightSF(float eta, float pt, int year);
+float ttH::getMuonLooseSF(float eta, float pt, int year);
+float ttH::getMuonTTHSFErrPt(float pt, int year);
+float ttH::getMuonTTHSFErrEta(float eta, int year);
+float ttH::getMuonTTHSFErr(float eta, float pt, int year, bool up);
 
-    float getElecPOGLooseSF(float eta, float pt, int year);
-    float getElecPOGLooseSFErr(float eta, float pt, int year);
 
-    float getElecRecoEffSF(float eta, float pt, int year);
-    float getElecRecoEffSFErr(float eta, float pt, int year);
-    float getElecRecoEffSFUL(float eta, float pt, int year);
-    float getElecRecoEffSFULErr(float eta, float pt, int year);
+float ttH::getElecPOGLooseSF(float eta, float pt, int year);
+float ttH::getElecPOGLooseSFErr(float eta, float pt, int year);
 
-}
-
+float ttH::getElecRecoEffSF(float eta, float pt, int year);
+float ttH::getElecRecoEffSFErr(float eta, float pt, int year);
+float ttH::getElecRecoEffSFUL(float eta, float pt, int year);
+float ttH::getElecRecoEffSFULErr(float eta, float pt, int year);
+float ttH::getElecRecoEffSFUL2016preVFP(float eta, float pt);
+float ttH::getElecRecoEffSFULErr2016preVFP(float eta, float pt);
+float ttH::getElecRecoEffSFUL2016postVFP(float eta, float pt);
+float ttH::getElecRecoEffSFULErr2016postVFP(float eta, float pt);
 #endif

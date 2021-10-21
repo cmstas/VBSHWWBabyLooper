@@ -1,30 +1,400 @@
+#include "lepScaleFactors.h"
 
-float ttH::getMuonTTHSFErrEta(float eta, int year) {
+float ttH::getElecTightSF(float eta, float pt, int year) {
     if (year == 2016) {
-        if (fabs(eta) >= 0 && fabs(eta) < 0.5) return 0.987079;
-        if (fabs(eta) >= 0.5 && fabs(eta) < 1) return 1.0011;
-        if (fabs(eta) >= 1 && fabs(eta) < 1.5) return 0.973398;
-        if (fabs(eta) >= 1.5 && fabs(eta) < 2) return 0.995077;
-        if (fabs(eta) >= 2 && fabs(eta) < 2.5) return 0.982187;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 10 && pt < 15) return 0.755435;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 15 && pt < 20) return 0.823245;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 20 && pt < 25) return 0.829126;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 25 && pt < 30) return 0.83156;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 30 && pt < 35) return 0.831597;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 35 && pt < 40) return 0.837012;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 40 && pt < 45) return 0.84375;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 45 && pt < 60) return 0.855784;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 60 && pt < 80) return 0.87156;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 80) return 0.893871;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 10 && pt < 15) return 0.783626;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 15 && pt < 20) return 0.791667;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 20 && pt < 25) return 0.807611;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 25 && pt < 30) return 0.814394;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 30 && pt < 35) return 0.811828;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 35 && pt < 40) return 0.822496;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 40 && pt < 45) return 0.826014;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 45 && pt < 60) return 0.831667;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 60 && pt < 80) return 0.834448;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 80) return 0.856427;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 10 && pt < 15) return 0.8;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 15 && pt < 20) return 0.815884;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 20 && pt < 25) return 0.813514;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 25 && pt < 30) return 0.835267;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 30 && pt < 35) return 0.798283;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 35 && pt < 40) return 0.804082;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 40 && pt < 45) return 0.818356;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 45 && pt < 60) return 0.825368;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 60 && pt < 80) return 0.827094;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 80) return 0.864528;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 10 && pt < 15) return 1.02817;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 15 && pt < 20) return 0.966825;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 20 && pt < 25) return 0.896774;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 25 && pt < 30) return 0.883152;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 30 && pt < 35) return 0.879093;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 35 && pt < 40) return 0.863962;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 40 && pt < 45) return 0.883295;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 45 && pt < 60) return 0.872768;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 60 && pt < 80) return 0.861298;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 80) return 0.893519;
     }
     if (year == 2017) {
-        if (fabs(eta) >= 0 && fabs(eta) < 0.5) return 0.988256;
-        if (fabs(eta) >= 0.5 && fabs(eta) < 1) return 0.998026;
-        if (fabs(eta) >= 1 && fabs(eta) < 1.5) return 0.992793;
-        if (fabs(eta) >= 1.5 && fabs(eta) < 2) return 0.97602;
-        if (fabs(eta) >= 2 && fabs(eta) < 2.5) return 0.946541;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 10 && pt < 15) return 0.751479;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 15 && pt < 20) return 0.820513;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 20 && pt < 25) return 0.837294;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 25 && pt < 30) return 0.842809;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 30 && pt < 35) return 0.851974;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 35 && pt < 40) return 0.870813;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 40 && pt < 45) return 0.872894;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 45 && pt < 60) return 0.881913;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 60 && pt < 80) return 0.886628;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 80) return 0.899859;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 10 && pt < 15) return 0.652482;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 15 && pt < 20) return 0.789189;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 20 && pt < 25) return 0.801572;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 25 && pt < 30) return 0.819277;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 30 && pt < 35) return 0.8203;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 35 && pt < 40) return 0.835218;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 40 && pt < 45) return 0.846875;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 45 && pt < 60) return 0.85559;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 60 && pt < 80) return 0.851501;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 80) return 0.855573;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 10 && pt < 15) return 0.516129;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 15 && pt < 20) return 0.64898;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 20 && pt < 25) return 0.675393;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 25 && pt < 30) return 0.714592;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 30 && pt < 35) return 0.718254;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 35 && pt < 40) return 0.745318;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 40 && pt < 45) return 0.768421;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 45 && pt < 60) return 0.798305;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 60 && pt < 80) return 0.81592;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 80) return 0.842105;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 10 && pt < 15) return 0.666667;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 15 && pt < 20) return 0.569767;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 20 && pt < 25) return 0.638989;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 25 && pt < 30) return 0.649171;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 30 && pt < 35) return 0.657895;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 35 && pt < 40) return 0.697727;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 40 && pt < 45) return 0.737069;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 45 && pt < 60) return 0.741201;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 60 && pt < 80) return 0.76342;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 80) return 0.846154;
     }
     if (year == 2018) {
-        if (fabs(eta) >= 0 && fabs(eta) < 0.5) return 0.980775;
-        if (fabs(eta) >= 0.5 && fabs(eta) < 1) return 0.977193;
-        if (fabs(eta) >= 1 && fabs(eta) < 1.5) return 0.982292;
-        if (fabs(eta) >= 1.5 && fabs(eta) < 2) return 0.986776;
-        if (fabs(eta) >= 2 && fabs(eta) < 2.5) return 0.994179;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 10 && pt < 15) return 0.759259;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 15 && pt < 20) return 0.843658;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 20 && pt < 25) return 0.863043;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 25 && pt < 30) return 0.880157;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 30 && pt < 35) return 0.909441;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 35 && pt < 40) return 0.905967;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 40 && pt < 45) return 0.907216;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 45 && pt < 60) return 0.91162;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 60 && pt < 80) return 0.907975;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 80) return 0.921168;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 10 && pt < 15) return 0.813187;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 15 && pt < 20) return 0.86532;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 20 && pt < 25) return 0.869565;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 25 && pt < 30) return 0.881657;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 30 && pt < 35) return 0.890152;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 35 && pt < 40) return 0.901639;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 40 && pt < 45) return 0.912434;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 45 && pt < 60) return 0.913793;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 60 && pt < 80) return 0.916522;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 80) return 0.933798;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 10 && pt < 15) return 0.810811;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 15 && pt < 20) return 0.817708;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 20 && pt < 25) return 0.81875;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 25 && pt < 30) return 0.848259;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 30 && pt < 35) return 0.822171;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 35 && pt < 40) return 0.832618;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 40 && pt < 45) return 0.840319;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 45 && pt < 60) return 0.850575;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 60 && pt < 80) return 0.852941;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 80) return 0.874114;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 10 && pt < 15) return 1.04545;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 15 && pt < 20) return 1.0082;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 20 && pt < 25) return 0.955357;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 25 && pt < 30) return 0.966443;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 30 && pt < 35) return 0.935294;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 35 && pt < 40) return 0.901907;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 40 && pt < 45) return 0.905371;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 45 && pt < 60) return 0.871734;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 60 && pt < 80) return 0.924945;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.5 && pt >= 80) return 0.854772;
     }
     return 0.0;
 }
-float ttH::getMuonTTHSFErr(float eta, float pt, int year, bool up)
-{
+
+float ttH::getElecTTHSFErrPt(float pt, int year) {
+    if (year == 2016) {
+        if (pt >= 0 && pt < 15) return 0.967409;
+        if (pt >= 15 && pt < 30) return 0.953719;
+        if (pt >= 30 && pt < 45) return 1.00114;
+        if (pt >= 45 && pt < 60) return 0.998463;
+        if (pt >= 60 && pt < 75) return 1.00979;
+        if (pt >= 75 && pt < 90) return 0.993269;
+        if (pt >= 90 && pt < 105) return 0.986654;
+        if (pt >= 105 && pt < 120) return 0.988112;
+        if (pt >= 120 && pt < 135) return 1.0086;
+        if (pt >= 135) return 1.00871;
+    }
+    if (year == 2017) {
+        if (pt >= 0 && pt < 15) return 1.02674;
+        if (pt >= 15 && pt < 30) return 1.02898;
+        if (pt >= 30 && pt < 45) return 1.04209;
+        if (pt >= 45 && pt < 60) return 1.01939;
+        if (pt >= 60 && pt < 75) return 1.02722;
+        if (pt >= 75 && pt < 90) return 1.01655;
+        if (pt >= 90 && pt < 105) return 1.01922;
+        if (pt >= 105 && pt < 120) return 1.01626;
+        if (pt >= 120 && pt < 135) return 1.0315;
+        if (pt >= 135) return 1.02362;
+    }
+    if (year == 2018) {
+        if (pt >= 0 && pt < 15) return 0.921124;
+        if (pt >= 15 && pt < 30) return 0.96246;
+        if (pt >= 30 && pt < 45) return 1.01475;
+        if (pt >= 45 && pt < 60) return 1.03108;
+        if (pt >= 60 && pt < 75) return 1.02545;
+        if (pt >= 75 && pt < 90) return 1.00691;
+        if (pt >= 90 && pt < 105) return 1.01313;
+        if (pt >= 105 && pt < 120) return 1.02224;
+        if (pt >= 120 && pt < 135) return 1.02086;
+        if (pt >= 135) return 1.02304;
+    }
+    return 0.0;
+}
+
+float ttH::getElecTTHSFErrEta(float eta, int year) {
+    if (year == 2016) {
+        if (abs(eta) >= 0 && abs(eta) < 0.5) return 0.996286;
+        if (abs(eta) >= 0.5 && abs(eta) < 1) return 0.999735;
+        if (abs(eta) >= 1 && abs(eta) < 1.5) return 0.967856;
+        if (abs(eta) >= 1.5 && abs(eta) < 2) return 0.97779;
+        if (abs(eta) >= 2 && abs(eta) < 2.5) return 0.952787;
+    }
+    if (year == 2017) {
+        if (abs(eta) >= 0 && abs(eta) < 0.5) return 1.02843;
+        if (abs(eta) >= 0.5 && abs(eta) < 1) return 1.02338;
+        if (abs(eta) >= 1 && abs(eta) < 1.5) return 1.03661;
+        if (abs(eta) >= 1.5 && abs(eta) < 2) return 0.977512;
+        if (abs(eta) >= 2 && abs(eta) < 2.5) return 0.997837;
+    }
+    if (year == 2018) {
+        if (abs(eta) >= 0 && abs(eta) < 0.5) return 0.98397;
+        if (abs(eta) >= 0.5 && abs(eta) < 1) return 1.00531;
+        if (abs(eta) >= 1 && abs(eta) < 1.5) return 1.01501;
+        if (abs(eta) >= 1.5 && abs(eta) < 2) return 0.985103;
+        if (abs(eta) >= 2 && abs(eta) < 2.5) return 0.970617;
+    }
+    return 0.0;
+}
+
+float ttH::getElecTTHSFErr(float eta, float pt, int year, bool up) {
+    float max_err = max(ttH::getElecTTHSFErrPt(pt, year), ttH::getElecTTHSFErrEta(eta, year));
+    return (1.0 - max_err);
+}
+float ttH::getMuonTightSF(float eta, float pt, int year) {
+    if (year == 2016) {
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 10 && pt < 15) return 0.955882;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 15 && pt < 20) return 0.976574;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 20 && pt < 25) return 0.985401;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 25 && pt < 30) return 0.989933;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 30 && pt < 35) return 0.995731;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 35 && pt < 40) return 0.995851;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 40 && pt < 45) return 0.998979;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 45 && pt < 60) return 0.998987;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 60 && pt < 80) return 0.998992;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 80) return 1.00302;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 10 && pt < 15) return 0.957983;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 15 && pt < 20) return 0.974551;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 20 && pt < 25) return 0.987593;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 25 && pt < 30) return 0.992045;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 30 && pt < 35) return 0.993535;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 35 && pt < 40) return 0.994792;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 40 && pt < 45) return 0.996933;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 45 && pt < 60) return 0.998986;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 60 && pt < 80) return 0.998992;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 80) return 1.00403;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 10 && pt < 15) return 0.944134;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 15 && pt < 20) return 0.985099;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 20 && pt < 25) return 1;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 25 && pt < 30) return 1;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 30 && pt < 35) return 0.997802;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 35 && pt < 40) return 0.997888;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 40 && pt < 45) return 0.998969;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 45 && pt < 60) return 1;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 60 && pt < 80) return 1;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 80) return 1.00404;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 10 && pt < 15) return 0.9;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 15 && pt < 20) return 0.973029;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 20 && pt < 25) return 0.992816;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 25 && pt < 30) return 0.988875;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 30 && pt < 35) return 0.99319;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 35 && pt < 40) return 0.994595;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 40 && pt < 45) return 0.996849;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 45 && pt < 60) return 0.995859;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 60 && pt < 80) return 0.992828;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 80) return 1.01754;
+    }
+    if (year == 2017) {
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 10 && pt < 15) return 0.87218;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 15 && pt < 20) return 0.925373;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 20 && pt < 25) return 0.960591;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 25 && pt < 30) return 0.977427;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 30 && pt < 35) return 0.982796;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 35 && pt < 40) return 0.989572;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 40 && pt < 45) return 0.992828;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 45 && pt < 60) return 0.994924;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 60 && pt < 80) return 0.996973;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 80) return 1.00302;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 10 && pt < 15) return 0.909465;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 15 && pt < 20) return 0.946792;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 20 && pt < 25) return 0.968072;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 25 && pt < 30) return 0.975751;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 30 && pt < 35) return 0.983624;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 35 && pt < 40) return 0.988433;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 40 && pt < 45) return 0.992798;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 45 && pt < 60) return 0.995923;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 60 && pt < 80) return 0.995956;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 80) return 1.00202;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 10 && pt < 15) return 0.819149;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 15 && pt < 20) return 0.916239;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 20 && pt < 25) return 0.949865;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 25 && pt < 30) return 0.964029;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 30 && pt < 35) return 0.97433;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 35 && pt < 40) return 0.983957;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 40 && pt < 45) return 0.989605;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 45 && pt < 60) return 0.993846;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 60 && pt < 80) return 0.995939;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 80) return 1.00202;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 10 && pt < 15) return 0.776786;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 15 && pt < 20) return 0.898947;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 20 && pt < 25) return 0.934551;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 25 && pt < 30) return 0.956466;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 30 && pt < 35) return 0.971031;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 35 && pt < 40) return 0.980349;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 40 && pt < 45) return 0.987355;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 45 && pt < 60) return 0.991718;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 60 && pt < 80) return 0.993871;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 80) return 1.01328;
+    }
+    if (year == 2018) {
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 10 && pt < 15) return 0.830116;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 15 && pt < 20) return 0.895988;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 20 && pt < 25) return 0.934969;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 25 && pt < 30) return 0.960586;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 30 && pt < 35) return 0.97637;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 35 && pt < 40) return 0.984375;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 40 && pt < 45) return 0.990788;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 45 && pt < 60) return 0.993909;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 60 && pt < 80) return 0.995964;
+        if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 80) return 1.00201;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 10 && pt < 15) return 0.853448;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 15 && pt < 20) return 0.910356;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 20 && pt < 25) return 0.945776;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 25 && pt < 30) return 0.963303;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 30 && pt < 35) return 0.975;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 35 && pt < 40) return 0.98531;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 40 && pt < 45) return 0.989733;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 45 && pt < 60) return 0.993896;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 60 && pt < 80) return 0.99596;
+        if (fabs(eta) >= 0.9 && fabs(eta) < 1.2 && pt >= 80) return 1.00202;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 10 && pt < 15) return 0.923077;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 15 && pt < 20) return 0.954003;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 20 && pt < 25) return 0.97043;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 25 && pt < 30) return 0.980907;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 30 && pt < 35) return 0.988827;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 35 && pt < 40) return 0.993576;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 40 && pt < 45) return 0.995833;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 45 && pt < 60) return 0.997947;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 60 && pt < 80) return 0.996954;
+        if (fabs(eta) >= 1.2 && fabs(eta) < 2.1 && pt >= 80) return 1.00202;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 10 && pt < 15) return 1.03191;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 15 && pt < 20) return 1.02371;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 20 && pt < 25) return 0.995363;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 25 && pt < 30) return 1.00396;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 30 && pt < 35) return 1.00956;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 35 && pt < 40) return 1.00785;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 40 && pt < 45) return 1.00647;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 45 && pt < 60) return 1.00421;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 60 && pt < 80) return 0.998971;
+        if (fabs(eta) >= 2.1 && fabs(eta) < 2.4 && pt >= 80) return 1.01336;
+    }
+    return 0.0;
+}
+
+float ttH::getMuonTTHSFErrPt(float pt, int year) {
+    if (year == 2016) {
+        if (pt >= 0 && pt < 15) return 0.944572;
+        if (pt >= 15 && pt < 30) return 0.984619;
+        if (pt >= 30 && pt < 45) return 1.00288;
+        if (pt >= 45 && pt < 60) return 0.997416;
+        if (pt >= 60 && pt < 75) return 1.00684;
+        if (pt >= 75 && pt < 90) return 1.00068;
+        if (pt >= 90 && pt < 105) return 0.988714;
+        if (pt >= 105 && pt < 120) return 0.996859;
+        if (pt >= 120 && pt < 135) return 1.00141;
+        if (pt >= 135) return 0.990344;
+    }
+    if (year == 2017) {
+        if (pt >= 0 && pt < 15) return 1.0035;
+        if (pt >= 15 && pt < 30) return 0.9748;
+        if (pt >= 30 && pt < 45) return 1.00079;
+        if (pt >= 45 && pt < 60) return 0.998123;
+        if (pt >= 60 && pt < 75) return 1.00255;
+        if (pt >= 75 && pt < 90) return 1.00035;
+        if (pt >= 90 && pt < 105) return 1.0018;
+        if (pt >= 105 && pt < 120) return 0.998739;
+        if (pt >= 120 && pt < 135) return 0.995682;
+        if (pt >= 135) return 1.00276;
+    }
+    if (year == 2018) {
+        if (pt >= 0 && pt < 15) return 0.992714;
+        if (pt >= 15 && pt < 30) return 0.970142;
+        if (pt >= 30 && pt < 45) return 0.990027;
+        if (pt >= 45 && pt < 60) return 0.994844;
+        if (pt >= 60 && pt < 75) return 1.00381;
+        if (pt >= 75 && pt < 90) return 1.00145;
+        if (pt >= 90 && pt < 105) return 0.996145;
+        if (pt >= 105 && pt < 120) return 0.986428;
+        if (pt >= 120 && pt < 135) return 0.990573;
+        if (pt >= 135) return 1.00155;
+    }
+    return 0.0;
+}
+
+float ttH::getMuonTTHSFErrEta(float eta, int year) {
+    if (year == 2016) {
+        if (abs(eta) >= 0 && abs(eta) < 0.5) return 0.987079;
+        if (abs(eta) >= 0.5 && abs(eta) < 1) return 1.0011;
+        if (abs(eta) >= 1 && abs(eta) < 1.5) return 0.973398;
+        if (abs(eta) >= 1.5 && abs(eta) < 2) return 0.995077;
+        if (abs(eta) >= 2 && abs(eta) < 2.5) return 0.982187;
+    }
+    if (year == 2017) {
+        if (abs(eta) >= 0 && abs(eta) < 0.5) return 0.988256;
+        if (abs(eta) >= 0.5 && abs(eta) < 1) return 0.998026;
+        if (abs(eta) >= 1 && abs(eta) < 1.5) return 0.992793;
+        if (abs(eta) >= 1.5 && abs(eta) < 2) return 0.97602;
+        if (abs(eta) >= 2 && abs(eta) < 2.5) return 0.946541;
+    }
+    if (year == 2018) {
+        if (abs(eta) >= 0 && abs(eta) < 0.5) return 0.980775;
+        if (abs(eta) >= 0.5 && abs(eta) < 1) return 0.977193;
+        if (abs(eta) >= 1 && abs(eta) < 1.5) return 0.982292;
+        if (abs(eta) >= 1.5 && abs(eta) < 2) return 0.986776;
+        if (abs(eta) >= 2 && abs(eta) < 2.5) return 0.994179;
+    }
+    return 0.0;
+}
+
+float ttH::getMuonTTHSFErr(float eta, float pt, int year, bool up) {
     float max_err = max(ttH::getMuonTTHSFErrPt(pt, year), ttH::getMuonTTHSFErrEta(eta, year));
     return (1.0 - max_err);
 }
@@ -535,16 +905,6 @@ float ttH::getElecRecoEffSFUL2016preVFP(float eta, float pt) {
     if (eta >= 1.444 && eta < 1.566 && pt >= 10 && pt < 20) return 1.2065;
     if (eta >= 1.566 && eta < 2 && pt >= 10 && pt < 20) return 0.990343;
     if (eta >= 2 && eta < 2.5 && pt >= 10 && pt < 20) return 1.01389;
-    if (eta >= -2.5 && eta < -2 && pt >= 10 && pt < 20) return 1.01389;
-    if (eta >= -2 && eta < -1.566 && pt >= 10 && pt < 20) return 0.990343;
-    if (eta >= -1.566 && eta < -1.444 && pt >= 10 && pt < 20) return 1.2065;
-    if (eta >= -1.444 && eta < -1 && pt >= 10 && pt < 20) return 1.01758;
-    if (eta >= -1 && eta < 0 && pt >= 10 && pt < 20) return 1.05569;
-    if (eta >= 0 && eta < 1 && pt >= 10 && pt < 20) return 1.05569;
-    if (eta >= 1 && eta < 1.444 && pt >= 10 && pt < 20) return 1.01758;
-    if (eta >= 1.444 && eta < 1.566 && pt >= 10 && pt < 20) return 1.2065;
-    if (eta >= 1.566 && eta < 2 && pt >= 10 && pt < 20) return 0.990343;
-    if (eta >= 2 && eta < 2.5 && pt >= 10 && pt < 20) return 1.01389;
     if (eta >= -2.5 && eta < -2 && pt >= 20 && pt < 45) return 0.996791;
     if (eta >= -2.5 && eta < -2 && pt >= 45 && pt < 75) return 0.991588;
     if (eta >= -2.5 && eta < -2 && pt >= 75 && pt < 100) return 0.988372;
@@ -597,16 +957,6 @@ float ttH::getElecRecoEffSFUL2016preVFP(float eta, float pt) {
 }
 
 float ttH::getElecRecoEffSFUL2016postVFP(float eta, float pt) {
-    if (eta >= -2.5 && eta < -2 && pt >= 10 && pt < 20) return 1.01524;
-    if (eta >= -2 && eta < -1.566 && pt >= 10 && pt < 20) return 0.990312;
-    if (eta >= -1.566 && eta < -1.444 && pt >= 10 && pt < 20) return 1.12956;
-    if (eta >= -1.444 && eta < -1 && pt >= 10 && pt < 20) return 0.958561;
-    if (eta >= -1 && eta < 0 && pt >= 10 && pt < 20) return 1.02404;
-    if (eta >= 0 && eta < 1 && pt >= 10 && pt < 20) return 1.02404;
-    if (eta >= 1 && eta < 1.444 && pt >= 10 && pt < 20) return 0.958561;
-    if (eta >= 1.444 && eta < 1.566 && pt >= 10 && pt < 20) return 1.12956;
-    if (eta >= 1.566 && eta < 2 && pt >= 10 && pt < 20) return 0.990312;
-    if (eta >= 2 && eta < 2.5 && pt >= 10 && pt < 20) return 1.01524;
     if (eta >= -2.5 && eta < -2 && pt >= 10 && pt < 20) return 1.01524;
     if (eta >= -2 && eta < -1.566 && pt >= 10 && pt < 20) return 0.990312;
     if (eta >= -1.566 && eta < -1.444 && pt >= 10 && pt < 20) return 1.12956;
@@ -806,16 +1156,6 @@ float ttH::getElecRecoEffSFULErr2016preVFP(float eta, float pt) {
     if (eta >= 1.444 && eta < 1.566 && pt >= 10 && pt < 20) return 0.483377;
     if (eta >= 1.566 && eta < 2 && pt >= 10 && pt < 20) return 0.0139072;
     if (eta >= 2 && eta < 2.5 && pt >= 10 && pt < 20) return 0.0199128;
-    if (eta >= -2.5 && eta < -2 && pt >= 10 && pt < 20) return 0.0199128;
-    if (eta >= -2 && eta < -1.566 && pt >= 10 && pt < 20) return 0.0139072;
-    if (eta >= -1.566 && eta < -1.444 && pt >= 10 && pt < 20) return 0.483377;
-    if (eta >= -1.444 && eta < -1 && pt >= 10 && pt < 20) return 0.0365457;
-    if (eta >= -1 && eta < 0 && pt >= 10 && pt < 20) return 0.0819944;
-    if (eta >= 0 && eta < 1 && pt >= 10 && pt < 20) return 0.0819944;
-    if (eta >= 1 && eta < 1.444 && pt >= 10 && pt < 20) return 0.0365457;
-    if (eta >= 1.444 && eta < 1.566 && pt >= 10 && pt < 20) return 0.483377;
-    if (eta >= 1.566 && eta < 2 && pt >= 10 && pt < 20) return 0.0139072;
-    if (eta >= 2 && eta < 2.5 && pt >= 10 && pt < 20) return 0.0199128;
     if (eta >= -2.5 && eta < -2 && pt >= 20 && pt < 45) return 0.00337567;
     if (eta >= -2.5 && eta < -2 && pt >= 45 && pt < 75) return 0.00605904;
     if (eta >= -2.5 && eta < -2 && pt >= 75 && pt < 100) return 0.0140636;
@@ -868,16 +1208,6 @@ float ttH::getElecRecoEffSFULErr2016preVFP(float eta, float pt) {
 }
 
 float ttH::getElecRecoEffSFULErr2016postVFP(float eta, float pt) {
-    if (eta >= -2.5 && eta < -2 && pt >= 10 && pt < 20) return 0.0185732;
-    if (eta >= -2 && eta < -1.566 && pt >= 10 && pt < 20) return 0.0224248;
-    if (eta >= -1.566 && eta < -1.444 && pt >= 10 && pt < 20) return 0.308;
-    if (eta >= -1.444 && eta < -1 && pt >= 10 && pt < 20) return 0.0372055;
-    if (eta >= -1 && eta < 0 && pt >= 10 && pt < 20) return 0.0796087;
-    if (eta >= 0 && eta < 1 && pt >= 10 && pt < 20) return 0.0796087;
-    if (eta >= 1 && eta < 1.444 && pt >= 10 && pt < 20) return 0.0372055;
-    if (eta >= 1.444 && eta < 1.566 && pt >= 10 && pt < 20) return 0.308;
-    if (eta >= 1.566 && eta < 2 && pt >= 10 && pt < 20) return 0.0224248;
-    if (eta >= 2 && eta < 2.5 && pt >= 10 && pt < 20) return 0.0185732;
     if (eta >= -2.5 && eta < -2 && pt >= 10 && pt < 20) return 0.0185732;
     if (eta >= -2 && eta < -1.566 && pt >= 10 && pt < 20) return 0.0224248;
     if (eta >= -1.566 && eta < -1.444 && pt >= 10 && pt < 20) return 0.308;
