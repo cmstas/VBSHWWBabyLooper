@@ -67,39 +67,52 @@ for year in $years; do
     mkdir -p ${year}/muons/pog
     if [[ "${year}" == "2016" ]]; then
         tocurl="${baseurl}/UL/2016_postVFP/2016_postVFP_Z/Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root"
-        echo "Fetching ${tocurl}"
+        echo "Copying ${tocurl} --> ${year}/muons/pog/Run${year}_postVFP_UL_ID.root"
         curl --cookie ~/private/ssocookie.txt -L $tocurl -o ${year}/muons/pog/Run${year}_postVFP_UL_ID.root
         tocurl="${baseurl}/UL/2016_preVFP/2016_preVFP_Z/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ID.root"
-        echo "Fetching ${tocurl}"
+        echo "Copying ${tocurl} --> ${year}/muons/pog/Run${year}_preVFP_UL_HIPM_ID.root"
         curl --cookie ~/private/ssocookie.txt -L $tocurl -o ${year}/muons/pog/Run${year}_preVFP_UL_HIPM_ID.root
     elif [[ "${year}" == "2017" || "${year}" == "2018" ]]; then
         tocurl="${baseurl}/UL/${year}/${year}_Z/Efficiencies_muon_generalTracks_Z_Run${year}_UL_ID.root"
-        echo "Fetching ${tocurl}"
+        echo "Copying ${tocurl} --> ${year}/muons/pog/Run${year}_UL_ID.root"
         curl --cookie ~/private/ssocookie.txt -L $tocurl -o ${year}/muons/pog/Run${year}_UL_ID.root
     fi
 done
 
 scpcommands=()
 function newscpcommand() {
-    mkdir -p ${2}
-    scpcommands+=("echo 'Fetching ${1}'")
+    if [[ ${2} == *.root || ${2} == *.json ]]; then
+        mkdir -p $(dirname ${2})
+    else
+        mkdir -p ${2}
+    fi
+    scpcommands+=("echo 'Copying ${1} --> ${2}'")
     scpcommands+=("scp ${1} ${USER}@uaf-10.t2.ucsd.edu:${PWD}/${2}")
 }
 
 # Everything else
+egamma="/eos/cms/store/group/phys_egamma/SF-Repository"
 odysei="/eos/user/o/odysei/shared/ttH/leptons/data"
 veelken="/afs/cern.ch/user/v/veelken/public/ttHAnalysis/leptonSF"
 balvarez="/afs/cern.ch/user/b/balvarez/work/public/ttHAnalysis"
 for year in $years; do
     # Electron reco sfs
     if [[ "$year" == "2016" ]]; then
-        newscpcommand ${veelken}/${year}/el_scaleFactors_gsf_ptLt20.root ${year}/electrons/pog/
-        newscpcommand ${veelken}/${year}/el_scaleFactors_gsf_ptGt20.root ${year}/electrons/pog/
+        newscpcommand ${veelken}/${year}/el_scaleFactors_gsf_ptLt20.root ${year}/electrons/reco/
+        newscpcommand ${veelken}/${year}/el_scaleFactors_gsf_ptGt20.root ${year}/electrons/reco/
+        newscpcommand ${egamma}/UL16/preVFP/ElectronReconstructionSFs/egammaEffi_ptBelow20.txt_EGM2D_UL2016preVFP.root ${year}/electrons/reco/el_scaleFactorsULpreVFP_gsf_ptLt20.root
+        newscpcommand ${egamma}/UL16/preVFP/ElectronReconstructionSFs/egammaEffi_ptAbove20.txt_EGM2D_UL2016preVFP.root ${year}/electrons/reco/el_scaleFactorsULpreVFP_gsf_ptGt20.root
+        newscpcommand ${egamma}/UL16/postVFP/ElectronReconstructionSFs/egammaEffi_ptBelow20.txt_EGM2D_UL2016postVFP.root ${year}/electrons/reco/el_scaleFactorsULpostVFP_gsf_ptLt20.root
+        newscpcommand ${egamma}/UL16/postVFP/ElectronReconstructionSFs/egammaEffi_ptAbove20.txt_EGM2D_UL2016postVFP.root ${year}/electrons/reco/el_scaleFactorsULpostVFP_gsf_ptGt20.root
     elif [[ "$year" == "2017" ]]; then
-        newscpcommand ${odysei}/${year}/SF/ID/el_scaleFactors_gsf_ptLt20.root ${year}/electrons/pog/
-        newscpcommand ${odysei}/${year}/SF/ID/el_scaleFactors_gsf_ptGt20.root ${year}/electrons/pog/
+        newscpcommand ${odysei}/${year}/SF/ID/el_scaleFactors_gsf_ptLt20.root ${year}/electrons/reco/
+        newscpcommand ${odysei}/${year}/SF/ID/el_scaleFactors_gsf_ptGt20.root ${year}/electrons/reco/
+        newscpcommand ${egamma}/UL17/ElectronReconstructionSFs/v2/egammaEffi_ptBelow20.txt_EGM2D.root ${year}/electrons/reco/el_scaleFactorsUL_gsf_ptLt20.root
+        newscpcommand ${egamma}/UL17/ElectronReconstructionSFs/v2/egammaEffi_ptAbove20.txt_EGM2D.root ${year}/electrons/reco/el_scaleFactorsUL_gsf_ptGt20.root
     elif [[ "$year" == "2018" ]]; then
-        newscpcommand ${veelken}/${year}/el_scaleFactors_gsf.root ${year}/electrons/pog/
+        newscpcommand ${veelken}/${year}/el_scaleFactors_gsf.root ${year}/electrons/reco/
+        newscpcommand ${egamma}/UL18/ElectronReconstructionSFs/egammaEffi_ptBelow20.txt_EGM2D.root ${year}/electrons/reco/el_scaleFactorsUL_gsf_ptLt20.root
+        newscpcommand ${egamma}/UL18/ElectronReconstructionSFs/egammaEffi_ptAbove20.txt_EGM2D.root ${year}/electrons/reco/el_scaleFactorsUL_gsf_ptGt20.root
     fi
     # Electron loose POG sfs
     newscpcommand ${balvarez}/TnP_loose_ele_${year}.root ${year}/electrons/pog/
