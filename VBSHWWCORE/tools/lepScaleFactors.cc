@@ -23,7 +23,7 @@ float ttH::getMuonTTHSFErrEta(float eta, int year) {
     }
     return 0.0;
 }
-float ttH::getMuonTTHSFErr(float eta, float pt, int year)
+float ttH::getMuonTTHSFErr(float eta, float pt, int year, bool up)
 {
     float max_err = max(ttH::getMuonTTHSFErrPt(pt, year), ttH::getMuonTTHSFErrEta(eta, year));
     return (1.0 - max_err);
