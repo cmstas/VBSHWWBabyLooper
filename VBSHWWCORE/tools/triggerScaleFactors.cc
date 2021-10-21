@@ -1,93 +1,5 @@
 #include "triggerScaleFactors.h"
 
-float get2MuonTriggerEffSF(float pt, int year) {
-    if (year == 2016) {
-        return 0.99;
-    }
-    if (year == 2017) {
-        if (pt >= 15 && pt < 40) return 0.97;
-        if (pt >= 40 && pt < 55) return 0.995;
-        if (pt >= 55 && pt < 70) return 0.96;
-        if (pt >= 70) return 0.94;
-    }
-    if (year == 2018) {
-        if (pt >= 15 && pt < 40) return 1.01;
-        if (pt >= 40 && pt < 70) return 0.995;
-        if (pt >= 70) return 0.98;
-    }
-    return 0.0;
-}
-
-float get2MuonTriggerEffSFErr(int year) {
-    if (year == 2016) {
-        return 0.01;
-    }
-    if (year == 2017) {
-        return 0.02;
-    }
-    if (year == 2018) {
-        return 0.01;
-    }
-    return 0.0;
-}
-
-float getMuonElecTriggerEffSF(float pt, int year) {
-    if (year == 2016) {
-        return 1.0;
-    }
-    if (year == 2017) {
-        if (pt >= 15 && pt < 40) return 0.98;
-        if (pt >= 40) return 0.99;
-    }
-    if (year == 2018) {
-        if (pt >= 15 && pt < 25) return 0.98;
-        if (pt >= 25) return 1.0;
-    }
-    return 0.0;
-}
-
-float getMuonElecTriggerEffSFErr(int year) {
-    if (year == 2016) {
-        return 0.01;
-    }
-    if (year == 2017) {
-        return 0.01;
-    }
-    if (year == 2018) {
-        return 0.01;
-    }
-    return 0.0;
-}
-
-float get2ElecTriggerEffSF(float pt, int year) {
-    if (year == 2016) {
-        if (pt >= 15 && pt < 25) return 0.98;
-        if (pt >= 25) return 1.0;
-    }
-    if (year == 2017) {
-        if (pt >= 15 && pt < 40) return 0.98;
-        if (pt >= 40) return 1.0;
-    }
-    if (year == 2018) {
-        if (pt >= 15 && pt < 25) return 0.98;
-        if (pt >= 25) return 1.0;
-    }
-    return 0.0;
-}
-
-float get2ElecTriggerEffSFErr(int year) {
-    if (year == 2016) {
-        return 0.02;
-    }
-    if (year == 2017) {
-        return 0.01;
-    }
-    if (year == 2018) {
-        return 0.01;
-    }
-    return 0.0;
-}
-
 float getTauChannelElecTriggerSF(float eta, float pt, int year) {
     // Electron_Ele25WPTight_eff.root
     if (year == 2016) {
@@ -330,10 +242,6 @@ float getTauChannelElecTriggerSF(float eta, float pt, int year) {
         }
     }
     return 0.0;
-}
-
-float getTauChannelElecTriggerSFErr() {
-    return 0.05;
 }
 
 float getTauChannelMuonTriggerSF(float eta, float pt, int year) {
@@ -599,8 +507,4 @@ float getTauChannelMuonTriggerSF(float eta, float pt, int year) {
         }
     }
     return 0.0;
-}
-
-float getTauChannelMuonTriggerSFErr() {
-    return 0.05;
 }
