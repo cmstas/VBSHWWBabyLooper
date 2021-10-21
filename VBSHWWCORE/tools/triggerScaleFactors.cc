@@ -1,3 +1,4 @@
+#include "triggerScaleFactors.h"
 
 float get2MuonTriggerEffSF(float pt, int year) {
     if (year == 2016) {
