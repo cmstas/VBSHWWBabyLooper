@@ -23,7 +23,11 @@ float ttH::getMuonTTHSFErrEta(float eta, int year) {
     }
     return 0.0;
 }
-
+float ttH::getMuonTTHSFErr(float eta, float pt, int year)
+{
+    float max_err = max(ttH::getMuonTTHSFErrPt(pt, year), ttH::getMuonTTHSFErrEta(eta, year));
+    return (1.0 - max_err);
+}
 float ttH::getElecLooseSF(float eta, float pt, int year) {
     if (year == 2016) {
         if (fabs(eta) >= 0 && fabs(eta) < 0.9 && pt >= 10 && pt < 15) return 0.993704;
