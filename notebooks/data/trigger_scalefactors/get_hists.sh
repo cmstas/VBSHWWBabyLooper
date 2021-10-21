@@ -32,7 +32,7 @@ for year in $years; do
         hists=$hists2018
     fi
     for hist in $hists; do
-        tocurl="${baseurl}/${hist}"
+        tocurl="${baseurl}/${year}/${hist}"
         echo "Fetching $tocurl"
         curl -O -L "$tocurl"
     done
