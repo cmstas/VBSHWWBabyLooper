@@ -592,7 +592,8 @@ float ttH::getElecRecoEffSFUL2016preVFP(float eta, float pt) {
     if (eta >= 2 && eta < 2.5 && pt >= 20 && pt < 45) return 1;
     if (eta >= 2 && eta < 2.5 && pt >= 45 && pt < 75) return 0.992537;
     if (eta >= 2 && eta < 2.5 && pt >= 75 && pt < 100) return 0.988372;
-    if (eta >= 2 && eta < 2.5 && pt >= 100) return 1.00958;}
+    if (eta >= 2 && eta < 2.5 && pt >= 100) return 1.00958;    return 0.0;
+}
 
 float ttH::getElecRecoEffSFUL2016postVFP(float eta, float pt) {
     if (eta >= -2.5 && eta < -2 && pt >= 10 && pt < 20) return 1.01524;
@@ -662,7 +663,8 @@ float ttH::getElecRecoEffSFUL2016postVFP(float eta, float pt) {
     if (eta >= 2 && eta < 2.5 && pt >= 20 && pt < 45) return 0.991416;
     if (eta >= 2 && eta < 2.5 && pt >= 45 && pt < 75) return 0.991588;
     if (eta >= 2 && eta < 2.5 && pt >= 75 && pt < 100) return 1;
-    if (eta >= 2 && eta < 2.5 && pt >= 100) return 1.01053;}
+    if (eta >= 2 && eta < 2.5 && pt >= 100) return 1.01053;    return 0.0;
+}
 
 float ttH::getElecRecoEffSFUL(float eta, float pt, int year) {
     if (year == 2016) {
@@ -859,7 +861,8 @@ float ttH::getElecRecoEffSFULErr2016preVFP(float eta, float pt) {
     if (eta >= 2 && eta < 2.5 && pt >= 20 && pt < 45) return 0.00337567;
     if (eta >= 2 && eta < 2.5 && pt >= 45 && pt < 75) return 0.00605904;
     if (eta >= 2 && eta < 2.5 && pt >= 75 && pt < 100) return 0.0140636;
-    if (eta >= 2 && eta < 2.5 && pt >= 100) return 0.0175638;}
+    if (eta >= 2 && eta < 2.5 && pt >= 100) return 0.0175638;    return 0.0;
+}
 
 float ttH::getElecRecoEffSFULErr2016postVFP(float eta, float pt) {
     if (eta >= -2.5 && eta < -2 && pt >= 10 && pt < 20) return 0.0185732;
@@ -929,7 +932,8 @@ float ttH::getElecRecoEffSFULErr2016postVFP(float eta, float pt) {
     if (eta >= 2 && eta < 2.5 && pt >= 20 && pt < 45) return 0.00356965;
     if (eta >= 2 && eta < 2.5 && pt >= 45 && pt < 75) return 0.00344904;
     if (eta >= 2 && eta < 2.5 && pt >= 75 && pt < 100) return 0.0186584;
-    if (eta >= 2 && eta < 2.5 && pt >= 100) return 0.0179257;}
+    if (eta >= 2 && eta < 2.5 && pt >= 100) return 0.0179257;    return 0.0;
+}
 
 float ttH::getElecRecoEffSFULErr(float eta, float pt, int year) {
     if (year == 2016) {
