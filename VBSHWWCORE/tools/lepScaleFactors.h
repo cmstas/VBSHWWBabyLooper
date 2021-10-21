@@ -16,7 +16,6 @@ namespace ttH {
     float getMuonTTHSFErrEta(float eta, int year);
     float getMuonTTHSFErr(float eta, float pt, int year, bool up);
 
-
     float getElecPOGLooseSF(float eta, float pt, int year);
     float getElecPOGLooseSFErr(float eta, float pt, int year);
 
@@ -29,4 +28,5 @@ namespace ttH {
     float getElecRecoEffSFUL2016postVFP(float eta, float pt);
     float getElecRecoEffSFULErr2016postVFP(float eta, float pt);
 }
+
 #endif

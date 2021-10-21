@@ -196,8 +196,19 @@ float ttH::getElecTTHSFErrEta(float eta, int year) {
 }
 
 float ttH::getElecTTHSFErr(float eta, float pt, int year, bool up) {
-    float max_err = max(ttH::getElecTTHSFErrPt(pt, year), ttH::getElecTTHSFErrEta(eta, year));
-    return (1.0 - max_err);
+    float max_err = std::max(ttH::getElecTTHSFErrPt(pt, year), ttH::getElecTTHSFErrEta(eta, year));
+    if (up)
+    {
+        // sf_up = sf*max_err 
+        // --> (sf + err_up*sf) = sf*max_err --> err_up = max_err - 1
+        return (max_err - 1);
+    }
+    else
+    {
+        // sf_up = sf/max_err 
+        // --> (sf - err_down*sf) = sf/max_err --> err_down = 1 - 1/max_err
+        return (1 - 1./max_err);
+    }
 }
 float ttH::getMuonTightSF(float eta, float pt, int year) {
     if (year == 2016) {
@@ -396,7 +407,18 @@ float ttH::getMuonTTHSFErrEta(float eta, int year) {
 
 float ttH::getMuonTTHSFErr(float eta, float pt, int year, bool up) {
     float max_err = max(ttH::getMuonTTHSFErrPt(pt, year), ttH::getMuonTTHSFErrEta(eta, year));
-    return (1.0 - max_err);
+    if (up)
+    {
+        // sf_up = sf*max_err 
+        // --> (sf + err_up*sf) = sf*max_err --> err_up = max_err - 1
+        return (max_err - 1);
+    }
+    else
+    {
+        // sf_up = sf/max_err 
+        // --> (sf - err_down*sf) = sf/max_err --> err_down = 1 - 1/max_err
+        return (1 - 1./max_err);
+    }
 }
 float ttH::getElecLooseSF(float eta, float pt, int year) {
     if (year == 2016) {
