@@ -62,6 +62,9 @@ public:
     // Boolean to determine whether it is UL
     bool isUL;
 
+    // Boolean to determine whether it is APV
+    bool isAPV;
+
     // Boolean to say whether the sample contains LHEScaleWeight
     bool hasLHEScaleWeight;
 

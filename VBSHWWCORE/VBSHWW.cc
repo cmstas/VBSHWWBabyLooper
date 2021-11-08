@@ -51,6 +51,8 @@ VBSHWW::VBSHWW(int argc, char** argv) :
         input_file_list_tstring.Contains("UL17") or input_file_list_tstring.Contains("UL2017")
         );
 
+    isAPV = input_file_list_tstring.Contains("NanoAODAPVv2") or input_file_list_tstring.Contains("HIPM_UL2016") or input_file_list_tstring.Contains("Run2016C-UL2016") or input_file_list_tstring.Contains("Run2016D-UL2016") or input_file_list_tstring.Contains("Run2016E-UL2016");
+
     // Setup the process of the input
     TString ofile_name = output_tfile->GetName();
     if (ofile_name.Contains("/TTToSemi")) { processType = ProcessType::kTT1LPowheg; }
@@ -101,6 +103,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
 
     // Set up the NanoCORE's common configuration service tool
     gconf.nanoAOD_ver = isUL ? 8 : 0;
+    gconf.isAPV = isAPV ? 1 : 0;
     gconf.GetConfigs(nt.year());
     std::cout <<  " gconf.WP_DeepFlav_tight: " << gconf.WP_DeepFlav_tight <<  std::endl;
 
