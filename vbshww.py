@@ -4,6 +4,7 @@ import sys
 import os
 import ROOT
 import glob
+import subprocess
 
 def get_xsec(**kwargs):
     samplename = kwargs.get("samplename")
@@ -312,7 +313,7 @@ def get_nanoaodtag(**kwargs):
     elif year == "2016":    return "UL16NanoAODv2"
     elif year == "2016APV": return "UL16NanoAODAPVv2"
 
-def get_samplelist(skimversion="v2.6", username="phchang"):
+def get_samplelist(skimversion="v2.6", minintup_tag="testV1", username="phchang"):
     samplelist = []
     for year in ["2018", "2017", "2016", "2016APV"]:
         for (isdata, issignal) in [(True, False), (False, True), (False, False)]:
@@ -325,6 +326,7 @@ def get_samplelist(skimversion="v2.6", username="phchang"):
                         skimversion=skimversion,
                         username=username,
                         year=year,
+                        minintup_tag=minintup_tag,
                         )
                 samplelist.append(sample)
     return samplelist
@@ -347,6 +349,15 @@ class Sample:
                 "skimnevents": kwargs.get("skimnevents", None),
                 "nanoaodtag": kwargs.get("nanoaodtag", None),
                 "lumi": kwargs.get("lumi", None),
+                "minintup_tag": kwargs.get("minintup_tag", None),
+                "minintup_njobs": kwargs.get("minintup_njobs", 0),
+                "minintup_nfinished": kwargs.get("minintup_nfinished", 0),
+                "minintup_jobcommands": kwargs.get("minintup_jobcommands", []),
+                "minintup_outputs": kwargs.get("minintup_outputs", []),
+                "ijecvar": kwargs.get("ijecvar", 0),
+                "hist_njobs": kwargs.get("hist_njobs", 0),
+                "hist_nfinished": kwargs.get("hist_nfinished", 0),
+                "hist_outputs": kwargs.get("hist_outputs", []),
                 }
         if self.info["samplename"] == None: raise TypeError("samplename not provided!")
         if self.info["isdata"] == None: raise TypeError("isdata not provided!")
@@ -354,14 +365,19 @@ class Sample:
         if self.info["skimversion"] == None: raise TypeError("skimversion not provided!")
         if self.info["year"] == None: raise TypeError("year not provided!")
         if self.info["username"] == None: raise TypeError("username not provided!")
+        if self.info["minintup_tag"] == None: raise TypeError("minintup_tag not provided!")
         self.init()
 
     def init(self):
+        #------------------------------------------------------------
         # parse few things first
+        #------------------------------------------------------------
         self.info["xsec"] = get_xsec(**self.info)
         self.info["nanoaodtag"] = get_nanoaodtag(**self.info)
         self.info["lumi"] = get_lumi(**self.info)
+        #------------------------------------------------------------
         # parse skim directory
+        #------------------------------------------------------------
         fs = glob.glob("/nfs-7/userdata/{username}/VBSHWWNanoSkim_{skimversion}/{samplename}*{nanoaodtag}*/merged/output.root".format(**self.info))
         if len(fs) != 1:
             print("ERROR! Found not equals to 1 number of samples in the skim nanoaod directory for sample={samplename} year={year} skimversion={skimversion} nanoaodtag={nanoaodtag} username={username}".format(**self.info))
@@ -369,20 +385,52 @@ class Sample:
                 print(d)
             sys.exit(-1)
         self.info["skimfilepath"] = fs[0]
+        #------------------------------------------------------------
         # parse nevents
+        #------------------------------------------------------------
         f = ROOT.TFile(self.info["skimfilepath"])
         self.info["skimnevents"] = f.Get("Events").GetEntries()
+        #------------------------------------------------------------
         # parse real number of events
+        #------------------------------------------------------------
         self.info["neventsinfofilepath"] = self.info["skimfilepath"].replace("output.root", "nevents.txt")
         f = open(self.info["neventsinfofilepath"])
         lines = f.readlines()
         self.info["nevents"] = int(lines[0].strip())
         self.info["neffevents"] = int(lines[-1].strip())
+        #------------------------------------------------------------
+        # parse njobs
+        #------------------------------------------------------------
+        njobs = self.info["skimnevents"] / 55000
+        njobs += 1 if self.info["skimnevents"] % 55000 > 0 else 0
+        self.info["minintup_njobs"] = njobs
+        fs = glob.glob("minintup/{skimversion}/{minintup_tag}/{year}/{samplename}*.root".format(**self.info))
+        ls = glob.glob("minintup/{skimversion}/{minintup_tag}/{year}/{samplename}*.log".format(**self.info))
+        fs.sort()
+        ls.sort()
+        if len(fs) != len(ls):
+            print(self)
+            print("ERROR! output root files and log files numbers do not match up!")
+            sys.exit(-1)
+        self.info["minintup_nfinished"] = subprocess.check_output("grep 'Who cares!' minintup/{skimversion}/{minintup_tag}/{year}/{samplename}*.log | wc -l") if len(ls) > 0 else 0
+        self.info["minintup_outputs"] = fs
+        #------------------------------------------------------------
         # parse scale1fb
+        #------------------------------------------------------------
         self.info["scale1fb"] = float(self.info["xsec"]) * 1000.0 / float(self.info["neffevents"]) if not self.info["isdata"] else 1
+        #------------------------------------------------------------
+        # parse cmds
+        #------------------------------------------------------------
+        if "_jecUp" in self.info["minintup_tag"]: self.info["ijecvar"] = 1
+        if "_jecDn" in self.info["minintup_tag"]: self.info["ijecvar"] =-1
+        for idx in range(self.info["minintup_njobs"]):
+            cmd = "rm -f minintup/{skimversion}/{minintup_tag}/{year}/{samplename}_output_{idx}.root; studies/createMini/doAnalysis -t Events -o minintup/{skimversion}/{minintup_tag}/{year}/{samplename}_output_{idx}.root -e {ijecvar} --scale1fb {scale1fb} -j {minintup_njobs} -I {idx} -i {skimfilepath} > minintup/{skimversion}/{minintup_tag}/{year}/{samplename}_output_{idx}.log 2>&1".format(idx=idx, **self.info)
+            self.info["minintup_jobcommands"].append(cmd)
+        for p in self.info["minintup_jobcommands"]:
+            print(p)
 
     def printheader(self):
-        msg = "{samplename:40s} | {skimversion:10s} | {skimfilepath:230s} | {skimnevents:15s} | {nevents:15s} | {neffevents:15s} | {xsec:13s} | {scale1fb:15s} | {lumi:10s}   ".format(
+        msg = "{samplename:40s} | {skimversion:10s} | {skimfilepath:230s} | {skimnevents:15s} | {nevents:15s} | {neffevents:15s} | {xsec:13s} | {scale1fb:15s} | {lumi:13s} | {minintupprogress:15s} ".format(
                 samplename="Sample Name",
                 skimversion="Skim Tag", 
                 skimfilepath="Skim File Path", 
@@ -391,16 +439,17 @@ class Sample:
                 neffevents="N evt (pos-neg)", 
                 xsec="xsec", 
                 scale1fb="scale1fb", 
-                lumi="Lumi"
+                lumi="Lumi",
+                minintupprogress="minintup(N/Tot.)",
                 )
         print(msg)
 
     def __str__(self):
-        msg = "{samplename:40s} | {skimversion:10s} | {skimfilepath:230s} | {skimnevents:15d} | {nevents:15d} | {neffevents:15d} | {xsec:10.5g} pb | {scale1fb:15f} | {lumi:10.4g}/fb".format(**self.info)
+        msg = "{samplename:40s} | {skimversion:10s} | {skimfilepath:230s} | {skimnevents:15d} | {nevents:15d} | {neffevents:15d} | {xsec:10.5g} pb | {scale1fb:15f} | {lumi:10.4g}/fb | {minintup_nfinished:7d}/{minintup_njobs:7d} ".format(**self.info)
         return msg
 
 if __name__ == "__main__":
-    samplelist = get_samplelist(skimversion="v2.6")
+    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="testV1")
     samplelist[0].printheader()
     for s in samplelist:
         print(s)
