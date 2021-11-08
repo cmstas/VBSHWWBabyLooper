@@ -1,5 +1,5 @@
 SUBDIRS := $(sort $(dir $(wildcard studies/*/.)))
-LIBRARIES := NanoTools/NanoCORE VBSHWWCORE rooutil
+LIBRARIES := NanoTools/NanoCORE VBSHWWCORE rooutil minilooper
 
 all: $(LIBRARIES) $(SUBDIRS)
 
