@@ -269,6 +269,22 @@ void VBS::Init(TTree *tree) {
   if (is_cut_cr_neg_branch) is_cut_cr_neg_branch->SetAddress(&is_cut_cr_neg_);
   is_cut_cr_lgt_branch = tree->GetBranch("is_cut_cr_lgt");
   if (is_cut_cr_lgt_branch) is_cut_cr_lgt_branch->SetAddress(&is_cut_cr_lgt_);
+  is_cut_c3_sr_el_branch = tree->GetBranch("is_cut_c3_sr_el");
+  if (is_cut_c3_sr_el_branch) is_cut_c3_sr_el_branch->SetAddress(&is_cut_c3_sr_el_);
+  is_cut_c3_sr_mu_branch = tree->GetBranch("is_cut_c3_sr_mu");
+  if (is_cut_c3_sr_mu_branch) is_cut_c3_sr_mu_branch->SetAddress(&is_cut_c3_sr_mu_);
+  is_cut_c3_sr_tau_branch = tree->GetBranch("is_cut_c3_sr_tau");
+  if (is_cut_c3_sr_tau_branch) is_cut_c3_sr_tau_branch->SetAddress(&is_cut_c3_sr_tau_);
+  is_cut_c3_sr_neg_branch = tree->GetBranch("is_cut_c3_sr_neg");
+  if (is_cut_c3_sr_neg_branch) is_cut_c3_sr_neg_branch->SetAddress(&is_cut_c3_sr_neg_);
+  is_cut_sm_sr_el_branch = tree->GetBranch("is_cut_sm_sr_el");
+  if (is_cut_sm_sr_el_branch) is_cut_sm_sr_el_branch->SetAddress(&is_cut_sm_sr_el_);
+  is_cut_sm_sr_mu_branch = tree->GetBranch("is_cut_sm_sr_mu");
+  if (is_cut_sm_sr_mu_branch) is_cut_sm_sr_mu_branch->SetAddress(&is_cut_sm_sr_mu_);
+  is_cut_sm_sr_tau_branch = tree->GetBranch("is_cut_sm_sr_tau");
+  if (is_cut_sm_sr_tau_branch) is_cut_sm_sr_tau_branch->SetAddress(&is_cut_sm_sr_tau_);
+  is_cut_sm_sr_neg_branch = tree->GetBranch("is_cut_sm_sr_neg");
+  if (is_cut_sm_sr_neg_branch) is_cut_sm_sr_neg_branch->SetAddress(&is_cut_sm_sr_neg_);
   is_cut_sr2_el_branch = tree->GetBranch("is_cut_sr2_el");
   if (is_cut_sr2_el_branch) is_cut_sr2_el_branch->SetAddress(&is_cut_sr2_el_);
   is_cut_sr2_mu_branch = tree->GetBranch("is_cut_sr2_mu");
@@ -277,14 +293,6 @@ void VBS::Init(TTree *tree) {
   if (is_cut_sr2_tau_branch) is_cut_sr2_tau_branch->SetAddress(&is_cut_sr2_tau_);
   is_cut_sr2_neg_branch = tree->GetBranch("is_cut_sr2_neg");
   if (is_cut_sr2_neg_branch) is_cut_sr2_neg_branch->SetAddress(&is_cut_sr2_neg_);
-  is_cut_cr2_el_branch = tree->GetBranch("is_cut_cr2_el");
-  if (is_cut_cr2_el_branch) is_cut_cr2_el_branch->SetAddress(&is_cut_cr2_el_);
-  is_cut_cr2_mu_branch = tree->GetBranch("is_cut_cr2_mu");
-  if (is_cut_cr2_mu_branch) is_cut_cr2_mu_branch->SetAddress(&is_cut_cr2_mu_);
-  is_cut_cr2_tau_branch = tree->GetBranch("is_cut_cr2_tau");
-  if (is_cut_cr2_tau_branch) is_cut_cr2_tau_branch->SetAddress(&is_cut_cr2_tau_);
-  is_cut_cr2_neg_branch = tree->GetBranch("is_cut_cr2_neg");
-  if (is_cut_cr2_neg_branch) is_cut_cr2_neg_branch->SetAddress(&is_cut_cr2_neg_);
   is_bdt_sr_el_branch = tree->GetBranch("is_bdt_sr_el");
   if (is_bdt_sr_el_branch) is_bdt_sr_el_branch->SetAddress(&is_bdt_sr_el_);
   is_bdt_sr_mu_branch = tree->GetBranch("is_bdt_sr_mu");
@@ -323,10 +331,18 @@ void VBS::Init(TTree *tree) {
   if (is_cut_sr_branch) is_cut_sr_branch->SetAddress(&is_cut_sr_);
   is_cut_cr_branch = tree->GetBranch("is_cut_cr");
   if (is_cut_cr_branch) is_cut_cr_branch->SetAddress(&is_cut_cr_);
+  is_cut_sm_sr_branch = tree->GetBranch("is_cut_sm_sr");
+  if (is_cut_sm_sr_branch) is_cut_sm_sr_branch->SetAddress(&is_cut_sm_sr_);
+  is_cut_c3_sr_branch = tree->GetBranch("is_cut_c3_sr");
+  if (is_cut_c3_sr_branch) is_cut_c3_sr_branch->SetAddress(&is_cut_c3_sr_);
   is_cut_sr2_branch = tree->GetBranch("is_cut_sr2");
   if (is_cut_sr2_branch) is_cut_sr2_branch->SetAddress(&is_cut_sr2_);
   is_cut_cr2_branch = tree->GetBranch("is_cut_cr2");
   if (is_cut_cr2_branch) is_cut_cr2_branch->SetAddress(&is_cut_cr2_);
+  is_cut_sm_sr2_branch = tree->GetBranch("is_cut_sm_sr2");
+  if (is_cut_sm_sr2_branch) is_cut_sm_sr2_branch->SetAddress(&is_cut_sm_sr2_);
+  is_cut_c3_sr2_branch = tree->GetBranch("is_cut_c3_sr2");
+  if (is_cut_c3_sr2_branch) is_cut_c3_sr2_branch->SetAddress(&is_cut_c3_sr2_);
   is_bdt_sr_branch = tree->GetBranch("is_bdt_sr");
   if (is_bdt_sr_branch) is_bdt_sr_branch->SetAddress(&is_bdt_sr_);
   is_bdt_cr_branch = tree->GetBranch("is_bdt_cr");
@@ -500,14 +516,18 @@ void VBS::GetEntry(unsigned int idx) {
   is_cut_cr_tau_isLoaded = false;
   is_cut_cr_neg_isLoaded = false;
   is_cut_cr_lgt_isLoaded = false;
+  is_cut_c3_sr_el_isLoaded = false;
+  is_cut_c3_sr_mu_isLoaded = false;
+  is_cut_c3_sr_tau_isLoaded = false;
+  is_cut_c3_sr_neg_isLoaded = false;
+  is_cut_sm_sr_el_isLoaded = false;
+  is_cut_sm_sr_mu_isLoaded = false;
+  is_cut_sm_sr_tau_isLoaded = false;
+  is_cut_sm_sr_neg_isLoaded = false;
   is_cut_sr2_el_isLoaded = false;
   is_cut_sr2_mu_isLoaded = false;
   is_cut_sr2_tau_isLoaded = false;
   is_cut_sr2_neg_isLoaded = false;
-  is_cut_cr2_el_isLoaded = false;
-  is_cut_cr2_mu_isLoaded = false;
-  is_cut_cr2_tau_isLoaded = false;
-  is_cut_cr2_neg_isLoaded = false;
   is_bdt_sr_el_isLoaded = false;
   is_bdt_sr_mu_isLoaded = false;
   is_bdt_sr_tau_isLoaded = false;
@@ -527,8 +547,12 @@ void VBS::GetEntry(unsigned int idx) {
   is_ps_isLoaded = false;
   is_cut_sr_isLoaded = false;
   is_cut_cr_isLoaded = false;
+  is_cut_sm_sr_isLoaded = false;
+  is_cut_c3_sr_isLoaded = false;
   is_cut_sr2_isLoaded = false;
   is_cut_cr2_isLoaded = false;
+  is_cut_sm_sr2_isLoaded = false;
+  is_cut_c3_sr2_isLoaded = false;
   is_bdt_sr_isLoaded = false;
   is_bdt_cr_isLoaded = false;
   is_bdt_sr2_isLoaded = false;
@@ -682,14 +706,18 @@ void VBS::LoadAllBranches() {
   if (is_cut_cr_tau_branch != 0) is_cut_cr_tau();
   if (is_cut_cr_neg_branch != 0) is_cut_cr_neg();
   if (is_cut_cr_lgt_branch != 0) is_cut_cr_lgt();
+  if (is_cut_c3_sr_el_branch != 0) is_cut_c3_sr_el();
+  if (is_cut_c3_sr_mu_branch != 0) is_cut_c3_sr_mu();
+  if (is_cut_c3_sr_tau_branch != 0) is_cut_c3_sr_tau();
+  if (is_cut_c3_sr_neg_branch != 0) is_cut_c3_sr_neg();
+  if (is_cut_sm_sr_el_branch != 0) is_cut_sm_sr_el();
+  if (is_cut_sm_sr_mu_branch != 0) is_cut_sm_sr_mu();
+  if (is_cut_sm_sr_tau_branch != 0) is_cut_sm_sr_tau();
+  if (is_cut_sm_sr_neg_branch != 0) is_cut_sm_sr_neg();
   if (is_cut_sr2_el_branch != 0) is_cut_sr2_el();
   if (is_cut_sr2_mu_branch != 0) is_cut_sr2_mu();
   if (is_cut_sr2_tau_branch != 0) is_cut_sr2_tau();
   if (is_cut_sr2_neg_branch != 0) is_cut_sr2_neg();
-  if (is_cut_cr2_el_branch != 0) is_cut_cr2_el();
-  if (is_cut_cr2_mu_branch != 0) is_cut_cr2_mu();
-  if (is_cut_cr2_tau_branch != 0) is_cut_cr2_tau();
-  if (is_cut_cr2_neg_branch != 0) is_cut_cr2_neg();
   if (is_bdt_sr_el_branch != 0) is_bdt_sr_el();
   if (is_bdt_sr_mu_branch != 0) is_bdt_sr_mu();
   if (is_bdt_sr_tau_branch != 0) is_bdt_sr_tau();
@@ -709,8 +737,12 @@ void VBS::LoadAllBranches() {
   if (is_ps_branch != 0) is_ps();
   if (is_cut_sr_branch != 0) is_cut_sr();
   if (is_cut_cr_branch != 0) is_cut_cr();
+  if (is_cut_sm_sr_branch != 0) is_cut_sm_sr();
+  if (is_cut_c3_sr_branch != 0) is_cut_c3_sr();
   if (is_cut_sr2_branch != 0) is_cut_sr2();
   if (is_cut_cr2_branch != 0) is_cut_cr2();
+  if (is_cut_sm_sr2_branch != 0) is_cut_sm_sr2();
+  if (is_cut_c3_sr2_branch != 0) is_cut_c3_sr2();
   if (is_bdt_sr_branch != 0) is_bdt_sr();
   if (is_bdt_cr_branch != 0) is_bdt_cr();
   if (is_bdt_sr2_branch != 0) is_bdt_sr2();
@@ -2446,6 +2478,110 @@ const int &VBS::is_cut_cr_lgt() {
   return is_cut_cr_lgt_;
 }
 
+const int &VBS::is_cut_c3_sr_el() {
+  if (not is_cut_c3_sr_el_isLoaded) {
+    if (is_cut_c3_sr_el_branch != 0) {
+      is_cut_c3_sr_el_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_c3_sr_el_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_c3_sr_el_isLoaded = true;
+  }
+  return is_cut_c3_sr_el_;
+}
+
+const int &VBS::is_cut_c3_sr_mu() {
+  if (not is_cut_c3_sr_mu_isLoaded) {
+    if (is_cut_c3_sr_mu_branch != 0) {
+      is_cut_c3_sr_mu_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_c3_sr_mu_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_c3_sr_mu_isLoaded = true;
+  }
+  return is_cut_c3_sr_mu_;
+}
+
+const int &VBS::is_cut_c3_sr_tau() {
+  if (not is_cut_c3_sr_tau_isLoaded) {
+    if (is_cut_c3_sr_tau_branch != 0) {
+      is_cut_c3_sr_tau_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_c3_sr_tau_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_c3_sr_tau_isLoaded = true;
+  }
+  return is_cut_c3_sr_tau_;
+}
+
+const int &VBS::is_cut_c3_sr_neg() {
+  if (not is_cut_c3_sr_neg_isLoaded) {
+    if (is_cut_c3_sr_neg_branch != 0) {
+      is_cut_c3_sr_neg_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_c3_sr_neg_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_c3_sr_neg_isLoaded = true;
+  }
+  return is_cut_c3_sr_neg_;
+}
+
+const int &VBS::is_cut_sm_sr_el() {
+  if (not is_cut_sm_sr_el_isLoaded) {
+    if (is_cut_sm_sr_el_branch != 0) {
+      is_cut_sm_sr_el_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_sm_sr_el_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_sm_sr_el_isLoaded = true;
+  }
+  return is_cut_sm_sr_el_;
+}
+
+const int &VBS::is_cut_sm_sr_mu() {
+  if (not is_cut_sm_sr_mu_isLoaded) {
+    if (is_cut_sm_sr_mu_branch != 0) {
+      is_cut_sm_sr_mu_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_sm_sr_mu_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_sm_sr_mu_isLoaded = true;
+  }
+  return is_cut_sm_sr_mu_;
+}
+
+const int &VBS::is_cut_sm_sr_tau() {
+  if (not is_cut_sm_sr_tau_isLoaded) {
+    if (is_cut_sm_sr_tau_branch != 0) {
+      is_cut_sm_sr_tau_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_sm_sr_tau_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_sm_sr_tau_isLoaded = true;
+  }
+  return is_cut_sm_sr_tau_;
+}
+
+const int &VBS::is_cut_sm_sr_neg() {
+  if (not is_cut_sm_sr_neg_isLoaded) {
+    if (is_cut_sm_sr_neg_branch != 0) {
+      is_cut_sm_sr_neg_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_sm_sr_neg_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_sm_sr_neg_isLoaded = true;
+  }
+  return is_cut_sm_sr_neg_;
+}
+
 const int &VBS::is_cut_sr2_el() {
   if (not is_cut_sr2_el_isLoaded) {
     if (is_cut_sr2_el_branch != 0) {
@@ -2496,58 +2632,6 @@ const int &VBS::is_cut_sr2_neg() {
     is_cut_sr2_neg_isLoaded = true;
   }
   return is_cut_sr2_neg_;
-}
-
-const int &VBS::is_cut_cr2_el() {
-  if (not is_cut_cr2_el_isLoaded) {
-    if (is_cut_cr2_el_branch != 0) {
-      is_cut_cr2_el_branch->GetEntry(index);
-    } else {
-      printf("branch is_cut_cr2_el_branch does not exist!\n");
-      exit(1);
-    }
-    is_cut_cr2_el_isLoaded = true;
-  }
-  return is_cut_cr2_el_;
-}
-
-const int &VBS::is_cut_cr2_mu() {
-  if (not is_cut_cr2_mu_isLoaded) {
-    if (is_cut_cr2_mu_branch != 0) {
-      is_cut_cr2_mu_branch->GetEntry(index);
-    } else {
-      printf("branch is_cut_cr2_mu_branch does not exist!\n");
-      exit(1);
-    }
-    is_cut_cr2_mu_isLoaded = true;
-  }
-  return is_cut_cr2_mu_;
-}
-
-const int &VBS::is_cut_cr2_tau() {
-  if (not is_cut_cr2_tau_isLoaded) {
-    if (is_cut_cr2_tau_branch != 0) {
-      is_cut_cr2_tau_branch->GetEntry(index);
-    } else {
-      printf("branch is_cut_cr2_tau_branch does not exist!\n");
-      exit(1);
-    }
-    is_cut_cr2_tau_isLoaded = true;
-  }
-  return is_cut_cr2_tau_;
-}
-
-const int &VBS::is_cut_cr2_neg() {
-  if (not is_cut_cr2_neg_isLoaded) {
-    if (is_cut_cr2_neg_branch != 0) {
-      is_cut_cr2_neg_branch->GetEntry(index);
-    } else {
-      printf("branch is_cut_cr2_neg_branch does not exist!\n");
-      exit(1);
-    }
-    is_cut_cr2_neg_isLoaded = true;
-  }
-  return is_cut_cr2_neg_;
 }
 
 const int &VBS::is_bdt_sr_el() {
@@ -2797,6 +2881,32 @@ const int &VBS::is_cut_cr() {
   return is_cut_cr_;
 }
 
+const int &VBS::is_cut_sm_sr() {
+  if (not is_cut_sm_sr_isLoaded) {
+    if (is_cut_sm_sr_branch != 0) {
+      is_cut_sm_sr_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_sm_sr_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_sm_sr_isLoaded = true;
+  }
+  return is_cut_sm_sr_;
+}
+
+const int &VBS::is_cut_c3_sr() {
+  if (not is_cut_c3_sr_isLoaded) {
+    if (is_cut_c3_sr_branch != 0) {
+      is_cut_c3_sr_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_c3_sr_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_c3_sr_isLoaded = true;
+  }
+  return is_cut_c3_sr_;
+}
+
 const int &VBS::is_cut_sr2() {
   if (not is_cut_sr2_isLoaded) {
     if (is_cut_sr2_branch != 0) {
@@ -2821,6 +2931,32 @@ const int &VBS::is_cut_cr2() {
     is_cut_cr2_isLoaded = true;
   }
   return is_cut_cr2_;
+}
+
+const int &VBS::is_cut_sm_sr2() {
+  if (not is_cut_sm_sr2_isLoaded) {
+    if (is_cut_sm_sr2_branch != 0) {
+      is_cut_sm_sr2_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_sm_sr2_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_sm_sr2_isLoaded = true;
+  }
+  return is_cut_sm_sr2_;
+}
+
+const int &VBS::is_cut_c3_sr2() {
+  if (not is_cut_c3_sr2_isLoaded) {
+    if (is_cut_c3_sr2_branch != 0) {
+      is_cut_c3_sr2_branch->GetEntry(index);
+    } else {
+      printf("branch is_cut_c3_sr2_branch does not exist!\n");
+      exit(1);
+    }
+    is_cut_c3_sr2_isLoaded = true;
+  }
+  return is_cut_c3_sr2_;
 }
 
 const int &VBS::is_bdt_sr() {
@@ -3199,14 +3335,18 @@ const int &is_cut_cr_mu() { return vbs.is_cut_cr_mu(); }
 const int &is_cut_cr_tau() { return vbs.is_cut_cr_tau(); }
 const int &is_cut_cr_neg() { return vbs.is_cut_cr_neg(); }
 const int &is_cut_cr_lgt() { return vbs.is_cut_cr_lgt(); }
+const int &is_cut_c3_sr_el() { return vbs.is_cut_c3_sr_el(); }
+const int &is_cut_c3_sr_mu() { return vbs.is_cut_c3_sr_mu(); }
+const int &is_cut_c3_sr_tau() { return vbs.is_cut_c3_sr_tau(); }
+const int &is_cut_c3_sr_neg() { return vbs.is_cut_c3_sr_neg(); }
+const int &is_cut_sm_sr_el() { return vbs.is_cut_sm_sr_el(); }
+const int &is_cut_sm_sr_mu() { return vbs.is_cut_sm_sr_mu(); }
+const int &is_cut_sm_sr_tau() { return vbs.is_cut_sm_sr_tau(); }
+const int &is_cut_sm_sr_neg() { return vbs.is_cut_sm_sr_neg(); }
 const int &is_cut_sr2_el() { return vbs.is_cut_sr2_el(); }
 const int &is_cut_sr2_mu() { return vbs.is_cut_sr2_mu(); }
 const int &is_cut_sr2_tau() { return vbs.is_cut_sr2_tau(); }
 const int &is_cut_sr2_neg() { return vbs.is_cut_sr2_neg(); }
-const int &is_cut_cr2_el() { return vbs.is_cut_cr2_el(); }
-const int &is_cut_cr2_mu() { return vbs.is_cut_cr2_mu(); }
-const int &is_cut_cr2_tau() { return vbs.is_cut_cr2_tau(); }
-const int &is_cut_cr2_neg() { return vbs.is_cut_cr2_neg(); }
 const int &is_bdt_sr_el() { return vbs.is_bdt_sr_el(); }
 const int &is_bdt_sr_mu() { return vbs.is_bdt_sr_mu(); }
 const int &is_bdt_sr_tau() { return vbs.is_bdt_sr_tau(); }
@@ -3226,8 +3366,12 @@ const int &is_bdt_cr2_neg() { return vbs.is_bdt_cr2_neg(); }
 const int &is_ps() { return vbs.is_ps(); }
 const int &is_cut_sr() { return vbs.is_cut_sr(); }
 const int &is_cut_cr() { return vbs.is_cut_cr(); }
+const int &is_cut_sm_sr() { return vbs.is_cut_sm_sr(); }
+const int &is_cut_c3_sr() { return vbs.is_cut_c3_sr(); }
 const int &is_cut_sr2() { return vbs.is_cut_sr2(); }
 const int &is_cut_cr2() { return vbs.is_cut_cr2(); }
+const int &is_cut_sm_sr2() { return vbs.is_cut_sm_sr2(); }
+const int &is_cut_c3_sr2() { return vbs.is_cut_c3_sr2(); }
 const int &is_bdt_sr() { return vbs.is_bdt_sr(); }
 const int &is_bdt_cr() { return vbs.is_bdt_cr(); }
 const int &is_bdt_sr2() { return vbs.is_bdt_sr2(); }

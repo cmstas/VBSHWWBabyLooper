@@ -16,10 +16,11 @@ def run(doBDT, idx, coupling):
 
     #_____________________________________________________________________________________
     # Toggle options
+    # /nfs-7/userdata/jguiang/VBSHWWResult/v2.6_SS/v2/Run2/Final/
     Tag = "v2.6_SS"
-    BabyVersion = "v10"
-    inputHistBaseDir = "/nfs-7/userdata/phchang/VBSHWWResult/"
-    inputHistDir = "{}/{}/{}/Run2/Nominal".format(inputHistBaseDir, Tag, BabyVersion)
+    BabyVersion = "v2"
+    inputHistBaseDir = "/nfs-7/userdata/jguiang/VBSHWWResult/"
+    inputHistDir = "{}/{}/{}/Run2/Final".format(inputHistBaseDir, Tag, BabyVersion)
 
     #_____________________________________________________________________________________
     # Computing the correct c2v values
