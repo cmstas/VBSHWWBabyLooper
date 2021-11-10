@@ -20,3 +20,4 @@ NanoSkimmer/*.json
 test.py
 doAnalysis
 .*.jobs
+*.tar.gz

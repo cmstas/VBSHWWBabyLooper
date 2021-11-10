@@ -16,20 +16,73 @@ int main(int argc, char** argv)
     // Set the cutflow object output file
     ana.cutflow.setTFile(ana.output_tfile);
 
+    TString tstr = ana.input_file_list_tstring;
+    bool isdata = tstr.Contains("Run201");
+    bool issignal = tstr.Contains("VBSWWHToLNuLNubb");
+
+    TString group = "none";
+    if (tstr.Contains("WW")) group = "bosons";
+    if (tstr.Contains("ZZ")) group = "bosons";
+    if (tstr.Contains("tZq_ll_4f_ckm_NLO")) group = "raretop";
+    if (tstr.Contains("ST_s-channel_4f")) group = "raretop";
+    if (tstr.Contains("ST_t-channel_antitop_4f")) group = "raretop";
+    if (tstr.Contains("ST_t-channel_top_4f")) group = "raretop";
+    if (tstr.Contains("ST_tW_antitop_5f")) group = "raretop";
+    if (tstr.Contains("ST_tW_top_5f")) group = "raretop";
+    if (tstr.Contains("ST_tWll_5f_LO")) group = "raretop";
+    if (tstr.Contains("TWZToLL_tlept_Whad_5f_DR")) group = "raretop";
+    if (tstr.Contains("TWZToLL_thad_Wlept_5f_DR")) group = "raretop";
+    if (tstr.Contains("ZZTo4L")) group = "bosons";
+    if (tstr.Contains("GluGluHToZZTo4L")) group = "bosons";
+    if (tstr.Contains("DYJetsToLL_M-10to50")) group = "bosons";
+    if (tstr.Contains("DYJetsToLL_M-50")) group = "bosons";
+    if (tstr.Contains("WJetsToLNu")) group = "bosons";
+    if (tstr.Contains("TTWJetsToLNu")) group = "ttw";
+    if (tstr.Contains("TTZToLLNuNu_M-10")) group = "ttz";
+    if (tstr.Contains("TTZToLL_M-1to10")) group = "ttz";
+    if (tstr.Contains("TTJets_DiLept")) group = "tt2l";
+    if (tstr.Contains("TTJets_SingleLeptFromT")) group = "tt1l";
+    if (tstr.Contains("TTJets_SingleLeptFromTbar")) group = "tt1l";
+    if (tstr.Contains("TTTo2L2Nu")) group = "tt2lpowheg";
+    if (tstr.Contains("TTToSemiLeptonic")) group = "tt1lpowheg";
+    if (tstr.Contains("WpWpJJ_EWK")) group = "bosons";
+    if (tstr.Contains("SSWW")) group = "bosons";
+    if (tstr.Contains("WZTo3LNu")) group = "bosons";
+    if (tstr.Contains("VBSWWHToLNuLNubb_C2V")) group = "vbshwwc2v";
+    if (tstr.Contains("VBSWWHToLNuLNubb_CV")) group = "vbshwwcv";
+    if (tstr.Contains("VBSWWHToLNuLNubb_C3")) group = "vbshwwc3";
+    if (tstr.Contains("ttHJetTobb")) group = "raretop";
+    if (tstr.Contains("ttHJetToNonbb")) group = "raretop";
+    if (tstr.Contains("TTTT")) group = "raretop";
+    if (tstr.Contains("TTWW")) group = "raretop";
+    if (tstr.Contains("TTWZ")) group = "raretop";
+    if (tstr.Contains("TTZZ")) group = "raretop";
+    if (tstr.Contains("TTWH")) group = "raretop";
+    if (tstr.Contains("TTZH")) group = "raretop";
+    if (tstr.Contains("WWW_4F")) group = "bosons";
+    if (tstr.Contains("WWZ")) group = "bosons";
+    if (tstr.Contains("WZG")) group = "bosons";
+    if (tstr.Contains("WZZ")) group = "bosons";
+    if (tstr.Contains("ZZZ")) group = "bosons";
+    if (tstr.Contains("WWToLNuQQ")) group = "bosons";
+    if (tstr.Contains("WWTo2L2Nu")) group = "bosons";
+    if (tstr.Contains("Run201")) group = "data";
+
+
     // Preselection
     //____________________________________________________________________________________________________________________________________________________________
     ana.cutflow.addCut("Presel", [&]() { return vbs.channel() >= 0; },
-                       [&]()
+                       [&, isdata, issignal]()
                        {
                            return
                                vbs.wgt() *
                                vbs.btagsf() *
                                vbs.lepsf() *
-                               (ana.looper.getCurrentFileName().Contains("vbshww") ? 1. : vbs.xsec_sf()) *
+                               (issignal ? 1. : vbs.xsec_sf()) *
                                vbs.genrewgt() *
-                               (ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.trigsf()) *
+                               (isdata ? 1. : vbs.trigsf()) *
                                (ana.rwgtidx < 0 ? 1. : vbs.lherewgts()[ana.rwgtidx]) *
-                               (ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.pu_rewgt());
+                               (isdata ? 1. : vbs.pu_rewgt());
                        });
     ana.cutflow.addCutToLastActiveCut("LooseVR", [&]() { return vbs.is_ps(); }, UNITY);
 
@@ -579,35 +632,34 @@ int main(int argc, char** argv)
     if (gSystem->AccessPathName("histograms.txt") == 0)
         ana.cutflow.setHistogramFilterFromFile("histograms.txt");
 
-    TString tstr = ana.input_file_list_tstring;
-    ana.cutflow.addWgtSyst("2xTT1LUp", [&, tstr]() { return tstr.Contains("tt1lpowheg") ? 2 : 1.; });
-    ana.cutflow.addWgtSyst("2xTT1LDn", [&, tstr]() { return tstr.Contains("tt1lpowheg") ? 1. / 2 : 1.; });
-    ana.cutflow.addWgtSyst("2xTT2LUp", [&, tstr]() { return tstr.Contains("tt2lpowheg") ? 2 : 1.; });
-    ana.cutflow.addWgtSyst("2xTT2LDn", [&, tstr]() { return tstr.Contains("tt2lpowheg") ? 1. / 2 : 1.; });
-    ana.cutflow.addWgtSyst("2xTTWUp", [&, tstr]() { return tstr.Contains("ttw") ? 2 : 1.; });
-    ana.cutflow.addWgtSyst("2xTTWDn", [&, tstr]() { return tstr.Contains("ttw") ? 1. / 2 : 1.; });
-    ana.cutflow.addWgtSyst("2xTTZUp", [&, tstr]() { return tstr.Contains("ttz") ? 2 : 1.; });
-    ana.cutflow.addWgtSyst("2xTTZDn", [&, tstr]() { return tstr.Contains("ttz") ? 1. / 2 : 1.; });
-    ana.cutflow.addWgtSyst("2xRareTopUp", [&, tstr]() { return tstr.Contains("raretop") ? 2 : 1.; });
-    ana.cutflow.addWgtSyst("2xRareTopDn", [&, tstr]() { return tstr.Contains("raretop") ? 1. / 2 : 1.; });
-    ana.cutflow.addWgtSyst("LepSFUp", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.lepsf_up() / vbs.lepsf(); });
-    ana.cutflow.addWgtSyst("LepSFDn", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.lepsf_dn() / vbs.lepsf(); });
-    ana.cutflow.addWgtSyst("BTagSFUp", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.btagsf_up() / vbs.btagsf(); });
-    ana.cutflow.addWgtSyst("BTagSFDn", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.btagsf_dn() / vbs.btagsf(); });
-    ana.cutflow.addWgtSyst("PURewgtUp", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.pu_rewgt_up() / vbs.pu_rewgt(); });
-    ana.cutflow.addWgtSyst("PURewgtDn", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.pu_rewgt_dn() / vbs.pu_rewgt(); });
-    ana.cutflow.addWgtSyst("TrigSFUp", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.trigsf_up() / vbs.trigsf(); });
-    ana.cutflow.addWgtSyst("TrigSFDn", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.trigsf_dn() / vbs.trigsf(); });
-    ana.cutflow.addWgtSyst("PDFRewgtUp", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_pdf_wgt_up(); });
-    ana.cutflow.addWgtSyst("PDFRewgtDn", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_pdf_wgt_dn(); });
-    ana.cutflow.addWgtSyst("LHEmuF0p5muR0p5", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_muF0p5_muR0p5(); });
-    ana.cutflow.addWgtSyst("LHEmuF1p0muR0p5", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_muF1p0_muR0p5(); });
-    ana.cutflow.addWgtSyst("LHEmuF2p0muR0p5", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_muF2p0_muR0p5(); });
-    ana.cutflow.addWgtSyst("LHEmuF0p5muR1p0", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_muF0p5_muR1p0(); });
-    ana.cutflow.addWgtSyst("LHEmuF2p0muR1p0", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_muF2p0_muR1p0(); });
-    ana.cutflow.addWgtSyst("LHEmuF0p5muR2p0", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_muF0p5_muR2p0(); });
-    ana.cutflow.addWgtSyst("LHEmuF1p0muR2p0", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_muF1p0_muR2p0(); });
-    ana.cutflow.addWgtSyst("LHEmuF2p0muR2p0", [&, tstr]() { return ana.looper.getCurrentFileName().Contains("data.root") ? 1. : vbs.LHE_muF2p0_muR2p0(); });
+    ana.cutflow.addWgtSyst("2xTT1LUp", [&, tstr, group]() { return tstr.Contains("tt1lpowheg") or group.EqualTo("tt1lpowheg") ? 2 : 1.; });
+    ana.cutflow.addWgtSyst("2xTT1LDn", [&, tstr, group]() { return tstr.Contains("tt1lpowheg") or group.EqualTo("tt1lpowheg") ? 1. / 2 : 1.; });
+    ana.cutflow.addWgtSyst("2xTT2LUp", [&, tstr, group]() { return tstr.Contains("tt2lpowheg") or group.EqualTo("tt2lpowheg") ? 2 : 1.; });
+    ana.cutflow.addWgtSyst("2xTT2LDn", [&, tstr, group]() { return tstr.Contains("tt2lpowheg") or group.EqualTo("tt2lpowheg") ? 1. / 2 : 1.; });
+    ana.cutflow.addWgtSyst("2xTTWUp", [&, tstr, group]() { return tstr.Contains("ttw") or group.EqualTo("ttw") ? 2 : 1.; });
+    ana.cutflow.addWgtSyst("2xTTWDn", [&, tstr, group]() { return tstr.Contains("ttw") or group.EqualTo("ttw") ? 1. / 2 : 1.; });
+    ana.cutflow.addWgtSyst("2xTTZUp", [&, tstr, group]() { return tstr.Contains("ttz") or group.EqualTo("ttz") ? 2 : 1.; });
+    ana.cutflow.addWgtSyst("2xTTZDn", [&, tstr, group]() { return tstr.Contains("ttz") or group.EqualTo("ttz") ? 1. / 2 : 1.; });
+    ana.cutflow.addWgtSyst("2xRareTopUp", [&, tstr, group]() { return tstr.Contains("raretop") or group.EqualTo("raretop") ? 2 : 1.; });
+    ana.cutflow.addWgtSyst("2xRareTopDn", [&, tstr, group]() { return tstr.Contains("raretop") or group.EqualTo("raretop") ? 1. / 2 : 1.; });
+    ana.cutflow.addWgtSyst("LepSFUp", [&, tstr, isdata]() { return isdata ? 1. : vbs.lepsf_up() / vbs.lepsf(); });
+    ana.cutflow.addWgtSyst("LepSFDn", [&, tstr, isdata]() { return isdata ? 1. : vbs.lepsf_dn() / vbs.lepsf(); });
+    ana.cutflow.addWgtSyst("BTagSFUp", [&, tstr, isdata]() { return isdata ? 1. : vbs.btagsf_up() / vbs.btagsf(); });
+    ana.cutflow.addWgtSyst("BTagSFDn", [&, tstr, isdata]() { return isdata ? 1. : vbs.btagsf_dn() / vbs.btagsf(); });
+    ana.cutflow.addWgtSyst("PURewgtUp", [&, tstr, isdata]() { return isdata ? 1. : vbs.pu_rewgt_up() / vbs.pu_rewgt(); });
+    ana.cutflow.addWgtSyst("PURewgtDn", [&, tstr, isdata]() { return isdata ? 1. : vbs.pu_rewgt_dn() / vbs.pu_rewgt(); });
+    ana.cutflow.addWgtSyst("TrigSFUp", [&, tstr, isdata]() { return isdata ? 1. : vbs.trigsf_up() / vbs.trigsf(); });
+    ana.cutflow.addWgtSyst("TrigSFDn", [&, tstr, isdata]() { return isdata ? 1. : vbs.trigsf_dn() / vbs.trigsf(); });
+    ana.cutflow.addWgtSyst("PDFRewgtUp", [&, tstr, isdata]() { return isdata ? 1. : vbs.LHE_pdf_wgt_up(); });
+    ana.cutflow.addWgtSyst("PDFRewgtDn", [&, tstr, isdata]() { return isdata ? 1. : vbs.LHE_pdf_wgt_dn(); });
+    ana.cutflow.addWgtSyst("LHEmuF0p5muR0p5", [&, tstr, isdata]() { return isdata ? 1. : vbs.LHE_muF0p5_muR0p5(); });
+    ana.cutflow.addWgtSyst("LHEmuF1p0muR0p5", [&, tstr, isdata]() { return isdata ? 1. : vbs.LHE_muF1p0_muR0p5(); });
+    ana.cutflow.addWgtSyst("LHEmuF2p0muR0p5", [&, tstr, isdata]() { return isdata ? 1. : vbs.LHE_muF2p0_muR0p5(); });
+    ana.cutflow.addWgtSyst("LHEmuF0p5muR1p0", [&, tstr, isdata]() { return isdata ? 1. : vbs.LHE_muF0p5_muR1p0(); });
+    ana.cutflow.addWgtSyst("LHEmuF2p0muR1p0", [&, tstr, isdata]() { return isdata ? 1. : vbs.LHE_muF2p0_muR1p0(); });
+    ana.cutflow.addWgtSyst("LHEmuF0p5muR2p0", [&, tstr, isdata]() { return isdata ? 1. : vbs.LHE_muF0p5_muR2p0(); });
+    ana.cutflow.addWgtSyst("LHEmuF1p0muR2p0", [&, tstr, isdata]() { return isdata ? 1. : vbs.LHE_muF1p0_muR2p0(); });
+    ana.cutflow.addWgtSyst("LHEmuF2p0muR2p0", [&, tstr, isdata]() { return isdata ? 1. : vbs.LHE_muF2p0_muR2p0(); });
 
     // Print cut structure
     ana.cutflow.printCuts();
