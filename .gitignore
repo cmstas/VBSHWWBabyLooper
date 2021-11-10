@@ -19,3 +19,4 @@ NanoSkimmer/tasks
 NanoSkimmer/*.json
 test.py
 doAnalysis
+.*.jobs
