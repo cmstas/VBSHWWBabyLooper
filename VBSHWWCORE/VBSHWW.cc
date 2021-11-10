@@ -48,7 +48,8 @@ VBSHWW::VBSHWW(int argc, char** argv) :
 
     isUL = (
         input_file_list_tstring.Contains("UL18") or input_file_list_tstring.Contains("UL2018") or
-        input_file_list_tstring.Contains("UL17") or input_file_list_tstring.Contains("UL2017")
+        input_file_list_tstring.Contains("UL17") or input_file_list_tstring.Contains("UL2017") or
+        input_file_list_tstring.Contains("UL16") or input_file_list_tstring.Contains("UL2016")
         );
 
     isAPV = input_file_list_tstring.Contains("NanoAODAPVv2") or input_file_list_tstring.Contains("HIPM_UL2016") or input_file_list_tstring.Contains("Run2016C-UL2016") or input_file_list_tstring.Contains("Run2016D-UL2016") or input_file_list_tstring.Contains("Run2016E-UL2016");
@@ -180,7 +181,46 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_B, "comb");
     btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_C, "comb");
     btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_UDSG, "incl");
-    if (nt.year() == 2016)
+    if (nt.year() == 2016 and isUL and isAPV)
+    {
+        btagEffTight_b = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_b");
+        btagEffTight_c = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_c");
+        btagEffTight_l = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_udsg");
+        btagEffLoose_b = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_b");
+        btagEffLoose_c = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_c");
+        btagEffLoose_l = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_udsg");
+        btagEffTight_b_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_b");
+        btagEffTight_c_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_c");
+        btagEffTight_l_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_udsg");
+        btagEffLoose_b_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_b");
+        btagEffLoose_c_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_c");
+        btagEffLoose_l_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_udsg");
+    }
+    else if (nt.year() == 2016 and not isUL and isAPV)
+    {
+        btagEffTight_b = new RooUtil::HistMap("data/eff_DeepFlav_102X_2016_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_b");
+        btagEffTight_c = new RooUtil::HistMap("data/eff_DeepFlav_102X_2016_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_c");
+        btagEffTight_l = new RooUtil::HistMap("data/eff_DeepFlav_102X_2016_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_udsg");
+        btagEffLoose_b = new RooUtil::HistMap("data/eff_DeepFlav_102X_2016_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_b");
+        btagEffLoose_c = new RooUtil::HistMap("data/eff_DeepFlav_102X_2016_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_c");
+        btagEffLoose_l = new RooUtil::HistMap("data/eff_DeepFlav_102X_2016_ttbar_1lep.root:h2_BTaggingEff_loose_Eff_udsg");
+    }
+    else if (nt.year() == 2016 and isUL and not isAPV)
+    {
+        btagEffTight_b = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_b");
+        btagEffTight_c = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_c");
+        btagEffTight_l = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_udsg");
+        btagEffLoose_b = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_b");
+        btagEffLoose_c = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_c");
+        btagEffLoose_l = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_udsg");
+        btagEffTight_b_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_b");
+        btagEffTight_c_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_c");
+        btagEffTight_l_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_udsg");
+        btagEffLoose_b_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_b");
+        btagEffLoose_c_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_c");
+        btagEffLoose_l_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_udsg");
+    }
+    else if (nt.year() == 2016 and not isUL and not isAPV)
     {
         btagEffTight_b = new RooUtil::HistMap("data/eff_DeepFlav_102X_2016_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_b");
         btagEffTight_c = new RooUtil::HistMap("data/eff_DeepFlav_102X_2016_ttbar_1lep.root:h2_BTaggingEff_tight_Eff_c");
@@ -246,6 +286,8 @@ VBSHWW::VBSHWW(int argc, char** argv) :
 
     // readerX = new RooUtil::TMVAUtil::ReaderX("BDT", "/nfs-7/userdata/yxiang/BDTResult/dataset/weights/TMVAClassification_BDT.weights.xml"); // 24 variables
     readerX = new RooUtil::TMVAUtil::ReaderX("BDT", "/nfs-7/userdata/yxiang/BDTResult/dataset_19variables/weights/TMVAClassification_BDT.weights.xml");
+
+    std::cout <<  " gconf.jecEraMC: " << gconf.jecEraMC <<  std::endl;
 
     // Set up JEC uncertainty tool
     jec_unc = new JetCorrectionUncertainty(

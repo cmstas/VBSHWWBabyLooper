@@ -5,6 +5,7 @@ import os
 import ROOT
 import glob
 import subprocess
+from pprint import pprint
 
 def get_xsec(**kwargs):
     samplename = kwargs.get("samplename")
@@ -61,6 +62,61 @@ def get_xsec(**kwargs):
     else:
         return xsec
 
+def get_group(**kwargs):
+    samplename = kwargs.get("samplename")
+    group = "none"
+    if "WW"                        in samplename: group = "bosons"
+    if "ZZ"                        in samplename: group = "bosons"
+    if "tZq_ll_4f_ckm_NLO"         in samplename: group = "raretop"
+    if "ST_s-channel_4f"           in samplename: group = "raretop"
+    if "ST_t-channel_antitop_4f"   in samplename: group = "raretop"
+    if "ST_t-channel_top_4f"       in samplename: group = "raretop"
+    if "ST_tW_antitop_5f"          in samplename: group = "raretop"
+    if "ST_tW_top_5f"              in samplename: group = "raretop"
+    if "ST_tWll_5f_LO"             in samplename: group = "raretop"
+    if "TWZToLL_tlept_Whad_5f_DR"  in samplename: group = "raretop"
+    if "TWZToLL_thad_Wlept_5f_DR"  in samplename: group = "raretop"
+    if "ZZTo4L"                    in samplename: group = "bosons"
+    if "GluGluHToZZTo4L"           in samplename: group = "bosons"
+    if "DYJetsToLL_M-10to50"       in samplename: group = "bosons"
+    if "DYJetsToLL_M-50"           in samplename: group = "bosons"
+    if "WJetsToLNu"                in samplename: group = "bosons"
+    if "TTWJetsToLNu"              in samplename: group = "ttw"
+    if "TTZToLLNuNu_M-10"          in samplename: group = "ttz"
+    if "TTZToLL_M-1to10"           in samplename: group = "ttz"
+    if "TTJets_DiLept"             in samplename: group = "tt2l"
+    if "TTJets_SingleLeptFromT"    in samplename: group = "tt1l"
+    if "TTJets_SingleLeptFromTbar" in samplename: group = "tt1l"
+    if "TTTo2L2Nu"                 in samplename: group = "tt2lpowheg"
+    if "TTToSemiLeptonic"          in samplename: group = "tt1lpowheg"
+    if "WpWpJJ_EWK"                in samplename: group = "bosons"
+    if "SSWW"                      in samplename: group = "bosons"
+    if "WZTo3LNu"                  in samplename: group = "bosons"
+    if "VBSWWHToLNuLNubb_C2V"      in samplename: group = "vbshwwc2v"
+    if "VBSWWHToLNuLNubb_CV"       in samplename: group = "vbshwwcv"
+    if "VBSWWHToLNuLNubb_C3"       in samplename: group = "vbshwwc3"
+    if "ttHJetTobb"                in samplename: group = "raretop"
+    if "ttHJetToNonbb"             in samplename: group = "raretop"
+    if "TTTT"                      in samplename: group = "raretop"
+    if "TTWW"                      in samplename: group = "raretop"
+    if "TTWZ"                      in samplename: group = "raretop"
+    if "TTZZ"                      in samplename: group = "raretop"
+    if "TTWH"                      in samplename: group = "raretop"
+    if "TTZH"                      in samplename: group = "raretop"
+    if "WWW_4F"                    in samplename: group = "bosons"
+    if "WWZ"                       in samplename: group = "bosons"
+    if "WZG"                       in samplename: group = "bosons"
+    if "WZZ"                       in samplename: group = "bosons"
+    if "ZZZ"                       in samplename: group = "bosons"
+    if "WWToLNuQQ"                 in samplename: group = "bosons"
+    if "WWTo2L2Nu"                 in samplename: group = "bosons"
+    if "Run201"                    in samplename: group = "data"
+    if group == "none":
+        print("ERROR! Did not find group for {}".format(samplename))
+        sys.exit(-1)
+    else:
+        return group
+
 def get_lumi(**kwargs):
     year = kwargs.get("year")
     if year == "2018": return 59.83
@@ -107,25 +163,25 @@ def get_samplenames(**kwargs):
                     "DYJetsToLL_M-10to50",
                     "DYJetsToLL_M-50",
                     "SSWW",
+                    "WJetsToLNu",
+                    "WW",
+                    "WZTo3LNu_mllmin01_NNPDF31",
+                    "ZZTo4L",
+                    "TTTo2L2Nu",
+                    "TTToSemiLeptonic",
+                    "TTWJetsToLNu",
+                    "TTZToLLNuNu_M-10",
+                    "TWZToLL_thad_Wlept_5f_DR",
+                    "TWZToLL_tlept_Whad_5f_DR",
+                    "ttHJetToNonbb_M125",
+                    "ttHJetTobb_M125",
                     "ST_s-channel_4f_leptonDecays",
                     "ST_t-channel_antitop_4f_InclusiveDecays",
                     "ST_t-channel_top_4f_InclusiveDecays",
                     "ST_tW_antitop_5f_NoFullyHadronicDecays",
                     "ST_tW_top_5f_NoFullyHadronicDecays",
-                    "TTTo2L2Nu",
-                    "TTToSemiLeptonic",
-                    "TTWJetsToLNu",
                     "TTWW",
                     "TTWZ",
-                    "TTZToLLNuNu_M-10",
-                    "TWZToLL_thad_Wlept_5f_DR",
-                    "TWZToLL_tlept_Whad_5f_DR",
-                    "WJetsToLNu",
-                    "WW",
-                    "WZTo3LNu_mllmin01_NNPDF31",
-                    "ZZTo4L",
-                    "ttHJetToNonbb_M125",
-                    "ttHJetTobb_M125",
                     ]
     elif year == "2017":
         if isdata:
@@ -167,25 +223,25 @@ def get_samplenames(**kwargs):
                     "DYJetsToLL_M-10to50",
                     "DYJetsToLL_M-50",
                     "SSWW",
+                    "WJetsToLNu",
+                    "WW",
+                    "WZTo3LNu_mllmin01_NNPDF31",
+                    "ZZ",
+                    "TTTo2L2Nu",
+                    "TTToSemiLeptonic",
+                    "TTWJetsToLNu",
+                    "TTZToLLNuNu_M-10",
+                    "TWZToLL_thad_Wlept_5f_DR",
+                    "TWZToLL_tlept_Whad_5f_DR",
+                    "ttHJetToNonbb_M125",
+                    "ttHJetTobb_M125",
                     "ST_s-channel_4f_leptonDecays",
                     "ST_t-channel_antitop_4f_InclusiveDecays",
                     "ST_t-channel_top_4f_InclusiveDecays",
                     "ST_tW_antitop_5f_NoFullyHadronicDecays",
                     "ST_tW_top_5f_NoFullyHadronicDecays",
-                    "TTTo2L2Nu",
-                    "TTToSemiLeptonic",
-                    "TTWJetsToLNu",
                     "TTWW",
                     "TTWZ",
-                    "TTZToLLNuNu_M-10",
-                    "TWZToLL_thad_Wlept_5f_DR",
-                    "TWZToLL_tlept_Whad_5f_DR",
-                    "WJetsToLNu",
-                    "WW",
-                    "WZTo3LNu_mllmin01_NNPDF31",
-                    "ZZ",
-                    "ttHJetToNonbb_M125",
-                    "ttHJetTobb_M125",
                     ]
     elif year == "2016":
         if isdata:
@@ -217,25 +273,25 @@ def get_samplenames(**kwargs):
                     "DYJetsToLL_M-10to50",
                     "DYJetsToLL_M-50",
                     "SSWW",
+                    "WJetsToLNu",
+                    "WW",
+                    "WZTo3LNu",
+                    "ZZTo4L",
+                    "TTTo2L2Nu",
+                    "TTToSemiLeptonic",
+                    "TTWJetsToLNu",
+                    "TTZToLLNuNu_M-10",
+                    "TWZToLL_thad_Wlept_5f_DR",
+                    "TWZToLL_tlept_Whad_5f_DR",
+                    "ttHJetToNonbb_M125",
+                    "ttHJetTobb_M125",
                     "ST_s-channel_4f_leptonDecays",
                     "ST_t-channel_antitop_4f_InclusiveDecays",
                     "ST_t-channel_top_4f_InclusiveDecays",
                     "ST_tW_antitop_5f_NoFullyHadronicDecays",
                     "ST_tW_top_5f_NoFullyHadronicDecays",
-                    "TTTo2L2Nu",
-                    "TTToSemiLeptonic",
-                    "TTWJetsToLNu",
                     "TTWW",
                     "TTWZ",
-                    "TTZToLLNuNu_M-10",
-                    "TWZToLL_thad_Wlept_5f_DR",
-                    "TWZToLL_tlept_Whad_5f_DR",
-                    "WJetsToLNu",
-                    "WW",
-                    "WZTo3LNu",
-                    "ZZTo4L",
-                    "ttHJetToNonbb_M125",
-                    "ttHJetTobb_M125",
                     ]
     elif year == "2016APV":
         if isdata:
@@ -282,25 +338,25 @@ def get_samplenames(**kwargs):
                     "DYJetsToLL_M-10to50",
                     "DYJetsToLL_M-50",
                     "SSWW",
+                    "WJetsToLNu",
+                    "WW",
+                    "WZTo3LNu",
+                    "ZZTo4L",
+                    "TTTo2L2Nu",
+                    "TTToSemiLeptonic",
+                    "TTWJetsToLNu",
+                    "TTZToLLNuNu_M-10",
+                    "TWZToLL_thad_Wlept_5f_DR",
+                    "TWZToLL_tlept_Whad_5f_DR",
+                    "ttHJetToNonbb_M125",
+                    "ttHJetTobb_M125",
                     "ST_s-channel_4f_leptonDecays",
                     "ST_t-channel_antitop_4f_InclusiveDecays",
                     "ST_t-channel_top_4f_InclusiveDecays",
                     "ST_tW_antitop_5f_NoFullyHadronicDecays",
                     "ST_tW_top_5f_NoFullyHadronicDecays",
-                    "TTTo2L2Nu",
-                    "TTToSemiLeptonic",
-                    "TTWJetsToLNu",
                     "TTWW",
                     "TTWZ",
-                    "TTZToLLNuNu_M-10",
-                    "TWZToLL_thad_Wlept_5f_DR",
-                    "TWZToLL_tlept_Whad_5f_DR",
-                    "WJetsToLNu",
-                    "WW",
-                    "WZTo3LNu",
-                    "ZZTo4L",
-                    "ttHJetToNonbb_M125",
-                    "ttHJetTobb_M125",
                     ]
     return sample_list
 
@@ -313,7 +369,7 @@ def get_nanoaodtag(**kwargs):
     elif year == "2016":    return "UL16NanoAODv2"
     elif year == "2016APV": return "UL16NanoAODAPVv2"
 
-def get_samplelist(skimversion="v2.6", minintup_tag="testV1", username="phchang"):
+def get_samplelist(skimversion="v2.6", minintup_tag="testV1", histogram_tag="v1", username="phchang"):
     samplelist = []
     for year in ["2018", "2017", "2016", "2016APV"]:
         for (isdata, issignal) in [(True, False), (False, True), (False, False)]:
@@ -327,9 +383,54 @@ def get_samplelist(skimversion="v2.6", minintup_tag="testV1", username="phchang"
                         username=username,
                         year=year,
                         minintup_tag=minintup_tag,
+                        histogram_tag=histogram_tag,
                         )
                 samplelist.append(sample)
     return samplelist
+
+def run_minintup(samplelist, resubmit=False):
+    jobcmds = []
+    for s in samplelist:
+        if resubmit:
+            jobcmds += s.info["minintup_jobcommands"]
+        else:
+            for (isf, cmd) in zip(s.info["minintup_isfinished"], s.info["minintup_jobcommands"]):
+                if not isf:
+                    jobcmds.append(cmd)
+    f = open(".minintup.jobs", "w")
+    f.write("\n".join(jobcmds))
+    f.close()
+    if len(jobcmds) > 0:
+        os.system("xargs.sh .minintup.jobs")
+
+def run_histogram(samplelist, resubmit=False):
+    jobcmds = []
+    for s in samplelist:
+        if resubmit:
+            jobcmds += s.info["histogram_jobcommands"]
+        else:
+            for (isf, cmd) in zip(s.info["histogram_isfinished"], s.info["histogram_jobcommands"]):
+                if not isf:
+                    jobcmds.append(cmd)
+    f = open(".histogram.jobs", "w")
+    f.write("\n".join(jobcmds))
+    f.close()
+    if len(jobcmds) > 0:
+        os.system("xargs.sh .histogram.jobs")
+
+def run_hadd(samplelist, resubmit=False):
+    jobcmds = []
+    for s in samplelist:
+        if resubmit:
+            jobcmds += s.info["histogram_jobcommands"]
+        else:
+            if not s.info["hadd_output"]:
+                jobcmds.append(s.info["hadd_jobcommand"])
+    f = open(".hadd.jobs", "w")
+    f.write("\n".join(jobcmds))
+    f.close()
+    if len(jobcmds) > 0:
+        os.system("xargs.sh .hadd.jobs")
 
 class Sample:
     def __init__(self, **kwargs):
@@ -341,6 +442,7 @@ class Sample:
                 "year": kwargs.get("year", None),
                 "username": kwargs.get("username"),
                 "xsec": kwargs.get("xsec", None),
+                "group": kwargs.get("group", None),
                 "neffevents": kwargs.get("neffevents", None),
                 "nevents": kwargs.get("nevents", None),
                 "scale1fb": kwargs.get("scale1fb", None),
@@ -349,15 +451,21 @@ class Sample:
                 "skimnevents": kwargs.get("skimnevents", None),
                 "nanoaodtag": kwargs.get("nanoaodtag", None),
                 "lumi": kwargs.get("lumi", None),
+                "njobs": kwargs.get("njobs", 0),
                 "minintup_tag": kwargs.get("minintup_tag", None),
-                "minintup_njobs": kwargs.get("minintup_njobs", 0),
                 "minintup_nfinished": kwargs.get("minintup_nfinished", 0),
                 "minintup_jobcommands": kwargs.get("minintup_jobcommands", []),
                 "minintup_outputs": kwargs.get("minintup_outputs", []),
+                "minintup_isfinished": kwargs.get("minintup_isfinished", []),
+                "histogram_tag": kwargs.get("histogram_tag", None),
+                "histogram_nfinished": kwargs.get("histogram_nfinished", 0),
+                "histogram_jobcommands": kwargs.get("histogram_jobcommands", []),
+                "histogram_outputs": kwargs.get("histogram_outputs", []),
+                "histogram_isfinished": kwargs.get("histogram_isfinished", []),
+                "hadd_jobcommand": kwargs.get("hadd_jobcommand", None),
+                "hadd_output": kwargs.get("hadd_output", None),
+                "hadd_status": kwargs.get("hadd_status", "N"),
                 "ijecvar": kwargs.get("ijecvar", 0),
-                "hist_njobs": kwargs.get("hist_njobs", 0),
-                "hist_nfinished": kwargs.get("hist_nfinished", 0),
-                "hist_outputs": kwargs.get("hist_outputs", []),
                 }
         if self.info["samplename"] == None: raise TypeError("samplename not provided!")
         if self.info["isdata"] == None: raise TypeError("isdata not provided!")
@@ -366,6 +474,7 @@ class Sample:
         if self.info["year"] == None: raise TypeError("year not provided!")
         if self.info["username"] == None: raise TypeError("username not provided!")
         if self.info["minintup_tag"] == None: raise TypeError("minintup_tag not provided!")
+        if self.info["histogram_tag"] == None: raise TypeError("histogram_tag not provided!")
         self.init()
 
     def init(self):
@@ -373,6 +482,7 @@ class Sample:
         # parse few things first
         #------------------------------------------------------------
         self.info["xsec"] = get_xsec(**self.info)
+        self.info["group"] = get_group(**self.info)
         self.info["nanoaodtag"] = get_nanoaodtag(**self.info)
         self.info["lumi"] = get_lumi(**self.info)
         #------------------------------------------------------------
@@ -403,34 +513,81 @@ class Sample:
         #------------------------------------------------------------
         njobs = self.info["skimnevents"] / 55000
         njobs += 1 if self.info["skimnevents"] % 55000 > 0 else 0
-        self.info["minintup_njobs"] = njobs
-        fs = glob.glob("minintup/{skimversion}/{minintup_tag}/{year}/{samplename}*.root".format(**self.info))
-        ls = glob.glob("minintup/{skimversion}/{minintup_tag}/{year}/{samplename}*.log".format(**self.info))
-        fs.sort()
-        ls.sort()
-        if len(fs) != len(ls):
-            print(self)
-            print("ERROR! output root files and log files numbers do not match up!")
-            sys.exit(-1)
-        self.info["minintup_nfinished"] = subprocess.check_output("grep 'Who cares!' minintup/{skimversion}/{minintup_tag}/{year}/{samplename}*.log | wc -l") if len(ls) > 0 else 0
-        self.info["minintup_outputs"] = fs
+        self.info["njobs"] = njobs
         #------------------------------------------------------------
         # parse scale1fb
         #------------------------------------------------------------
-        self.info["scale1fb"] = float(self.info["xsec"]) * 1000.0 / float(self.info["neffevents"]) if not self.info["isdata"] else 1
+        if self.info["isdata"]:
+            self.info["scale1fb"] = 1
+        else:
+            self.info["scale1fb"] = float(self.info["xsec"]) * 1000.0 / float(self.info["neffevents"])
         #------------------------------------------------------------
-        # parse cmds
+        # parse minintup cmds
         #------------------------------------------------------------
         if "_jecUp" in self.info["minintup_tag"]: self.info["ijecvar"] = 1
         if "_jecDn" in self.info["minintup_tag"]: self.info["ijecvar"] =-1
-        for idx in range(self.info["minintup_njobs"]):
-            cmd = "rm -f minintup/{skimversion}/{minintup_tag}/{year}/{samplename}_output_{idx}.root; studies/createMini/doAnalysis -t Events -o minintup/{skimversion}/{minintup_tag}/{year}/{samplename}_output_{idx}.root -e {ijecvar} --scale1fb {scale1fb} -j {minintup_njobs} -I {idx} -i {skimfilepath} > minintup/{skimversion}/{minintup_tag}/{year}/{samplename}_output_{idx}.log 2>&1".format(idx=idx, **self.info)
-            self.info["minintup_jobcommands"].append(cmd)
-        for p in self.info["minintup_jobcommands"]:
-            print(p)
+        minintup_nfinished = 0
+        histogram_nfinished = 0
+        for idx in range(self.info["njobs"]):
+            # Mini Ntuple creation command building
+            minintup_odir = "minintup/{skimversion}/{minintup_tag}/{year}".format(**self.info)
+            minintup_output = "{minintup_odir}/{samplename}_output_{idx}.root".format(minintup_odir=minintup_odir, idx=idx, **self.info)
+            minintup_log = "{minintup_odir}/{samplename}_output_{idx}.log".format(minintup_odir=minintup_odir, idx=idx, **self.info)
+            minintup_cmd = "mkdir -p {minintup_odir}/; rm -f {minintup_output}; studies/createMini/doAnalysis -t Events -o {minintup_output} -e {ijecvar} --scale1fb {scale1fb} -j {njobs} -I {idx} -i {skimfilepath} > {minintup_log} 2>&1".format(minintup_odir=minintup_odir, minintup_output=minintup_output, minintup_log=minintup_log, idx=idx, **self.info)
+            # histogram creation command building
+            histogram_odir = "histogram/{skimversion}/{minintup_tag}/{year}/{histogram_tag}".format(**self.info)
+            histogram_output = "{histogram_odir}/{samplename}_output_{idx}.root".format(histogram_odir=histogram_odir, idx=idx, **self.info)
+            histogram_log = "{histogram_odir}/{samplename}_output_{idx}.log".format(histogram_odir=histogram_odir, idx=idx, **self.info)
+            histogram_cmd = "mkdir -p {histogram_odir}/; rm -f {histogram_output}; minilooper/doAnalysis -t variable -o {histogram_output} -i {minintup_output} > {histogram_log} 2>&1".format(histogram_odir=histogram_odir, histogram_output=histogram_output, histogram_log=histogram_log, minintup_output=minintup_output, idx=idx, **self.info)
+            self.info["minintup_jobcommands"].append(minintup_cmd)
+            self.info["histogram_jobcommands"].append(histogram_cmd)
+            # Parsing Mini Ntuple creation progress
+            minintup_fs = glob.glob(minintup_output)
+            minintup_ls = glob.glob(minintup_log)
+            if len(minintup_fs) > 0:
+                self.info["minintup_outputs"].append(minintup_output)
+            else:
+                self.info["minintup_outputs"].append(None)
+            if len(minintup_ls) > 0:
+                minintup_isfinished = int(subprocess.check_output("grep 'Who cares!' {} | wc -l".format(minintup_log), shell=True)) > 0
+                self.info["minintup_isfinished"].append(minintup_isfinished)
+                if minintup_isfinished:
+                    minintup_nfinished += 1
+            else:
+                self.info["minintup_isfinished"].append(False)
+            # Parsing histogram creation progress
+            histogram_fs = glob.glob(histogram_output)
+            histogram_ls = glob.glob(histogram_log)
+            if len(histogram_fs) > 0:
+                self.info["histogram_outputs"].append(histogram_output)
+            else:
+                self.info["histogram_outputs"].append(None)
+            if len(histogram_ls) > 0:
+                histogram_isfinished = int(subprocess.check_output("grep 'Who cares!' {} | wc -l".format(histogram_log), shell=True)) > 0
+                self.info["histogram_isfinished"].append(histogram_isfinished)
+                if histogram_isfinished:
+                    histogram_nfinished += 1
+            else:
+                self.info["histogram_isfinished"].append(False)
+        self.info["minintup_nfinished"] = minintup_nfinished
+        self.info["histogram_nfinished"] = histogram_nfinished
+        #------------------------------------------------------------
+        # parse hadd command
+        #------------------------------------------------------------
+        hadd_odir = "hadd/{skimversion}/{minintup_tag}/{year}/{histogram_tag}".format(**self.info)
+        hadd_output = "{hadd_odir}/{group}_{samplename}.root".format(hadd_odir=hadd_odir, **self.info)
+        hadd_log = "{hadd_odir}/{group}_{samplename}.log".format(hadd_odir=hadd_odir, **self.info)
+        hadd_cmd = "mkdir -p {hadd_odir}; hadd -f {hadd_output} {hadd_inputs} > {hadd_log} 2>&1".format(hadd_odir=hadd_odir, hadd_output=hadd_output, hadd_log=hadd_log, hadd_inputs=" ".join(self.info["histogram_outputs"]))
+        self.info["hadd_jobcommand"] = hadd_cmd
+        hs = glob.glob(hadd_output)
+        if len(hs) > 0:
+            self.info["hadd_output"] = hadd_output
+            self.info["hadd_status"] = "Y"
 
     def printheader(self):
-        msg = "{samplename:40s} | {skimversion:10s} | {skimfilepath:230s} | {skimnevents:15s} | {nevents:15s} | {neffevents:15s} | {xsec:13s} | {scale1fb:15s} | {lumi:13s} | {minintupprogress:15s} ".format(
+        msg = "{year:9s} | {group:10s} | {samplename:40s} | {skimversion:10s} | {skimfilepath:230s} | {skimnevents:15s} | {nevents:15s} | {neffevents:15s} | {xsec:13s} | {scale1fb:15s} | {lumi:13s} | {minintup_tag:10s} | {jecvar:6s} | {minintupprogress:15s} | {histogram_tag:10s} | {histogramprogress:15s} | {haddstatus:5s}".format(
+                year="Year",
+                group="group",
                 samplename="Sample Name",
                 skimversion="Skim Tag", 
                 skimfilepath="Skim File Path", 
@@ -440,16 +597,24 @@ class Sample:
                 xsec="xsec", 
                 scale1fb="scale1fb", 
                 lumi="Lumi",
-                minintupprogress="minintup(N/Tot.)",
+                minintup_tag="miniNT tag",
+                jecvar="jecvar",
+                minintupprogress="miniNT (N/Tot.)",
+                histogram_tag="hist tag",
+                histogramprogress="hist (N/Tot.)",
+                haddstatus="hadd",
                 )
         print(msg)
 
     def __str__(self):
-        msg = "{samplename:40s} | {skimversion:10s} | {skimfilepath:230s} | {skimnevents:15d} | {nevents:15d} | {neffevents:15d} | {xsec:10.5g} pb | {scale1fb:15f} | {lumi:10.4g}/fb | {minintup_nfinished:7d}/{minintup_njobs:7d} ".format(**self.info)
+        msg = "{year:9s} | {group:10s} | {samplename:40s} | {skimversion:10s} | {skimfilepath:230s} | {skimnevents:15d} | {nevents:15d} | {neffevents:15d} | {xsec:10.5g} pb | {scale1fb:15f} | {lumi:10.4g}/fb | {minintup_tag:10s} | {ijecvar:6d} | {minintup_nfinished:7d}/{njobs:7d} | {histogram_tag:10s} | {histogram_nfinished:7d}/{njobs:7d} | {hadd_status:5s}".format(**self.info)
         return msg
 
 if __name__ == "__main__":
-    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="testV1")
+    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="testV1", histogram_tag="v1")
     samplelist[0].printheader()
     for s in samplelist:
         print(s)
+    run_minintup(samplelist, resubmit=False)
+    run_histogram(samplelist, resubmit=False)
+    run_hadd(samplelist, resubmit=False)
