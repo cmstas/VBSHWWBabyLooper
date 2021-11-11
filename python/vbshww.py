@@ -460,7 +460,8 @@ def run_Run2_hadd(samplelist, resubmit=False):
                 peryear_hadd_odir_pattern=peryear_hadd_odir_pattern,
                 )
         outputs.append("{hadd_odir}/{group}.root".format(hadd_odir=hadd_odir, group=group))
-        jobcmds.append(cmd)
+        if not len(glob.glob(outputs[-1])):
+            jobcmds.append(cmd)
     f = open(".run2hadd.jobs", "w")
     f.write("\n".join(jobcmds))
     f.close()
@@ -472,20 +473,22 @@ def run_Run2_hadd(samplelist, resubmit=False):
     cmd = "mkdir -p {hadd_odir}; hadd -f {hadd_odir}/totalbkg.root {hadd_odir}/bosons.root {hadd_odir}/raretop.root {hadd_odir}/ttw.root {hadd_odir}/ttz.root {hadd_odir}/tt1lpowheg.root {hadd_odir}/tt2lpowheg.root > {hadd_odir}/totalbkg.log 2>&1".format(
             hadd_odir=hadd_odir
             )
-    jobcmds.append(cmd)
+    if not len("{hadd_odir}/totalbkg.root".format(hadd_odir=hadd_odir)):
+        jobcmds.append(cmd)
     cmd = "mkdir -p {hadd_odir}; hadd -f {hadd_odir}/topbkg.root {hadd_odir}/raretop.root {hadd_odir}/ttw.root {hadd_odir}/ttz.root {hadd_odir}/tt1lpowheg.root {hadd_odir}/tt2lpowheg.root > {hadd_odir}/topbkg.log 2>&1".format(
             hadd_odir=hadd_odir
             )
-    jobcmds.append(cmd)
+    if not len("{hadd_odir}/topbkg.root".format(hadd_odir=hadd_odir)):
+        jobcmds.append(cmd)
     f = open(".run2haddgroup.jobs", "w")
     f.write("\n".join(jobcmds))
     f.close()
     if len(jobcmds) > 0:
         os.system("xargs.sh .run2haddgroup.jobs")
 
-    print("Processed Run2 hadding... see following outputs")
-    # check the outputs
-    os.system("ls -l {hadd_odir}".format(hadd_odir=hadd_odir))
+    print("Processed Run2 hadding...")
+    # # check the outputs
+    # os.system("ls -l {hadd_odir}".format(hadd_odir=hadd_odir))
 
 def run(samplelist):
     run_minintup(samplelist, resubmit=False)

@@ -121,33 +121,75 @@ VBSHWW::VBSHWW(int argc, char** argv) :
 
     // Setting up tau ID scale factors (used tight ttH tau ID DeepTau working points)
     // TODO: check that 'embedding' should indeed be false (last bool in the TauIDSFTool constructor)
-    if (nt.year() == 2016)
+    if (isUL)
     {
-        tauSF_vsJet = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSjet", "Medium", false, false);
-        tauSF_vsMu = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSmu", "Loose", false, false);
-        tauSF_vsEl = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSe", "VVLoose", false, false); // ttH uses VVVLoose but sfs only available up to VVLoose
-    }
-    else if (nt.year() == 2017)
-    {
-        tauSF_vsJet = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSjet", "Medium", false, false);
-        tauSF_vsMu = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSmu", "Loose", false, false);
-        tauSF_vsEl = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSe", "VVLoose", false, false); // ttH uses VVVLoose but sfs only available up to VVLoose
-    }
-    else if (nt.year() == 2018)
-    {
-        tauSF_vsJet = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSjet", "Medium", false, false);
-        tauSF_vsMu = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSmu", "Loose", false, false);
-        tauSF_vsEl = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSe", "VVLoose", false, false); // ttH uses VVVLoose but sfs only available up to VVLoose
+        if (nt.year() == 2016 and isAPV)
+        {
+            tauSF_vsJet = new TauIDSFTool("UL2016_preVFP", "DeepTau2017v2p1VSjet", "Medium", false, false);
+            /* TODO: UPDATE */ tauSF_vsMu = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSmu", "Loose", false, false);
+            tauSF_vsEl = new TauIDSFTool("UL2016_preVFP", "DeepTau2017v2p1VSe", "VVLoose", false, false); // ttH uses VVVLoose but sfs only available up to VVLoose
+        }
+        else if (nt.year() == 2016 and not isAPV)
+        {
+            tauSF_vsJet = new TauIDSFTool("UL2016_postVFP", "DeepTau2017v2p1VSjet", "Medium", false, false);
+            /* TODO: UPDATE */ tauSF_vsMu = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSmu", "Loose", false, false);
+            tauSF_vsEl = new TauIDSFTool("UL2016_postVFP", "DeepTau2017v2p1VSe", "VVLoose", false, false); // ttH uses VVVLoose but sfs only available up to VVLoose
+        }
+        else if (nt.year() == 2017)
+        {
+            tauSF_vsJet = new TauIDSFTool("UL2017", "DeepTau2017v2p1VSjet", "Medium", false, false);
+            /* TODO: UPDATE */ tauSF_vsMu = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSmu", "Loose", false, false);
+            tauSF_vsEl = new TauIDSFTool("UL2017", "DeepTau2017v2p1VSe", "VVLoose", false, false); // ttH uses VVVLoose but sfs only available up to VVLoose
+        }
+        else if (nt.year() == 2018)
+        {
+            tauSF_vsJet = new TauIDSFTool("UL2018", "DeepTau2017v2p1VSjet", "Medium", false, false);
+            /* TODO: UPDATE */ tauSF_vsMu = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSmu", "Loose", false, false);
+            tauSF_vsEl = new TauIDSFTool("UL2018", "DeepTau2017v2p1VSe", "VVLoose", false, false); // ttH uses VVVLoose but sfs only available up to VVLoose
+        }
+        else
+        {
+            RooUtil::error(TString::Format("While setting tau ID scale factors, found year = %d that is not recognized.", nt.year()));
+        }
     }
     else
     {
-        RooUtil::error(TString::Format("While setting tau ID scale factors, found year = %d that is not recognized.", nt.year()));
+        if (nt.year() == 2016)
+        {
+            tauSF_vsJet = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSjet", "Medium", false, false);
+            tauSF_vsMu = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSmu", "Loose", false, false);
+            tauSF_vsEl = new TauIDSFTool("2016Legacy", "DeepTau2017v2p1VSe", "VVLoose", false, false); // ttH uses VVVLoose but sfs only available up to VVLoose
+        }
+        else if (nt.year() == 2017)
+        {
+            tauSF_vsJet = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSjet", "Medium", false, false);
+            tauSF_vsMu = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSmu", "Loose", false, false);
+            tauSF_vsEl = new TauIDSFTool("2017ReReco", "DeepTau2017v2p1VSe", "VVLoose", false, false); // ttH uses VVVLoose but sfs only available up to VVLoose
+        }
+        else if (nt.year() == 2018)
+        {
+            tauSF_vsJet = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSjet", "Medium", false, false);
+            tauSF_vsMu = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSmu", "Loose", false, false);
+            tauSF_vsEl = new TauIDSFTool("2018ReReco", "DeepTau2017v2p1VSe", "VVLoose", false, false); // ttH uses VVVLoose but sfs only available up to VVLoose
+        }
+        else
+        {
+            RooUtil::error(TString::Format("While setting tau ID scale factors, found year = %d that is not recognized.", nt.year()));
+        }
     }
 
     // Setting up btagging scale factors
-    if (nt.year() == 2016)
+    if (nt.year() == 2016 and not isUL)
     {
         btagCalib = new BTagCalibration("DeepJet", "data/DeepJet_2016LegacySF_V1.csv");
+    }
+    else if (nt.year() == 2016 and isUL and isAPV)
+    {
+        /* TODO: UPDATE */ btagCalib = new BTagCalibration("DeepJet", "data/DeepJet_106XUL16SF.csv");
+    }
+    else if (nt.year() == 2016 and isUL and not isAPV)
+    {
+        btagCalib = new BTagCalibration("DeepJet", "data/DeepJet_106XUL16SF.csv");
     }
     else if (nt.year() == 2017 and isUL)
     {
