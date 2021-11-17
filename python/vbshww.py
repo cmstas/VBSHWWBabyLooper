@@ -607,7 +607,12 @@ class Sample:
             histogram_odir = "outputs/histogram/{skimversion}/{minintup_tag}/{year}/{histogram_tag}".format(**self.info)
             histogram_output = "{histogram_odir}/{samplename}_output_{idx}.root".format(histogram_odir=histogram_odir, idx=idx, **self.info)
             histogram_log = "{histogram_odir}/{samplename}_output_{idx}.log".format(histogram_odir=histogram_odir, idx=idx, **self.info)
-            histogram_cmd = "mkdir -p {histogram_odir}/; rm -f {histogram_output}; minilooper/doAnalysis -t variable -o {histogram_output} -i {minintup_output} > {histogram_log} 2>&1".format(histogram_odir=histogram_odir, histogram_output=histogram_output, histogram_log=histogram_log, minintup_output=minintup_output, idx=idx, **self.info)
+            # If CV signal sample then the there is extra option to pass to set it to specific CV value.
+            if self.info["samplename"] == "VBSWWHToLNuLNubb_CV":
+                extracmd = "-r 34"
+            else:
+                extracmd = ""
+            histogram_cmd = "mkdir -p {histogram_odir}/; rm -f {histogram_output}; minilooper/doAnalysis {extracmd} -t variable -o {histogram_output} -i {minintup_output} > {histogram_log} 2>&1".format(histogram_odir=histogram_odir, histogram_output=histogram_output, histogram_log=histogram_log, minintup_output=minintup_output, idx=idx, extracmd=extracmd,**self.info)
             self.info["minintup_jobcommands"].append(minintup_cmd)
             self.info["histogram_jobcommands"].append(histogram_cmd)
             # Parsing Mini Ntuple creation progress
@@ -673,12 +678,12 @@ class Sample:
 
 if __name__ == "__main__":
 
-    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="testV2", histogram_tag="v1")
+    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="miniNtupV1", histogram_tag="HistV1")
     print_samplelist(samplelist)
     run(samplelist)
-    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="testV2_jecUp", histogram_tag="v1")
+    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="miniNtupV1_jecUp", histogram_tag="HistV1")
     print_samplelist(samplelist)
     run(samplelist)
-    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="testV2_jecDn", histogram_tag="v1")
+    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="miniNtupV1_jecDn", histogram_tag="HistV1")
     print_samplelist(samplelist)
     run(samplelist)
