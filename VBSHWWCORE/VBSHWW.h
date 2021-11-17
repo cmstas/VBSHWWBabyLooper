@@ -114,6 +114,7 @@ public:
     TauIDSFTool* tauSF_vsEl;
 
     BTagCalibration* btagCalib;
+    BTagCalibration* btagCalib_inlieu;
     BTagCalibrationReader* btagReaderTight;
     BTagCalibrationReader* btagReaderMedium;
     BTagCalibrationReader* btagReaderLoose;

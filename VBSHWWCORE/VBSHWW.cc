@@ -112,7 +112,9 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     // TString vbsHwwNanoLooperDirPath = gSystem->Getenv("VBSHWWNANOLOOPERDIR");
     // const char* json_file = TString::Format("%s/NanoTools/NanoCORE/Tools/data/Cert_271036-325175_13TeV_Combined161718_JSON_snt.txt", vbsHwwNanoLooperDirPath.Data()).Data();
     // cout << "Setting grl: " << json_file << endl;
-    if (nt.year() == 2016)
+    if (nt.year() == 2016 and isUL)
+        set_goodrun_file("/nfs-7/userdata/phchang/analysis_data/grl/Cert_271036-284044_13TeV_Legacy2016_Collisions16_JSON_formatted.txt");
+    if (nt.year() == 2016 and not isUL)
         set_goodrun_file("/nfs-7/userdata/phchang/analysis_data/grl/Cert_271036-325175_13TeV_Combined161718_JSON_snt.txt");
     if (nt.year() == 2017)
         set_goodrun_file("/nfs-7/userdata/phchang/analysis_data/grl/Cert_294927-306462_13TeV_UL2017_Collisions17_GoldenJSON_snt.txt");
@@ -185,11 +187,13 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     }
     else if (nt.year() == 2016 and isUL and isAPV)
     {
-        /* TODO: UPDATE */ btagCalib = new BTagCalibration("DeepJet", "data/DeepJet_106XUL16SF.csv");
+        /* TODO: UPDATE */ btagCalib = new BTagCalibration("DeepJet", "data/DeepJet_2016LegacySF_V1.csv");
+        /* TODO: UPDATE */ btagCalib_inlieu = new BTagCalibration("DeepJet", "data/DeepJet_2016LegacySF_V1.csv");
     }
     else if (nt.year() == 2016 and isUL and not isAPV)
     {
         btagCalib = new BTagCalibration("DeepJet", "data/DeepJet_106XUL16SF.csv");
+        /* TODO: UPDATE */ btagCalib_inlieu = new BTagCalibration("DeepJet", "data/DeepJet_2016LegacySF_V1.csv");
     }
     else if (nt.year() == 2017 and isUL)
     {
@@ -214,15 +218,46 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     btagReaderTight = new BTagCalibrationReader(BTagEntry::OP_TIGHT, "central", {"up", "down"});
     btagReaderMedium = new BTagCalibrationReader(BTagEntry::OP_MEDIUM, "central", {"up", "down"});
     btagReaderLoose = new BTagCalibrationReader(BTagEntry::OP_LOOSE, "central", {"up", "down"});
-    btagReaderTight->load(*btagCalib, BTagEntry::FLAV_B, "comb");
-    btagReaderTight->load(*btagCalib, BTagEntry::FLAV_C, "comb");
-    btagReaderTight->load(*btagCalib, BTagEntry::FLAV_UDSG, "incl");
-    btagReaderMedium->load(*btagCalib, BTagEntry::FLAV_B, "comb");
-    btagReaderMedium->load(*btagCalib, BTagEntry::FLAV_C, "comb");
-    btagReaderMedium->load(*btagCalib, BTagEntry::FLAV_UDSG, "incl");
-    btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_B, "comb");
-    btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_C, "comb");
-    btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_UDSG, "incl");
+
+    if (nt.year() == 2016 and isUL and isAPV)
+    {
+        btagReaderTight->load(*btagCalib, BTagEntry::FLAV_B, "comb");
+        btagReaderTight->load(*btagCalib, BTagEntry::FLAV_C, "comb");
+        /* TODO: UPDATE */ btagReaderTight->load(*btagCalib_inlieu, BTagEntry::FLAV_UDSG, "incl");
+        btagReaderMedium->load(*btagCalib, BTagEntry::FLAV_B, "comb");
+        btagReaderMedium->load(*btagCalib, BTagEntry::FLAV_C, "comb");
+        /* TODO: UPDATE */ btagReaderMedium->load(*btagCalib_inlieu, BTagEntry::FLAV_UDSG, "incl");
+        btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_B, "comb");
+        btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_C, "comb");
+        /* TODO: UPDATE */ btagReaderLoose->load(*btagCalib_inlieu, BTagEntry::FLAV_UDSG, "incl");
+    }
+    else if (nt.year() == 2016 and isUL and not isAPV)
+    {
+        btagReaderTight->load(*btagCalib, BTagEntry::FLAV_B, "comb");
+        btagReaderTight->load(*btagCalib, BTagEntry::FLAV_C, "comb");
+        /* TODO: UPDATE */ btagReaderTight->load(*btagCalib_inlieu, BTagEntry::FLAV_UDSG, "incl");
+        btagReaderMedium->load(*btagCalib, BTagEntry::FLAV_B, "comb");
+        btagReaderMedium->load(*btagCalib, BTagEntry::FLAV_C, "comb");
+        /* TODO: UPDATE */ btagReaderMedium->load(*btagCalib_inlieu, BTagEntry::FLAV_UDSG, "incl");
+        btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_B, "comb");
+        btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_C, "comb");
+        /* TODO: UPDATE */ btagReaderLoose->load(*btagCalib_inlieu, BTagEntry::FLAV_UDSG, "incl");
+    }
+    else
+    {
+        btagReaderTight->load(*btagCalib, BTagEntry::FLAV_B, "comb");
+        btagReaderTight->load(*btagCalib, BTagEntry::FLAV_C, "comb");
+        btagReaderTight->load(*btagCalib, BTagEntry::FLAV_UDSG, "incl");
+        btagReaderMedium->load(*btagCalib, BTagEntry::FLAV_B, "comb");
+        btagReaderMedium->load(*btagCalib, BTagEntry::FLAV_C, "comb");
+        btagReaderMedium->load(*btagCalib, BTagEntry::FLAV_UDSG, "incl");
+        btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_B, "comb");
+        btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_C, "comb");
+        btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_UDSG, "incl");
+    }
+
+
+
     if (nt.year() == 2016 and isUL and isAPV)
     {
         btagEffTight_b = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_b");

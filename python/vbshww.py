@@ -473,12 +473,12 @@ def run_Run2_hadd(samplelist, resubmit=False):
     cmd = "mkdir -p {hadd_odir}; hadd -f {hadd_odir}/totalbkg.root {hadd_odir}/bosons.root {hadd_odir}/raretop.root {hadd_odir}/ttw.root {hadd_odir}/ttz.root {hadd_odir}/tt1lpowheg.root {hadd_odir}/tt2lpowheg.root > {hadd_odir}/totalbkg.log 2>&1".format(
             hadd_odir=hadd_odir
             )
-    if not len("{hadd_odir}/totalbkg.root".format(hadd_odir=hadd_odir)):
+    if not len(glob.glob("{hadd_odir}/totalbkg.root".format(hadd_odir=hadd_odir))):
         jobcmds.append(cmd)
     cmd = "mkdir -p {hadd_odir}; hadd -f {hadd_odir}/topbkg.root {hadd_odir}/raretop.root {hadd_odir}/ttw.root {hadd_odir}/ttz.root {hadd_odir}/tt1lpowheg.root {hadd_odir}/tt2lpowheg.root > {hadd_odir}/topbkg.log 2>&1".format(
             hadd_odir=hadd_odir
             )
-    if not len("{hadd_odir}/topbkg.root".format(hadd_odir=hadd_odir)):
+    if not len(glob.glob("{hadd_odir}/topbkg.root".format(hadd_odir=hadd_odir))):
         jobcmds.append(cmd)
     f = open(".run2haddgroup.jobs", "w")
     f.write("\n".join(jobcmds))
@@ -673,12 +673,12 @@ class Sample:
 
 if __name__ == "__main__":
 
-    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="testV1", histogram_tag="v1")
+    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="testV2", histogram_tag="v1")
     print_samplelist(samplelist)
     run(samplelist)
-    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="testV1_jecUp", histogram_tag="v1")
+    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="testV2_jecUp", histogram_tag="v1")
     print_samplelist(samplelist)
     run(samplelist)
-    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="testV1_jecDn", histogram_tag="v1")
+    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="testV2_jecDn", histogram_tag="v1")
     print_samplelist(samplelist)
     run(samplelist)

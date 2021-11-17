@@ -109,10 +109,10 @@ book_plot_alpha
 
 xargs.sh .plotjobs.txt
 
-cd /nfs-7/userdata/${USERNAME}/VBSHWWResult/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/
+cd outputs/hadd/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/
 tar -czf plots.tar.gz plots/ --exclude=*.txt --exclude=*.php --exclude=*.png
 cd - > /dev/null
-cp /nfs-7/userdata/${USERNAME}/VBSHWWResult/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/plots.tar.gz .
+cp outputs/hadd/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/plots.tar.gz .
 
-echo "Plots are here: /nfs-7/userdata/${USERNAME}/VBSHWWResult/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/plots"
+echo "Plots are here: outputs/hadd/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/plots"
 echo "Tarball of the plots are here: plots.tar.gz"
