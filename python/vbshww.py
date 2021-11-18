@@ -7,6 +7,12 @@ import glob
 import subprocess
 from pprint import pprint
 
+def get_groups():
+    return ["data", "bosons", "ttw", "ttz", "tt1lpowheg", "tt2lpowheg", "raretop", "vbshwwc2v", "vbshwwcv", "vbshwwc3"]
+
+def get_years():
+    return ["Run2", "2016APV", "2016", "2017", "2018"]
+
 def get_xsec(**kwargs):
     samplename = kwargs.get("samplename")
     xsec = -999
@@ -403,98 +409,91 @@ def run_minintup(samplelist, resubmit=False):
     if len(jobcmds) > 0:
         os.system("xargs.sh .minintup.jobs")
 
-def run_histogram(samplelist, resubmit=False):
-    jobcmds = []
-    for s in samplelist:
-        if resubmit:
-            jobcmds += s.info["histogram_jobcommands"]
-        else:
-            for (isf, cmd) in zip(s.info["histogram_isfinished"], s.info["histogram_jobcommands"]):
-                if not isf:
-                    jobcmds.append(cmd)
-    f = open(".histogram.jobs", "w")
-    f.write("\n".join(jobcmds))
-    f.close()
-    if len(jobcmds) > 0:
-        os.system("xargs.sh .histogram.jobs")
-
 def run_hadd(samplelist, resubmit=False):
+    # take the first sample to get the various tags
+    s = samplelist[0]
+    skimversion = s.info["skimversion"]
+    minintup_tag = s.info["minintup_tag"]
     jobcmds = []
-    for s in samplelist:
-        if resubmit:
-            jobcmds += s.info["histogram_jobcommands"]
+    outputs = []
+    for year in get_years():
+        if year == "Run2":
+            sourceyear = "201*"
         else:
-            if not s.info["hadd_output"]:
-                jobcmds.append(s.info["hadd_jobcommand"])
+            sourceyear = year
+        hadd_odir = "outputs/minintuphadd/{skimversion}/{minintup_tag}/{year}/".format(
+                skimversion=skimversion,
+                minintup_tag=minintup_tag,
+                year=year,
+                )
+        peryear_hadd_odir_pattern = "outputs/minintup/{skimversion}/{minintup_tag}/201*/".format(
+                skimversion=skimversion,
+                minintup_tag=minintup_tag,
+                )
+        for group in get_groups():
+            cmd = "mkdir -p {hadd_odir}; hadd -f {hadd_odir}/{group}.root {peryear_hadd_odir_pattern}/{group}*.root > {hadd_odir}/{group}.log 2>&1".format(
+                    hadd_odir=hadd_odir,
+                    group=group,
+                    peryear_hadd_odir_pattern=peryear_hadd_odir_pattern,
+                    )
+            outputs.append("{hadd_odir}/{group}.root".format(hadd_odir=hadd_odir, group=group))
+            if not len(glob.glob(outputs[-1])):
+                jobcmds.append(cmd)
     f = open(".hadd.jobs", "w")
     f.write("\n".join(jobcmds))
     f.close()
     if len(jobcmds) > 0:
         os.system("xargs.sh .hadd.jobs")
 
-def run_Run2_hadd(samplelist, resubmit=False):
+def run_histogram(samplelist, resubmit=False):
     # take the first sample to get the various tags
     s = samplelist[0]
     skimversion = s.info["skimversion"]
     minintup_tag = s.info["minintup_tag"]
     histogram_tag = s.info["histogram_tag"]
-    year = "Run2" # all years will be hadded together
-    hadd_odir = "outputs/hadd/{skimversion}/{minintup_tag}/{year}/{histogram_tag}".format(
-            skimversion=skimversion,
-            minintup_tag=minintup_tag,
-            year=year,
-            histogram_tag=histogram_tag,
-            )
-    peryear_hadd_odir_pattern = "outputs/hadd/{skimversion}/{minintup_tag}/201*/{histogram_tag}".format(
-            skimversion=skimversion,
-            minintup_tag=minintup_tag,
-            histogram_tag=histogram_tag,
-            )
-    groups = ["data", "bosons", "ttw", "ttz", "tt1lpowheg", "tt2lpowheg", "raretop", "vbshwwc2v", "vbshwwcv", "vbshwwc3"]
     jobcmds = []
     outputs = []
-    for group in groups:
-        cmd = "mkdir -p {hadd_odir}; hadd -f {hadd_odir}/{group}.root {peryear_hadd_odir_pattern}/{group}*.root > {hadd_odir}/{group}.log 2>&1".format(
-                hadd_odir=hadd_odir,
-                group=group,
-                peryear_hadd_odir_pattern=peryear_hadd_odir_pattern,
+    for year in get_years():
+        if year == "Run2":
+            sourceyear = "201*"
+        else:
+            sourceyear = year
+        hadd_odir = "outputs/minintuphadd/{skimversion}/{minintup_tag}/{year}/".format(
+                skimversion=skimversion,
+                minintup_tag=minintup_tag,
+                year=year,
                 )
-        outputs.append("{hadd_odir}/{group}.root".format(hadd_odir=hadd_odir, group=group))
-        if not len(glob.glob(outputs[-1])):
-            jobcmds.append(cmd)
-    f = open(".run2hadd.jobs", "w")
+        hist_odir = "outputs/histogram/{skimversion}/{minintup_tag}/{year}/{histogram_tag}".format(
+                skimversion=skimversion,
+                minintup_tag=minintup_tag,
+                year=year,
+                histogram_tag=histogram_tag,
+                )
+        for group in get_groups():
+            # If CV signal sample then the there is extra option to pass to set it to specific CV value.
+            if group == "vbshwwcv":
+                extracmd = "-r 34"
+            else:
+                extracmd = ""
+            cmd = "mkdir -p {hist_odir}; minilooper/doAnalysis -t variable {extracmd} -i {hadd_odir}/{group}.root -o {hist_odir}/{group}.root > {hist_odir}/{group}.log 2>&1".format(
+                    extracmd=extracmd,
+                    hist_odir=hist_odir,
+                    hadd_odir=hadd_odir,
+                    group=group,
+                    )
+            outputs.append("{hist_odir}/{group}.root".format(hist_odir=hist_odir, group=group))
+            if not len(glob.glob(outputs[-1])):
+                jobcmds.append(cmd)
+    f = open(".histogram.jobs", "w")
     f.write("\n".join(jobcmds))
     f.close()
     if len(jobcmds) > 0:
-        os.system("xargs.sh .run2hadd.jobs")
-
-    # total bkg
-    jobcmds = []
-    cmd = "mkdir -p {hadd_odir}; hadd -f {hadd_odir}/totalbkg.root {hadd_odir}/bosons.root {hadd_odir}/raretop.root {hadd_odir}/ttw.root {hadd_odir}/ttz.root {hadd_odir}/tt1lpowheg.root {hadd_odir}/tt2lpowheg.root > {hadd_odir}/totalbkg.log 2>&1".format(
-            hadd_odir=hadd_odir
-            )
-    if not len(glob.glob("{hadd_odir}/totalbkg.root".format(hadd_odir=hadd_odir))):
-        jobcmds.append(cmd)
-    cmd = "mkdir -p {hadd_odir}; hadd -f {hadd_odir}/topbkg.root {hadd_odir}/raretop.root {hadd_odir}/ttw.root {hadd_odir}/ttz.root {hadd_odir}/tt1lpowheg.root {hadd_odir}/tt2lpowheg.root > {hadd_odir}/topbkg.log 2>&1".format(
-            hadd_odir=hadd_odir
-            )
-    if not len(glob.glob("{hadd_odir}/topbkg.root".format(hadd_odir=hadd_odir))):
-        jobcmds.append(cmd)
-    f = open(".run2haddgroup.jobs", "w")
-    f.write("\n".join(jobcmds))
-    f.close()
-    if len(jobcmds) > 0:
-        os.system("xargs.sh .run2haddgroup.jobs")
-
-    print("Processed Run2 hadding...")
-    # # check the outputs
-    # os.system("ls -l {hadd_odir}".format(hadd_odir=hadd_odir))
+        os.system("xargs.sh .histogram.jobs")
 
 def run(samplelist):
     run_minintup(samplelist, resubmit=False)
-    run_histogram(samplelist, resubmit=False)
     run_hadd(samplelist, resubmit=False)
-    run_Run2_hadd(samplelist, resubmit=False)
+    run_histogram(samplelist, resubmit=False)
 
 def print_samplelist(samplelist):
     samplelist[0].printheader()
@@ -596,26 +595,14 @@ class Sample:
         if "_jecUp" in self.info["minintup_tag"]: self.info["ijecvar"] = 1
         if "_jecDn" in self.info["minintup_tag"]: self.info["ijecvar"] =-1
         minintup_nfinished = 0
-        histogram_nfinished = 0
         for idx in range(self.info["njobs"]):
             # Mini Ntuple creation command building
             minintup_odir = "outputs/minintup/{skimversion}/{minintup_tag}/{year}".format(**self.info)
-            minintup_output = "{minintup_odir}/{samplename}_output_{idx}.root".format(minintup_odir=minintup_odir, idx=idx, **self.info)
-            minintup_log = "{minintup_odir}/{samplename}_output_{idx}.log".format(minintup_odir=minintup_odir, idx=idx, **self.info)
+            minintup_output = "{minintup_odir}/{group}_{samplename}_output_{idx}.root".format(minintup_odir=minintup_odir, idx=idx, **self.info)
+            minintup_log = "{minintup_odir}/{group}_{samplename}_output_{idx}.log".format(minintup_odir=minintup_odir, idx=idx, **self.info)
             minintup_cmd = "mkdir -p {minintup_odir}/; rm -f {minintup_output}; studies/createMini/doAnalysis -t Events -o {minintup_output} -e {ijecvar} --scale1fb {scale1fb} -j {njobs} -I {idx} -i {skimfilepath} > {minintup_log} 2>&1".format(minintup_odir=minintup_odir, minintup_output=minintup_output, minintup_log=minintup_log, idx=idx, **self.info)
-            # histogram creation command building
-            histogram_odir = "outputs/histogram/{skimversion}/{minintup_tag}/{year}/{histogram_tag}".format(**self.info)
-            histogram_output = "{histogram_odir}/{samplename}_output_{idx}.root".format(histogram_odir=histogram_odir, idx=idx, **self.info)
-            histogram_log = "{histogram_odir}/{samplename}_output_{idx}.log".format(histogram_odir=histogram_odir, idx=idx, **self.info)
-            # If CV signal sample then the there is extra option to pass to set it to specific CV value.
-            if self.info["samplename"] == "VBSWWHToLNuLNubb_CV":
-                extracmd = "-r 34"
-            else:
-                extracmd = ""
-            histogram_cmd = "mkdir -p {histogram_odir}/; rm -f {histogram_output}; minilooper/doAnalysis {extracmd} -t variable -o {histogram_output} -i {minintup_output} > {histogram_log} 2>&1".format(histogram_odir=histogram_odir, histogram_output=histogram_output, histogram_log=histogram_log, minintup_output=minintup_output, idx=idx, extracmd=extracmd,**self.info)
+            # histogram_cmd = "mkdir -p {histogram_odir}/; rm -f {histogram_output}; minilooper/doAnalysis {extracmd} -t variable -o {histogram_output} -i {minintup_output} > {histogram_log} 2>&1".format(histogram_odir=histogram_odir, histogram_output=histogram_output, histogram_log=histogram_log, minintup_output=minintup_output, idx=idx, extracmd=extracmd,**self.info)
             self.info["minintup_jobcommands"].append(minintup_cmd)
-            self.info["histogram_jobcommands"].append(histogram_cmd)
-            # Parsing Mini Ntuple creation progress
             self.info["minintup_outputs"].append(minintup_output)
             minintup_ls = glob.glob(minintup_log)
             if len(minintup_ls) > 0:
@@ -625,33 +612,10 @@ class Sample:
                     minintup_nfinished += 1
             else:
                 self.info["minintup_isfinished"].append(False)
-            # Parsing histogram creation progress
-            self.info["histogram_outputs"].append(histogram_output)
-            histogram_ls = glob.glob(histogram_log)
-            if len(histogram_ls) > 0:
-                histogram_isfinished = int(subprocess.check_output("grep 'Who cares!' {} | wc -l".format(histogram_log), shell=True)) > 0
-                self.info["histogram_isfinished"].append(histogram_isfinished)
-                if histogram_isfinished:
-                    histogram_nfinished += 1
-            else:
-                self.info["histogram_isfinished"].append(False)
         self.info["minintup_nfinished"] = minintup_nfinished
-        self.info["histogram_nfinished"] = histogram_nfinished
-        #------------------------------------------------------------
-        # parse hadd command
-        #------------------------------------------------------------
-        hadd_odir = "outputs/hadd/{skimversion}/{minintup_tag}/{year}/{histogram_tag}".format(**self.info)
-        hadd_output = "{hadd_odir}/{group}_{samplename}.root".format(hadd_odir=hadd_odir, **self.info)
-        hadd_log = "{hadd_odir}/{group}_{samplename}.log".format(hadd_odir=hadd_odir, **self.info)
-        hadd_cmd = "mkdir -p {hadd_odir}; hadd -f {hadd_output} {hadd_inputs} > {hadd_log} 2>&1".format(hadd_odir=hadd_odir, hadd_output=hadd_output, hadd_log=hadd_log, hadd_inputs=" ".join(self.info["histogram_outputs"]))
-        self.info["hadd_jobcommand"] = hadd_cmd
-        hs = glob.glob(hadd_output)
-        if len(hs) > 0:
-            self.info["hadd_output"] = hadd_output
-            self.info["hadd_status"] = "Y"
 
     def printheader(self):
-        msg = "{year:9s} | {group:10s} | {samplename:40s} | {skimversion:10s} | {skimfilepath:230s} | {skimnevents:15s} | {nevents:15s} | {neffevents:15s} | {xsec:13s} | {scale1fb:15s} | {lumi:13s} | {minintup_tag:10s} | {jecvar:6s} | {minintupprogress:15s} | {histogram_tag:10s} | {histogramprogress:15s} | {haddstatus:5s}".format(
+        msg = "{year:9s} | {group:10s} | {samplename:40s} | {skimversion:10s} | {skimfilepath:230s} | {skimnevents:15s} | {nevents:15s} | {neffevents:15s} | {xsec:13s} | {scale1fb:15s} | {lumi:13s} | {minintup_tag:10s} | {jecvar:6s} | {minintupprogress:15s}".format(
                 year="Year",
                 group="group",
                 samplename="Sample Name",
@@ -666,24 +630,22 @@ class Sample:
                 minintup_tag="miniNT tag",
                 jecvar="jecvar",
                 minintupprogress="miniNT (N/Tot.)",
-                histogram_tag="hist tag",
-                histogramprogress="hist (N/Tot.)",
-                haddstatus="hadd",
+                # haddstatus="hadd",
                 )
         print(msg)
 
     def __str__(self):
-        msg = "{year:9s} | {group:10s} | {samplename:40s} | {skimversion:10s} | {skimfilepath:230s} | {skimnevents:15d} | {nevents:15d} | {neffevents:15d} | {xsec:10.5g} pb | {scale1fb:15f} | {lumi:10.4g}/fb | {minintup_tag:10s} | {ijecvar:6d} | {minintup_nfinished:7d}/{njobs:7d} | {histogram_tag:10s} | {histogram_nfinished:7d}/{njobs:7d} | {hadd_status:5s}".format(**self.info)
+        msg = "{year:9s} | {group:10s} | {samplename:40s} | {skimversion:10s} | {skimfilepath:230s} | {skimnevents:15d} | {nevents:15d} | {neffevents:15d} | {xsec:10.5g} pb | {scale1fb:15f} | {lumi:10.4g}/fb | {minintup_tag:10s} | {ijecvar:6d} | {minintup_nfinished:7d}/{njobs:7d}".format(**self.info)
         return msg
 
 if __name__ == "__main__":
 
-    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="miniNtupV1", histogram_tag="HistV1")
+    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="miniNtupV2", histogram_tag="HistV1")
     print_samplelist(samplelist)
     run(samplelist)
-    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="miniNtupV1_jecUp", histogram_tag="HistV1")
+    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="miniNtupV2_jecUp", histogram_tag="HistV1")
     print_samplelist(samplelist)
     run(samplelist)
-    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="miniNtupV1_jecDn", histogram_tag="HistV1")
+    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="miniNtupV2_jecDn", histogram_tag="HistV1")
     print_samplelist(samplelist)
     run(samplelist)
