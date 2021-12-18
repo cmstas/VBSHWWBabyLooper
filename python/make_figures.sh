@@ -35,7 +35,7 @@ if [ -z ${USERNAME} ]; then
     USERNAME=phchang
 fi
 
-NFSDIR=outputs/hadd/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/plots
+NFSDIR=outputs/histogram/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/plots
 mkdir -p ${NFSDIR}
 
 rm -f .plotjobs.txt
@@ -77,6 +77,7 @@ book_plot VRBDT       "    Tau Neg"               MbbOffLowBDT${SYST} "BDTBkg"
 book_plot VRBDT       "Lgt"                       MbbOffLowBDT${SYST} "BDTBkg2"
 book_plot SRBDT       "El Mu Tau Neg"             ""${SYST}           "BDT"
 book_plot AnchorYield "MbbOff"                    ""${SYST}           "Channel"
+book_plot AnchorYield "MbbOffLowBDT"              ""${SYST}           "Channel"
 book_plot SRYield     "LooseVR"                   ""${SYST}           "BDTSR BDTSR2"
 book_plot SRYield     "LooseVR"                   ""${SYST}           "CutSR CutSR2"
 book_plot SRYield     "LooseVR"                   ""${SYST}           "CutC3SR CutC3SR2"
@@ -101,6 +102,7 @@ book_plot Alpha       "LooseVR"                   ""${SYST}           "BDTSRMu B
 book_plot Alpha       "LooseVR"                   ""${SYST}           "BDTSRTau BDTSR2Tau"
 book_plot Alpha       "LooseVR"                   ""${SYST}           "BDTSRNeg BDTSR2Neg"
 book_plot SRKine      "Presel"                    ""                  "ST LT Ptbb MJJ DEtaJJ LeptonPt0 LeptonPt1 Mbb"
+book_plot MbbOffKine  "MbbOff"                    ""                  "ST LT Ptbb MJJ DEtaJJ LeptonPt0 LeptonPt1 Mbb"
 book_plot Fit         "LooseVR"                   ""${SYST}           "BDTSR"
 book_plot Fit         "LooseVR"                   ""${SYST}           "CutSR"
 book_plot Fit         "LooseVR"                   ""${SYST}           "CutC3SR"
@@ -109,10 +111,10 @@ book_plot_alpha
 
 xargs.sh .plotjobs.txt
 
-cd outputs/hadd/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/
+cd outputs/histogram/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/
 tar -czf plots.tar.gz plots/ --exclude=*.txt --exclude=*.php --exclude=*.png
 cd - > /dev/null
-cp outputs/hadd/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/plots.tar.gz .
+cp outputs/histogram/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/plots.tar.gz .
 
-echo "Plots are here: outputs/hadd/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/plots"
+echo "Plots are here: outputs/histogram/${SKIMVERSION}/${BABYVERSION}/${YEAR}/${YOURTAG}/plots"
 echo "Tarball of the plots are here: plots.tar.gz"

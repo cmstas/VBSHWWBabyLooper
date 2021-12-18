@@ -4,7 +4,7 @@ import sys
 
 model="C2V"
 
-def plotUpperLimit(mv,lov,lev,lp1v,lp2v,lm1v,lm2v,outname="upperlimit_br"):
+def plotUpperLimit(mv,lov,lev,lp1v,lp2v,lm1v,lm2v,outname="upperlimit_br",coupling="c2v",ana="bdt"):
 
     lumi=101
 
@@ -17,9 +17,12 @@ def plotUpperLimit(mv,lov,lev,lp1v,lp2v,lm1v,lm2v,outname="upperlimit_br"):
     mv = np.array([float(i) for i in list(mv)])
 
     haxisl=ROOT.TH2D("haxiss","",1,np.amin(mv)*1,np.amax(mv)*1,1,minL,maxL)
-    # haxisl.GetXaxis().SetTitle("#kappa_{VV}")
-    # haxisl.GetXaxis().SetTitle("#kappa_{V}")
-    haxisl.GetXaxis().SetTitle("#kappa_{#lambda}")
+    if coupling == "c2v":
+        haxisl.GetXaxis().SetTitle("#kappa_{VV}")
+    if coupling == "cv":
+        haxisl.GetXaxis().SetTitle("#kappa_{V}")
+    if coupling == "c3":
+        haxisl.GetXaxis().SetTitle("#kappa_{#lambda}")
     haxisl.GetYaxis().SetTitle("95% CLs limit on #sigma(pp#rightarrowW^{#pm}W^{#pm}Hjj) / #sigma_{theory}")
     # if "H" in sys.argv[2]:
     #     if "H2" in sys.argv[2]:
@@ -38,15 +41,16 @@ def plotUpperLimit(mv,lov,lev,lp1v,lp2v,lm1v,lm2v,outname="upperlimit_br"):
     haxisl.GetYaxis().SetTitleSize(0.047)
     haxisl.GetXaxis().SetTitleOffset(0.85)
 
-    # mask_ranges = [(-0.1, 0.1)]
+    if coupling == "cv":
+        mask_ranges = [(-0.1, 0.1)]
 
-    # box=[]
-    # for r,m in enumerate(mask_ranges):
-    #     box.append(ROOT.TBox(mask_ranges[r][0],minL+0.001*abs(minL),mask_ranges[r][1],maxL-0.001*maxL))
-    #     box[r].SetFillColor(ROOT.kGray)
-    #     box[r].SetLineColor(ROOT.kGray)
-    #     box[r].SetLineWidth(0)
-    #     box[r].SetFillStyle(1001)
+        box=[]
+        for r,m in enumerate(mask_ranges):
+            box.append(ROOT.TBox(mask_ranges[r][0],minL+0.001*abs(minL),mask_ranges[r][1],maxL-0.001*maxL))
+            box[r].SetFillColor(ROOT.kGray)
+            box[r].SetLineColor(ROOT.kGray)
+            box[r].SetLineWidth(0)
+            box[r].SetFillStyle(1001)
 
     ROOT.gStyle.SetOptStat(0)
     can = ROOT.TCanvas("can", "", 1500, 1200)
@@ -91,9 +95,10 @@ def plotUpperLimit(mv,lov,lev,lp1v,lp2v,lm1v,lm2v,outname="upperlimit_br"):
     gobs.SetLineColor(ROOT.kBlack)
     gobs.Draw("L")
 
-    # for b in box:
-    #     if b.GetX1()>=(np.amin(mv)*0.99):
-    #         b.Draw("same")
+    if coupling == "cv":
+        for b in box:
+            if b.GetX1()>=(np.amin(mv)*0.99):
+                b.Draw("same")
 
     latex = ROOT.TLatex()
     latex.SetTextFont(42)
@@ -146,17 +151,19 @@ def plotUpperLimit(mv,lov,lev,lp1v,lp2v,lm1v,lm2v,outname="upperlimit_br"):
 
     can.Update()
 
-    can.SaveAs("limit.png")
-    can.SaveAs("limit.pdf")
+    can.SaveAs("limit_{}_{}.png".format(coupling, ana))
+    can.SaveAs("limit_{}_{}.pdf".format(coupling, ana))
 
 if __name__ == "__main__":
 
     import sys
 
     tag = sys.argv[1]
+    coupling = sys.argv[2]
+    ana = sys.argv[3]
 
     cmd = "import limits.{}_asymptotic_results as lim".format(tag)
 
     exec(cmd)
 
-    plotUpperLimit(lim.mv,lim.lov,lim.lev,lim.lp1v,lim.lp2v,lim.lm1v,lim.lm2v,outname="upperlimit_br")
+    plotUpperLimit(lim.mv,lim.lov,lim.lev,lim.lp1v,lim.lp2v,lim.lm1v,lim.lm2v,outname="upperlimit_br", coupling=coupling, ana=ana)

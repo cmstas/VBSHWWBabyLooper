@@ -54,7 +54,7 @@ except:
 import ROOT as r
 r.gROOT.SetBatch(True)
 
-hadd_dir = "outputs/hadd/{}/{}/{}/{}".format(SKIMVERSION, BABYVERSION, YEAR, YOURTAG)
+hadd_dir = "outputs/histogram/{}/{}/{}/{}".format(SKIMVERSION, BABYVERSION, YEAR, YOURTAG)
 
 bkgs_fit = [
         "{}/topbkgest.root".format(hadd_dir),
@@ -167,8 +167,7 @@ if "LooseVR" in cutname_to_plot and "MbbOff" in cutname_to_plot and "Channels4Bi
     signal_labels = None
 
 if "Presel__" in cutname_to_plot:
-    # sigs.append("{}/s_c2v_i20.root".format(hadd_dir))
-    sigs.append("{}/vbshwwc2v.root".format(hadd_dir))
+    sigs.append("{}/vbshwwsm.root".format(hadd_dir))
     signal_labels.append("SM")
     signal_labels_tex.append("\\CTWOV=1 (SM)")
 
@@ -200,7 +199,7 @@ signal_scale = 1
 # signal_scale = 137. / (59.97+41.3)
 signal_scale = 1
 
-if "_SS" in SKIMVERSION:
+if "v2.6" in SKIMVERSION:
     if ("MbbOn" in cutname_to_plot and "SR" not in cutname_to_plot) or ("Presel" in cutname_to_plot and "MbbOff" not in cutname_to_plot):
         signal_scale = "auto"
         blind = True
@@ -260,7 +259,7 @@ histxaxislabeloptions = {
 "PtJJ"                            : {"xaxis_label"      : "p_{T,jj} [GeV]",           "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
 "Channels4Bins"                   : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
 "Channels5Bins"                   : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)", "(e/#mu)^{+}l^{+}"]},
-"BDTSR"                           : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
+"BDTSR"                           : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"], "yaxis_log": True},
 "CutSR"                           : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)", "(e/#mu)^{+}l^{+}"]},
 "CutC3SR"                         : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
 "CutSMSR"                         : {"xaxis_label"      : "Channel",                  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": True, "bin_labels": ["e^{+}l^{+}", "#mu^{+}l^{+}", "#tau^{+}l^{+}", "(--)"]},
@@ -281,6 +280,14 @@ histxaxislabeloptions = {
 "Presel__DEtaJJ"                  : {"xaxis_label"      : "#Delta#eta_{jj}",          "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": sig_run2,     "blind": blind, "yaxis_log":True},
 "Presel__LeptonPt0"               : {"xaxis_label"      : "p_{T,lead-lep} [GeV]",     "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": sig_run2,     "blind": blind, "yaxis_log":True},
 "Presel__LeptonPt1"               : {"xaxis_label"      : "p_{T,sublead-lep} [GeV]",  "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": sig_run2,     "blind": blind, "yaxis_log":True},
+"MbbOff__LT"                      : {"xaxis_label"      : "L_{T} [GeV]",              "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": sig_run2,     "blind": blind, "yaxis_log":True},
+"MbbOff__ST"                      : {"xaxis_label"      : "S_{T} [GeV]",              "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": sig_run2,     "blind": blind, "yaxis_log":True},
+"MbbOff__Ptbb"                    : {"xaxis_label"      : "p_{T,bb} [GeV]",           "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": sig_run2,     "blind": blind, "yaxis_log":True},
+"MbbOff__Mbb"                     : {"xaxis_label"      : "m_{bb} [GeV]",             "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": sig_run2,     "blind": blind, "yaxis_log":True},
+"MbbOff__MJJ"                     : {"xaxis_label"      : "m_{jj} [GeV]",             "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": sig_run2,     "blind": blind, "yaxis_log":True},
+"MbbOff__DEtaJJ"                  : {"xaxis_label"      : "#Delta#eta_{jj}",          "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": sig_run2,     "blind": blind, "yaxis_log":True},
+"MbbOff__LeptonPt0"               : {"xaxis_label"      : "p_{T,lead-lep} [GeV]",     "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": sig_run2,     "blind": blind, "yaxis_log":True},
+"MbbOff__LeptonPt1"               : {"xaxis_label"      : "p_{T,sublead-lep} [GeV]",  "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": sig_run2,     "blind": blind, "yaxis_log":True},
 "El__BDT"                         : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": signal_scale *  3, "blind": True, "hide_signal_scale": False},
 "Mu__BDT"                         : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": signal_scale *  3, "blind": True, "hide_signal_scale": False},
 "Tau__BDT"                        : {"xaxis_label"      : "BDT",                      "xaxis_ndivisions" : 505, "nbins": 30, "signal_scale": signal_scale * 40, "blind": True, "hide_signal_scale": False},
@@ -373,7 +380,7 @@ p.dump_plot(
         "lumi_value": lumi,
         "ratio_range": [0., 2.],
         # "remove_overflow": True,
-        "yield_prec": 2,
+        "yield_prec": 4,
         # "blind": True,
         "yaxis_range": yaxis_range,
         "yaxis_log": yaxis_log,

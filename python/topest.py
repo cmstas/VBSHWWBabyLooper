@@ -52,9 +52,9 @@ except:
 
 #_______________________________________________________________________________________________________________________________
 # Defining base directory path where the histograms are saved after running mini looper
-basedir = "outputs/hadd/{}/{}/{}/{}".format(SKIMVERSION, BABYVERSION, YEAR, YOURTAG)
-basedir_jecup = "outputs/hadd/{}/{}/{}/{}".format(SKIMVERSION, BABYVERSION+"_jecUp", YEAR, YOURTAG)
-basedir_jecdn = "outputs/hadd/{}/{}/{}/{}".format(SKIMVERSION, BABYVERSION+"_jecDn", YEAR, YOURTAG)
+basedir = "outputs/histogram/{}/{}/{}/{}".format(SKIMVERSION, BABYVERSION, YEAR, YOURTAG)
+basedir_jecup = "outputs/histogram/{}/{}/{}/{}".format(SKIMVERSION, BABYVERSION+"_jecUp", YEAR, YOURTAG)
+basedir_jecdn = "outputs/histogram/{}/{}/{}/{}".format(SKIMVERSION, BABYVERSION+"_jecDn", YEAR, YOURTAG)
 
 # List of top backgrounds
 bkgs = ["tt1lpowheg", "tt2lpowheg", "raretop", "ttw", "ttz"]

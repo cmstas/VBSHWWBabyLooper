@@ -15,6 +15,7 @@
 #include "MCTools.h"
 #include "Tools/goodrun.h"
 #include "Tools/btagsf/BTagCalibrationStandalone.h"
+#include "Tools/btagsf/BTagCalibrationStandalone_v2.h"
 #include "Tools/jetcorr/JetCorrectionUncertainty.h"
 // VBSHWWCORE
 #include "tools/lepScaleFactors.h"     // ttH analysis scale factors
@@ -55,6 +56,9 @@ public:
 
     // Debug boolean
     bool debug;
+
+    // Debug boolean
+    TString cut_stage_to_write_to_ntuple;
 
     // Tau boolean
     bool do_tau;
@@ -118,6 +122,11 @@ public:
     BTagCalibrationReader* btagReaderTight;
     BTagCalibrationReader* btagReaderMedium;
     BTagCalibrationReader* btagReaderLoose;
+    BTagCalibration_v2* btagCalib_v2;
+    BTagCalibration_v2* btagCalib_v2_inlieu;
+    BTagCalibrationReader_v2* btagReaderTight_v2;
+    BTagCalibrationReader_v2* btagReaderMedium_v2;
+    BTagCalibrationReader_v2* btagReaderLoose_v2;
     RooUtil::HistMap* btagEffTight_b; // lead
     RooUtil::HistMap* btagEffTight_c; // lead
     RooUtil::HistMap* btagEffTight_l; // lead
@@ -130,6 +139,8 @@ public:
     RooUtil::HistMap* btagEffLoose_b_subl; // sublead
     RooUtil::HistMap* btagEffLoose_c_subl; // sublead
     RooUtil::HistMap* btagEffLoose_l_subl; // sublead
+
+    RooUtil::HistMap* muonPOGLooseIDSF;
 
     RooUtil::HistMap* sig_rewgt; // signal reweighting
 

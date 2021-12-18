@@ -109,7 +109,7 @@ histxaxislabeloptions = {
 
 # hadd_dir = "hists/{}/{}/{}/{}/".format(runtag, tag, babyversion, year)
 # hadd_dir = "/nfs-7/userdata/{}/VBSHWWResult/{}/{}/{}/{}/".format(username, tag, babyversion, year, runtag)
-hadd_dir = "outputs/hadd/{}/{}/{}/{}/".format(tag, babyversion, year, runtag)
+hadd_dir = "outputs/histogram/{}/{}/{}/{}/".format(tag, babyversion, year, runtag)
 
 bkgs_fit = [
         "{}/topbkg.root".format(hadd_dir),

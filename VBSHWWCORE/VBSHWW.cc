@@ -52,7 +52,7 @@ VBSHWW::VBSHWW(int argc, char** argv) :
         input_file_list_tstring.Contains("UL16") or input_file_list_tstring.Contains("UL2016")
         );
 
-    isAPV = input_file_list_tstring.Contains("NanoAODAPVv2") or input_file_list_tstring.Contains("HIPM_UL2016") or input_file_list_tstring.Contains("Run2016C-UL2016") or input_file_list_tstring.Contains("Run2016D-UL2016") or input_file_list_tstring.Contains("Run2016E-UL2016");
+    isAPV = input_file_list_tstring.Contains("NanoAODAPVv9") or input_file_list_tstring.Contains("NanoAODAPVv2") or input_file_list_tstring.Contains("HIPM_UL2016") or input_file_list_tstring.Contains("Run2016C-UL2016") or input_file_list_tstring.Contains("Run2016D-UL2016") or input_file_list_tstring.Contains("Run2016E-UL2016");
 
     // Setup the process of the input
     TString ofile_name = output_tfile->GetName();
@@ -121,6 +121,19 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     if (nt.year() == 2018)
         set_goodrun_file("/nfs-7/userdata/phchang/analysis_data/grl/Cert_314472-325175_13TeV_Legacy2018_Collisions18_JSON_snt.txt");
 
+    // Setting up muon POG ID scale factors up to loose which the ttH ID SF for UL was rederived w.r.t. (i.e. loose muon POG ID is the denominator in TnP)
+    if (isUL)
+    {
+        if (nt.year() == 2016 and isAPV)
+            muonPOGLooseIDSF = new RooUtil::HistMap("data/Efficiencies_muon_generalTracks_Z_Run2016_UL_HIPM_ID.root:NUM_LooseID_DEN_TrackerMuons_abseta_pt");
+        else if (nt.year() == 2016 and not isAPV)
+            muonPOGLooseIDSF = new RooUtil::HistMap("data/Efficiencies_muon_generalTracks_Z_Run2016_UL_ID.root:NUM_LooseID_DEN_TrackerMuons_abseta_pt");
+        else if (nt.year() == 2017)
+            muonPOGLooseIDSF = new RooUtil::HistMap("data/Efficiencies_muon_generalTracks_Z_Run2017_UL_ID.root:NUM_LooseID_DEN_TrackerMuons_abseta_pt");
+        else if (nt.year() == 2018)
+            muonPOGLooseIDSF = new RooUtil::HistMap("data/Efficiencies_muon_generalTracks_Z_Run2018_UL_ID.root:NUM_LooseID_DEN_TrackerMuons_abseta_pt");
+    }
+
     // Setting up tau ID scale factors (used tight ttH tau ID DeepTau working points)
     // TODO: check that 'embedding' should indeed be false (last bool in the TauIDSFTool constructor)
     if (isUL)
@@ -187,13 +200,11 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     }
     else if (nt.year() == 2016 and isUL and isAPV)
     {
-        /* TODO: UPDATE */ btagCalib = new BTagCalibration("DeepJet", "data/DeepJet_2016LegacySF_V1.csv");
-        /* TODO: UPDATE */ btagCalib_inlieu = new BTagCalibration("DeepJet", "data/DeepJet_2016LegacySF_V1.csv");
+        btagCalib_v2 = new BTagCalibration_v2("DeepJet", "data/DeepJet_106XUL16preVFPSF_v1.csv");
     }
     else if (nt.year() == 2016 and isUL and not isAPV)
     {
-        btagCalib = new BTagCalibration("DeepJet", "data/DeepJet_106XUL16SF.csv");
-        /* TODO: UPDATE */ btagCalib_inlieu = new BTagCalibration("DeepJet", "data/DeepJet_2016LegacySF_V1.csv");
+        btagCalib_v2 = new BTagCalibration_v2("DeepJet", "data/DeepJet_106XUL16postVFPSF_v2.csv");
     }
     else if (nt.year() == 2017 and isUL)
     {
@@ -219,29 +230,33 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     btagReaderMedium = new BTagCalibrationReader(BTagEntry::OP_MEDIUM, "central", {"up", "down"});
     btagReaderLoose = new BTagCalibrationReader(BTagEntry::OP_LOOSE, "central", {"up", "down"});
 
+    btagReaderTight_v2 = new BTagCalibrationReader_v2(BTagEntry_v2::OP_TIGHT, "central", {"up", "down"});
+    btagReaderMedium_v2 = new BTagCalibrationReader_v2(BTagEntry_v2::OP_MEDIUM, "central", {"up", "down"});
+    btagReaderLoose_v2 = new BTagCalibrationReader_v2(BTagEntry_v2::OP_LOOSE, "central", {"up", "down"});
+
     if (nt.year() == 2016 and isUL and isAPV)
     {
-        btagReaderTight->load(*btagCalib, BTagEntry::FLAV_B, "comb");
-        btagReaderTight->load(*btagCalib, BTagEntry::FLAV_C, "comb");
-        /* TODO: UPDATE */ btagReaderTight->load(*btagCalib_inlieu, BTagEntry::FLAV_UDSG, "incl");
-        btagReaderMedium->load(*btagCalib, BTagEntry::FLAV_B, "comb");
-        btagReaderMedium->load(*btagCalib, BTagEntry::FLAV_C, "comb");
-        /* TODO: UPDATE */ btagReaderMedium->load(*btagCalib_inlieu, BTagEntry::FLAV_UDSG, "incl");
-        btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_B, "comb");
-        btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_C, "comb");
-        /* TODO: UPDATE */ btagReaderLoose->load(*btagCalib_inlieu, BTagEntry::FLAV_UDSG, "incl");
+        btagReaderTight_v2->load(*btagCalib_v2, BTagEntry_v2::FLAV_B, "comb");
+        btagReaderTight_v2->load(*btagCalib_v2, BTagEntry_v2::FLAV_C, "comb");
+        btagReaderTight_v2->load(*btagCalib_v2, BTagEntry_v2::FLAV_UDSG, "incl");
+        btagReaderMedium_v2->load(*btagCalib_v2, BTagEntry_v2::FLAV_B, "comb");
+        btagReaderMedium_v2->load(*btagCalib_v2, BTagEntry_v2::FLAV_C, "comb");
+        btagReaderMedium_v2->load(*btagCalib_v2, BTagEntry_v2::FLAV_UDSG, "incl");
+        btagReaderLoose_v2->load(*btagCalib_v2, BTagEntry_v2::FLAV_B, "comb");
+        btagReaderLoose_v2->load(*btagCalib_v2, BTagEntry_v2::FLAV_C, "comb");
+        btagReaderLoose_v2->load(*btagCalib_v2, BTagEntry_v2::FLAV_UDSG, "incl");
     }
     else if (nt.year() == 2016 and isUL and not isAPV)
     {
-        btagReaderTight->load(*btagCalib, BTagEntry::FLAV_B, "comb");
-        btagReaderTight->load(*btagCalib, BTagEntry::FLAV_C, "comb");
-        /* TODO: UPDATE */ btagReaderTight->load(*btagCalib_inlieu, BTagEntry::FLAV_UDSG, "incl");
-        btagReaderMedium->load(*btagCalib, BTagEntry::FLAV_B, "comb");
-        btagReaderMedium->load(*btagCalib, BTagEntry::FLAV_C, "comb");
-        /* TODO: UPDATE */ btagReaderMedium->load(*btagCalib_inlieu, BTagEntry::FLAV_UDSG, "incl");
-        btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_B, "comb");
-        btagReaderLoose->load(*btagCalib, BTagEntry::FLAV_C, "comb");
-        /* TODO: UPDATE */ btagReaderLoose->load(*btagCalib_inlieu, BTagEntry::FLAV_UDSG, "incl");
+        btagReaderTight_v2->load(*btagCalib_v2, BTagEntry_v2::FLAV_B, "comb");
+        btagReaderTight_v2->load(*btagCalib_v2, BTagEntry_v2::FLAV_C, "comb");
+        btagReaderTight_v2->load(*btagCalib_v2, BTagEntry_v2::FLAV_UDSG, "incl");
+        btagReaderMedium_v2->load(*btagCalib_v2, BTagEntry_v2::FLAV_B, "comb");
+        btagReaderMedium_v2->load(*btagCalib_v2, BTagEntry_v2::FLAV_C, "comb");
+        btagReaderMedium_v2->load(*btagCalib_v2, BTagEntry_v2::FLAV_UDSG, "incl");
+        btagReaderLoose_v2->load(*btagCalib_v2, BTagEntry_v2::FLAV_B, "comb");
+        btagReaderLoose_v2->load(*btagCalib_v2, BTagEntry_v2::FLAV_C, "comb");
+        btagReaderLoose_v2->load(*btagCalib_v2, BTagEntry_v2::FLAV_UDSG, "incl");
     }
     else
     {
@@ -260,18 +275,18 @@ VBSHWW::VBSHWW(int argc, char** argv) :
 
     if (nt.year() == 2016 and isUL and isAPV)
     {
-        btagEffTight_b = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_b");
-        btagEffTight_c = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_c");
-        btagEffTight_l = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_udsg");
-        btagEffLoose_b = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_b");
-        btagEffLoose_c = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_c");
-        btagEffLoose_l = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_udsg");
-        btagEffTight_b_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_b");
-        btagEffTight_c_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_c");
-        btagEffTight_l_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_udsg");
-        btagEffLoose_b_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_b");
-        btagEffLoose_c_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_c");
-        btagEffLoose_l_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_udsg");
+        btagEffTight_b = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016APV_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_b");
+        btagEffTight_c = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016APV_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_c");
+        btagEffTight_l = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016APV_ttbar_1lep_lead.root:h2_BTaggingEff_tight_Eff_udsg");
+        btagEffLoose_b = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016APV_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_b");
+        btagEffLoose_c = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016APV_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_c");
+        btagEffLoose_l = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016APV_ttbar_1lep_lead.root:h2_BTaggingEff_loose_Eff_udsg");
+        btagEffTight_b_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016APV_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_b");
+        btagEffTight_c_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016APV_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_c");
+        btagEffTight_l_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016APV_ttbar_1lep_subl.root:h2_BTaggingEff_tight_Eff_udsg");
+        btagEffLoose_b_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016APV_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_b");
+        btagEffLoose_c_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016APV_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_c");
+        btagEffLoose_l_subl = new RooUtil::HistMap("data/eff_DeepFlav_106X_2016APV_ttbar_1lep_subl.root:h2_BTaggingEff_loose_Eff_udsg");
     }
     else if (nt.year() == 2016 and not isUL and isAPV)
     {
@@ -398,18 +413,18 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch  < int                 >   ( "ntrueint"                      , true  );
 
     // Create trigger branches
-    tx.createBranch  < int                 >   ( "trig_ee"                       , false );
-    tx.createBranch  < int                 >   ( "trig_em"                       , false );
-    tx.createBranch  < int                 >   ( "trig_mm"                       , false );
-    tx.createBranch  < int                 >   ( "trig_se"                       , false );
-    tx.createBranch  < int                 >   ( "trig_sm"                       , false );
-    tx.createBranch  < int                 >   ( "pass_duplicate_ee_em_mm"       , false );
-    tx.createBranch  < int                 >   ( "pass_duplicate_mm_em_ee"       , false );
-    tx.createBranch  < int                 >   ( "is_pd_ee"                      , false );
-    tx.createBranch  < int                 >   ( "is_pd_em"                      , false );
-    tx.createBranch  < int                 >   ( "is_pd_mm"                      , false );
-    tx.createBranch  < int                 >   ( "is_pd_se"                      , false );
-    tx.createBranch  < int                 >   ( "is_pd_sm"                      , false );
+    tx.createBranch  < int                 >   ( "trig_ee"                       , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < int                 >   ( "trig_em"                       , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < int                 >   ( "trig_mm"                       , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < int                 >   ( "trig_se"                       , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < int                 >   ( "trig_sm"                       , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < int                 >   ( "pass_duplicate_ee_em_mm"       , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < int                 >   ( "pass_duplicate_mm_em_ee"       , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < int                 >   ( "is_pd_ee"                      , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < int                 >   ( "is_pd_em"                      , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < int                 >   ( "is_pd_mm"                      , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < int                 >   ( "is_pd_se"                      , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < int                 >   ( "is_pd_sm"                      , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
 
     // Create met branches
     tx.createBranch  < LV                  >   ( "met_p4"                        , true  );
@@ -451,32 +466,32 @@ VBSHWW::VBSHWW(int argc, char** argv) :
     tx.createBranch  < float               >   ( "trigsf_dn"                     , true  );
 
     // Create lepton branches
-    tx.createBranch  < vector<LV>          >   ( "good_leptons_p4"               , false );
-    tx.createBranch  < vector<int>         >   ( "good_leptons_pdgid"            , false );
-    tx.createBranch  < vector<int>         >   ( "good_leptons_tight"            , false );
-    tx.createBranch  < vector<int>         >   ( "good_leptons_jetIdx"           , false );
-    tx.createBranch  < vector<int>         >   ( "good_leptons_genPartFlav"      , false );
-    tx.createBranch  < vector<float>       >   ( "good_leptons_pfRelIso03_all"   , false );
-    tx.createBranch  < vector<float>       >   ( "good_leptons_pfRelIso03_chg"   , false );
-    tx.createBranch  < vector<float>       >   ( "good_leptons_jetPtRelv2"       , false );
-    tx.createBranch  < vector<float>       >   ( "good_leptons_jetRelIso"        , false );
-    tx.createBranch  < vector<float>       >   ( "good_leptons_miniPFRelIso_all" , false );
+    tx.createBranch  < vector<LV>          >   ( "good_leptons_p4"               , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < vector<int>         >   ( "good_leptons_pdgid"            , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < vector<int>         >   ( "good_leptons_tight"            , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < vector<int>         >   ( "good_leptons_jetIdx"           , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < vector<int>         >   ( "good_leptons_genPartFlav"      , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < vector<float>       >   ( "good_leptons_pfRelIso03_all"   , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < vector<float>       >   ( "good_leptons_pfRelIso03_chg"   , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < vector<float>       >   ( "good_leptons_jetPtRelv2"       , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < vector<float>       >   ( "good_leptons_jetRelIso"        , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < vector<float>       >   ( "good_leptons_miniPFRelIso_all" , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
 
     // Create tau branches
-    tx.createBranch  < vector<LV>          >   ( "good_taus_p4"                  , false );
-    tx.createBranch  < vector<int>         >   ( "good_taus_pdgid"               , false );
-    tx.createBranch  < vector<int>         >   ( "good_taus_tight"               , false );
-    tx.createBranch  < vector<int>         >   ( "good_taus_jetIdx"              , false );
-    tx.createBranch  < vector<int>         >   ( "good_taus_genPartFlav"         , false );
+    tx.createBranch  < vector<LV>          >   ( "good_taus_p4"                  , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < vector<int>         >   ( "good_taus_pdgid"               , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < vector<int>         >   ( "good_taus_tight"               , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < vector<int>         >   ( "good_taus_jetIdx"              , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < vector<int>         >   ( "good_taus_genPartFlav"         , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
 
     // Create jet branches
-    tx.createBranch  < vector<LV>          >   ( "good_jets_p4"                  , false );
-    tx.createBranch  < vector<int>         >   ( "good_jets_loose_btagged"       , false );
-    tx.createBranch  < vector<int>         >   ( "good_jets_medium_btagged"      , false );
-    tx.createBranch  < vector<int>         >   ( "good_jets_tight_btagged"       , false );
-    tx.createBranch  < vector<float>       >   ( "good_jets_btag_score"          , false );
-    tx.createBranch  < vector<float>       >   ( "good_jets_qg_disc"             , false );
-    tx.createBranch  < vector<int>         >   ( "good_jets_flavor"              , false );
+    tx.createBranch  < vector<LV>          >   ( "good_jets_p4"                  , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < vector<int>         >   ( "good_jets_loose_btagged"       , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < vector<int>         >   ( "good_jets_medium_btagged"      , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < vector<int>         >   ( "good_jets_tight_btagged"       , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < vector<float>       >   ( "good_jets_btag_score"          , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < vector<float>       >   ( "good_jets_qg_disc"             , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
+    tx.createBranch  < vector<int>         >   ( "good_jets_flavor"              , cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection") ? true : false );
 
     // Create fatjet branches
     tx.createBranch  < vector<LV>          >   ( "good_fatjets_p4"               , false );
@@ -715,6 +730,58 @@ VBSHWW::VBSHWW(int argc, char** argv) :
             std::vector<LV> good_leptons_p4;
             std::vector<LV> good_taus_p4;
             std::vector<int> good_leptons_jetIdx;
+
+            if (cut_stage_to_write_to_ntuple.EqualTo("TLPreselection"))
+            {
+                // Select muons
+                for (unsigned int imu = 0; imu < nt.Muon_pt().size(); ++imu)
+                {
+                    if (not (ttH::muonID(imu, ttH::IDveto, nt.year()))) continue;
+                    charges.push_back(nt.Muon_charge()[imu]);
+                    good_leptons_p4.push_back(nt.Muon_p4()[imu]);
+                    good_leptons_jetIdx.push_back(nt.Muon_jetIdx()[imu]);
+                }
+
+                // Select muons
+                for (unsigned int iel = 0; iel < nt.Electron_pt().size(); ++iel)
+                {
+                    if (not (ttH::electronID(iel, ttH::IDveto, nt.year()))) continue;
+                    charges.push_back(nt.Electron_charge()[iel]);
+                    good_leptons_p4.push_back(nt.Electron_p4()[iel]);
+                    good_leptons_jetIdx.push_back(nt.Electron_jetIdx()[iel]);
+                }
+
+                if (good_leptons_p4.size() == 3)
+                    return true;
+                else
+                    return false;
+            }
+
+            if (cut_stage_to_write_to_ntuple.EqualTo("DLPreselection"))
+            {
+                // Select muons
+                for (unsigned int imu = 0; imu < nt.Muon_pt().size(); ++imu)
+                {
+                    if (not (ttH::muonID(imu, ttH::IDveto, nt.year()))) continue;
+                    charges.push_back(nt.Muon_charge()[imu]);
+                    good_leptons_p4.push_back(nt.Muon_p4()[imu]);
+                    good_leptons_jetIdx.push_back(nt.Muon_jetIdx()[imu]);
+                }
+
+                // Select muons
+                for (unsigned int iel = 0; iel < nt.Electron_pt().size(); ++iel)
+                {
+                    if (not (ttH::electronID(iel, ttH::IDveto, nt.year()))) continue;
+                    charges.push_back(nt.Electron_charge()[iel]);
+                    good_leptons_p4.push_back(nt.Electron_p4()[iel]);
+                    good_leptons_jetIdx.push_back(nt.Electron_jetIdx()[iel]);
+                }
+
+                if (good_leptons_p4.size() == 2)
+                    return true;
+                else
+                    return false;
+            }
 
             // Select muons
             for (unsigned int imu = 0; imu < nt.Muon_pt().size(); ++imu)
@@ -1112,12 +1179,24 @@ void VBSHWW::initSRCutflow()
                     tx.pushbackToBranch<float>("good_leptons_miniPFRelIso_all", nt.Muon_miniPFRelIso_all()[imu]);
                     float mu_eta = nt.Muon_eta()[imu];
                     float mu_pt = nt.Muon_pt()[imu];
+
+                    // OLD DEPRECATED (this is what Jonathan set up. (Thanks!))
                     // medium POG ID -> loose ttH ID -> tight ttH ID
                     // NOTE: POG ID SF are folded into the ttH
-                    lepsf *= ttH::getMuonLooseSF(mu_eta, mu_pt, nt.year());
-                    lepsf *= ttH::getMuonTightSF(mu_eta, mu_pt, nt.year());
-                    err_up += std::pow(ttH::getMuonTTHSFErr(mu_eta, mu_pt, nt.year(), true), 2);
-                    err_dn += std::pow(ttH::getMuonTTHSFErr(mu_eta, mu_pt, nt.year(), false), 2);
+                    // lepsf *= ttH::getMuonLooseSF(mu_eta, mu_pt, nt.year());
+                    // lepsf *= ttH::getMuonTightSF(mu_eta, mu_pt, nt.year());
+                    // err_up += std::pow(ttH::getMuonTTHSFErr(mu_eta, mu_pt, nt.year(), true), 2);
+                    // err_dn += std::pow(ttH::getMuonTTHSFErr(mu_eta, mu_pt, nt.year(), false), 2);
+
+                    // New (this is after re-deriving SF cause I got tired of waiting for GodottH... (No thank you))
+                    lepsf *= muonPOGLooseIDSF->eval(std::min(fabs(mu_eta), 2.399f), std::min(mu_pt, 119.9f));
+                    float lepsf_val = ttH::getMuonTightSFRederived(mu_eta, mu_pt, nt.year(), isAPV);
+                    float lepsf_up  = ttH::getMuonTightSFRederived(mu_eta, mu_pt, nt.year(), isAPV, 1);
+                    lepsf *= lepsf_val;
+                    err_up += std::pow(lepsf_up - lepsf_val, 2);
+                    err_dn += std::pow(lepsf_up - lepsf_val, 2); // error up and down are same
+                    err_up += std::pow(0.02, 2); // add flat 2%
+                    err_dn += std::pow(0.02, 2); // add flat 2%
                 }
             }
 
@@ -1141,7 +1220,7 @@ void VBSHWW::initSRCutflow()
                     if (isUL)
                     {
                         // event -> reco
-                        lepsf *= ttH::getElecRecoEffSFUL(el_eta, el_pt, nt.year());
+                        lepsf *= ttH::getElecRecoEffSFUL(el_eta, el_pt, nt.year(), isAPV);
                         err_up += std::pow(ttH::getElecRecoEffSFULErr(el_eta, el_pt, nt.year()), 2);
                         err_dn += std::pow(ttH::getElecRecoEffSFULErr(el_eta, el_pt, nt.year()), 2);
                     }
@@ -1157,11 +1236,22 @@ void VBSHWW::initSRCutflow()
                     lepsf *= ttH::getElecPOGLooseSF(el_eta, el_pt, nt.year());
                     err_up += std::pow(ttH::getElecPOGLooseSFErr(el_eta, el_pt, nt.year()), 2);
                     err_dn += std::pow(ttH::getElecPOGLooseSFErr(el_eta, el_pt, nt.year()), 2);
+
+                    // OLD DEPRECATED (this is what Jonathan set up. (Thanks!))
                     // loose POG ID -> loose ttH ID -> tight ttH ID
-                    lepsf *= ttH::getElecLooseSF(el_eta, el_pt, nt.year());
-                    lepsf *= ttH::getElecTightSF(el_eta, el_pt, nt.year());
-                    err_up += std::pow(ttH::getElecTTHSFErr(el_eta, el_pt, nt.year(), true), 2);
-                    err_dn += std::pow(ttH::getElecTTHSFErr(el_eta, el_pt, nt.year(), false), 2);
+                    // lepsf *= ttH::getElecLooseSF(el_eta, el_pt, nt.year());
+                    // lepsf *= ttH::getElecTightSF(el_eta, el_pt, nt.year());
+                    // err_up += std::pow(ttH::getElecTTHSFErr(el_eta, el_pt, nt.year(), true), 2);
+                    // err_dn += std::pow(ttH::getElecTTHSFErr(el_eta, el_pt, nt.year(), false), 2);
+
+                    // New (this is after re-deriving SF cause I got tired of waiting for GodottH... (No thank you))
+                    float lepsf_val = ttH::getElecTightSFRederived(el_eta, el_pt, nt.year(), isAPV);
+                    float lepsf_up  = ttH::getElecTightSFRederived(el_eta, el_pt, nt.year(), isAPV, 1);
+                    lepsf *= lepsf_val;
+                    err_up += std::pow(lepsf_up - lepsf_val, 2);
+                    err_dn += std::pow(lepsf_up - lepsf_val, 2); // error up and down are same
+                    err_up += std::pow(0.02, 2); // add flat 2%
+                    err_dn += std::pow(0.02, 2); // add flat 2%
                 }
             }
 
@@ -1192,6 +1282,12 @@ void VBSHWW::initSRCutflow()
             const vector<int>& good_leptons_pdgid = tx.getBranchLazy<vector<int>>("good_leptons_pdgid");
             for (unsigned int itau = 0; itau < nt.nTau(); ++itau)
             {
+                if (cut_stage_to_write_to_ntuple.EqualTo("TLPreselection"))
+                    break;
+
+                if (cut_stage_to_write_to_ntuple.EqualTo("DLPreselection"))
+                    break;
+
                 if (ttH::tauID(itau, ttH::IDfakable, nt.year()))
                 {
                     // tau-(non-tau lep) overlap removal
@@ -1400,64 +1496,67 @@ void VBSHWW::initSRCutflow()
                     /* names of any associated vector<bool>  branches to sort along */ {}
                     );
 
-            // Loop over the jets
-            for (unsigned int ifatjet = 0; ifatjet < nt.FatJet_pt().size(); ++ifatjet)
+            if (not (cut_stage_to_write_to_ntuple.EqualTo("TLPreselection") or cut_stage_to_write_to_ntuple.EqualTo("DLPreselection")))
             {
-
-                // Read jet p4
-                const LV& jet_p4 = nt.FatJet_p4()[ifatjet];
-
-                // Overlap check against good leptons
-                bool isOverlap = false;
-                for (unsigned int ilep = 0; ilep < tx.getBranchLazy<vector<LV>>("good_leptons_p4").size(); ++ilep)
+                // Loop over the jets
+                for (unsigned int ifatjet = 0; ifatjet < nt.FatJet_pt().size(); ++ifatjet)
                 {
-                    if (RooUtil::Calc::DeltaR(tx.getBranchLazy<vector<LV>>("good_leptons_p4")[ilep], jet_p4) < 0.8)
+
+                    // Read jet p4
+                    const LV& jet_p4 = nt.FatJet_p4()[ifatjet];
+
+                    // Overlap check against good leptons
+                    bool isOverlap = false;
+                    for (unsigned int ilep = 0; ilep < tx.getBranchLazy<vector<LV>>("good_leptons_p4").size(); ++ilep)
                     {
-                        isOverlap = true;
-                        break;
+                        if (RooUtil::Calc::DeltaR(tx.getBranchLazy<vector<LV>>("good_leptons_p4")[ilep], jet_p4) < 0.8)
+                        {
+                            isOverlap = true;
+                            break;
+                        }
                     }
-                }
 
-                for (unsigned int itau = 0; itau < tx.getBranchLazy<vector<LV>>("good_taus_p4").size(); ++itau)
-                {
-                    if (RooUtil::Calc::DeltaR(tx.getBranchLazy<vector<LV>>("good_taus_p4").at(itau), jet_p4) < 0.4)
+                    for (unsigned int itau = 0; itau < tx.getBranchLazy<vector<LV>>("good_taus_p4").size(); ++itau)
                     {
-                        isOverlap = true;
-                        break;
+                        if (RooUtil::Calc::DeltaR(tx.getBranchLazy<vector<LV>>("good_taus_p4").at(itau), jet_p4) < 0.4)
+                        {
+                            isOverlap = true;
+                            break;
+                        }
                     }
-                }
 
-                // Then skip
-                if (isOverlap)
-                    continue;
+                    // Then skip
+                    if (isOverlap)
+                        continue;
 
-                // FatJet pt preselection is 250 GeV as Hbb tagger SF starts at 250 GeV.
-                if (not (jet_p4.pt() > 250.))
-                    continue;
+                    // FatJet pt preselection is 250 GeV as Hbb tagger SF starts at 250 GeV.
+                    if (not (jet_p4.pt() > 250.))
+                        continue;
 
-                bool is_loose_btagged = false;
-                bool is_medium_btagged = false;
-                bool is_tight_btagged = false;
+                    bool is_loose_btagged = false;
+                    bool is_medium_btagged = false;
+                    bool is_tight_btagged = false;
 
-                // B-tagging is also done up to 2.4 in eta only
-                if (abs(jet_p4.eta()) < 2.4)
-                {
-                    // Check if it passes btagging
-                    if (nt.year() == 2018)
+                    // B-tagging is also done up to 2.4 in eta only
+                    if (abs(jet_p4.eta()) < 2.4)
                     {
-                        is_loose_btagged = nt.FatJet_btagDDBvL()[ifatjet] > 0.7; // 85% after SF
-                        is_medium_btagged = nt.FatJet_btagDDBvL()[ifatjet] > 0.86; // 55% after SF
-                        is_tight_btagged = nt.FatJet_btagDDBvL()[ifatjet] > 0.91; // 30% after SF
+                        // Check if it passes btagging
+                        if (nt.year() == 2018)
+                        {
+                            is_loose_btagged = nt.FatJet_btagDDBvL()[ifatjet] > 0.7; // 85% after SF
+                            is_medium_btagged = nt.FatJet_btagDDBvL()[ifatjet] > 0.86; // 55% after SF
+                            is_tight_btagged = nt.FatJet_btagDDBvL()[ifatjet] > 0.91; // 30% after SF
+                        }
                     }
+
+                    tx.pushbackToBranch<LV>("good_fatjets_p4", jet_p4);
+                    tx.pushbackToBranch<int>("good_fatjets_loose", is_loose_btagged);
+                    tx.pushbackToBranch<int>("good_fatjets_medium", is_medium_btagged);
+                    tx.pushbackToBranch<int>("good_fatjets_tight", is_tight_btagged);
+                    tx.pushbackToBranch<float>("good_fatjets_msd", nt.FatJet_msoftdrop()[ifatjet]);
+
+
                 }
-
-                tx.pushbackToBranch<LV>("good_fatjets_p4", jet_p4);
-                tx.pushbackToBranch<int>("good_fatjets_loose", is_loose_btagged);
-                tx.pushbackToBranch<int>("good_fatjets_medium", is_medium_btagged);
-                tx.pushbackToBranch<int>("good_fatjets_tight", is_tight_btagged);
-                tx.pushbackToBranch<float>("good_fatjets_msd", nt.FatJet_msoftdrop()[ifatjet]);
-
-
             }
 
             tx.sortVecBranchesByPt(
@@ -2399,6 +2498,77 @@ void VBSHWW::initSRCutflow()
         UNITY);
 
     cutflow.addCutToLastActiveCut("AK4CategPresel", [&]() { return tx.getBranch<int>("is_ps"); }, [&]() { return tx.getBranch<float>("btagsf"); } );
+
+    cutflow.getCut("ObjectsSelection");
+
+    //*******************************
+    // - Select Three leptons
+    //*******************************
+    cutflow.addCutToLastActiveCut("TLPreselection",
+        [&]()
+        {
+
+            // Only three loose leptons
+            if (not (tx.getBranchLazy<vector<LV>>("good_leptons_p4").size() == 3))
+                return false;
+
+            int ntight = 0;
+            for (auto& istight : tx.getBranch<vector<int>>("good_leptons_tight"))
+            {
+                if (istight)
+                    ntight++;
+            }
+
+            // Select only three tight leptons
+            if (not (ntight == 3))
+                return false;
+
+            // // std::cout <<  " looper.getCurrentEventIndex(): " << looper.getCurrentEventIndex() <<  std::endl;
+            // // std::cout <<  " tx.getBranch<vector<LV>>('good_jets_p4').size(): " << tx.getBranch<vector<LV>>("good_jets_p4").size() <<  std::endl;
+            // if (tx.getBranchLazy<vector<LV>>("good_jets_p4").size() < 4)
+            //     return false;
+
+            return true;
+
+        },
+        [&]() { return tx.getBranch<float>("lepsf"); } );
+        // UNITY);
+
+    cutflow.getCut("ObjectsSelection");
+
+    //*******************************
+    // - Select Three leptons
+    //*******************************
+    cutflow.addCutToLastActiveCut("DLPreselection",
+        [&]()
+        {
+
+            // Only three loose leptons
+            if (not (tx.getBranchLazy<vector<LV>>("good_leptons_p4").size() == 2))
+                return false;
+
+            int ntight = 0;
+            for (auto& istight : tx.getBranch<vector<int>>("good_leptons_tight"))
+            {
+                if (istight)
+                    ntight++;
+            }
+
+            // Select only three tight leptons
+            if (not (ntight == 2))
+                return false;
+
+            // // std::cout <<  " looper.getCurrentEventIndex(): " << looper.getCurrentEventIndex() <<  std::endl;
+            // // std::cout <<  " tx.getBranch<vector<LV>>('good_jets_p4').size(): " << tx.getBranch<vector<LV>>("good_jets_p4").size() <<  std::endl;
+            // if (tx.getBranchLazy<vector<LV>>("good_jets_p4").size() < 4)
+            //     return false;
+
+            return true;
+
+        },
+        [&]() { return tx.getBranch<float>("lepsf"); } );
+        // UNITY);
+
     return;
 }
 
@@ -2866,31 +3036,68 @@ void VBSHWW::setBTagSF(std::vector<float> jet_pt, std::vector<float> jet_eta, st
                 eff_tight = flavor == 5 ? btagEffTight_b->eval(pt, eta) : (flavor == 0 ? btagEffTight_l->eval(pt, eta) : btagEffTight_c->eval(pt, eta));
                 eff_loose = flavor == 5 ? btagEffLoose_b->eval(pt, eta) : (flavor == 0 ? btagEffLoose_l->eval(pt, eta) : btagEffLoose_c->eval(pt, eta));
             }
+            float sf_tight;
+            float sf_loose;
+            float sf_up_tight;
+            float sf_up_loose;
+            float sf_dn_tight;
+            float sf_dn_loose;
 
-            float sf_tight =
-                flavor == 5 ? btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_B, eta, pt) : (
-                flavor == 0 ? btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_UDSG, eta, pt) :
-                              btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_C, eta, pt));
-            float sf_loose =
-                flavor == 5 ? btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_B, eta, pt) : (
-                flavor == 0 ? btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_UDSG, eta, pt) :
-                              btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_C, eta, pt));
-            float sf_up_tight =
-                flavor == 5 ? btagReaderTight->eval_auto_bounds("up", BTagEntry::FLAV_B, eta, pt) : (
-                flavor == 0 ? btagReaderTight->eval_auto_bounds("up", BTagEntry::FLAV_UDSG, eta, pt) :
-                              btagReaderTight->eval_auto_bounds("up", BTagEntry::FLAV_C, eta, pt));
-            float sf_up_loose =
-                flavor == 5 ? btagReaderLoose->eval_auto_bounds("up", BTagEntry::FLAV_B, eta, pt) : (
-                flavor == 0 ? btagReaderLoose->eval_auto_bounds("up", BTagEntry::FLAV_UDSG, eta, pt) :
-                              btagReaderLoose->eval_auto_bounds("up", BTagEntry::FLAV_C, eta, pt));
-            float sf_dn_tight =
-                flavor == 5 ? btagReaderTight->eval_auto_bounds("down", BTagEntry::FLAV_B, eta, pt) : (
-                flavor == 0 ? btagReaderTight->eval_auto_bounds("down", BTagEntry::FLAV_UDSG, eta, pt) :
-                              btagReaderTight->eval_auto_bounds("down", BTagEntry::FLAV_C, eta, pt));
-            float sf_dn_loose =
-                flavor == 5 ? btagReaderLoose->eval_auto_bounds("down", BTagEntry::FLAV_B, eta, pt) : (
-                flavor == 0 ? btagReaderLoose->eval_auto_bounds("down", BTagEntry::FLAV_UDSG, eta, pt) :
-                              btagReaderLoose->eval_auto_bounds("down", BTagEntry::FLAV_C, eta, pt));
+            if (nt.year() == 2016 and isUL)
+            {
+                sf_tight =
+                    flavor == 5 ? btagReaderTight_v2->eval_auto_bounds("central", BTagEntry_v2::FLAV_B, eta, pt) : (
+                    flavor == 0 ? btagReaderTight_v2->eval_auto_bounds("central", BTagEntry_v2::FLAV_UDSG, eta, pt) :
+                                  btagReaderTight_v2->eval_auto_bounds("central", BTagEntry_v2::FLAV_C, eta, pt));
+                sf_loose =
+                    flavor == 5 ? btagReaderLoose_v2->eval_auto_bounds("central", BTagEntry_v2::FLAV_B, eta, pt) : (
+                    flavor == 0 ? btagReaderLoose_v2->eval_auto_bounds("central", BTagEntry_v2::FLAV_UDSG, eta, pt) :
+                                  btagReaderLoose_v2->eval_auto_bounds("central", BTagEntry_v2::FLAV_C, eta, pt));
+                sf_up_tight =
+                    flavor == 5 ? btagReaderTight_v2->eval_auto_bounds("up", BTagEntry_v2::FLAV_B, eta, pt) : (
+                    flavor == 0 ? btagReaderTight_v2->eval_auto_bounds("up", BTagEntry_v2::FLAV_UDSG, eta, pt) :
+                                  btagReaderTight_v2->eval_auto_bounds("up", BTagEntry_v2::FLAV_C, eta, pt));
+                sf_up_loose =
+                    flavor == 5 ? btagReaderLoose_v2->eval_auto_bounds("up", BTagEntry_v2::FLAV_B, eta, pt) : (
+                    flavor == 0 ? btagReaderLoose_v2->eval_auto_bounds("up", BTagEntry_v2::FLAV_UDSG, eta, pt) :
+                                  btagReaderLoose_v2->eval_auto_bounds("up", BTagEntry_v2::FLAV_C, eta, pt));
+                sf_dn_tight =
+                    flavor == 5 ? btagReaderTight_v2->eval_auto_bounds("down", BTagEntry_v2::FLAV_B, eta, pt) : (
+                    flavor == 0 ? btagReaderTight_v2->eval_auto_bounds("down", BTagEntry_v2::FLAV_UDSG, eta, pt) :
+                                  btagReaderTight_v2->eval_auto_bounds("down", BTagEntry_v2::FLAV_C, eta, pt));
+                sf_dn_loose =
+                    flavor == 5 ? btagReaderLoose_v2->eval_auto_bounds("down", BTagEntry_v2::FLAV_B, eta, pt) : (
+                    flavor == 0 ? btagReaderLoose_v2->eval_auto_bounds("down", BTagEntry_v2::FLAV_UDSG, eta, pt) :
+                                  btagReaderLoose_v2->eval_auto_bounds("down", BTagEntry_v2::FLAV_C, eta, pt));
+            }
+            else
+            {
+                sf_tight =
+                    flavor == 5 ? btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_B, eta, pt) : (
+                    flavor == 0 ? btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_UDSG, eta, pt) :
+                                  btagReaderTight->eval_auto_bounds("central", BTagEntry::FLAV_C, eta, pt));
+                sf_loose =
+                    flavor == 5 ? btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_B, eta, pt) : (
+                    flavor == 0 ? btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_UDSG, eta, pt) :
+                                  btagReaderLoose->eval_auto_bounds("central", BTagEntry::FLAV_C, eta, pt));
+                sf_up_tight =
+                    flavor == 5 ? btagReaderTight->eval_auto_bounds("up", BTagEntry::FLAV_B, eta, pt) : (
+                    flavor == 0 ? btagReaderTight->eval_auto_bounds("up", BTagEntry::FLAV_UDSG, eta, pt) :
+                                  btagReaderTight->eval_auto_bounds("up", BTagEntry::FLAV_C, eta, pt));
+                sf_up_loose =
+                    flavor == 5 ? btagReaderLoose->eval_auto_bounds("up", BTagEntry::FLAV_B, eta, pt) : (
+                    flavor == 0 ? btagReaderLoose->eval_auto_bounds("up", BTagEntry::FLAV_UDSG, eta, pt) :
+                                  btagReaderLoose->eval_auto_bounds("up", BTagEntry::FLAV_C, eta, pt));
+                sf_dn_tight =
+                    flavor == 5 ? btagReaderTight->eval_auto_bounds("down", BTagEntry::FLAV_B, eta, pt) : (
+                    flavor == 0 ? btagReaderTight->eval_auto_bounds("down", BTagEntry::FLAV_UDSG, eta, pt) :
+                                  btagReaderTight->eval_auto_bounds("down", BTagEntry::FLAV_C, eta, pt));
+                sf_dn_loose =
+                    flavor == 5 ? btagReaderLoose->eval_auto_bounds("down", BTagEntry::FLAV_B, eta, pt) : (
+                    flavor == 0 ? btagReaderLoose->eval_auto_bounds("down", BTagEntry::FLAV_UDSG, eta, pt) :
+                                  btagReaderLoose->eval_auto_bounds("down", BTagEntry::FLAV_C, eta, pt));
+            }
+
             // std::cout <<  " eff_tight: " << eff_tight <<  " eff_loose: " << eff_loose <<  " sf_tight: " << sf_tight <<  " sf_loose: " << sf_loose <<  std::endl;
             if (is_tight_btagged)
             {
@@ -2984,6 +3191,8 @@ void VBSHWW::parseCLI(int argc, char** argv)
         ("s,scale1fb"    , "pass scale1fb of the sample"                                                                         , cxxopts::value<float>())
         ("e,jecvar"      , "JEC variations to apply (1 = up, 0 = nominal, -1 = down)"                                            , cxxopts::value<int>()->default_value("0"))
         ("d,debug"       , "Run debug job. i.e. overrides output option to 'debug.root' and 'recreate's the file.")
+        ("3,threelep"    , "Run three lepton ntuple")
+        ("2,twolep"      , "Run two lepton ntuple")
         ("h,help"        , "Print help")
         ;
 
@@ -3072,6 +3281,28 @@ void VBSHWW::parseCLI(int argc, char** argv)
             std::cout << "ERROR: Output file name is not provided! Check your arguments" << std::endl;
             exit(1);
         }
+    }
+
+    //_______________________________________________________________________________
+    // --threelep
+    if (result.count("threelep"))
+    {
+        cut_stage_to_write_to_ntuple = "TLPreselection";
+    }
+    else
+    {
+        cut_stage_to_write_to_ntuple = "AK4CategChannels";
+    }
+
+    //_______________________________________________________________________________
+    // --twolep
+    if (result.count("twolep"))
+    {
+        cut_stage_to_write_to_ntuple = "DLPreselection";
+    }
+    else
+    {
+        cut_stage_to_write_to_ntuple = "AK4CategChannels";
     }
 
     //_______________________________________________________________________________

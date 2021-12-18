@@ -121,7 +121,7 @@ int main(int argc, char** argv)
                 continue;
         }
 
-        vbs.process("AK4CategChannels");
+        vbs.process(vbs.cut_stage_to_write_to_ntuple.Data());
 
     }
     // Writing output file

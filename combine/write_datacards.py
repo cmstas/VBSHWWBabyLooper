@@ -16,11 +16,11 @@ def run(doBDT, idx, coupling):
 
     #_____________________________________________________________________________________
     # Toggle options
-    # /nfs-7/userdata/jguiang/VBSHWWResult/v2.6_SS/v2/Run2/Final/
-    Tag = "v2.6_SS"
-    BabyVersion = "v2"
-    inputHistBaseDir = "/nfs-7/userdata/jguiang/VBSHWWResult/"
-    inputHistDir = "{}/{}/{}/Run2/Final".format(inputHistBaseDir, Tag, BabyVersion)
+    Tag = "v2.6"
+    BabyVersion = "miniNtupV3"
+    inputHistBaseDir = "../outputs/histogram"
+    HistVersion = "HistV2"
+    inputHistDir = "{}/{}/{}/Run2/{}".format(inputHistBaseDir, Tag, BabyVersion, HistVersion)
 
     #_____________________________________________________________________________________
     # Computing the correct c2v values
@@ -78,7 +78,7 @@ def run(doBDT, idx, coupling):
     # topbkgs    = ["tt1lpowheg", "tt2lpowheg", "ttw", "ttz", "raretop", ]
     topbkgs    = ["topbkgfit"]
     nontopbkgs = ["bosons", ]
-    sigs       = ["s_{}{}".format(coupling, suffix), ]
+    sigs       = ["vbshww{}{}".format(coupling, suffix), ]
     bkgs       = topbkgs + nontopbkgs
     processes  = bkgs + sigs
 
@@ -178,20 +178,3 @@ if __name__ == "__main__":
     for i in xrange(40):
         run(doBDT=True,  idx=i, coupling="c3")
         run(doBDT=False, idx=i, coupling="c3")
-
-    # run(doBDT=True,  c2v="4p5")
-    # run(doBDT=False, c2v="4p5")
-    # run(doBDT=True,  c2v="4")
-    # run(doBDT=False, c2v="4")
-    # run(doBDT=True,  c2v="3")
-    # run(doBDT=False, c2v="3")
-    # run(doBDT=True,  c2v="1")
-    # run(doBDT=False, c2v="1")
-    # run(doBDT=True,  c2v="0")
-    # run(doBDT=False, c2v="0")
-    # run(doBDT=True,  c2v="m1")
-    # run(doBDT=False, c2v="m1")
-    # run(doBDT=True,  c2v="m2")
-    # run(doBDT=False, c2v="m2")
-    # run(doBDT=True,  c2v="m2p5")
-    # run(doBDT=False, c2v="m2p5")

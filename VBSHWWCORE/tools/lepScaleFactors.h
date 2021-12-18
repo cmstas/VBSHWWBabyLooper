@@ -21,12 +21,15 @@ namespace ttH {
 
     float getElecRecoEffSF(float eta, float pt, int year);
     float getElecRecoEffSFErr(float eta, float pt, int year);
-    float getElecRecoEffSFUL(float eta, float pt, int year);
+    float getElecRecoEffSFUL(float eta, float pt, int year, bool isAPV=false);
     float getElecRecoEffSFULErr(float eta, float pt, int year);
     float getElecRecoEffSFUL2016preVFP(float eta, float pt);
     float getElecRecoEffSFULErr2016preVFP(float eta, float pt);
     float getElecRecoEffSFUL2016postVFP(float eta, float pt);
     float getElecRecoEffSFULErr2016postVFP(float eta, float pt);
+
+    float getMuonTightSFRederived(float eta, float pt, int year, bool isAPV, int syst=0);
+    float getElecTightSFRederived(float eta, float pt, int year, bool isAPV, int syst=0);
 }
 
 #endif

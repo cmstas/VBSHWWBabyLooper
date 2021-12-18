@@ -1040,9 +1040,13 @@ float ttH::getElecRecoEffSFUL2016postVFP(float eta, float pt) {
     return 0.0;
 }
 
-float ttH::getElecRecoEffSFUL(float eta, float pt, int year) {
+float ttH::getElecRecoEffSFUL(float eta, float pt, int year, bool isAPV) {
     if (year == 2016) {
-        return 0.45*ttH::getElecRecoEffSFUL2016preVFP(eta, pt) + 0.55*ttH::getElecRecoEffSFUL2016postVFP(eta, pt);
+        if (isAPV)
+            return ttH::getElecRecoEffSFUL2016preVFP(eta, pt);
+        else
+            return ttH::getElecRecoEffSFUL2016postVFP(eta, pt);
+        // return 0.45*ttH::getElecRecoEffSFUL2016preVFP(eta, pt) + 0.55*ttH::getElecRecoEffSFUL2016postVFP(eta, pt);
     }
     if (year == 2017) {
         if (eta >= -2.5 && eta < -2 && pt >= 10 && pt < 20) return 1.01368;
@@ -1764,4 +1768,956 @@ float ttH::getElecRecoEffSFErr(float eta, float pt, int year) {
         if (fabs(eta) >= 2 && fabs(eta) < 2.5 && pt >= 100) return 0.00962603;
     }
     return 0.0;
+}
+
+float ttH::getMuonTightSFRederived(float eta, float pt, int year, bool isAPV, int syst)
+{
+    if (year == 2016 and isAPV)
+    {
+        if (pt >= 40 and pt < 45)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.993029182885 : (syst == 1 ? 0.994297527216 : 0.991760838553));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.991588101886 : (syst == 1 ? 0.993843745648 : 0.989332458124));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.99382189308 : (syst == 1 ? 0.995321701257 : 0.992322084904));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.987137696461 : (syst == 1 ? 0.990502752075 : 0.983772640848));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 45 and pt < 55)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.994008235011 : (syst == 1 ? 0.995376726864 : 0.992639743158));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.992546435581 : (syst == 1 ? 0.994952038355 : 0.990140832807));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.992953885301 : (syst == 1 ? 0.994506300123 : 0.991401470478));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.986406038949 : (syst == 1 ? 0.989937584352 : 0.982874493546));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 55 and pt < 80)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.991823242964 : (syst == 1 ? 0.994490412162 : 0.989156073766));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.990658463843 : (syst == 1 ? 0.995388366087 : 0.985928561598));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.988535205098 : (syst == 1 ? 0.991610484036 : 0.985459926161));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.976148241582 : (syst == 1 ? 0.983061618068 : 0.969234865095));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 80)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.991494761519 : (syst == 1 ? 0.997853578305 : 0.985135944733));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.990229415956 : (syst == 1 ? 1.00169848975 : 0.978760342163));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.988422461097 : (syst == 1 ? 0.996178855341 : 0.980666066853));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.969961986659 : (syst == 1 ? 0.988429989718 : 0.951493983601));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+    }
+    else if (year == 2016 and not isAPV)
+    {
+        if (pt >= 40 and pt < 45)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.98920017212 : (syst == 1 ? 0.990700960452 : 0.987699383789));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.989363880677 : (syst == 1 ? 0.992035933146 : 0.986691828209));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.986392931211 : (syst == 1 ? 0.988149781396 : 0.984636081026));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.963808019007 : (syst == 1 ? 0.967613284772 : 0.960002753241));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 45 and pt < 55)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.991538093033 : (syst == 1 ? 0.993114972765 : 0.989961213301));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.991291906411 : (syst == 1 ? 0.994070734496 : 0.988513078326));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.989410522213 : (syst == 1 ? 0.991191388459 : 0.987629655966));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.967616210835 : (syst == 1 ? 0.971539470665 : 0.963692951004));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 55 and pt < 80)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.989610987979 : (syst == 1 ? 0.992272461722 : 0.986949514236));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.990293682353 : (syst == 1 ? 0.99501404668 : 0.985573318026));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.988506963194 : (syst == 1 ? 0.991558808004 : 0.985455118384));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.962031757921 : (syst == 1 ? 0.968746183236 : 0.955317332605));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 80)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.987777153212 : (syst == 1 ? 0.993574562498 : 0.981979743927));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.986058947156 : (syst == 1 ? 0.996428375963 : 0.975689518349));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.988517567152 : (syst == 1 ? 0.995493890785 : 0.98154124352));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.963334159813 : (syst == 1 ? 0.979464479111 : 0.947203840515));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+    }
+    else if (year == 2017)
+    {
+        if (pt >= 40 and pt < 45)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.986489668309 : (syst == 1 ? 0.987542827935 : 0.985436508683));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.986734398946 : (syst == 1 ? 0.988616611466 : 0.984852186425));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.988300184197 : (syst == 1 ? 0.989547453717 : 0.987052914677));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.98970749149 : (syst == 1 ? 0.992479862743 : 0.986935120236));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 45 and pt < 55)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.988765272254 : (syst == 1 ? 0.98991020867 : 0.987620335838));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.98944824852 : (syst == 1 ? 0.991475131899 : 0.987421365141));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.990559333361 : (syst == 1 ? 0.991864116993 : 0.98925454973));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.992210102521 : (syst == 1 ? 0.995156056895 : 0.989264148148));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 55 and pt < 80)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.989112171824 : (syst == 1 ? 0.991390836406 : 0.986833507243));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.990048418292 : (syst == 1 ? 0.994122033117 : 0.985974803468));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.991261485341 : (syst == 1 ? 0.993914441869 : 0.988608528812));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.995134128122 : (syst == 1 ? 1.00115752154 : 0.989110734705));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 80)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.987360985344 : (syst == 1 ? 0.992824319851 : 0.981897650836));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.988804478571 : (syst == 1 ? 0.998707902462 : 0.97890105468));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.991298092962 : (syst == 1 ? 0.998060297634 : 0.98453588829));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.995499542171 : (syst == 1 ? 1.0118627086 : 0.979136375745));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+    }
+    else // if (year == 2018)
+    {
+        if (pt >= 40 and pt < 45)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.988305988079 : (syst == 1 ? 0.989315459067 : 0.987296517091));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.985663483177 : (syst == 1 ? 0.987456653341 : 0.983870313014));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.982505776519 : (syst == 1 ? 0.983685602553 : 0.981325950486));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.965530232791 : (syst == 1 ? 0.968085536718 : 0.962974928865));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 45 and pt < 55)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.990344749278 : (syst == 1 ? 0.991444467841 : 0.989245030715));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.988443800122 : (syst == 1 ? 0.990381343624 : 0.986506256619));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.986097381958 : (syst == 1 ? 0.987334317752 : 0.984860446165));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.971310322818 : (syst == 1 ? 0.974041541702 : 0.968579103934));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 55 and pt < 80)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.989973800735 : (syst == 1 ? 0.992166414253 : 0.987781187217));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.988365566352 : (syst == 1 ? 0.992269979464 : 0.98446115324));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.987085267642 : (syst == 1 ? 0.989606590719 : 0.984563944565));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.974480634737 : (syst == 1 ? 0.980115514469 : 0.968845755005));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 80)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.988363703303 : (syst == 1 ? 0.993648810335 : 0.983078596271));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.987602731635 : (syst == 1 ? 0.997114140114 : 0.978091323156));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.987736926723 : (syst == 1 ? 0.994173961389 : 0.981299892057));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.964244098842 : (syst == 1 ? 0.979057324282 : 0.949430873401));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+    }
+}
+
+float ttH::getElecTightSFRederived(float eta, float pt, int year, bool isAPV, int syst)
+{
+    if (year == 2016 and isAPV)
+    {
+        if (pt >= 40 and pt < 45)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 1.04528748695 : (syst == 1 ? 1.04754080963 : 1.04303416427));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 1.02855519243 : (syst == 1 ? 1.03256472613 : 1.02454565872));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.985019444983 : (syst == 1 ? 0.987753890182 : 0.982284999783));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 1.04869496629 : (syst == 1 ? 1.05521172041 : 1.04217821217));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 45 and pt < 55)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 1.03731843347 : (syst == 1 ? 1.03983146877 : 1.03480539817));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 1.02383787322 : (syst == 1 ? 1.02845940113 : 1.01921634532));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.996056860735 : (syst == 1 ? 0.999213134819 : 0.992900586652));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 1.05106191199 : (syst == 1 ? 1.05811093629 : 1.04401288769));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 55 and pt < 80)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 1.00546396237 : (syst == 1 ? 1.01163724618 : 0.999290678556));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 1.00379542021 : (syst == 1 ? 1.01533715958 : 0.992253680829));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.975404132043 : (syst == 1 ? 0.983288353334 : 0.967519910751));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 1.0301602235 : (syst == 1 ? 1.04888736071 : 1.01143308629));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 80)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.984894365397 : (syst == 1 ? 0.995171536635 : 0.974617194159));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 1.02684477902 : (syst == 1 ? 1.04780107309 : 1.00588848496));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.987181776544 : (syst == 1 ? 1.00177976665 : 0.972583786439));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 1.06570236893 : (syst == 1 ? 1.10505014121 : 1.02635459664));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+    }
+    else if (year == 2016 and not isAPV)
+    {
+        if (pt >= 40 and pt < 45)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.942488793727 : (syst == 1 ? 0.944825860347 : 0.940151727107));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.936340174699 : (syst == 1 ? 0.940562208355 : 0.932118141043));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.913394312254 : (syst == 1 ? 0.916356859999 : 0.91043176451));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.941433695496 : (syst == 1 ? 0.948342350399 : 0.934525040593));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 45 and pt < 55)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.942585549955 : (syst == 1 ? 0.9451506335 : 0.94002046641));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.934141107726 : (syst == 1 ? 0.938854745348 : 0.929427470105));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.927701494764 : (syst == 1 ? 0.930978151215 : 0.924424838313));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.966021211569 : (syst == 1 ? 0.973503498126 : 0.958538925011));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 55 and pt < 80)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.933608603248 : (syst == 1 ? 0.939038850587 : 0.928178355909));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.930708057978 : (syst == 1 ? 0.940829527313 : 0.920586588642));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.909434869504 : (syst == 1 ? 0.916367343737 : 0.902502395271));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.960835747417 : (syst == 1 ? 0.97769742421 : 0.943974070625));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 80)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.944713364706 : (syst == 1 ? 0.953476836185 : 0.935949893228));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.950127720884 : (syst == 1 ? 0.967332808909 : 0.932922632859));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.931573412106 : (syst == 1 ? 0.943719751712 : 0.919427072499));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.954565036057 : (syst == 1 ? 0.985252467306 : 0.923877604807));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+    }
+    else if (year == 2017)
+    {
+        if (pt >= 40 and pt < 45)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.878787818916 : (syst == 1 ? 0.880262232841 : 0.87731340499));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.898815332354 : (syst == 1 ? 0.901540930082 : 0.896089734627));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.841895516725 : (syst == 1 ? 0.843701951183 : 0.840089082267));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.870877223834 : (syst == 1 ? 0.874967998111 : 0.866786449557));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 45 and pt < 55)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.882212863137 : (syst == 1 ? 0.883896087704 : 0.88052963857));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.899896499124 : (syst == 1 ? 0.903058903133 : 0.896734095115));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.851364386239 : (syst == 1 ? 0.853424200648 : 0.849304571829));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.879739961113 : (syst == 1 ? 0.884157186252 : 0.875322735975));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 55 and pt < 80)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.886375626673 : (syst == 1 ? 0.890792800638 : 0.881958452708));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.887414109229 : (syst == 1 ? 0.895605542592 : 0.879222675865));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.84915749387 : (syst == 1 ? 0.854533698667 : 0.843781289074));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.874165107963 : (syst == 1 ? 0.886169860259 : 0.862160355667));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 80)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.90983741606 : (syst == 1 ? 0.917656381485 : 0.902018450636));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.898401005881 : (syst == 1 ? 0.913513628872 : 0.88328838289));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.866260727637 : (syst == 1 ? 0.876550935793 : 0.855970519482));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.906843678487 : (syst == 1 ? 0.932210954641 : 0.881476402333));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+    }
+    else // if (year == 2018)
+    {
+        if (pt >= 40 and pt < 45)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.892774496694 : (syst == 1 ? 0.894216648856 : 0.891332344532));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.898499601967 : (syst == 1 ? 0.901095633007 : 0.895903570928));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.823930136395 : (syst == 1 ? 0.825575572434 : 0.822284700356));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.8228387946 : (syst == 1 ? 0.826390704179 : 0.81928688502));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 45 and pt < 55)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.889245540945 : (syst == 1 ? 0.890880662295 : 0.887610419595));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.895345767541 : (syst == 1 ? 0.898350852023 : 0.892340683058));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.829590094156 : (syst == 1 ? 0.831450311061 : 0.827729877251));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.843534842822 : (syst == 1 ? 0.847375433157 : 0.839694252486));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 55 and pt < 80)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.887217547034 : (syst == 1 ? 0.891508606309 : 0.88292648776));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.883409382635 : (syst == 1 ? 0.891218755001 : 0.875600010268));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.83186821831 : (syst == 1 ? 0.836797542979 : 0.826938893642));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.853359663893 : (syst == 1 ? 0.864096336729 : 0.842622991057));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else if (pt >= 80)
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return (syst == 0 ? 0.898369656488 : (syst == 1 ? 0.905840549274 : 0.890898763702));
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return (syst == 0 ? 0.895171683424 : (syst == 1 ? 0.909631528878 : 0.880711837969));
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return (syst == 0 ? 0.848975421068 : (syst == 1 ? 0.858474195661 : 0.839476646474));
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return (syst == 0 ? 0.901022016068 : (syst == 1 ? 0.923872879544 : 0.878171152593));
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+        else
+        {
+            if (fabs(eta) >= 0.0 and fabs(eta) < 0.9)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 0.9 and fabs(eta) < 1.2)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 1.2 and fabs(eta) < 2.1)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else if (fabs(eta) >= 2.1)
+            {
+                return 1; // No SF computed for this phase-space
+            }
+            else
+            {
+                return 1; // No SF computed for this phase-space
+            }
+        }
+    }
 }

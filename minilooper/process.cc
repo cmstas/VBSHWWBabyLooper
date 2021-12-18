@@ -17,8 +17,8 @@ int main(int argc, char** argv)
     ana.cutflow.setTFile(ana.output_tfile);
 
     TString tstr = ana.input_file_list_tstring;
-    bool isdata = tstr.Contains("Run201");
-    bool issignal = tstr.Contains("VBSWWHToLNuLNubb");
+    bool isdata = tstr.Contains("Run201") or tstr.Contains("data.root");
+    bool issignal = tstr.Contains("VBSWWHToLNuLNubb") or tstr.Contains("vbshww");
 
     TString group = "none";
     if (tstr.Contains("WW")) group = "bosons";
@@ -76,9 +76,9 @@ int main(int argc, char** argv)
                        {
                            return
                                vbs.wgt() *
-                               vbs.btagsf() *
-                               vbs.lepsf() *
-                               (issignal ? 1. : vbs.xsec_sf()) *
+                               // vbs.btagsf() *
+                               // vbs.lepsf() *
+                               // (issignal ? 1. : vbs.xsec_sf()) *
                                vbs.genrewgt() *
                                (isdata ? 1. : vbs.trigsf()) *
                                (ana.rwgtidx < 0 ? 1. : vbs.lherewgts()[ana.rwgtidx]) *
@@ -109,6 +109,7 @@ int main(int argc, char** argv)
 
     ana.cutflow.getCut("LooseVR");
     ana.cutflow.addCutToLastActiveCut("MbbOff", [&]() { return vbs.mbb() > 150; }, UNITY);
+    ana.cutflow.addCutToLastActiveCut("MbbOffLowBDT", [&]() { return vbs.bdt() < 0.543; }, UNITY);
 
     ana.cutflow.getCut("LooseVR");
     ana.cutflow.addCutToLastActiveCut("LL", [&]() { return vbs.lepchannel() == 0 or vbs.lepchannel() == 1 or vbs.lepchannel() == 2; }, UNITY);

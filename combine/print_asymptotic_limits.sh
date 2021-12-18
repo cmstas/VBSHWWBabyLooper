@@ -2,25 +2,32 @@ usage()
 {
     echo "Usage:"
     echo ""
-    echo "   >  $0 TAG"
+    echo "   >  $0 TAG COUPLING(=cv, c2v, c3) ANALYSISTYPE(=bdt, cut)"
     echo ""
     echo ""
     exit
 }
 
 tag=$1
+COUPLING=$2
+ana=$3
 
 if [ -z $tag ]; then
     usage
 fi
 
-COUPLING=c2v
+var=exp
 
 print_limits()
 {
-    var=exp
     idx=$1
-    tail -n7 limits/${tag}/${COUPLING}_*/bdt_${var}.out | grep "r\|${var}" | paste -d" " - - - - - - - | awk '{print $2, $'${idx}'}' | sed 's|limits/'${tag}'/c2v_||' | sed 's|/bdt_exp.out||' | tr 'm' '-' | tr 'p' '.' | sort -g
+    tail -n7 limits/${tag}/${COUPLING}_*/${ana}_${var}.out \
+        | grep "r\|${var}" \
+        | paste -d" " - - - - - - - \
+        | awk '{print $2, $'${idx}'}' \
+        | sed 's|limits/'${tag}'/'${COUPLING}'_||' \
+        | sed 's|/'${ana}'_exp.out||' \
+        | tr 'm' '-' | tr 'p' '.' | sort -g
 }
 
 function col {

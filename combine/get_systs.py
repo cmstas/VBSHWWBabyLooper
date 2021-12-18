@@ -1,6 +1,6 @@
 def get_systs(signal,
-              philip_plot_dir="/nfs-7/userdata/jguiang/VBSHWWResult/v2.6_SS/v2/Run2/Final/plots", 
-              jonathan_table_dir="/home/users/jguiang/public_html/dump/vbs_syst_tables",
+              philip_plot_dir="../outputs/histogram/v2.6/miniNtupV3/Run2/HistV2/plots", 
+              jonathan_table_dir="../outputs/histogram/v2.6/miniNtupV3/Run2/HistV2/plots",
               doBDT=False):
     bdt_philip_systs = []
     cut_philip_systs = []
@@ -43,7 +43,7 @@ def get_systs(signal,
     # Parse Jonathan's tables
     signal_systs = []
     bosons_systs = []
-    for table_path_template in ["{0}/{1}_based_bosons.tex", "{0}/{1}_based.tex"]:
+    for table_path_template in ["{0}/{1}_based_bkg_syst.tex", "{0}/{1}_based_sig_syst.tex"]:
         table_path = table_path_template.format(jonathan_table_dir, "bdt" if doBDT else "cut")
         with open(table_path, "r") as f_in:
             for line in f_in.readlines():
@@ -52,7 +52,7 @@ def get_systs(signal,
                 if len(cols) > 1 and cols[0] != "systematics":
                     header = cols[0]
                     systs = [float(c.replace("\\", "")) if c != "NaN" else 0 for c in cols[1:]]
-                    if "bosons" in table_path:
+                    if "bkg" in table_path:
                         bosons_systs.append((header, systs))
                     else:
                         signal_systs.append((header, systs))

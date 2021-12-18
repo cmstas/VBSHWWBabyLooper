@@ -4,7 +4,7 @@ usage()
 {
     echo "Usage:"
     echo ""
-    echo "   > $0 TAG"
+    echo "   >  $0 TAG COUPLING(=cv, c2v, c3) ANALYSISTYPE(=bdt, cut)"
     echo ""
     echo ""
     exit
@@ -15,13 +15,13 @@ if [ -z $1 ]; then
 fi
 
 TAG=$1
+COUPLING=$2
+ANALYSIS=$3
 
 # $DIR is the path to the directory where this specific script is sitting
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-ANALYSIS=bdt
 BIN=Combined
-COUPLING=c2v
 
 # ACCURACYOPTION="--rAbsAcc=0.01 --rRelAcc=0.03 "
 ACCURACYOPTION=""
