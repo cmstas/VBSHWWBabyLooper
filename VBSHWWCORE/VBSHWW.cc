@@ -3285,20 +3285,19 @@ void VBSHWW::parseCLI(int argc, char** argv)
 
     //_______________________________________________________________________________
     // --threelep
-    if (result.count("threelep"))
+    if (result.count("threelep") and not result.count("twolep"))
     {
         cut_stage_to_write_to_ntuple = "TLPreselection";
     }
-    else
-    {
-        cut_stage_to_write_to_ntuple = "AK4CategChannels";
-    }
-
-    //_______________________________________________________________________________
-    // --twolep
-    if (result.count("twolep"))
+    else if (not result.count("threelep") and result.count("twolep"))
     {
         cut_stage_to_write_to_ntuple = "DLPreselection";
+    }
+    else if (result.count("threelep") and result.count("twolep"))
+    {
+        std::cout << options.help() << std::endl;
+        std::cout << "ERROR: both -3,--threelep and -2,--twolep options are provided! this is not allowed!" << std::endl;
+        exit(1);
     }
     else
     {

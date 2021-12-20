@@ -17,9 +17,9 @@ def run(doBDT, idx, coupling):
     #_____________________________________________________________________________________
     # Toggle options
     Tag = "v2.6"
-    BabyVersion = "miniNtupV3"
+    BabyVersion = "miniNtupV5myULSF"
     inputHistBaseDir = "../outputs/histogram"
-    HistVersion = "HistV2"
+    HistVersion = "HistV1"
     inputHistDir = "{}/{}/{}/Run2/{}".format(inputHistBaseDir, Tag, BabyVersion, HistVersion)
 
     #_____________________________________________________________________________________

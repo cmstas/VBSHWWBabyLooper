@@ -36,6 +36,12 @@ def plot(flavor, year):
     flavordata = flavor
     if flavor == "ee" and year == "2018": flavordata = "eg"
 
+    if year == "2018": lumivalue = 59.8
+    if year == "2017": lumivalue = 41.3
+    if year == "2016": lumivalue = 16.8
+    if year == "2016APV": lumivalue = 19.5
+    if year == "Run2": lumivalue = 137
+
     p.dump_plot(
         fnames=[
             "outputs/dy_{year}.root".format(year=year),
@@ -53,9 +59,9 @@ def plot(flavor, year):
             "nbins":30,
             "ratio_range":[0., 2.],
             "print_yield":True,
-            "lumi_value":19.5,
+            "lumi_value":lumivalue,
             "legend_scalex":1.8,
-            "yaxis_log":True,
+            # "yaxis_log":True,
             },
         histxaxislabeloptions=histxaxislabeloptions,
         )
