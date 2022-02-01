@@ -51,6 +51,8 @@ def get_systs(signal,
                 cols = line_no_whitespace.split("&")
                 if len(cols) > 1 and cols[0] != "systematics":
                     header = cols[0]
+                    if header == "lepsf":
+                        continue
                     systs = [float(c.replace("\\", "")) if c != "NaN" else 0 for c in cols[1:]]
                     if "bkg" in table_path:
                         bosons_systs.append((header, systs))

@@ -939,20 +939,38 @@ class Sample:
 
 if __name__ == "__main__":
 
-    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="testv1", histogram_tag="HistV1")
+    #-------------------------------------------------------------------------------------------------------
+    # samplelist = get_samplelist(skimversion="v2.6", minintup_tag="miniNtupV7", histogram_tag="HistV1")
+    # print_samplelist(samplelist)
+    # run(samplelist)
+    #-------------------------------------------------------------------------------------------------------
+
+    #-------------------------------------------------------------------------------------------------------
+    # samplelist = get_samplelist(skimversion="v2.6", minintup_tag="miniNtupV6noVBSPSCut", histogram_tag="HistV1")
+    # print_samplelist(samplelist)
+    # run(samplelist)
+    #-------------------------------------------------------------------------------------------------------
+
+    #-------------------------------------------------------------------------------------------------------
+    # samplelist = get_samplelist(skimversion="v2.6", minintup_tag="testv1", histogram_tag="HistV1")
+    # print_samplelist(samplelist)
+    # run(samplelist, runallrewgt=True)
+    #-------------------------------------------------------------------------------------------------------
+
+    #-------------------------------------------------------------------------------------------------------
+    # Main result
+    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="miniNtupV5myULSF", histogram_tag="HistV1")
     print_samplelist(samplelist)
     run(samplelist, runallrewgt=True)
+    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="miniNtupV5myULSF_jecUp", histogram_tag="HistV1")
+    print_samplelist(samplelist)
+    run(samplelist, runallrewgt=True)
+    samplelist = get_samplelist(skimversion="v2.6", minintup_tag="miniNtupV5myULSF_jecDn", histogram_tag="HistV1")
+    print_samplelist(samplelist)
+    run(samplelist, runallrewgt=True)
+    #-------------------------------------------------------------------------------------------------------
 
-    # samplelist = get_samplelist(skimversion="v2.6", minintup_tag="miniNtupV5myULSF", histogram_tag="HistV1")
-    # print_samplelist(samplelist)
-    # run(samplelist, runallrewgt=True)
-    # samplelist = get_samplelist(skimversion="v2.6", minintup_tag="miniNtupV5myULSF_jecUp", histogram_tag="HistV1")
-    # print_samplelist(samplelist)
-    # run(samplelist, runallrewgt=True)
-    # samplelist = get_samplelist(skimversion="v2.6", minintup_tag="miniNtupV5myULSF_jecDn", histogram_tag="HistV1")
-    # print_samplelist(samplelist)
-    # run(samplelist, runallrewgt=True)
-
+    #-------------------------------------------------------------------------------------------------------
     # samplelist = get_samplelist_3L(skimversion="v2.6_Excl3L", minintup_tag="v4_3L", histogram_tag="HistV1")
     # print_samplelist(samplelist)
     # run_minintup(samplelist)
@@ -961,8 +979,11 @@ if __name__ == "__main__":
     # print_samplelist(samplelist)
     # run_minintup(samplelist)
     # run_hadd(samplelist)
+    #-------------------------------------------------------------------------------------------------------
 
+    #-------------------------------------------------------------------------------------------------------
     # samplelist = get_samplelist_3L(skimversion="v2.6_Excl2L", minintup_tag="v1_2L", histogram_tag="HistV1")
     # print_samplelist(samplelist)
     # run_minintup(samplelist)
     # run_hadd(samplelist)
+    #-------------------------------------------------------------------------------------------------------

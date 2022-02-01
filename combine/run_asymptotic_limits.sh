@@ -4,7 +4,7 @@ usage()
 {
     echo "Usage:"
     echo ""
-    echo "   >  $0 TAG COUPLING(=cv, c2v, c3) ANALYSISTYPE(=bdt, cut)"
+    echo "   >  $0 TAG COUPLING(=cv, c2v, c3) ANALYSISTYPE(=bdt, cut) [BIN=Combined]"
     echo ""
     echo ""
     exit
@@ -21,7 +21,13 @@ ANALYSIS=$3
 # $DIR is the path to the directory where this specific script is sitting
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-BIN=Combined
+if [ -z $4 ]; then
+    BIN=Combined
+else
+    BIN=$4
+fi
+
+echo "Running limits with BIN=$BIN"
 
 # ACCURACYOPTION="--rAbsAcc=0.01 --rRelAcc=0.03 "
 ACCURACYOPTION=""

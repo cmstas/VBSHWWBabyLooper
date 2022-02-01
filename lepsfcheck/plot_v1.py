@@ -14,6 +14,10 @@ histxaxislabeloptions = {
     "Phi1"   : {"xaxis_label" : "#phi_{sublead-lep}"      , "xaxis_ndivisions" : 505},
     "Pt0"    : {"xaxis_label" : "p_{T,lead-lep} [GeV]"    , "xaxis_ndivisions" : 505},
     "Pt1"    : {"xaxis_label" : "p_{T,sublead-lep} [GeV]" , "xaxis_ndivisions" : 505},
+    "PtE"    : {"xaxis_label" : "p_{T,electron} [GeV]"    , "xaxis_ndivisions" : 505},
+    "PtM"    : {"xaxis_label" : "p_{T,muon} [GeV]"        , "xaxis_ndivisions" : 505},
+    "EtaE"   : {"xaxis_label" : "#eta_{electron}"         , "xaxis_ndivisions" : 505},
+    "EtaM"   : {"xaxis_label" : "#eta_{muon}"             , "xaxis_ndivisions" : 505},
     "Njet"   : {"xaxis_label" : "n_{jets}"                , "xaxis_ndivisions" : 505},
     "nbtight": {"xaxis_label" : "n_{b-jets,tight}"        , "xaxis_ndivisions" : 505},
 }

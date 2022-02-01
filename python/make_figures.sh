@@ -71,7 +71,7 @@ book_plot_alpha()
 }
 
 book_plot VRVarBin    "Lgt Tau Neg"               MbbOff${SYST}       "STVarBin3 STVarBin LTVarBin MJJVarBin DEtaJJVarBin"
-book_plot VRShatKine  "Lgt Tau Neg"               MbbOff${SYST}       "LeptonPt0Zoom LeptonPt1Zoom BJetPt0 BJetPt1 MET LT ST"
+book_plot VRShatKine  "Lgt Tau Neg"               MbbOff${SYST}       "LeptonPt0Zoom LeptonPt1Zoom BJetPt0 BJetPt1 MET LT ST LTZoom STZoom LTVarBin LTVarBin2 STVarBin STVarBin2 STVarBin3"
 book_plot VRVBFKine   "Lgt Tau Neg"               MbbOff${SYST}       "MJJZoom DEtaJJ JetPt0 JetPt1 JetEta0 JetEta1"
 book_plot VRBDT       "    Tau Neg"               MbbOffLowBDT${SYST} "BDTBkg"
 book_plot VRBDT       "Lgt"                       MbbOffLowBDT${SYST} "BDTBkg2"

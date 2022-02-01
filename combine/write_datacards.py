@@ -122,7 +122,7 @@ def run(doBDT, idx, coupling):
     # Grand object that will hold list of systematic definitions
     systs = []
     # Hand-made systematics
-    systs.append(("lumiSyst", "lnN", [], {sigs[0]:2.5, "topbkgfit": 2.5, "bosons": 2.5}))
+    systs.append(("lumiSyst", "lnN", [], {sigs[0]:1.6, "topbkgfit": 1.6, "bosons": 1.6}))
     # Factory-made systematics from LaTeX tables
     systs += get_systs(sigs[0], doBDT=doBDT)
     # Turn X% errors into 1+X/100
@@ -139,11 +139,16 @@ def run(doBDT, idx, coupling):
         _systs.append((name, syst_type, empty_list, _syst_map))
     systs = _systs
 
+    sigplusbkg = hists[sigs[0]].Clone("totalbkg")
+    for bkg in bkgs:
+        sigplusbkg.Add(hists[bkg])
+
     # create the data card writer tool
     d = dw.DataCardWriter(
             sig=hists[sigs[0]],
             bgs=[ hists[bkg] for bkg in bkgs ],
-            data=None,
+            # data=None,
+            data=sigplusbkg,
             systs=systs,
             # no_stat_procs=["bkg2"]
             )

@@ -2412,7 +2412,8 @@ void VBSHWW::initSRCutflow()
             const float& st = tx.getBranch<float>("st");
             const float& bdt = tx.getBranch<float>("bdt");
 
-            int is_preselection = channel >= 0 and mjj > 500 and detajj > 3;
+            // int is_preselection = channel >= 0 and mjj > 500 and detajj > 3;
+            int is_preselection = channel >= 0 and mjj > 0 and detajj > 0;
 
             int islgt = categ == 0 or categ == 1;
 
@@ -2492,6 +2493,8 @@ void VBSHWW::initSRCutflow()
             int isSS = (tx.getBranch<int>("lep0ID") * tx.getBranch<int>("lep1ID")) > 0;
             tx.setBranch<int>("pass_blind", nt.isData() and isSS ? not (mbbIn): 1);
             tx.setBranch<int>("pass_blind_bdt", nt.isData() and isSS ? not (mbbIn or bdt > 0.543): 1);
+            // tx.setBranch<int>("pass_blind", 1);
+            // tx.setBranch<int>("pass_blind_bdt", 1);
 
             return tx.getBranch<int>("is_ps");
         },

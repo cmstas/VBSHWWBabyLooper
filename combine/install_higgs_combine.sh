@@ -11,3 +11,6 @@ scramv1 b clean; scramv1 b -j # always make a clean build
 cd ../../../../;
 
 source ../rooutil/thisrooutil.sh # To setup DataCardWriter
+
+# Below is for additionally installing CombineTools
+#  bash <(curl -s https://raw.githubusercontent.com/cms-analysis/CombineHarvester/master/CombineTools/scripts/sparse-checkout-ssh.sh)

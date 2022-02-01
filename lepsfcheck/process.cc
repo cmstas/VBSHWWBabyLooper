@@ -249,13 +249,17 @@ int main(int argc, char** argv)
     ana.histograms.addHistogram("Eta1", 180, -2.5, 2.5, [&]() { return dilep.good_leptons_p4()[1].eta(); } );
     ana.histograms.addHistogram("Phi0", 180, -3.1416, 3.1416, [&]() { return dilep.good_leptons_p4()[0].phi(); } );
     ana.histograms.addHistogram("Phi1", 180, -3.1416, 3.1416, [&]() { return dilep.good_leptons_p4()[1].phi(); } );
+    ana.histograms.addHistogram("PtE", 180, 0, 250, [&]() { return abs(dilep.good_leptons_pdgid()[0]) == 11 ? dilep.good_leptons_p4()[0].pt() : dilep.good_leptons_p4()[1].pt(); } );
+    ana.histograms.addHistogram("PtM", 180, 0, 250, [&]() { return abs(dilep.good_leptons_pdgid()[0]) == 11 ? dilep.good_leptons_p4()[1].pt() : dilep.good_leptons_p4()[0].pt(); } );
+    ana.histograms.addHistogram("EtaE", 180, -2.5, 2.5, [&]() { return abs(dilep.good_leptons_pdgid()[0]) == 11 ? dilep.good_leptons_p4()[0].eta() : dilep.good_leptons_p4()[1].eta(); } );
+    ana.histograms.addHistogram("EtaM", 180, -2.5, 2.5, [&]() { return abs(dilep.good_leptons_pdgid()[0]) == 11 ? dilep.good_leptons_p4()[1].eta() : dilep.good_leptons_p4()[0].eta(); } );
     ana.histograms.addHistogram("Njet", 10, 0, 10, [&]() { return dilep.good_jets_p4().size(); } );
     // ana.histograms.addHistogram("nbloose", 10, 0, 10, [&]() { return dilep.nbloose(); } );
     // ana.histograms.addHistogram("nbmedium", 10, 0, 10, [&]() { return dilep.nbmedium(); } );
     ana.histograms.addHistogram("nbtight", 10, 0, 10, [&]() { return dilep.nbtight(); } );
 
     // Book cutflows
-    ana.cutflow.bookCutflows();
+    // ana.cutflow.bookCutflows();
 
     // Book Histograms
     ana.cutflow.bookHistograms(ana.histograms); // if just want to book everywhere

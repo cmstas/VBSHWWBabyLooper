@@ -174,10 +174,11 @@ if "Presel__" in cutname_to_plot:
 data_fname = "{}/data.root".format(hadd_dir)
 
 lumi = -1
-if "2016" in hadd_dir: lumi = 35.9
+if "2016" in hadd_dir: lumi = 16.8
+if "2016APV" in hadd_dir: lumi = 19.5
 if "2017" in hadd_dir: lumi = 41.5
-if "2018" in hadd_dir: lumi = 59.97
-if "Run2" in hadd_dir: lumi = 137
+if "2018" in hadd_dir: lumi = 59.8
+if "Run2" in hadd_dir: lumi = 138
 
 ChannelsMbbMerged_bin_labels = [
 "T-ee",
@@ -227,15 +228,15 @@ histxaxislabeloptions = {
 "LeptonPt1"                       : {"xaxis_label"      : "p_{T,sublead-lep} [GeV]",  "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
 "LeptonPt0Zoom"                   : {"xaxis_label"      : "p_{T,lead-lep} [GeV]",     "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
 "LeptonPt1Zoom"                   : {"xaxis_label"      : "p_{T,sublead-lep} [GeV]",  "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
-"LeptonEta0"                      : {"xaxis_label"      : "#eta_{lead-lep} [GeV]",    "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
-"LeptonEta1"                      : {"xaxis_label"      : "#eta_{sublead-lep} [GeV]", "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"LeptonEta0"                      : {"xaxis_label"      : "#eta_{lead-lep}",          "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
+"LeptonEta1"                      : {"xaxis_label"      : "#eta_{sublead-lep}",       "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
 "MJJ"                             : {"xaxis_label"      : "m_{jj} [GeV]",             "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
 "MJJZoom"                         : {"xaxis_label"      : "m_{jj} [GeV]",             "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
 "MJJVarBin"                       : {"xaxis_label"      : "m_{jj} [GeV]",             "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
 "DEtaJJ"                          : {"xaxis_label"      : "#Delta#eta_{jj} [GeV]",    "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
 "DEtaJJVarBin"                    : {"xaxis_label"      : "#Delta#eta_{jj} [GeV]",    "xaxis_ndivisions" : 505, "nbins": 20, "signal_scale": signal_scale, "blind": blind},
-"JetEta0"                         : {"xaxis_label"      : "p_{T,lead-jet} [GeV]",     "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
-"JetEta1"                         : {"xaxis_label"      : "p_{T,sublead-jet} [GeV]",  "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
+"JetEta0"                         : {"xaxis_label"      : "#eta_{T,lead-jet}",        "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
+"JetEta1"                         : {"xaxis_label"      : "#eta_{T,sublead-jet}",     "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
 "JetPt0"                          : {"xaxis_label"      : "p_{T,lead-jet} [GeV]",     "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
 "JetPt1"                          : {"xaxis_label"      : "p_{T,sublead-jet} [GeV]",  "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
 "BJetPt0"                         : {"xaxis_label"      : "p_{T,lead-b} [GeV]",       "xaxis_ndivisions" : 505, "nbins": 10, "signal_scale": signal_scale, "blind": blind},
